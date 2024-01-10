@@ -21,8 +21,8 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "GOTOES_big_sample.gpx",
-                "GOTOES_big_sample_compressed.gpx"
+                "-i", "GOTOES_big_sample.gpx",
+                "-o", " GOTOES_big_sample_compressed.gpx"
             ]
         },
     {
@@ -33,8 +33,8 @@
         "console": "integratedTerminal",
         "justMyCode": true,
         "args": [
-            "GOTOES_big.gpx",
-            "GOTOES_big_compressed.gpx"
+            "-i", "GOTOES_big.gpx",
+            "-o", "GOTOES_big_compressed.gpx"
         ]
     }
     ]

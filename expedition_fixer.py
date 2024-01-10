@@ -1,9 +1,7 @@
 import gpxpy
 import geopy.distance
 from weather_openmeteo import getWeatherForLocation, getTempForTime
-import sys
-
-
+import argparse
 
 # Load a GPX file
 def readOriginalGPX(input_file):
@@ -102,8 +100,13 @@ def createNewGPX(gpx_orig, output_file):
 
 
 def main():
-    input_file = sys.argv[1]
-    output_file = sys.argv[2]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i","--input", help = "input filename")
+    parser.add_argument("-o","--output", help = "output filename")
+    args = parser.parse_args()
+
+    input_file = args.input
+    output_file = args.output
     gpx_orig = readOriginalGPX(input_file)
     createNewGPX(gpx_orig, output_file)
 
