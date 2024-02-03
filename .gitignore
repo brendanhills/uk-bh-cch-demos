@@ -1,3 +1,5 @@
 *.swp
 .cache.sqlite
 *.pyc
+markerstudy/mstudy/venv/
+markerstudy/mstudy/.venv/
