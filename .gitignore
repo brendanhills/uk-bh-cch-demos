@@ -4,3 +4,4 @@
 venv/
 markerstudy/mstudy/venv/
 markerstudy/mstudy/.venv/
+.vscode/settings.json
