@@ -2,6 +2,7 @@
 .cache.sqlite
 *.pyc
 venv/
+*checkpoint*
 markerstudy/mstudy/venv/
 markerstudy/mstudy/.venv/
 .vscode/settings.json
