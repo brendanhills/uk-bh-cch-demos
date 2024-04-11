@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 
+
         {
             "name": "Python: Current File",
             "type": "python",
@@ -14,17 +15,29 @@
             "justMyCode": true
         },
         {
-            "name": "Python: Current File Main with sample",
+            "name": "Python: AskPDF with sample",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "-i", "GOTOES_big_sample.gpx",
-                "-o", " GOTOES_big_sample_compressed.gpx"
+               "-d", "~/dev/uk-bh-experiments/intertek/",
+               "-p" "summarise these files"
             ]
         },
+        {
+        "name": "Python: AskPDF token_count with sample",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "args": [
+           "-d", "~/dev/uk-bh-experiments/intertek/",
+           "-c"
+        ]
+    },
     {
         "name": "Python: Current File Main with full files",
         "type": "python",
@@ -36,6 +49,20 @@
             "-i", "GOTOES_big.gpx",
             "-o", "GOTOES_big_compressed.gpx"
         ]
-    }
+    },
+    {
+        "name": "Python: Current File Main with sample",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+        "args": [
+            "-i", "GOTOES_big_sample.gpx",
+            "-o", " GOTOES_big_sample_compressed.gpx"
+        ]
+    },
+
+
     ]
 }
