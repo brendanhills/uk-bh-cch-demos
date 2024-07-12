@@ -8,3 +8,9 @@ markerstudy/mstudy/.venv/
 .vscode/settings.json
 *env
 
+breedr/__MACOSX/tables/._account_user.csv
+breedr/.vscode/launch.json
+breedr/tables/output
+subsea7/notebook.log
+subsea7/poetry.lock
+subsea7/.vscode/settings.json
