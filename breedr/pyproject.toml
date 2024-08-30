@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "breedr"
+name = "ask_data"
 version = "0.1.0"
 description = ""
 authors = ["Brendan Hills <brendanhills@google.com>"]
@@ -16,6 +16,9 @@ pyarrow = "^17.0.0"
 pandas = "^2.2.2"
 db-dtypes = "^1.3.0"
 pip = "^24.2"
+pytest = "^8.3.2"
+tqdm = "^4.66.5"
+ipywidgets = "^8.1.5"
 
 
 [build-system]

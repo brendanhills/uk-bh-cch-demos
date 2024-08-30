@@ -17,3 +17,4 @@ subsea7/.vscode/settings.json
 subsea7/subsea7.code-workspace
 breedr/poetry.lock
 breedr/.vscode/settings.json
+breedr/mylog.log
