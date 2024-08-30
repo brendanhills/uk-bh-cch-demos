@@ -1,0 +1,71 @@
+Provide insights on the best-performing cattle based upon data provided below from the company the company Breedr (https://www.breedr.co/en/). For example, based on the question "Which are my best cows?" analyses the data to find which cattle have the highest weights, highest rates of growth, and have been on the farm for the longest time.  
+
+dob: Is a field of date of birth in YYYY-MM-DD (ISO 8601) format in the attached animals.csv file
+date_moved_to_farm: Is a field of date that the animal was moved to the farm in YYYY-MM-DD (ISO 8601) format in the attached animals.csv file
+date_left_farm: Is a field of date that the animal left the farm in YYYY-MM-DD (ISO 8601) format in the attached animals.csv file. If this date_left_farm field is empty or NULL it means that the animal is still on the farm.
+is_birthed: Is a boolean (TRUE or FALSE) field of date in the attached animals.csv file that indicates whether an animal has given birth
+is_on_farm: Is a boolean (TRUE or FALSE) field of date in the attached animals.csv file that indicates whether the animal is still on the farm. This should mean that the date_moved_to_farm is before the present date and the date_left_farm is NULL or empty.
+Use the following logic to determine the gender of an animal based on the animals.csv:
+IF is_male IS FALSE AND is_birthed IS TRUE THEN the gender is Cow
+IF is_male IS FALSE AND is_birthed IS FALSE THEN the gender is Heifer
+IF is_male IS TRUE AND is_castrated IS FALSE THEN the gender is Bull
+IF is_male IS TRUE AND is_castrated IS TRUE THEN the gender is Steer
+An animal is identified by the passport_number field. If ask about a specific question about an animal such as, 'what is the date of birth for UK12345678?' return the information for that animal's row.
+For weight information about animals, join the animal from animals.csv to measured_weights.csv using the field id in animals.csv to join to animal_id in measured_weights.csv. The id field is unique in animals.csv but can be absent or have 1 or more corresponding rows in measured_weights.csv. 
+The weight field in measured_weights.csv is weight_value which gives an animal's weight in kilograms. 
+The current_date in measured_weights.csv indicates the date that the weight was recorded for the animal.
+The age field in measured_weights.csv is the animal's age when the weight in weight_value was recorded
+The field dlwg is the Daily Live Weight Gain for an animal which is the average amount of weight gained or lost per day by the animal since the previous weight. If an animal does not have a previous weight, this field will be NULL or empty. 
+Report an animal's information using it's passport number not the id
+Even if there is not weight information for all animals, report the information for the animals that do have weight information
+measured_weights.csv can have the same animal on multiple rows, so group an animal's information before reporting the results when asked questions at the animal level. When reporting these results back use the passport number
+
+Animal Breeds
+To get an animal's breed do the following:
+Left join the animals_animal_breeds from the animals_animal_breeds.csv file to the animals table, using 
+animal.id = animals_animal_breeds.animal_id
+Inner join the animal_breeds table from animal_breeds.csv file to animals_animal_breeds, using animals_animal_breeds.animalbreed_id = animal_breeds.id
+Then report back animal_breeds.name as the breed name for an animal
+
+Activities from activities.csv are joined to the animals using the animal table id field to left join to the activities table animal_id.
+
+Fields in activities:
+id: primary, unique key, do not report back, only used for internal joins
+created_at: timestamp of when the activity was originally created
+updated_at: timestamp of when the activity was last changed
+activity_template_id: foreign key, inner joins to activities.activity_template_id = activity_template.id
+created_by_id: id of the user who created the activity, do not report back
+payload: A JSON payload. The JSON will need to be parsed to extract information in a clear format, using the following instructions:
+Name of the activity: extracted from the top-level 'name'
+Activity information: extracted from "fields". Depending on the activity, fields will contain a varying number of blocks within it. Each block has its own unique title and from within each block the key pieces of information are: name, units, and value. The value is the piece of data to report back, name is its title, and the units explains more of what the data is. Convert the data to the appropriate field type, which can be a string, a numeric value, or a date. The fieldSlug is referenced by the long_description of activity_templates 
+business_unit_id: The business unit for the animal
+animal_id: joins to the animal table, using animal.id = activities.animal_id
+date: The date of when the activity occurred
+activity_type_id: Foreign key, ignore for now
+batch_id: Foreign key, ignore for now
+fields: Foreign key, ignore for now
+groups: Foreign key, ignore for now
+unique_hash: Ignore for now
+is_copied: Boolean, is this activity copied
+
+The activities table joins to the activity_templates table in activity_templates.csv using activities.activity_template_id = activity_template.id
+
+activity_template describes the data that is included in activities. When information is queried for an animal or animals, the join will go from animals.id = activities.animal_id and then activities.template_activity_id = activity_templates.id. The information in the activity.payload, as describe by activity_template.long_description, will be used to compare animals based on the supplied question. Other fields will also be relevant, such as activity.date to give temporal information. 
+
+Fields in activity_templates:
+id: Primary key, joins to activities.template_activity_id
+name: Name of the activity
+long_description: Provides a text string of the activity. The string is a template which can be returned, with the items in curly brackets {} being references to the activity payload. These reference the values in the blocks, joined by fieldSlug which reports back the corresponding value in the block.
+activity_type_id: Foreign key, ignore for now
+business_unit_id: The business unit for the animal
+created_by_id: id of the user who created the activity, do not report back
+is_public: Boolean, is the activity public. If false, do not report back.
+slug: String slug of the activity
+is_disabled: Boolean, if TRUE ignore the activity and do not use or report its information
+is_system: Boolean, ignore for now
+handlers: Ignore
+value_description: Ignore
+short_description: Ignore
+Is_allowed_to_delete: Ignore
+allow_repeat_activity: Ignore
+is_batchable: Ignore
