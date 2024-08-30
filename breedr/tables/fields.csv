@@ -1,7 +1,0 @@
-id,name,description,is_organic,is_yard,size,image,system_meta,is_deleted,location_id,size_unit,field_area,colour
-55daad6e-33ea-42fb-b41c-74ac85b6a068,NAMEFIELDA,,false,true,0.0,,"{""has_animals"": false, ""grazed_update_time"": 0}",false,3176,HA,,
-ddcf29a2-4007-4fc4-96b3-b538224b5091,NAMEFIELDB,,false,false,0.0,,"{""has_animals"": true, ""grazed_update_time"": 1666798152.0068731}",false,3176,HA,,
-9c6742d4-5408-4bc1-b622-cdfff7a27569,NAMEFIELDC,,false,true,0.0,,"{""has_animals"": true, ""grazed_update_time"": 1666797953.8001304}",false,3176,HA,,
-a88ecf99-075e-40c8-bd32-b69fa4b32978,NAMEFIELDD,,false,true,,,"{""has_animals"": true, ""grazed_update_time"": 1666870517.9193656}",false,3176,HA,,
-847ff71a-d85d-4d74-a793-7498992f2a11,NAMEFIELDE,To sell,false,false,0.0,,"{""has_animals"": false, ""grazed_update_time"": 1663339148.3327687}",false,3176,HA,,
-a6c8945f-0d32-478d-b447-5fd0c38192d7,NAMEFIELDF,,false,true,0.0,,"{""has_animals"": false, ""grazed_update_time"": 0}",false,3176,HA,,
