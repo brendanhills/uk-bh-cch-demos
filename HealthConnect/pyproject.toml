@@ -1,0 +1,20 @@
+[project]
+name = "healthconnect"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Brendan Hills",email = "brendanhills@google.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit (>=1.43.2,<2.0.0)",
+    "google-cloud-dialogflow-cx (>=1.41.0,<2.0.0)"
+]
+
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+package-mode = false

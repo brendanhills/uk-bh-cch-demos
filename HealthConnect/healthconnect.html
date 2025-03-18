@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+
+
+    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
+<script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+<df-messenger
+  location="us-central1"
+  project-id="uk-bh-experiments-argolis"
+  agent-id="a1054063-fcb0-4e85-8716-5148a643a995"
+  language-code="en"
+  max-query-length="-1">
+  <df-messenger-chat-bubble
+    chat-title="Health Connect v1">
+  </df-messenger-chat-bubble>
+</df-messenger>
+<style>
+  df-messenger {
+    z-index: 999;
+    position: fixed;
+    --df-messenger-font-color: #000;
+    --df-messenger-font-family: Google Sans;
+    --df-messenger-chat-background: #f3f6fc;
+    --df-messenger-message-user-background: #d3e3fd;
+    --df-messenger-message-bot-background: #fff;
+    bottom: 16px;
+    right: 16px;
+  }
+</style>
+
+
+    
+    <style>
+        /* Custom styles for the chat widget (simulated) */
+        #chat-widget {
+            position: fixed;
+            bottom: 20px;su
+            right: 20px;
+            background-color: #007bff; /* Google Blue */
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex; /* Use flexbox for centering */
+            align-items: center;
+            justify-content: center;
+            width: 60px; /* Make it a circle */
+            height: 60px;
+        }
+
+        #chat-widget:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        #chat-widget-icon {
+            /* Use a simple icon (e.g., a message bubble) */
+            width: 30px; /* Adjust size as needed */
+            height: 30px;
+            /* You can use an actual SVG here or a font icon */
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle"%3E%3Cpath d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"%3E%3C/path%3E%3C/svg%3E'); /* Replace with your SVG if needed */
+            background-size: cover;
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 80px; /* Adjust based on chat widget size */
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            width: 350px;
+            max-height: 400px;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            overflow: hidden; /* Ensure content doesn't overflow */
+        }
+
+        #chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-bottom: 1px solid #0056b3;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between; /* Space between title and close button */
+            align-items: center; /* Vertically center items */
+        }
+
+        #chat-header-title {
+              margin: 0; /* Remove default margin */
+        }
+
+        #close-chat-btn {
+            color: white;
+            background: none;
+            border: none;
+            font-size: 20px; /* Increased size for better usability */
+            cursor: pointer;
+            padding: 0; /* Remove padding to avoid extra space */
+            line-height: 1; /* Adjust line height to vertically center the X */
+        }
+
+        #close-chat-btn:hover {
+            color: #f0f0f0; /* Slightly lighter on hover */
+        }
+
+
+        #chat-messages {
+            flex: 1; /* Allow it to take up available space */
+            padding: 10px;
+            overflow-y: auto; /* Enable vertical scrolling */
+            display: flex;
+            flex-direction: column;
+            height: 250px; /* Initial height, will grow as needed */
+        }
+
+        .message {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            max-width: 80%; /* Prevent messages from taking up full width */
+        }
+
+        .message-text {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .user-message .message-text {
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px 10px 0 10px; /* Different rounding for user messages */
+        }
+
+        .support-message .message-text {
+            background-color: #e0e0e0;
+            color: #333;
+            border-radius: 10px 10px 10px 0;
+        }
+
+
+        .message-sender {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .user-message .message-sender {
+            text-align: right;
+        }
+
+        #chat-input-area {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 1em;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        #send-chat-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #send-chat-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-inter">
+    <header class="bg-blue-500 text-white py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-semibold">HealthConnect</h1>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#services" class="hover:text-blue-200 transition duration-300">Services</a></li>
+                    <li><a href="#about" class="hover:text-blue-200 transition duration-300">About Us</a></li>
+                    <li><a href="#contact" class="hover:text-blue-200 transition duration-300">Contact</a></li>
+                    <li><a href="#support" class="hover:text-blue-200 transition duration-300">Support</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-br from-blue-600 to-blue-400 text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Your Health, Connected.</h2>
+            <p class="text-lg mb-8">
+                Experience seamless telehealth services with HealthConnect.  Connect with doctors, manage prescriptions, and monitor your health from the comfort of your home.
+            </p>
+            <a href="#services" class="bg-white text-blue-500 py-3 px-6 rounded-full font-semibold hover:bg-gray-100 transition duration-300">
+                Explore Services
+            </a>
+        </div>
+    </section>
+
+    <section id="services" class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-semibold mb-8 text-gray-800">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 flex flex-col justify-between">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">Virtual Consultations</h3>
+                    <p class="text-gray-700 mb-4">Connect with licensed physicians for real-time video consultations.</p>
+                    <button class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300">
+                        Book a Consultation
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 flex flex-col justify-between">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">Prescription Management</h3>
+                    <p class="text-gray-700 mb-4">Get your prescriptions filled and delivered to your doorstep.</p>
+                    <button class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300">
+                        Manage Prescriptions
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 flex flex-col justify-between">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">Chronic Care Monitoring</h3>
+                    <p class="text-gray-700 mb-4">
+                        Manage your chronic conditions with personalized monitoring and support.
+                    </p>
+                    <button class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition duration-300">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="bg-blue-100 py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-semibold mb-8 text-gray-800">About Us</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                HealthConnect is committed to providing accessible and affordable healthcare through
+                cutting-edge telehealth technology.  Our mission is to improve the health and well-being
+                of our patients by delivering convenient, high-quality medical care.
+            </p>
+        </div>
+    </section>
+
+    <section id="contact" class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-semibold mb-8 text-gray-800">Contact Us</h2>
+            <p class="text-lg text-gray-700 mb-4">
+                Email: support@healthconnect.com<br />
+                Phone: +1 (555) 123-4567
+            </p>
+             <button id="contact-support-button" class="bg-green-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-green-600 transition duration-300">
+                Contact Support
+            </button>
+        </div>
+    </section>
+
+    <section id="support" class="bg-gray-100 py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-semibold mb-8 text-gray-800">Support</h2>
+            <p class="text-lg text-gray-700 mb-4">
+                For immediate assistance, please visit our <a href="#" class="text-blue-500 hover:underline">FAQ</a> or use our live chat.
+            </p>
+            <button id="start-chat-button" class="bg-blue-500 text-white py-3 px-6 rounded-full font-semibold hover:bg-blue-600 transition duration-300">
+                Start Live Chat
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 HealthConnect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="chat-widget">
+        <div id="chat-widget-icon"></div>
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-header">
+            <h4 id="chat-header-title">Live Chat Support</h4>
+            <button id="close-chat-btn">×</button>
+        </div>
+        <div id="chat-messages">
+            </div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message..." />
+            <button id="send-chat-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatWidget = document.getElementById('chat-widget');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const startChatButton = document.getElementById('start-chat-button'); // Get the "Start Live Chat" button
+        const contactSupportButton = document.getElementById('contact-support-button');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat-btn');
+        const chatMessages = document.getElementById('chat-messages');
+
+        let isChatOpen = false;
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            chatWindow.style.display = isChatOpen ? 'flex' : 'none';
+        }
+
+        chatWidget.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+        startChatButton.addEventListener('click', toggleChat); // Add event listener to the start chat button.
+        contactSupportButton.addEventListener('click', toggleChat);
+
+        sendChatBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (messageText === '') return;
+
+            const message = {
+                sender: 'user',
+                text: messageText,
+            };
+
+            addMessageToChat(message);
+            chatInput.value = '';
+
+            // Simulate a response from support after a short delay
+            setTimeout(() => {
+                const response = {
+                    sender: 'support',
+                    text: 'Thank you for your message!  How can we assist you further today?',
+                };
+                addMessageToChat(response);
+            }, 1000);
+        }
+
+        function addMessageToChat(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(message.sender === 'user' ? 'user-message' : 'support-message');
+
+            const senderDiv = document.createElement('div');
+            senderDiv.classList.add('message-sender');
+            senderDiv.textContent = message.sender === 'user' ? 'You' : 'Support';
+
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('message-text');
+            textDiv.textContent = message.text;
+
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(textDiv);
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to bottom of chat messages to show the latest message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
