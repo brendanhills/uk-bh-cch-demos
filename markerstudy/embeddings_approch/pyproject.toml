@@ -1,0 +1,26 @@
+[project]
+name = "embeddings-approch"
+version = "0.1.0"
+description = ""
+
+authors = [
+    {name = "Brendan Hills",email = "brendanhills@google.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "jinja2 (>=3.1.6,<4.0.0)",
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "db-dtypes (>=1.4.2,<2.0.0)",
+    "google-cloud-bigquery (>=3.31.0,<4.0.0)",
+    "google-cloud-aiplatform (>=1.91.0,<2.0.0)",
+    "pandas (>=2.2.3,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
