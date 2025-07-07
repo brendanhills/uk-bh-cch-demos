@@ -1,0 +1,22 @@
+[project]
+name = "drive-upload"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Brendan Hills",email = "brendanhills@google.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-cloud-storage (>=3.2.0,<4.0.0)",
+    "google-api-python-client (>=2.175.0,<3.0.0)",
+    "google-auth-httplib2 (>=0.2.0,<0.3.0)",
+    "google-auth-oauthlib (>=1.2.2,<2.0.0)"
+]
+
+[tool.poetry]
+package-mode=false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
