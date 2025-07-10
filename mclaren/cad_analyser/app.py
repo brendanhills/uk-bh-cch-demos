@@ -149,6 +149,9 @@ with st.sidebar:
     gcp_project_id = st.secrets.get("gcp", {}).get("project_id")
     gcp_location = st.secrets.get("gcp", {}).get("location")
     gcs_bucket_name = st.secrets.get("gcp", {}).get("bucket_name")
+    default_prompt = st.secrets.get("app", {}).get("default_prompt")
+    default_system_instruction = st.secrets.get("app", {}).get("default_system_instruction")
+
 
     # Display loaded configuration
     st.write(f"**Project ID:** `{gcp_project_id}`")
@@ -197,28 +200,14 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
                 system_instruction = st.text_area(
                     "System Instructions:",
                     height=200,
-                    value="""You are an expert in understanding and interpreting CAD diagrams for car parts for an engineering team. 
-Provide very clear and factual output that is suitable for an experienced engineer to understand. 
-Use normal mechanical engineering terminology. Be meticulous and careful."""
+                    value=default_system_instruction
                 )
 
                 st.subheader("📝 Analysis Prompt")
                 prompt = st.text_area(
                     "CAD Analysis prompt:",
                     height=300,
-                    value="""You will be provided with a CAD diagram. 
-Your task is to create a checklist for this CAD diagram. An engineer will use the checklist to verify all of the dimensions and tolerances are correct in this diagram.
-
-Follow these steps:
-
-1.  Interpret the CAD diagram:
-    *   Carefully analyze the provided CAD diagram.
-    *   Interpret any symbols on the diagram using standard conventions for CAD drawings.
-2.  Create a checklist:
-    *   Produce a list of dimensions and tolerances, grouped by component, and ordered in a logical way.
-    *   It is very important that you don't make any errors with the numbers in the diagram.
-    *   If you are unsure of any number, then make that very clear.
-3.  Output the checklist."""
+                    value=default_prompt
                 )
 
                 analyze_button = st.button("🚀 Analyze Image", type="primary", use_container_width=True)
@@ -239,7 +228,7 @@ Follow these steps:
 
                         # Display a spinner while waiting for the first chunk
                         try:
-                            with st.spinner("Generating analysis... Please wait..."):
+                            with st.spinner("Gemini is analyzing the image... This may take a moment. Please wait..."):
                                 first_chunk = next(stream_iterator)
                         except StopIteration:
                             # Handle the case where the stream is empty
