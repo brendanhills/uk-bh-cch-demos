@@ -1,0 +1,22 @@
+[project]
+name = "solar-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "absl-py>=2.3.1",
+    "google-adk>=1.7.0",
+    "google-cloud-aiplatform>=1.104.0",
+]
+
+
+[tool.uv]
+default-groups = [
+    "dev",
+    "deployment",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
