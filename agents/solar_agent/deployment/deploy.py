@@ -38,13 +38,17 @@ flags.mark_bool_flags_as_mutual_exclusive(["create", "delete"])
 
 def create() -> None:
     """Creates an agent engine for ADK Agent."""
+    print(f"Creating remote agent: {root_agent.name}")
+    print(f"Description: {root_agent.description}")
     adk_app = AdkApp(agent=root_agent, enable_tracing=True)
-
+    
     remote_agent = agent_engines.create(
-        adk_app,
+        agent_engine=adk_app,
         display_name=root_agent.name,
         description=root_agent.description,
-        #extra_packages=["./solar_agent"],
+        requirements=[
+            "google-cloud-aiplatform[adk,agent_engines]",
+        ]
     )
     print(f"Created remote agent: {remote_agent.resource_name}")
 

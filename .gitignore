@@ -32,3 +32,5 @@ drive_upload/poetry.lock
 drive_upload/token.json
 mclaren/cad_analyser/poetry.lock
 drive_upload/.vscode/launch.json
+agents/solar_agent/.python-version
+agents/solar_agent/solar_agent/agent.py
