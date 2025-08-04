@@ -1,12 +1,12 @@
 *.swp
 .cache.sqlite
 *.pyc
-venv/
 *checkpoint*
-markerstudy/mstudy/venv/
-markerstudy/mstudy/.venv/
+*.venv/
 .vscode/settings.json
 *env
+*poetry.lock
+*uv.lock
 
 breedr/__MACOSX/tables/._account_user.csv
 breedr/.vscode/launch.json
@@ -23,14 +23,12 @@ belron/poetry.lock
 belron/output.mp3
 pearson/poetry.lock
 pearson/author_tools/temp_chapter.pdf
-HealthConnect/poetry.lock
+
 HealthConnect/.vscode/HealthConnect.code-workspace
-rmg/dlt-agent-v2/poetry.lock
 drive_upload/credentials.json
 drive_upload/Screen Recording 2025-06-02 at 10.25.02 PM.mov_.gstmp
-drive_upload/poetry.lock
 drive_upload/token.json
-mclaren/cad_analyser/poetry.lock
 drive_upload/.vscode/launch.json
-agents/solar_agent/.python-version
+
 agents/solar_agent/solar_agent/agent.py
+*.python-version
