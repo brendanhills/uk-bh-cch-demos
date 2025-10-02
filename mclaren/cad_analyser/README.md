@@ -1,6 +1,6 @@
  # 🤖 Gemini CAD Drawing Analyzer
  
- This Streamlit web application leverages the power of Google's Gemini 2.5 Flash multimodal model via Vertex AI to analyze technical CAD drawings. Users can select a drawing from a Google Cloud Storage (GCS) bucket, provide custom instructions and prompts, and receive a detailed analysis. The complete report, including the image, prompts, and Gemini's response, can be saved directly to a Google Doc.
+ This Streamlit web application uses Google's Gemini 2.5 Flash multimodal model via Vertex AI to analyze technical CAD drawings. Users can select a drawing from a Google Cloud Storage (GCS) bucket, provide custom instructions and prompts, and receive a detailed analysis. The complete report, including the image, prompts, and Gemini's response, can be saved directly to a Google Doc.
  
  ## ✨ Features
  
@@ -48,16 +48,22 @@
      cd cad_analyser
      ```
  
- 2.  **Create a Virtual Environment:**
-     ```bash
-     python -m venv .venv
-     source .venv/bin/activate
-     ```
+ 2.  **Install UV**: (if you don't have it already)
+        This project uses `pyproject.toml` to manage dependencies. The fastest way to install them is with `uv`.
+      ```bash
+      pip install uv
+      ```
+      or
+      ```bash
+      pipx install uv
+      ```
+        See other install options here:  https://docs.astral.sh/uv/getting-started/installation/
+
  
  3.  **Install Dependencies with `uv`:**
-     This project uses `pyproject.toml` to manage dependencies. Use `uv` to sync your virtual environment with the specified packages. This is the fastest way to install.
+     Use `uv` to sync your virtual environment with the specified packages. This is the fastest way to create a .venv and install dependencies.
      ```bash
-     uv sync pyproject.toml
+     uv sync
      ```
  
  4.  **Local Authentication:**
@@ -68,7 +74,7 @@
  
  ## ⚙️ Configuration
  
- The application is configured using a `secrets.toml` file located in a `.streamlit` directory.
+ The application is configured using a `secrets.toml` file located in the `.streamlit` directory.
  
  1.  Create the directory and file:
      ```bash
