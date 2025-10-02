@@ -5,7 +5,6 @@ from google.cloud import storage
 from google import genai
 from PIL import Image
 import io
-import os
 import vertexai
 from datetime import datetime
 
@@ -19,7 +18,7 @@ from google.auth.impersonated_credentials import Credentials
 
 # --- Configuration & Page Setup ---
 st.set_page_config(
-    page_title="Vertex AI Gemini Analyzer",
+    page_title="Gemini CAD Drawing Analyzer",
     page_icon="🤖",
     layout="wide"
 )
@@ -76,7 +75,7 @@ def analyze_image_with_vertex_gemini(image, system_instruction, prompt):
         image.save(img_byte_arr, format='PNG')
         image_bytes = img_byte_arr.getvalue()
 
-        client = genai.Client(
+        genai_client = genai.Client(
             vertexai=True,
             project = gcp_project_id,
             location = gcp_location
@@ -126,7 +125,7 @@ def analyze_image_with_vertex_gemini(image, system_instruction, prompt):
             ),
         )
 
-        response = client.models.generate_content_stream(
+        response = genai_client.models.generate_content_stream(
             model = model,
             contents = contents,
             config = generate_content_config,
@@ -375,7 +374,7 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
                 with st.spinner("Loading image from GCS..."):
                     image = get_gcs_image(gcs_bucket_name, selected_image_file)
                     if image:
-                        st.image(image, caption=f"Image: {selected_image_file}", use_container_width=True)
+                        st.image(image, caption=f"Image: {selected_image_file}", width='stretch')
 
             with col2:
                 st.subheader("📝 System Instruction")
@@ -392,7 +391,7 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
                     value=default_prompt
                 )
 
-                analyze_button = st.button("🚀 Analyze Image", type="primary", use_container_width=True)
+                analyze_button = st.button("🚀 Analyze Image", type="primary", width='stretch')
 
             # --- Analysis Execution ---
             if analyze_button:
@@ -439,7 +438,7 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
             # This block now correctly handles the "Save" button click on a script rerun
             # because the result is persisted in st.session_state.
             if st.session_state.full_response_text:
-                if st.button("💾 Save to Google Doc", use_container_width=True):
+                if st.button("💾 Save to Google Doc", width='stretch'):
                     if google_docs_service_account_email and st.session_state.analysis_inputs:
                         with st.spinner("Saving to Google Docs..."):
                             create_google_doc(
@@ -447,7 +446,7 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
                                 st.session_state.analysis_inputs["system_instruction"],
                                 st.session_state.analysis_inputs["prompt"],
                                 st.session_state.full_response_text,
-                                st.session_state.gemini_config,
+                                st.session_state.gemini_config, # pyright: ignore[reportArgumentType]
                                 google_docs_service_account_email
                             )
                     else:
