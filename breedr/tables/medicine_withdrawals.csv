@@ -1,0 +1,1269 @@
+id,withdrawal_type,withdrawal_period_days,notes,animal_type_id,medicine_id,use_withdrawal_period
+168,MEAT,5,Not for use in sheep producing milk for human consumption,2,f4f33db5-86dc-42a8-b5a4-b5651a843dbd,true
+1193,MEAT,13,Rabbits: meat and offal: 6 days. Do not use in birds intended for human consumption.,1,474d8084-ee32-476e-8dcc-f84b34446479,true
+22,DAIRY,2,Horses:,3,2559f96c-fd6c-4055-b110-4f454e170dd1,true
+23,MEAT,10,Horses:,3,2559f96c-fd6c-4055-b110-4f454e170dd1,true
+1258,DAIRY,0,Horses: Meat and Offal: 1 day. Milk: Not authorised for use in lactating animals producing milk for human consumption.,3,4910c05a-63a2-494e-a4b2-8ff5b4098654,true
+171,MEAT,9,Withdrawal applies to meat and offal,1,5c8e0bce-6880-4600-88c2-37b51dc0370a,true
+174,MEAT,60,Not authorised for use in animals producing milk for human consumption.,2,8e53e3ac-7d5d-4979-a5f8-1427458f851a,true
+202,MEAT,0,,1,0957a1ad-f512-42d8-b93c-7be83a4c306b,true
+24,MEAT,20,Horses:,1,2559f96c-fd6c-4055-b110-4f454e170dd1,true
+1260,MEAT,4,Horses: Meat and Offal: 1 day. Milk: Not authorised for use in lactating animals producing milk for human consumption.,1,4910c05a-63a2-494e-a4b2-8ff5b4098654,true
+1131,MEAT,14,,3,9d194ca7-87d1-428d-987c-760388b82390,true
+1079,DAIRY,2,Not for use in sheep producing milk for human consumption.,3,dd8cebef-26f1-4d76-bd79-72d1a07a3db6,true
+1239,DAIRY,0,,3,d09a3fb6-5626-46da-af04-b30515fa4b13,true
+1195,MEAT,4,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,2,b0a387ee-5066-4b85-a30b-4d6075171c80,true
+284,DAIRY,0,,3,9539067c-5aa1-4bd5-a6eb-60116e19dad8,true
+1197,DAIRY,5,"Sheep milk: 72 hours, Goats meat: 6 days, Goats milk: 96 hours",3,81942b4b-fe38-427e-bb51-41a5313003d3,true
+1122,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption,3,95f442d6-9e55-4920-adee-056917131095,false
+15,DAIRY,8,Sheep Milk: 7 days,3,0018676f-ac25-43bd-943c-8332c1c04950,true
+1233,MEAT,63,"Not authorised for use in cattle producing milk for human consumption, including",3,7685acd1-57aa-4cf3-b18c-7f62369d7e81,true
+1216,MEAT,13,,3,8151c5e0-bc7d-4b2b-85cb-f9f9354da469,true
+1159,MEAT,21,,3,ef5e79cf-cae8-4b42-9754-3054ecfd0c31,true
+1157,MEAT,0,,1,0fe32628-dd17-4cfb-b3ef-b55f2591cf57,true
+1186,MEAT,0,,3,7db4632f-2d4d-4134-a1c6-11f29ae3d696,true
+1213,MEAT,42,Contraindications,2,2660e747-e7ac-4b81-ab91-2d330b68f676,true
+1165,MEAT,42,Chicken meat 12 days; Turkey meat 19 days,3,888020de-997a-4310-bd02-44fa8e6d7745,true
+1171,MEAT,22,Not authorised for use in lactating animals producing milk for human consumption. ,3,19e49208-747e-4614-8674-75c368e076a0,true
+1224,DAIRY,0,48 hours after 2nd prostaglandin treatment. Meat 28 days,3,f1b5dfb7-34db-4465-b645-e07944f9c5ba,true
+1230,MEAT,0,,3,82eb81dc-fdd9-49e6-bcc2-19ac3e35ecc3,true
+1160,MEAT,22,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,afb651e3-1ef6-4441-bba6-afd6fcd25e20,true
+1161,MEAT,16,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,afb651e3-1ef6-4441-bba6-afd6fcd25e20,true
+1156,MEAT,0,,2,2a3854c9-d930-40a9-90a3-f91d5c12f53a,true
+575,MEAT,0,,1,9efa619d-bdc9-4978-b719-f49aa3ed5d59,true
+634,MEAT,0,,2,8b4542ea-4973-492e-b287-9652cbf24ea9,true
+133,MEAT,1,Horse - meat: 1 day,3,ee64b194-2496-4faa-a092-58d22bd1635c,true
+922,MEAT,18,,1,e6164ead-4354-42bf-a02a-0143cfd1126e,true
+190,MEAT,49,Do not use in lactating cows producing milk for human consumption. Do not use in cattle producing milk for human consumption or in dairy cows within 60 days prior to calving.,3,8707b271-357c-4dd4-b11c-5d078fadd96b,true
+217,MEAT,12,"Sheep milk: 72 hours, Goats meat and offal: 6 days, Goats milk: 96 hours.",3,71cdc690-25ea-4179-ac6b-0d19582c5d17,true
+321,DAIRY,5,,3,67d9913e-7faf-4faf-bd6b-bdc3f443b8ae,true
+197,MEAT,28,Rabbit Meat Zero days. Not for use in birds producing or intended to produce eggs for human consumption. Do not use within 4 weeks of the start of the laying period.,3,c946d0f3-15ee-4f98-a3b0-e05c93b01f7a,true
+27,MEAT,0,,2,686eab2e-0d4c-4395-8c9b-977a51aa54ab,true
+28,MEAT,0,,1,686eab2e-0d4c-4395-8c9b-977a51aa54ab,true
+323,DAIRY,0,,3,fe2ecd8e-6f27-4d50-a269-435014078129,true
+229,MEAT,10,,1,87514935-83ca-46e6-9661-89c4c93f5212,true
+235,MEAT,10,Not for use in sheep producing milk for human consumption,2,e8b4d545-94d4-4d1e-ac33-399de751d340,true
+1060,MEAT,49,,3,f69ec604-c280-434a-92b2-48b7cf0919c1,true
+258,DAIRY,0,,3,d9e5689d-5e44-496c-8803-2ee32a2eef2e,true
+299,MEAT,0,,3,528fb9fa-5155-4664-bb8d-e57f9095898e,true
+300,MEAT,0,,2,528fb9fa-5155-4664-bb8d-e57f9095898e,true
+42,MEAT,9,Horse meat and offal: 12 days. Not permitted for use in cows producing milk for human consumption.,3,cf3ec94f-a3b5-41c0-85b8-1463f3ca168d,true
+367,DAIRY,2,,3,560145cb-2c0f-4f0b-8d70-43f9c29bd76a,true
+1064,DAIRY,0,,3,98d02b88-4641-4901-86ba-cae0d4580b5c,true
+289,MEAT,0,,3,501d4ee2-6062-4abb-bf3a-c69759e3fef6,true
+350,MEAT,6,Not for use in laying birds producing eggs for human consumption.,1,016fe3d7-24df-4658-be95-84d5d0bbc356,true
+351,DAIRY,0,Horses: Meat - Zero days,3,0c86892d-a383-42ae-9958-85090fac83af,true
+713,MEAT,12,Horse: not to be used in horses intended for human consumption,3,c83db833-4b96-45bd-8c06-c6f31c519325,true
+784,MEAT,2,,1,c444546d-b4f9-4b74-9022-25369b997b07,true
+344,MEAT,20,Not for use in animals producing milk for human consumption.,3,e5a5631d-ac25-478a-97c2-85a55c68bd86,true
+353,MEAT,2,Sheep milk: Zero hours including treatment time.,2,c1cf5ffd-2de5-4550-9464-d029808395dd,true
+356,MEAT,0,Sheep milk: zero hours.,2,6f01f33c-a5e1-4c70-8554-790f8e492293,true
+359,DAIRY,3,Not for use in sheep producing milk for human consumption,3,6a376505-3f26-412a-a9b9-957a5d7fd382,true
+363,MEAT,40,Not permitted for use in lactating animals producing milk for human consumption.,2,411fcf6c-683f-4fc6-a521-546371ba5bc0,true
+370,DAIRY,5,"See datasheet, when using Cobactan MC and Cobactan 25 mg/ml in combination.",3,b0840599-a3c6-453c-89ff-e6713e962f4c,true
+389,MEAT,0,,2,8b047cde-0499-4f81-8e02-166502b6b490,true
+391,MEAT,0,,3,07d8b435-2ba6-4ee7-b78c-3f8ea5a0d85e,true
+392,DAIRY,0,,3,bd7a2e85-b0d6-44ea-b2e6-aab3d2d4357d,true
+395,DAIRY,0,,3,87cf9465-9daf-4137-b0ae-3bc2dc0fde74,true
+398,DAIRY,0,"Goat meat, milk and offal: Zero days",3,9f76bad5-b976-4dd2-b61f-dac0c5614677,true
+941,DAIRY,0,Not authorised for use in lactating animals producing milk for human consumption,3,8692e60e-1ff9-4faa-bb18-9fead49050b8,false
+944,MEAT,77,Not authorised for use in lactating animals producing milk for human consumption,1,8692e60e-1ff9-4faa-bb18-9fead49050b8,true
+400,MEAT,8,Sheep milk: 5 days,2,a2e690a1-fd83-4578-a0b6-a0947db4fbf0,true
+47,DAIRY,0,Do not use on the udder of lactating animals if milk is intended for human consumption. Stained part of the pigskin must be removed prior to the rest of the animal being used for human consumption.,3,364245fe-cdd2-43e6-a9ec-1556e7ed760f,true
+885,MEAT,14,,1,8b6ab38e-ed1c-4c3d-b97f-a60dbd178653,true
+409,MEAT,108,Not for use in lactating animals producing milk for human consumption or industrial purposes or within 80 days of expected parturition.,3,569b15b4-c16c-402a-a8d7-4ad8ce53ea86,true
+1106,DAIRY,11,,3,118ffcee-8ffc-465d-b28c-4f22fcf43f75,true
+424,MEAT,1,,1,07f383ff-8c7b-4843-adf5-07366c580a9b,true
+147,MEAT,28,"Piglets, lambs & calves meat: Zero days. Not to be administered to ewes producing milk for human consumption",2,ea0d0d36-fa95-4d3e-836e-c03f54d48d09,true
+433,MEAT,8,Horses - meat and offal 8 days. Not authorised for use in horses producing milk for human consumption.,3,b9da4c77-eae0-46fd-896d-ac446e12dbff,true
+436,MEAT,63,Not to be used in horses intended for human consumption.,3,cde048c6-d20a-40fd-8a7d-5097289d3768,true
+451,MEAT,13,,1,e375dcc8-3647-4056-b9ec-8787016273b6,true
+487,DAIRY,3,Not for use in sheep producing milk for human consumption,3,94e432d0-ec43-4b24-a02c-f2b1576eb32a,true
+489,MEAT,4,Not for use in sheep producing milk for human consumption,2,94e432d0-ec43-4b24-a02c-f2b1576eb32a,true
+1112,MEAT,14,,2,fef2b7e4-ea9c-44ea-a452-49c21789b0cd,true
+467,DAIRY,0,,3,210cac8d-512b-44d8-8d73-cb9633f12761,true
+1088,MEAT,14,,1,13e1ee5a-4a83-4c99-a0d6-047222f16470,true
+454,DAIRY,0,,3,405116b5-b7fd-4f41-b9af-162d07d83403,true
+1115,MEAT,0,,3,6e43205b-7615-4211-9ed4-e393b04cb020,true
+1116,MEAT,0,,2,6e43205b-7615-4211-9ed4-e393b04cb020,true
+539,MEAT,2,"Not permitted for use in cows producing milk for human consumption. Do not use in birds producing eggs for consumption, during and 4 weeks before the laying phase.",3,c860c404-4d86-4f08-a49e-a3b6ba02c65e,true
+546,DAIRY,0,84 hours (sub-cutaneous use),3,366a62e8-2aa9-4415-9f90-2b2c00522033,false
+548,MEAT,10,84 hours (sub-cutaneous use),1,366a62e8-2aa9-4415-9f90-2b2c00522033,true
+569,MEAT,0,,2,6e326614-1038-410d-aefa-43cfa34a1e1a,true
+1095,MEAT,70,Pig offal: 70 days,1,0bcb8ba4-64ae-4f3a-b6eb-59b78bf5a2d0,true
+81,DAIRY,0,,3,7f6f9411-bfca-435f-a776-8943d985574c,true
+83,MEAT,0,,2,7f6f9411-bfca-435f-a776-8943d985574c,true
+616,MEAT,66,Animals must not be slaughtered for human consumption during treatment. Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,4d32a212-dfdd-4455-9144-318a9a803783,true
+623,DAIRY,0,"Cattle: Meat: IV: 1 day, IM: 4 days. Horses: Meat: 1 day",3,293041e3-0bbe-458c-a0e8-ab2b08269a5d,true
+604,MEAT,5,Horses: Meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption,1,9d095a7d-3693-4cb9-bf62-8d35f27fe98b,true
+607,MEAT,0,,1,43568d57-672a-436c-82ec-c4fc9478bcf6,true
+668,DAIRY,1,Horses Meat and offal: 2 days,3,2fde4e14-55f3-4910-bb03-fc01f6b09988,true
+633,MEAT,0,,3,9606f40d-43d1-415d-a8b3-d43662e550ad,true
+652,MEAT,0,,1,1442c32c-71db-4475-b0ba-0f834c85d284,true
+87,MEAT,0,Sheep milk: Zero hours,2,07e81508-3e54-409d-aaa3-4f72897a09e9,true
+660,DAIRY,2,,3,d66ff6bd-9ffb-4f20-9966-b3e46971eec6,true
+677,DAIRY,0,,3,1bec6c2c-53c0-4396-838b-67bc17089c1b,true
+680,MEAT,70,Sheep milk: 432 hours (18 days). Cattle and Sheep -,3,4d3d9c99-644c-4c9d-89d2-4e982b476fc1,true
+672,DAIRY,6,Horse meat and offal: 5 days,3,b6c1f5e3-5c52-4575-961b-9aad47c4741e,true
+694,MEAT,4,Horse Meat Withdrawal- 4 days,3,b3e9f72c-09d2-4536-9e17-61dc9c4bb928,true
+711,MEAT,28,See datasheet,3,63c60c0e-e4b6-4596-9790-c6a62236eebe,true
+719,MEAT,0,,3,d5899a3e-e00a-4327-b835-38baac833a8c,true
+793,MEAT,0,,1,1a8dece5-b200-4fc1-aeeb-068518edf2d4,true
+757,MEAT,37,Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving. Do not use in sheep producing milk for human consumption.,2,4d3a0d1a-eee4-4627-9659-d6146b1352b3,true
+761,MEAT,28,Do not use in cows producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,aa6274bc-91af-491b-86d9-2a707070190b,true
+115,MEAT,14,Do not use in sheep producing milk for human consumption,2,a4931bc7-bce6-4e7c-b3fd-5389978fa8ea,true
+123,MEAT,18,Milk for human consumption may only be taken from cows after 60 hours from the last treatment. Not to be used in sheep producing milk for human consumption,1,68b870b2-1a93-4772-90a8-b1d575eb9236,true
+769,MEAT,5,,1,36c77970-cb73-4016-bdfc-46b8ae8fbc48,true
+756,MEAT,49,Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving. Do not use in sheep producing milk for human consumption.,3,4d3a0d1a-eee4-4627-9659-d6146b1352b3,true
+790,MEAT,0,When used for superovulation with prostaglandin - Milk 48 hours after 2nd prostaglandin; Meat 28 days,1,d7202432-229d-43f9-9c30-ba43c608afc5,true
+863,MEAT,3,Not for use in sheep producing milk for human consumption.,2,30517aa6-6e3d-4718-905a-19befde2f914,true
+896,MEAT,65,Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.,2,52059243-2b04-409a-8d20-fc1c2c5ea942,true
+937,DAIRY,0,Cattle & Sheep: Not authorised for use in lactating animals producing milk for human consumption.,3,a3efcbc0-1e42-48cb-8258-ce5997633fd2,false
+781,MEAT,4,,1,6e936532-2e9e-47f0-a40b-bf72fc0ff040,true
+783,MEAT,4,,1,7f7b7801-2e6c-41ee-b9dd-3ee1db77a4ad,true
+811,MEAT,0,,1,601831ed-4c2a-45b6-b590-d49bc0f7a46d,true
+813,MEAT,4,Not to be used in horses intended for human consumption.,3,5a163e7d-63e0-433d-a64a-d673fb07d615,true
+814,MEAT,4,Not to be used in horses intended for human consumption.,1,5a163e7d-63e0-433d-a64a-d673fb07d615,true
+1070,MEAT,10,Horses: Meat and offal: 10 Days Milk: The product is not authorised for use in lactating mares producing milk for human consumption.,3,077e682f-5380-474f-ab7c-3af728b84a65,true
+806,MEAT,1,,1,f8d8ce47-49c2-423c-9688-6637079aadcb,true
+819,MEAT,0,Not to be used in trout intended for human consumption. Horse and rabbit: Zero days.,3,0b194743-335f-4bc4-98ea-4a8cc4746ed8,true
+826,MEAT,0,,1,f4d2c808-2eca-4c28-9755-052cfc95afe6,true
+849,DAIRY,0,,3,7e9df81a-35ce-4831-bc4a-6961dfe25292,true
+1093,MEAT,13,For use in newborn calves,3,41d91e66-ba8d-432f-9e4b-19abaa315814,true
+870,MEAT,20,,1,fd49b428-b63e-4821-8f63-76f46b21916d,true
+1051,MEAT,14,,3,951f56ae-6f51-41d1-8270-6aceb2059452,true
+21,MEAT,28,20 mg/kg dose: Cattle Meat & offal: 28 days/Pigs Meat & offal 14 days/ Sheep Meat & offal 28 days. 30mg/kg dose: Cattle Meat & Offal: 35 days/Pigs Meat & Offal 28 days/Sheep Meat & Offal 28 days. Sheep milk - 8 days,2,8eb443c6-637f-4c6d-93eb-e6eefa70ed51,true
+170,MEAT,3,,3,0adf963a-e26c-438a-ab03-c85ee642d5d0,true
+209,MEAT,180,,3,08f2eb6d-a1cc-420a-b023-71b4906a9f30,true
+1256,DAIRY,0,Do not use during pregnancy and lactation,3,26d22cc7-b7b5-4f75-ba71-b3cde81f2920,false
+1196,MEAT,13,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,1,b0a387ee-5066-4b85-a30b-4d6075171c80,true
+1198,MEAT,12,"Sheep milk: 72 hours, Goats meat: 6 days, Goats milk: 96 hours",3,81942b4b-fe38-427e-bb51-41a5313003d3,true
+30,MEAT,63,Do not use in milking cows or sheep producing milk for human consumption.,3,aff05d96-ab69-47c0-874d-13aad660bd68,true
+152,DAIRY,4,,3,6849c3f4-a81a-41dd-9701-e046f4e28215,true
+13,MEAT,0,Sheep milk: Zero hours,2,807a0118-6b67-4b5b-8cfe-9d32689aa455,true
+1232,MEAT,1,Horse:	Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation.,3,986b1b5f-1d86-4ff6-83b3-42188d85ac5b,true
+1191,MEAT,77,Not permitted for use in lactating animals producing milk for human consumption.,1,83f723e3-82e4-4b7e-b3d8-2c1c1711fceb,true
+1158,DAIRY,54,,3,ef5e79cf-cae8-4b42-9754-3054ecfd0c31,true
+1184,MEAT,0,Horses - meat: Zero days,3,bc0b508d-9ac8-4362-bc64-797075eb2429,true
+1209,MEAT,3,Horse meat and offal 1 day. Not authorised for use in mares producing milk for human consumption,1,85f100d2-2e8b-4e01-af4d-464e87403ccc,true
+1212,MEAT,49,Contraindications,3,2660e747-e7ac-4b81-ab91-2d330b68f676,true
+41,MEAT,2,Horse meat and offal: 1 day. Not permitted for use in lactating animals producing milk for human consumption.,3,20547da1-ca04-421e-ae7a-323bdcf64080,true
+1153,MEAT,16,"Not authorised for use in animals producing milk for human consumption.
+Do not use in pregnant animals which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,05927e81-f79c-413d-a27a-a3ccb5e6907b,true
+1219,MEAT,20,Do not use in cattle and sheep producing milk for human consumption,2,a11551c8-c064-4b69-ad40-193106304275,true
+1173,MEAT,13,Not authorised for use in lactating animals producing milk for human consumption. ,1,19e49208-747e-4614-8674-75c368e076a0,true
+294,DAIRY,0,,3,dfcbcc05-1158-4c67-8ae2-1aaf379a2d28,true
+1134,MEAT,0,,2,680b54e0-8927-4941-b7fb-45fa3f52442f,true
+953,MEAT,7,Turkeys: 3 days. Do not administer to birds producing eggs intended for human consumption.,1,2c2058c9-fb99-4b32-91c5-35d322d07447,true
+1155,MEAT,0,,3,2a3854c9-d930-40a9-90a3-f91d5c12f53a,true
+490,DAIRY,6,See data sheet for further information on sheep and horses,3,ed4f9311-3951-43c7-a93c-e235301f4899,true
+492,MEAT,14,See data sheet for further information on sheep and horses,2,ed4f9311-3951-43c7-a93c-e235301f4899,true
+919,DAIRY,10,,3,e6164ead-4354-42bf-a02a-0143cfd1126e,true
+923,DAIRY,10,Licensed for use in sheep producing milk for human consumption. Sheep Milk Withdrawal: 7 days,3,c4b24ff6-472c-40b2-9043-8fef4b5f095a,true
+185,MEAT,20,,1,f505c21f-b235-4fda-bdb2-43692dd0755e,true
+194,DAIRY,37,"If Apotil is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving. If it is administered to ewes during the dry period or to pregnant ewes, milk should not be used for human consumption until 18 days after lambing.",3,86a9c0a2-3842-4140-a83e-52ee96d86523,true
+291,MEAT,0,,3,95facc6c-b7b1-45ee-ae66-bcbc305f7c36,true
+240,MEAT,42,Do not use in lactating dairy cows. Do not use in non-lactating dairy cows incl. pregnant dairy heifers within 60 days of calving.,2,2065c3f2-13b7-4475-a284-bb7e172be40f,true
+242,DAIRY,0,Not for use in animals producing milk for human consumption,3,b48a493a-3afc-40c7-8131-fd762c78961f,false
+221,MEAT,13,Rabbits: meat and offal: 6 days. Do not use in birds intended for human consumption.,1,37a44c47-47b9-4912-bd48-f94e1da70c4f,true
+326,DAIRY,0,,3,4b389df6-6b28-4021-a6bb-a8dfd9123cfe,true
+264,DAIRY,7,See datasheets - Must not be used in treatment of lactating cows. Not intended for use within 49 days of calving.,3,42e50018-0332-4806-830f-f819e76f24d5,true
+206,MEAT,0,,1,a44f7b0b-022d-4449-a90f-4ae4b0d3cb41,true
+339,MEAT,8,"Cattle offal : 8 days, Pig offal: 5 days",3,b9b9c499-e9e7-4a48-898e-4fb0c8cf1014,true
+325,MEAT,6,,1,fe2ecd8e-6f27-4d50-a269-435014078129,true
+230,DAIRY,0,Horse: Meat and offal; 50 days. Not authorised for use in horses producing milk for human consumption.,3,3ec71c30-8765-49ac-aa6e-4817c5c633f1,true
+228,MEAT,12,,1,94c95dfd-66e5-4bf3-9a05-7b0f49051196,true
+233,DAIRY,2,Not for use in sheep producing milk for human consumption,3,e8b4d545-94d4-4d1e-ac33-399de751d340,true
+238,DAIRY,0,Do not use in lactating dairy cows. Do not use in non-lactating dairy cows incl. pregnant dairy heifers within 60 days of calving.,3,2065c3f2-13b7-4475-a284-bb7e172be40f,false
+249,MEAT,21,Not for use in ewes producing milk for human consumption or food processing,3,7ff7f238-203e-4d2f-a8e6-5ce38f26a77c,true
+256,MEAT,2,Not permitted for use in cows producing milk for human consumption.,3,f1907e79-d20c-4f18-bb4f-a133130e60ec,true
+1084,MEAT,20,,3,2f481fae-0993-4742-864b-dd176b376dd2,true
+268,MEAT,0,,3,67e0473c-51f8-4099-84c5-f5f31c728f19,true
+307,DAIRY,0,,3,9555d507-94b5-4d61-9318-7ed5c2b06a39,true
+272,MEAT,0,,3,d2ca743c-4d9f-4c23-92f5-0e21e74a9d16,true
+282,DAIRY,0,,3,615e20ce-cc5f-4f5d-9cc6-18e801d87043,true
+772,MEAT,0,,1,1630032e-e38d-4f09-95af-7dab4e68aaad,true
+303,DAIRY,0,,3,cdc4421b-9f8e-4de0-b5eb-ce135ba9e4ea,true
+329,DAIRY,0,1 day after calving when the dry period is more than 5 weeks. 36 days after treatment where the dry period is 5 weeks or less.,3,f1bef1e1-04f4-4db8-8742-d5f491583f8e,false
+337,MEAT,7,,2,42ff00d3-290a-47a2-9057-acc02274542f,true
+110,DAIRY,0,,3,6958843b-c316-4b8d-8120-d960367a707a,true
+111,MEAT,0,,3,6958843b-c316-4b8d-8120-d960367a707a,true
+748,MEAT,0,"Horse, Goat: Zero days",1,22210759-0e88-49e7-a048-c3c8a65890db,true
+360,MEAT,54,Not for use in sheep producing milk for human consumption,3,6a376505-3f26-412a-a9b9-957a5d7fd382,true
+362,MEAT,47,Not for use in sheep producing milk for human consumption,1,6a376505-3f26-412a-a9b9-957a5d7fd382,true
+45,MEAT,49,Milk: Not authorised for use in cattle and sheep for human consumption,3,02f8f1aa-22af-4912-86ca-f50b0fc4bba8,true
+393,MEAT,0,,3,bd7a2e85-b0d6-44ea-b2e6-aab3d2d4357d,true
+399,MEAT,0,"Goat meat, milk and offal: Zero days",3,9f76bad5-b976-4dd2-b61f-dac0c5614677,true
+1145,DAIRY,1,Not to be used in horses intended for human consumption.,3,474069cc-0d4a-4f3b-b7d2-55b1e2ec097c,true
+1146,MEAT,8,Not to be used in horses intended for human consumption.,3,474069cc-0d4a-4f3b-b7d2-55b1e2ec097c,true
+415,DAIRY,0,Not for use in ewes producing milk for human consumption,3,504a8c1b-69de-446b-8f07-5b6ccfd0d7bd,true
+417,MEAT,35,Not for use in ewes producing milk for human consumption,2,504a8c1b-69de-446b-8f07-5b6ccfd0d7bd,true
+422,MEAT,6,Rabbit meat Zero Days,1,ee786fb9-ddff-4685-b90b-5a93f58aeb6f,true
+421,MEAT,1,Rabbit meat Zero days,1,9d86f04d-b091-4f41-9176-cf24e0e33441,true
+1109,MEAT,5,,1,118ffcee-8ffc-465d-b28c-4f22fcf43f75,true
+438,MEAT,12,,3,d3c6ccdf-9b8e-4d96-a085-6daa85a6abc1,true
+437,DAIRY,3,,3,d3c6ccdf-9b8e-4d96-a085-6daa85a6abc1,true
+446,MEAT,7,Not authorised for use in laying birds producing eggs for human consumption,3,d691231a-2b32-4f04-bc88-f6dc21d477c6,true
+1141,MEAT,50,Not authorised for use in cattle producing milk for human consumption.,3,4b5181c6-685e-40d0-93cc-f8172f0f8d38,true
+474,MEAT,8,Sheep Milk- 5 days,2,5acbc555-0e80-4a81-87c0-8ad698d91592,true
+477,MEAT,0,,1,b480910e-840f-4d0d-9940-e5d6d217c2f2,true
+457,DAIRY,2,Not for use in sheep producing milk for human consumption,3,ceaa18ab-de50-4076-a1e9-82af2d9dfd58,true
+484,DAIRY,3,Not for use in sheep producing milk for human consumption,3,be98813f-073a-4940-8034-081faf2f7502,true
+466,MEAT,0,,2,4d3cd6a5-7d8b-4e8a-99c0-c9fe6275e777,true
+524,DAIRY,0,Milk from cows may be used for human consumption at any time following treatment.,3,742fb18b-5406-4ba4-8e66-6a6dbc9406b0,true
+482,MEAT,56,"Cattle Milk: may only be taken from 48 hours after calving. Not intended for use within 45 days of calving. If calving occurs before 45 days after treatment, milk for human consumption may only be 45 days plus 48 hours after the treatment. Sheep Milk: Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.",3,a6e9458f-7474-456e-a5da-051d44a75517,true
+553,MEAT,7,See datasheet for further information.,3,4bd09c56-5f1c-46d0-8d24-3877f2597c93,true
+561,MEAT,7,,1,168b66a3-4373-46dd-9030-0ddbfab7f3a9,true
+1090,MEAT,41,,3,f1226a59-241f-455d-93c1-fc208963a371,true
+518,MEAT,7,,2,6aca44b2-afcd-430c-a488-0e61461f16fa,true
+532,MEAT,1,Not to be used in horses intended for human consumption.,3,ce6bb595-73b8-4ed9-a58b-a99031dcc7d9,true
+535,MEAT,2,Not for use in horses intended for human consumption,1,317a3145-a2e3-45a0-aa02-eec1123c41a3,true
+570,DAIRY,3,,3,214a389f-2410-43d6-a474-1e04fdf8ba88,true
+584,MEAT,0,,1,fe30ad37-12c0-4e6c-a433-d8d2481f8658,true
+585,MEAT,0,,1,1490250c-b9a6-4ce5-a268-be6aa1452128,true
+80,MEAT,5,Must not be used in cattle and sheep producing milk for human consumption.,2,7b8414db-eb83-40ea-8d83-055be1701f79,true
+642,MEAT,3,,1,577ce323-d546-4dcf-a0c2-e248f60b4773,true
+663,DAIRY,4,,3,7dc7d3c0-4cad-4f7d-be4a-07659178e204,true
+88,DAIRY,1,Horse: Meat and offal - 2 days,3,c21c87d3-ebeb-4b4f-a81c-c27782ccba23,true
+637,MEAT,0,,3,826404e3-10a3-433d-9630-d486023aaabe,true
+656,MEAT,6,,3,17a4ff82-9321-4f1a-b24e-59461fc0e2e3,true
+658,MEAT,6,,3,86c90ab8-5407-4404-a105-89b13c885ada,true
+678,MEAT,1,,3,1bec6c2c-53c0-4396-838b-67bc17089c1b,true
+674,MEAT,5,Horse meat and offal: 5 days,1,b6c1f5e3-5c52-4575-961b-9aad47c4741e,true
+692,MEAT,9,It is essential that Naxcel is only administered at the base of the ear location in order to comply with the meat withdrawal period.,3,a9e6aeb8-b39e-42af-a614-6ae4effd1975,true
+109,MEAT,0,Sheep Milk: Zero hours/Horses: Zero days,2,4eb1544c-cef6-48a0-927c-588ca3d66918,true
+731,MEAT,28,,3,1861b563-5140-4a5c-bdb6-c8cd57fbd86f,true
+696,MEAT,0,,1,ea4d431a-79d3-422a-a6cd-3b60ae0d444f,true
+699,DAIRY,0,,3,2fc46685-a08a-4451-95b4-66a063e93a3b,true
+700,MEAT,15,,3,2fc46685-a08a-4451-95b4-66a063e93a3b,true
+703,MEAT,22,"Cattle Meat & Offal by i/m (at 20 mg/kg, twice): 39 days by s/c (at 40 mg/kg), once: 44 days. Milk not permitted for use in lactating animals producing milk for human consumption",1,0aa322da-3abd-49d2-a588-e8e42c034478,true
+100,MEAT,7,Do not use in sheep producing milk for human consumption,3,440e3575-3e36-465d-818c-43d03e8700ff,true
+103,DAIRY,0,"Not to be used in animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers within 60 days of calving.",3,352e4966-a5e2-4cc6-a05f-b223fb051253,false
+106,MEAT,28,"Not to be used in animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers within 60 days of calving.",1,352e4966-a5e2-4cc6-a05f-b223fb051253,true
+722,DAIRY,0,Milk: Not permitted for use in lactating animals producing milk for human consumption including pregnant animals intended to produce milk for human consumption.,3,d157f3a2-3cf0-4d05-92b2-7a3caa90530f,false
+738,MEAT,0,,3,21d40e02-573d-4405-8efc-31454459d1d6,true
+1126,MEAT,0,Horse and Goat Zero days,2,bdd96d62-1dc0-4a9b-9a91-987016c0413a,true
+753,DAIRY,0,"Not for use in cattle producing milk for human consumption, or dairy heifers within 200 days of parturition.",3,8fec8bdf-239b-4fdb-b3cd-15e429d881da,false
+797,MEAT,0,,1,c4b01a6b-554c-4bbc-a31f-07529d992b62,true
+760,DAIRY,0,Do not use in cows producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,aa6274bc-91af-491b-86d9-2a707070190b,false
+767,DAIRY,4,,3,56adce96-8d38-4bf3-aced-05c532168c52,true
+122,MEAT,31,Milk for human consumption may only be taken from cows after 60 hours from the last treatment. Not to be used in sheep producing milk for human consumption,2,68b870b2-1a93-4772-90a8-b1d575eb9236,true
+903,DAIRY,4,,3,fd8d25f4-3a9b-498c-8dcc-60f9ce277de8,true
+771,MEAT,4,,3,c3d8734a-73e7-4ede-9e49-3af4e659ba94,true
+782,MEAT,4,,1,70adefce-734e-4e7c-847e-3ebf2c032935,true
+787,DAIRY,0,When used for superovulation with prostaglandin - Milk 48 hours after 2nd prostaglandin; Meat 28 days,3,d7202432-229d-43f9-9c30-ba43c608afc5,true
+788,MEAT,0,When used for superovulation with prostaglandin - Milk 48 hours after 2nd prostaglandin; Meat 28 days,3,d7202432-229d-43f9-9c30-ba43c608afc5,true
+125,MEAT,0,,3,8326e4fb-a812-470d-98b9-5d23f651d8e6,true
+841,DAIRY,0,,3,fd606398-4eb5-4948-a2df-22eb2bdbe08e,true
+838,DAIRY,0,Horse meat and offal - 4 days,3,0db9a155-2533-407e-add2-0861e6844b4b,true
+820,MEAT,0,Not to be used in trout intended for human consumption. Horse and rabbit: Zero days.,1,0b194743-335f-4bc4-98ea-4a8cc4746ed8,true
+823,DAIRY,0,Offal: Zero days,3,0db3e5bc-9673-435f-b1b5-c2acb2669680,true
+850,MEAT,0,,3,7e9df81a-35ce-4831-bc4a-6961dfe25292,true
+166,DAIRY,3,Not for use in sheep producing milk for human consumption,3,f4f33db5-86dc-42a8-b5a4-b5651a843dbd,true
+32,MEAT,77,Do not use in milking cows or sheep producing milk for human consumption.,1,aff05d96-ab69-47c0-874d-13aad660bd68,true
+214,MEAT,77,Do not use in milking cows or sheep producing milk for human consumption.,1,7ce62d9f-2090-4af3-bbaa-44348d231e21,true
+1247,MEAT,22,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,e47dff6e-616f-4130-bca2-b684a8666a09,true
+1254,MEAT,0,,3,069b2db6-67c1-449a-9ee0-c6492e0e75bb,true
+1257,MEAT,0,Do not use during pregnancy and lactation,3,26d22cc7-b7b5-4f75-ba71-b3cde81f2920,true
+1130,DAIRY,4,,3,9d194ca7-87d1-428d-987c-760388b82390,true
+705,MEAT,42,,3,4d7582cc-c167-4298-9de0-79ab03007856,true
+154,DAIRY,3,,3,e407d713-976b-4ad7-a332-6eda14e77bb5,true
+1221,MEAT,60,Not to be used in sheep producing milk for human consumption.,1,8ebd81d2-1961-4e04-bd9a-a26f20ae2bdf,true
+733,MEAT,28,,3,df631b86-6e7b-42e7-b1d3-26218660bad6,true
+11,DAIRY,0,Sheep milk: Zero hours,3,807a0118-6b67-4b5b-8cfe-9d32689aa455,true
+14,MEAT,0,Sheep milk: Zero hours,1,807a0118-6b67-4b5b-8cfe-9d32689aa455,true
+1188,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption.,3,83f723e3-82e4-4b7e-b3d8-2c1c1711fceb,false
+1163,DAIRY,0,,3,78b03fb4-6724-4603-b6ba-18825e9de8ce,true
+1164,MEAT,1,,3,78b03fb4-6724-4603-b6ba-18825e9de8ce,true
+1207,DAIRY,0,Horse meat and offal 1 day. Not authorised for use in mares producing milk for human consumption,3,85f100d2-2e8b-4e01-af4d-464e87403ccc,true
+1234,MEAT,0,,1,60901295-f6a5-4ac4-a633-9f5d121a00c0,true
+1241,MEAT,0,,1,951e9386-c455-4a77-bd9f-11d90f0bdd48,true
+1180,MEAT,15,Cattle Milk: not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition. Cattle Meat & offal: 18 days following i/v administration 28 days following i/m administration. Horses: Meat and Offal: 15 days. Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition.,1,4897dbd1-cf85-4c5a-ac81-9162568b3976,true
+1166,MEAT,14,Chicken meat 12 days; Turkey meat 19 days,1,888020de-997a-4310-bd02-44fa8e6d7745,true
+262,MEAT,0,,3,c55fb9bc-07a2-4010-a47d-9a6b2f0e9349,true
+1218,MEAT,20,Do not use in cattle and sheep producing milk for human consumption,3,a11551c8-c064-4b69-ad40-193106304275,true
+737,DAIRY,0,,3,21d40e02-573d-4405-8efc-31454459d1d6,true
+1229,DAIRY,0,,3,82eb81dc-fdd9-49e6-bcc2-19ac3e35ecc3,true
+950,MEAT,56,Milk: Not authorized for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.,2,c531b6b7-b6d2-4ef5-978e-1082ad11562c,true
+142,MEAT,56,Not authorised for use in ewes producing milk for human consumption incl dry period,2,30736af9-e4fc-4f08-bb0d-fc69bc250928,true
+1237,MEAT,16,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,0bb2e085-d8cd-4652-84f2-53ef8f04679f,true
+510,DAIRY,0,s.c. meat and offal: 14 days/Milk 84 hours - i.v. meat and offal: 4 days/Milk 72 hours,3,e7004a5f-7eb9-4734-a5fd-c985db606ef5,false
+511,MEAT,0,s.c. meat and offal: 14 days/Milk 84 hours - i.v. meat and offal: 4 days/Milk 72 hours,3,e7004a5f-7eb9-4734-a5fd-c985db606ef5,false
+574,MEAT,0,,3,9efa619d-bdc9-4978-b719-f49aa3ed5d59,true
+726,DAIRY,0,Not for use in lactating animals producing milk for human consumption,3,e63b5484-5f2d-4c6b-9b55-75193dbedd23,false
+156,MEAT,3,,1,e407d713-976b-4ad7-a332-6eda14e77bb5,true
+160,DAIRY,3,Not to be used in sheep producing milk for human consumption,3,2d0bf00c-8ee0-421a-987d-3f8cdcbb153e,true
+312,MEAT,5,,3,628a7080-da9b-41ce-be9e-26e5b848bc39,true
+254,DAIRY,0,,3,db3dce9d-6015-4f96-bb1a-a7092109d4da,true
+186,DAIRY,0,Not for use in lactating animals producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant dairy heifers within 60 days prior to calving.,3,bc2a2082-5248-4d77-b772-ffefbaddf5c7,false
+195,MEAT,70,"If Apotil is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving. If it is administered to ewes during the dry period or to pregnant ewes, milk should not be used for human consumption until 18 days after lambing.",3,86a9c0a2-3842-4140-a83e-52ee96d86523,true
+219,MEAT,13,"Sheep milk: 72 hours, Goats meat and offal: 6 days, Goats milk: 96 hours.",1,71cdc690-25ea-4179-ac6b-0d19582c5d17,true
+301,DAIRY,0,,3,4b89cde3-dde4-48c6-932b-84e0d6fd24a8,true
+302,MEAT,20,,3,4b89cde3-dde4-48c6-932b-84e0d6fd24a8,true
+226,DAIRY,6,,3,94c95dfd-66e5-4bf3-9a05-7b0f49051196,true
+1058,MEAT,8,,2,0392031e-2baa-4032-b2ab-21e71936800c,true
+204,MEAT,0,,3,a44f7b0b-022d-4449-a90f-4ae4b0d3cb41,true
+1098,MEAT,0,,3,87198791-73b3-4a85-957b-4dab4bbff5ec,true
+340,MEAT,5,"Cattle offal : 8 days, Pig offal: 5 days",1,b9b9c499-e9e7-4a48-898e-4fb0c8cf1014,true
+34,MEAT,39,Contraindicated for use in sheep producing milk for human consumption,3,55704b4e-7a24-4ede-bda3-c730cb499e00,true
+246,DAIRY,0,,3,47a0e678-4e31-4bd3-866d-a376730cc506,true
+252,DAIRY,0,Offal: 1 day,3,969fbc58-7d20-492d-bf00-228feafbb3dd,true
+257,MEAT,0,Not permitted for use in cows producing milk for human consumption.,1,f1907e79-d20c-4f18-bb4f-a133130e60ec,true
+259,MEAT,0,,3,d9e5689d-5e44-496c-8803-2ee32a2eef2e,true
+494,DAIRY,6,See data sheet for further information on sheep and horses,3,b3cdfc9b-41e0-42b9-8ea2-707badd2862a,true
+497,MEAT,14,See data sheet for further information on sheep and horses,1,b3cdfc9b-41e0-42b9-8ea2-707badd2862a,true
+500,MEAT,9,Sheep milk: 168 hours (7 days),2,6a1e7e5d-2d39-4667-8b1b-fa03b96bb3ca,true
+577,MEAT,0,,3,1ce97d88-cbb2-434a-b90b-acc77a2cdef4,true
+1061,MEAT,37,,2,f69ec604-c280-434a-92b2-48b7cf0919c1,true
+288,DAIRY,0,,3,501d4ee2-6062-4abb-bf3a-c69759e3fef6,true
+380,DAIRY,3,,3,01b643cb-8cf1-4f35-b2b4-d58608089ceb,true
+270,MEAT,0,,3,d61a7cd3-6cb2-431f-8b14-80b73a2fd622,true
+1062,MEAT,6,,2,80fc87e6-78ba-4026-a503-94a7c7c48241,true
+281,MEAT,0,,3,862c716e-1cc8-481e-8843-3a69f646cae9,true
+286,DAIRY,0,,3,309b41c4-e211-4a23-8385-9ef104869e0d,true
+287,MEAT,0,,3,309b41c4-e211-4a23-8385-9ef104869e0d,true
+316,MEAT,3,,1,a6038199-a788-4b19-81cd-63930b2637eb,true
+1099,DAIRY,54,,3,14657c1a-621a-4b55-98e1-62419d786530,true
+348,MEAT,42,Cattle/Sheep milk - Not permitted for use in lactating animals producing milk for human consumption.,2,7557a648-9bd4-467f-87a5-e2d4bf27a9a6,true
+354,DAIRY,0,,3,3ad9b942-ae83-4176-8f64-3521eabc7836,true
+358,MEAT,45,,2,f59fcafd-7bcb-4ae5-b527-df454ee84db7,true
+53,MEAT,28,,1,60e0669d-4b4a-42d3-bd20-8db2a52e2340,true
+407,MEAT,14,,3,9eacdf55-8f85-4bd9-b938-4e51d4f3ccd9,true
+408,MEAT,70,"Not for use in sheep producing milk for human consumption or industrial purposes, including the dry period.",2,ca35bb8e-4dcf-4703-97cd-946465e4b57c,true
+364,MEAT,40,Not authorised for use in animals producing milk for human consumption.,2,1126f8fe-5766-4766-a8b3-53cc6c8467f1,true
+369,MEAT,3,,1,560145cb-2c0f-4f0b-8d70-43f9c29bd76a,true
+816,MEAT,6,,3,154ffe9d-f0ae-426a-9c2b-fbf6a40e224b,true
+817,MEAT,4,,1,154ffe9d-f0ae-426a-9c2b-fbf6a40e224b,true
+48,MEAT,0,Do not use on the udder of lactating animals if milk is intended for human consumption. Stained part of the pigskin must be removed prior to the rest of the animal being used for human consumption.,3,364245fe-cdd2-43e6-a9ec-1556e7ed760f,true
+51,DAIRY,8,,3,60e0669d-4b4a-42d3-bd20-8db2a52e2340,true
+58,MEAT,70,Not permitted for use in lactating animals producing milk for human consumption.,2,7f71bf01-55d3-43d3-88ac-6c147f60742c,true
+1077,MEAT,17,Sheep Milk: Zero hours,3,19ad7135-4a6a-47ce-86d8-bf9cd17464f0,true
+413,MEAT,0,Do not use in lactating sheep or cattle producing milk for human consumption,3,abbaad46-e90a-426b-b821-e257657bf9c9,true
+1108,MEAT,5,,2,118ffcee-8ffc-465d-b28c-4f22fcf43f75,true
+480,MEAT,5,,1,446d0ae2-2589-49a5-b803-717a512af803,true
+64,MEAT,0,,3,bfabb516-5cf0-46a1-a627-cee6544137ad,true
+460,MEAT,16,Not for use in sheep producing milk for human consumption,1,ceaa18ab-de50-4076-a1e9-82af2d9dfd58,true
+486,MEAT,4,Not for use in sheep producing milk for human consumption,2,be98813f-073a-4940-8034-081faf2f7502,true
+464,DAIRY,0,,3,4d3cd6a5-7d8b-4e8a-99c0-c9fe6275e777,true
+1110,DAIRY,6,,3,fef2b7e4-ea9c-44ea-a452-49c21789b0cd,true
+1113,MEAT,14,,1,fef2b7e4-ea9c-44ea-a452-49c21789b0cd,true
+1087,MEAT,14,,2,13e1ee5a-4a83-4c99-a0d6-047222f16470,true
+452,DAIRY,4,Not to be used in horses intended for human consumption,3,72544e6e-042e-4235-808a-c899fda8b01f,true
+481,DAIRY,0,"Cattle Milk: may only be taken from 48 hours after calving. Not intended for use within 45 days of calving. If calving occurs before 45 days after treatment, milk for human consumption may only be 45 days plus 48 hours after the treatment. Sheep Milk: Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.",3,a6e9458f-7474-456e-a5da-051d44a75517,false
+559,MEAT,18,Not permitted for use in lactating animals producing milk for human consumption.,1,d74946a8-6e3a-4b08-b1cb-4261c09369fc,true
+563,MEAT,42,Not authorised for use in ewes producing milk for human consumption including during the dry period.,2,3fab1ba3-8b78-4367-afaa-4ca30486fe9d,true
+509,MEAT,13,Calves: Meat & Offal: I/V 5 days; S/C 12 days; Not authorised for use in animals producing milk for human consumption.,1,e6956557-c57c-431d-8b5d-12f75cb04775,true
+513,MEAT,0,,1,3f2d77b8-db83-4ec5-ab45-ae9362b20a38,true
+515,DAIRY,0,Withdrawal periods apply to meat and offal,3,472868e6-f9d0-488c-9bb9-a32453888392,true
+543,MEAT,52,Milk for human consumption may only be taken from 50 days after the last treatment (see notes).,3,d2f78589-316a-469b-b3c5-9f75624b16d1,true
+549,DAIRY,0,Not permitted use in lactating animals producing milk for human consumption.,3,5d3c43c2-d990-44d4-957b-6db0160fdac9,false
+566,MEAT,35,Not for use in sheep producing milk for human consumption,2,c79d2a98-7f37-4c27-9032-78ba35be1175,true
+567,DAIRY,0,,3,4611129a-62f7-4496-901f-2c8200964fd5,true
+571,MEAT,5,,3,214a389f-2410-43d6-a474-1e04fdf8ba88,true
+572,MEAT,9,Offal: 9 days,1,81cca3ce-ae26-4a83-9b6d-e9f3202bc1aa,true
+69,MEAT,2,Horses: 2 days,3,b638f76a-d33f-4a30-98f6-9dbe25e6c12e,true
+593,MEAT,6,Not authorised for use in laying birds producing eggs for human consumption. Do not use within 4 weeks of onset of laying period.,1,495c7b65-2efd-4516-882b-ab0448d0052c,true
+596,MEAT,0,,3,461195af-485c-45eb-972a-5a8d2155f94b,true
+644,DAIRY,0,The product is not intended for use during pregnancy and lactation.,3,d0bbc415-308c-4438-b34f-59473e7b6199,false
+71,MEAT,0,Horse meat: Zero days,3,ef447018-7506-4efe-82a6-91cc70023abf,true
+624,MEAT,0,"Cattle: Meat: IV: 1 day, IM: 4 days. Horses: Meat: 1 day",3,293041e3-0bbe-458c-a0e8-ab2b08269a5d,false
+641,MEAT,1,Not authorised for use in laying birds producing eggs for human consumption.,1,932add5f-5c90-4991-914b-b72429ed79d1,true
+620,DAIRY,0,Cattle - meat = After IV administration = 1 day; After IM administration = 4 days; Horses - meat = 1 day,3,000bf381-9af6-4d62-b4bd-ffa4af838163,true
+643,MEAT,3,,1,f30bb7a5-d9d5-4d2f-97ce-63835e5a98d1,true
+602,DAIRY,5,Horses: Meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption,3,9d095a7d-3693-4cb9-bf62-8d35f27fe98b,true
+605,MEAT,0,,1,7fde0fec-3073-4af4-abe6-6600319d28cd,true
+606,MEAT,0,,1,6a9dab4d-2892-4c57-8b91-fbb59ece8a66,true
+613,MEAT,15,Do not use in cows producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving,3,46aacf18-4ade-4e66-b572-4742b9fa58cc,true
+664,MEAT,3,,3,7dc7d3c0-4cad-4f7d-be4a-07659178e204,true
+667,MEAT,4,,3,90dfc584-7256-4592-8ca5-765674a6a3af,true
+625,MEAT,4,"Cattle: Meat: IV: 1 day, IM: 4 days. Horses: Meat: 1 day",1,293041e3-0bbe-458c-a0e8-ab2b08269a5d,true
+649,DAIRY,0,Horses: not to be used in horses intended for slaughter for human consumption,3,02c2b6c3-1a4b-47a5-a9ae-a52225be7f93,true
+653,DAIRY,5,,3,8efab6ca-a989-4f08-b295-779bdbc4d5b3,true
+92,MEAT,5,Horse meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption.,1,d5be7c5d-b341-4a95-930b-839a90299833,true
+1119,MEAT,5,,1,e9609f7f-be11-41a8-a5a2-8316d4529b64,true
+715,MEAT,15,,3,eb34a179-5f18-49f9-98dc-599fb3d3d3cf,true
+691,DAIRY,0,It is essential that Naxcel is only administered at the base of the ear location in order to comply with the meat withdrawal period.,3,a9e6aeb8-b39e-42af-a614-6ae4effd1975,true
+697,MEAT,70,"Not for use in sheep producing milk for human consumption, or horses intended for human consumption",2,726e9201-e1cf-4d64-8ce9-6276be53df5b,true
+1121,MEAT,1,Horses: Meat and offal: 1 day; Milk: Zero hours,3,db1b72db-09c3-4ce4-83be-272e9a258e71,true
+702,MEAT,0,"Cattle Meat & Offal by i/m (at 20 mg/kg, twice): 39 days by s/c (at 40 mg/kg), once: 44 days. Milk not permitted for use in lactating animals producing milk for human consumption",3,0aa322da-3abd-49d2-a588-e8e42c034478,false
+1138,MEAT,2,Additional Info,3,6c95111e-ca7e-4b83-93b2-beac30400151,true
+931,MEAT,21,Rabbits 4 days,1,20ef025f-0fb0-4b7b-b7ae-048497ba2dda,true
+933,MEAT,14,Broilers: 12 days. Turkeys: 19 days. Not permitted for use in laying birds producing eggs for human consumption.,1,b983236c-9f88-4096-84f0-83f45db1064d,true
+916,MEAT,0,Horse meat: Zero days,2,ed50068c-72ff-42a1-9e98-c91a50048311,true
+928,MEAT,2,Pigs offal: 2 days,1,da305bba-d8cc-4ef9-a7d2-911a8729c87c,true
+1105,MEAT,13,Not authorised for use in animals producing milk for human consumption. ,1,aad4e6f5-afd1-443c-9577-48c5c9454129,true
+979,DAIRY,0,"If treated at least 35 days before calving, milk must not be used for 36 hours after calving. If treated less than 35 days before calving, milk must not be used for 37 days after treatment.",3,488b8cc0-db0e-4028-bf4c-5eed5089a4de,false
+991,MEAT,28,,2,311b2f89-8ea1-4248-bfe2-a243988df11c,true
+983,MEAT,10,Cattle Meat: s/c 13 days; i/m 23 days,1,4160a1dc-9e66-4c32-8e62-ecad493444cf,true
+995,MEAT,0,Horses: Meat and offal/milk - zero days/hours,3,251b98e1-6b62-4c0b-ae83-3ecc318172b3,true
+999,MEAT,0,Horse meat: Zero days.,3,6b13bbfc-d014-4944-984f-c62081e83590,true
+1006,MEAT,3,,1,afce084a-4d93-484a-8bac-b030bc12f170,true
+1014,MEAT,28,Cattle - milk = Not to be used in cattle producing milk for human consumption; Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,1,746a20f3-1eee-468a-8fe7-e5394d78f5e8,true
+1008,MEAT,18,,3,33d2f0f3-66f1-42b7-83e0-9dbae0f36f37,true
+1019,DAIRY,0,Vitbee 250: Sheep; zero days: Horse & Foal meat: zero days/Vitbee 1000: Horse & Foal meat: zero days,3,bf27dc03-4a39-4abb-b181-760bd625753b,true
+1020,MEAT,0,Vitbee 250: Sheep; zero days: Horse & Foal meat: zero days/Vitbee 1000: Horse & Foal meat: zero days,3,bf27dc03-4a39-4abb-b181-760bd625753b,true
+1038,MEAT,14,Not for use in sheep producing milk for human consumption,3,08450e2f-0be6-48e6-9822-6ed2f35e97ca,true
+1030,MEAT,29,"Not authorised for use in lactating animals producing milk for human consumption.Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months (cows, heifers) or 1 month (ewes) of expected parturition.",2,e640af95-645b-4783-a9c5-de64eaf8f08a,true
+1246,MEAT,27,Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.,2,62505843-147d-4874-88cd-166eec22960a,true
+173,MEAT,60,Not authorised for use in animals producing milk for human consumption.,3,8e53e3ac-7d5d-4979-a5f8-1427458f851a,true
+175,MEAT,60,Not authorised for use in animals producing milk for human consumption.,1,8e53e3ac-7d5d-4979-a5f8-1427458f851a,true
+1252,MEAT,0,,3,4dfdfa78-4b64-4b32-8d9d-cc48d01ec493,true
+1,DAIRY,0,,3,5b6d6b0e-3b30-48cc-bbef-613793434897,true
+1080,MEAT,18,Not for use in sheep producing milk for human consumption.,3,dd8cebef-26f1-4d76-bd79-72d1a07a3db6,true
+1082,MEAT,16,Not for use in sheep producing milk for human consumption.,1,dd8cebef-26f1-4d76-bd79-72d1a07a3db6,true
+285,MEAT,0,,3,9539067c-5aa1-4bd5-a6eb-60116e19dad8,true
+1248,MEAT,16,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,e47dff6e-616f-4130-bca2-b684a8666a09,true
+1199,MEAT,4,"Sheep milk: 72 hours, Goats meat: 6 days, Goats milk: 96 hours",2,81942b4b-fe38-427e-bb51-41a5313003d3,true
+732,DAIRY,42,,3,df631b86-6e7b-42e7-b1d3-26218660bad6,true
+207,MEAT,10,"Ducks (meat): 4 days. Eggs: chickens, turkeys and ducks: eggs of treated animals should not be used for human consumption.",1,494c3fe2-5cdf-4cd8-a4b7-00a8a3885e6a,true
+734,DAIRY,5,Do not use in sheep producing milk for human consumption,3,06821154-316f-4c4d-be64-b8083a15a6c2,true
+1187,MEAT,53,,1,9e374bea-f67c-40ca-9f7f-b4b6b8b8b099,true
+1214,MEAT,28,Contraindications,1,2660e747-e7ac-4b81-ab91-2d330b68f676,true
+1215,MEAT,42,Sheep and Goats milk: zero hours,2,b88823cf-fd45-4e3a-b96d-bc03bfd7acd4,true
+1181,DAIRY,0,,3,44bfabb5-dafb-451d-9c10-d245242bfff3,true
+1205,DAIRY,2,Not to be used in horses intended for human consumption - see data sheet,3,318aa823-6644-44c8-a1e1-03b21de41585,true
+1208,MEAT,2,Horse meat and offal 1 day. Not authorised for use in mares producing milk for human consumption,3,85f100d2-2e8b-4e01-af4d-464e87403ccc,true
+261,DAIRY,0,,3,c55fb9bc-07a2-4010-a47d-9a6b2f0e9349,true
+263,MEAT,0,,2,c55fb9bc-07a2-4010-a47d-9a6b2f0e9349,true
+1125,MEAT,0,Horse and Goat Zero days,3,bdd96d62-1dc0-4a9b-9a91-987016c0413a,true
+1174,MEAT,24,Goat and sheep - meat and offal: 24 days,2,8bf761c5-e29c-4478-8b6c-782ed82ff3d2,true
+1226,MEAT,0,48 hours after 2nd prostaglandin treatment. Meat 28 days,2,f1b5dfb7-34db-4465-b645-e07944f9c5ba,true
+427,MEAT,5,Do not use in sheep producing milk for human consumption. Do not use in horses intended for human consumption,3,5e51ca03-bef5-41f2-847e-ac6231873399,true
+429,MEAT,5,Do not use in sheep producing milk for human consumption. Do not use in horses intended for human consumption,1,5e51ca03-bef5-41f2-847e-ac6231873399,true
+504,MEAT,0,Stained part of the pig skin must be removed prior to the rest of the animal being used for human consumption.,2,fad83119-8af6-4a2b-916d-562293729cc5,true
+493,MEAT,14,See data sheet for further information on sheep and horses,1,ed4f9311-3951-43c7-a93c-e235301f4899,true
+795,MEAT,0,,1,7a0ce4da-4be2-43f6-84af-6734a7f84421,true
+921,MEAT,9,,2,e6164ead-4354-42bf-a02a-0143cfd1126e,true
+181,DAIRY,4,Not for use in sheep producing milk for human consumption.,3,8f3c9057-5b50-41ca-a710-9be2388f3534,true
+183,MEAT,16,Not for use in sheep producing milk for human consumption.,2,8f3c9057-5b50-41ca-a710-9be2388f3534,true
+184,MEAT,16,Not for use in sheep producing milk for human consumption.,1,8f3c9057-5b50-41ca-a710-9be2388f3534,true
+157,MEAT,2,,1,125f7ccd-b479-40b5-8a12-30336ef5d090,true
+20,MEAT,35,20 mg/kg dose: Cattle Meat & offal: 28 days/Pigs Meat & offal 14 days/ Sheep Meat & offal 28 days. 30mg/kg dose: Cattle Meat & Offal: 35 days/Pigs Meat & Offal 28 days/Sheep Meat & Offal 28 days. Sheep milk - 8 days,3,8eb443c6-637f-4c6d-93eb-e6eefa70ed51,true
+319,DAIRY,0,Milk: 1 day after calving when dry period is more than 5 weeks/36 days after treatment when dry period is 5 weeks or less,3,b093884a-710b-4f97-88e8-e1c484ea9200,false
+172,MEAT,2,Not authorised for use in laying birds producing eggs for human consumption. Do not use within 3 weeks of onset of lay.,1,d9727d0f-8e36-44c1-b261-71af3587cf49,true
+215,MEAT,53,,1,8bb0437f-e4f0-4165-89bf-3f3d7cf06878,true
+220,MEAT,8,Not for use in exotic animals or birds for human consumption. Not for use in poultry.,3,dc3e85e2-835e-46a4-9494-8c80d3465962,true
+199,MEAT,14,,1,83e5ae21-2725-4732-be60-5dcd4702834a,true
+224,MEAT,4,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,2,92d9fa03-1eb4-4c99-90df-77091d2073d7,true
+203,DAIRY,0,,3,a44f7b0b-022d-4449-a90f-4ae4b0d3cb41,true
+245,MEAT,66,Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant dairy heifers within 60 days of calving.,3,a6deaf4f-2e18-4680-ad3a-ec71a211aa15,true
+236,MEAT,16,Not for use in sheep producing milk for human consumption,1,e8b4d545-94d4-4d1e-ac33-399de751d340,true
+36,MEAT,42,Contraindicated for use in sheep producing milk for human consumption,1,55704b4e-7a24-4ede-bda3-c730cb499e00,true
+250,MEAT,19,Not for use in ewes producing milk for human consumption or food processing,2,7ff7f238-203e-4d2f-a8e6-5ce38f26a77c,true
+496,MEAT,14,See data sheet for further information on sheep and horses,2,b3cdfc9b-41e0-42b9-8ea2-707badd2862a,true
+498,DAIRY,10,Sheep milk: 168 hours (7 days),3,6a1e7e5d-2d39-4667-8b1b-fa03b96bb3ca,true
+499,MEAT,31,Sheep milk: 168 hours (7 days),3,6a1e7e5d-2d39-4667-8b1b-fa03b96bb3ca,true
+379,MEAT,7,Combined Therapy: When using this product and Combiclav Injection in combination: Meat and offal: 42 days Milk: 84 hours From the last treatment of Combiclav Injection following the minimum posology regime.,3,8790e1c2-0df0-47b9-bd21-31a7d1c7e8d4,true
+273,DAIRY,0,Do not use during pregnancy and lactation,3,d4aea40b-95a4-4dfe-8f99-bad849211f83,false
+275,DAIRY,0,,3,f972eb98-7b87-480c-bdd3-daf11bdc3352,true
+1065,MEAT,0,,3,98d02b88-4641-4901-86ba-cae0d4580b5c,true
+6,DAIRY,21,,3,4065745c-7deb-4fb5-8a97-7e698246a7d6,true
+304,MEAT,0,,3,cdc4421b-9f8e-4de0-b5eb-ce135ba9e4ea,true
+305,DAIRY,0,,3,087b3daa-7a6b-4470-991e-902ff36cf506,true
+309,DAIRY,0,,3,040d0ef8-a7ea-46a6-b89f-8be51745cefc,true
+721,MEAT,14,,3,4a6b4a75-e8ab-4d4c-a61c-e4190a627135,true
+1100,MEAT,21,,3,14657c1a-621a-4b55-98e1-62419d786530,true
+346,DAIRY,0,Cattle/Sheep milk - Not permitted for use in lactating animals producing milk for human consumption.,3,7557a648-9bd4-467f-87a5-e2d4bf27a9a6,false
+714,MEAT,20,Horse: not to be used in horses intended for human consumption,1,c83db833-4b96-45bd-8c06-c6f31c519325,true
+720,DAIRY,4,,3,4a6b4a75-e8ab-4d4c-a61c-e4190a627135,true
+50,MEAT,0,Do not use on the udder of lactating animals if milk is intended for human consumption. Stained part of the pigskin must be removed prior to the rest of the animal being used for human consumption.,1,364245fe-cdd2-43e6-a9ec-1556e7ed760f,true
+405,MEAT,14,Sheep milk: 120 hours,2,b26a808e-51b9-41c3-a3eb-97744b239e03,true
+430,DAIRY,0,Horses: Zero days,3,9b594bf3-1afb-41c7-9edb-fb030c6f2423,true
+368,MEAT,5,,3,560145cb-2c0f-4f0b-8d70-43f9c29bd76a,true
+49,MEAT,0,Do not use on the udder of lactating animals if milk is intended for human consumption. Stained part of the pigskin must be removed prior to the rest of the animal being used for human consumption.,2,364245fe-cdd2-43e6-a9ec-1556e7ed760f,true
+55,MEAT,35,Not permitted for use in lactating animals producing milk for human consumption.,3,62dabc2c-a592-4011-a924-fb8634d5db87,true
+61,MEAT,2,Horses: 8 days,1,3d25552e-22df-43a0-9e71-0cfcda9848a1,true
+412,MEAT,143,Milk: Do not use in cattle of any age intended to produce milk for human consumption.,3,4f306154-ebb1-4bbf-b409-853e584b4096,true
+145,MEAT,0,,3,68b45587-8b28-4a55-82f7-1db927d98f80,true
+423,MEAT,2,,1,98ec78a1-031e-4f60-b97c-14a2957fbb85,true
+439,MEAT,20,,1,d3c6ccdf-9b8e-4d96-a085-6daa85a6abc1,true
+434,MEAT,2,Horses - meat and offal 8 days. Not authorised for use in horses producing milk for human consumption.,1,b9da4c77-eae0-46fd-896d-ac446e12dbff,true
+435,DAIRY,6,Not to be used in horses intended for human consumption.,3,cde048c6-d20a-40fd-8a7d-5097289d3768,true
+444,MEAT,2,Horse meat and offal: 2 days; Horse milk: 12 hours.,3,9cf9f4a7-00e9-4c71-bc5f-f06ecc7c0bb4,true
+478,DAIRY,0,,3,446d0ae2-2589-49a5-b803-717a512af803,true
+471,MEAT,12,The product can be administered to sows at any stage of pregnancy or lactation. This product can be used in breeding animals.,1,059fa041-3799-4033-b6b5-6ef8556606aa,true
+459,MEAT,10,Not for use in sheep producing milk for human consumption,2,ceaa18ab-de50-4076-a1e9-82af2d9dfd58,true
+483,MEAT,56,"Cattle Milk: may only be taken from 48 hours after calving. Not intended for use within 45 days of calving. If calving occurs before 45 days after treatment, milk for human consumption may only be 45 days plus 48 hours after the treatment. Sheep Milk: Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.",2,a6e9458f-7474-456e-a5da-051d44a75517,true
+488,MEAT,14,Not for use in sheep producing milk for human consumption,3,94e432d0-ec43-4b24-a02c-f2b1576eb32a,true
+463,MEAT,20,Not for use in horses intended for human consumption,1,c4db0c51-69e6-4a0b-b23b-a53c013a5bcf,true
+527,MEAT,10,,3,c363b75a-8941-49ca-bd15-388a6109b825,true
+522,MEAT,15,"Meat and Offal: Cattle - 15 days; Sheep - 2 days; Goats - 1 day. Milk - zero hours for cattle, sheep and goats.",3,72faffa0-5a1b-4b65-8d82-96c509e65e67,true
+528,DAIRY,0,,3,0c6ca1df-fb4a-4227-89c2-c3e882f0b05b,true
+536,DAIRY,0,,3,48d54f04-7e1e-4949-8312-34770d7d1868,true
+540,MEAT,0,"Not permitted for use in cows producing milk for human consumption. Do not use in birds producing eggs for consumption, during and 4 weeks before the laying phase.",1,c860c404-4d86-4f08-a49e-a3b6ba02c65e,true
+544,DAIRY,0,"Meat and offal:by IM (at 20 mg/kg bodyweight, twice): 	30 days",3,074758a4-14bc-4ce8-941b-da6419bfcaec,false
+545,MEAT,0,"Meat and offal:by IM (at 20 mg/kg bodyweight, twice): 	30 days",3,074758a4-14bc-4ce8-941b-da6419bfcaec,false
+565,MEAT,17,Not for use in sheep producing milk for human consumption,3,c79d2a98-7f37-4c27-9032-78ba35be1175,true
+568,MEAT,0,,3,4611129a-62f7-4496-901f-2c8200964fd5,true
+587,MEAT,28,,1,26a696e8-9905-4eaa-b4d7-ee5b875ce02c,true
+590,MEAT,35,Not for use in cattle producing milk for human consumption,3,98c339b7-8e9e-47e2-b087-bbf2ca909145,true
+617,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption.,3,0d8deb58-e993-47f5-aaf8-a998c9f842bb,false
+1143,MEAT,0,Horses: meat - Zero days,3,1e7dd5cf-1c9f-476e-86f6-bf6b90d61efd,true
+1049,DAIRY,21,,3,ad0be98a-e32b-41d3-a550-36a551a50605,true
+1050,MEAT,213,,3,ad0be98a-e32b-41d3-a550-36a551a50605,true
+84,MEAT,0,,1,7f6f9411-bfca-435f-a776-8943d985574c,true
+615,DAIRY,0,Animals must not be slaughtered for human consumption during treatment. Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,4d32a212-dfdd-4455-9144-318a9a803783,false
+70,DAIRY,0,Horse meat: Zero days,3,ef447018-7506-4efe-82a6-91cc70023abf,true
+603,MEAT,15,Horses: Meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption,3,9d095a7d-3693-4cb9-bf62-8d35f27fe98b,true
+639,MEAT,20,Do not use in cattle and sheep producing milk for human consumption,2,7ee1ed0e-13a0-440d-a6a6-9bc10f7b6b70,true
+78,DAIRY,0,Must not be used in cattle and sheep producing milk for human consumption.,3,7b8414db-eb83-40ea-8d83-055be1701f79,false
+665,MEAT,4,,1,7dc7d3c0-4cad-4f7d-be4a-07659178e204,true
+627,MEAT,0,,3,6611aa1e-dc62-4c74-b841-a3e521ed1d96,true
+75,MEAT,15,Not to be used on animals producing milk for human consumption. This product must not be used in cattle and sheep producing milk for human consumption.,2,084bd93e-c282-4b24-a046-23492e5f1536,true
+77,MEAT,21,Not to be used in cattle and sheep producing milk for human consumption,2,cc3b1e80-87e3-4a26-ad4a-b48dc49d51f0,true
+91,MEAT,15,Horse meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption.,3,d5be7c5d-b341-4a95-930b-839a90299833,true
+679,DAIRY,36,Sheep milk: 432 hours (18 days). Cattle and Sheep -,3,4d3d9c99-644c-4c9d-89d2-4e982b476fc1,true
+688,MEAT,28,96 hours post calving in cows with a dry period of more than 50 days. 50 days plus 96 hours after treatment from cows with a dry period of 50 days or less.,3,38fb6868-62a6-4e1d-907c-946e79aea4a8,true
+685,DAIRY,5,,3,8d33da91-f87c-4508-a331-35ad2c8b1a3f,true
+690,MEAT,71,,1,4be1288e-9a2b-414c-8a17-16620af241db,true
+701,DAIRY,0,"Cattle Meat & Offal by i/m (at 20 mg/kg, twice): 39 days by s/c (at 40 mg/kg), once: 44 days. Milk not permitted for use in lactating animals producing milk for human consumption",3,0aa322da-3abd-49d2-a588-e8e42c034478,false
+1096,MEAT,7,Do not use in sheep producing milk for human consumption,1,440e3575-3e36-465d-818c-43d03e8700ff,true
+741,DAIRY,0,,3,696e4f98-4b00-444b-b251-7638f60307d7,true
+742,MEAT,0,,3,696e4f98-4b00-444b-b251-7638f60307d7,true
+743,MEAT,0,,2,7c04fa51-1fe3-4e27-8ea3-9a7579d5911b,true
+751,MEAT,15,Sheep milk: 168 hours (7 days). Not to be used in horses intended for human consumption.,2,8f747621-02b7-4364-8cb0-3cf68d43b95d,true
+752,MEAT,4,,1,b9c079ed-6710-41df-8b36-7c3c3e2aac8a,true
+792,MEAT,0,,1,bc7a07d9-fe97-4deb-b9ca-178387d90e39,true
+1068,MEAT,0,,1,33a6a492-eb6f-4da4-8c05-f9549f896a9a,true
+804,MEAT,0,,1,3df1618e-ddf9-4467-8f63-dac09cdf5b91,true
+119,MEAT,28,Do not use in cows producing milk for human consumption,1,dfe40c94-af69-45e7-a714-822efbb4ed12,true
+765,MEAT,3,,1,8dfa4979-fbcd-4da3-992f-787a96441bda,true
+1102,MEAT,0,,3,6f246383-5192-4f9a-944e-9fcd4136b0b8,true
+904,MEAT,7,,3,fd8d25f4-3a9b-498c-8dcc-60f9ce277de8,true
+939,MEAT,42,Cattle & Sheep: Not authorised for use in lactating animals producing milk for human consumption.,2,a3efcbc0-1e42-48cb-8258-ce5997633fd2,true
+946,DAIRY,0,,3,abf9e578-38cd-4680-bf5b-c0ca5e13f1a0,true
+1128,MEAT,0,,1,7f122289-0143-4dff-8030-0a1ccc4fcaa4,true
+778,MEAT,28,,3,53b6f74e-15e2-4ddf-bc0b-96ce59e19c35,true
+785,DAIRY,3,,3,0c6e3603-e5e5-445f-b175-b23f2a95810a,true
+837,MEAT,0,,1,c020eae1-b94a-40c6-acfb-44b26076cd03,true
+808,DAIRY,0,,3,24ec3483-3396-446a-a6b8-d298fd6210c0,true
+828,DAIRY,0,Milk: Not authorized for use in lactating animals producing milk for human consumption. Do not use during lactation or drying off periods. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition.,3,0c9deab3-935a-43d8-8c07-ce2363953e0a,false
+829,MEAT,46,Milk: Not authorized for use in lactating animals producing milk for human consumption. Do not use during lactation or drying off periods. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition.,3,0c9deab3-935a-43d8-8c07-ce2363953e0a,true
+830,MEAT,0,,1,025d2078-2195-4afd-9d8b-6bdc76abb517,true
+836,MEAT,5,Horse: Meat - 5 days. Not authorised for use in horses producing milk for human consumption,1,402acc0c-48dc-4894-9161-06f7ef81bda8,true
+1101,DAIRY,0,,3,6f246383-5192-4f9a-944e-9fcd4136b0b8,true
+136,MEAT,17,Not authorised for use in ewes producing milk for human consumption,3,3556de1d-44a2-452c-9638-94c91da247e0,true
+137,MEAT,35,Not authorised for use in ewes producing milk for human consumption,2,3556de1d-44a2-452c-9638-94c91da247e0,true
+888,MEAT,0,,3,6aff2100-82f3-4557-809f-c9e91c0ca9b0,true
+895,MEAT,0,,1,6771973d-e363-49a1-a1b3-303300dd6297,true
+869,MEAT,18,Not permitted for use in lactating animals producing milk for human consumption,1,35fe3434-9ffd-4105-aa36-b2ce732bdebe,true
+880,MEAT,0,Sheep Meat: 10 days from the last treatment; Pig Meat: 12 days from the last treatment,2,d80ca297-7a7c-43a5-b68e-5213d78a76e7,false
+877,DAIRY,5,Horse meat (IV) - 12 days,3,e7f909c2-0770-4965-8fc5-ae055fc747ca,true
+911,MEAT,0,,2,d613466c-2bcd-4804-927c-e5ec6e53fd22,true
+914,MEAT,24,,2,357351b4-1714-4960-8d2b-5dbbf12d4c32,true
+915,MEAT,36,,1,357351b4-1714-4960-8d2b-5dbbf12d4c32,true
+1147,DAIRY,10,Sheep Milk: 7 days,3,cb08b491-9e35-44e5-9fa6-b58ee8d47ac5,true
+1150,MEAT,18,Sheep Milk: 7 days,1,cb08b491-9e35-44e5-9fa6-b58ee8d47ac5,true
+958,MEAT,49,Not authorised for use in cattle and sheep producing milk for human consumption including the dry period. Do not use during the last trimester of pregnancy in heifers which are intended to produce milk for human consumption. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption,2,adec271c-f21e-4b07-933e-cb75431fc1bd,true
+970,MEAT,0,,3,c80908c5-58bf-48ee-8ad7-0198d4651e57,true
+977,DAIRY,0,,3,0d0a08d8-35b1-4a89-bccc-6d34c28c63ea,true
+985,MEAT,0,,1,19bda096-063d-41ee-b13b-277e92988e1f,true
+1013,MEAT,49,Cattle - milk = Not to be used in cattle producing milk for human consumption; Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,746a20f3-1eee-468a-8fe7-e5394d78f5e8,true
+1009,MEAT,20,,1,33d2f0f3-66f1-42b7-83e0-9dbae0f36f37,true
+148,DAIRY,0,,3,2c8e61c6-60a3-4e5b-b78d-55ae442af617,true
+1029,MEAT,64,"Not authorised for use in lactating animals producing milk for human consumption.Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months (cows, heifers) or 1 month (ewes) of expected parturition.",3,e640af95-645b-4783-a9c5-de64eaf8f08a,true
+1032,DAIRY,5,Withdrawal Period Sheep - milk: 7 days,3,d929a9bf-6075-4c74-89dd-dc480fadcdb9,true
+852,MEAT,0,,3,ac2bd3ff-bc8c-4d6c-8a56-173a83ae158d,true
+892,MEAT,0,,2,b98d8e0b-60f6-419c-82c0-ad3673eb8155,true
+893,MEAT,0,,1,b98d8e0b-60f6-419c-82c0-ad3673eb8155,true
+865,MEAT,0,Meat: 42 days post 2nd vaccination (meat and offal),1,daa19727-9915-4442-9402-b919541f458f,false
+872,MEAT,0,Do not use in cows producing milk for human consumption,3,5a09611a-aab1-4f52-9bed-cd3290271522,true
+879,MEAT,15,Horse meat (IV) - 12 days,1,e7f909c2-0770-4965-8fc5-ae055fc747ca,true
+898,MEAT,0,,1,67e4d7fa-0891-45b9-88ab-53a3cc0f2275,true
+907,MEAT,31,,1,2cd72daf-09cc-4b9f-8cf3-e3127481fbeb,true
+1148,MEAT,31,Sheep Milk: 7 days,3,cb08b491-9e35-44e5-9fa6-b58ee8d47ac5,true
+1149,MEAT,9,Sheep Milk: 7 days,2,cb08b491-9e35-44e5-9fa6-b58ee8d47ac5,true
+929,MEAT,21,Rabbits: 4 days,1,389e9a9b-cd8e-4df8-b241-afadd8d0816c,true
+966,DAIRY,5,,3,3c48b4ea-94ed-493f-a644-be3245f01fef,true
+974,MEAT,28,,3,405e1439-9799-4e77-9068-7319bcc5ad2f,true
+961,MEAT,16,,1,d1dccb59-8d43-4888-888d-0f72a16024cb,true
+143,DAIRY,6,,3,3168d437-68fc-49c0-b263-4ccb2e930bd3,true
+144,MEAT,3,,3,3168d437-68fc-49c0-b263-4ccb2e930bd3,true
+972,MEAT,28,"If calving occurs before 28 days after the last treatment, milk for human consumption may only be taken after 28 days plus 84 hours after the last treatment",3,48493bc8-64bf-4164-b057-acd2b79381d9,true
+1025,MEAT,14,Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation. Not to be used in animals producing milk for human consumption.,3,0e59dc82-069f-4c01-949e-05579e85c4a7,true
+998,DAIRY,0,Horse meat: Zero days.,3,6b13bbfc-d014-4944-984f-c62081e83590,true
+987,DAIRY,0,,3,06f0e161-176d-42f5-842b-b03fd48e1fc4,true
+988,MEAT,0,,3,06f0e161-176d-42f5-842b-b03fd48e1fc4,true
+1002,MEAT,6,Pig Meat: 6 days; Rabbits: Zero days; Turkeys: Meat and offal 4 days.,1,5b3cd830-b330-4260-b008-5ad71bfce86b,true
+1005,MEAT,4,,1,88863b9e-f528-4641-913d-fd367569fe4e,true
+1018,MEAT,0,,3,85c88c2b-7961-4ce6-abc5-f63f8474113b,true
+1176,MEAT,16,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,a4440588-61d4-4bde-9355-8730b1e5dc14,true
+1231,DAIRY,0,Horse:	Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation.,3,986b1b5f-1d86-4ff6-83b3-42188d85ac5b,true
+163,DAIRY,3,Not for use in sheep producing milk for human consumption,3,345571a4-e8f2-470e-950a-180201d2c6b5,true
+1242,MEAT,0,,1,c02296a7-2c0b-4cd9-b340-d2dd1e7eac45,true
+1192,MEAT,8,Not for use in exotic animals or birds intended for human consumption. Not for use in poultry.,3,91840adf-e755-4e7b-a6c7-669ab17aea7c,true
+1249,MEAT,13,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,e47dff6e-616f-4130-bca2-b684a8666a09,true
+2,MEAT,0,,3,5b6d6b0e-3b30-48cc-bbef-613793434897,true
+150,DAIRY,0,,3,904de9bc-9622-45b6-b6f1-9f057af14b95,true
+1123,MEAT,64,Not permitted for use in lactating animals producing milk for human consumption,3,95f442d6-9e55-4920-adee-056917131095,true
+735,MEAT,7,Do not use in sheep producing milk for human consumption,3,06821154-316f-4c4d-be64-b8083a15a6c2,true
+9,MEAT,0,Animals must not be slaughtered for human consumption during treatment.,3,e86fd6c9-8792-40a7-8b53-15976e1832b6,true
+1190,MEAT,42,Not permitted for use in lactating animals producing milk for human consumption.,2,83f723e3-82e4-4b7e-b3d8-2c1c1711fceb,true
+1217,MEAT,2,,1,87d0125a-2578-4b56-bd74-1c86faee5610,true
+1151,DAIRY,0,"Not authorised for use in animals producing milk for human consumption.
+Do not use in pregnant animals which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,05927e81-f79c-413d-a27a-a3ccb5e6907b,false
+1210,DAIRY,0,"Not permitted for use in lactating cattle producing milk for human consumption. Do not use in non-lactating diary cows, including pregnant dairy heifers, within 60 days of calving.",3,2c4e9e3c-0049-4014-bb2f-121842a77b09,false
+40,DAIRY,0,Horse meat and offal: 1 day. Not permitted for use in lactating animals producing milk for human consumption.,3,20547da1-ca04-421e-ae7a-323bdcf64080,false
+1152,MEAT,22,"Not authorised for use in animals producing milk for human consumption.
+Do not use in pregnant animals which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,05927e81-f79c-413d-a27a-a3ccb5e6907b,true
+683,MEAT,70,"Cattle milk: if the product is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving.",3,4c567290-88df-4121-94e3-afb83e3f1ba5,true
+95,MEAT,14,withdrawal period from sheep's milk: 120 hours (5 days),2,590dcbd0-03dc-467f-bfea-b5c67fe7e1d4,true
+1154,MEAT,13,"Not authorised for use in animals producing milk for human consumption.
+Do not use in pregnant animals which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,05927e81-f79c-413d-a27a-a3ccb5e6907b,true
+1168,MEAT,22,"Not authorised for use in animals producing milk for human consumption
+Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition",3,794ed5c3-954a-407f-8c5d-6993eac40287,true
+682,DAIRY,36,"Cattle milk: if the product is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving.",3,4c567290-88df-4121-94e3-afb83e3f1ba5,true
+295,MEAT,0,,3,dfcbcc05-1158-4c67-8ae2-1aaf379a2d28,true
+373,DAIRY,0,Not permitted for use in animals producing milk for human consumption,3,e3f34eb1-b1f9-4260-9b56-43f3581f1961,false
+1235,MEAT,13,,1,db9385be-d3cc-43f3-a63f-0d3804143229,true
+1162,MEAT,13,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,afb651e3-1ef6-4441-bba6-afd6fcd25e20,true
+512,MEAT,0,s.c. meat and offal: 14 days/Milk 84 hours - i.v. meat and offal: 4 days/Milk 72 hours,1,e7004a5f-7eb9-4734-a5fd-c985db606ef5,false
+597,DAIRY,0,Horses: meat - Zero days,3,df01281e-6895-4bf1-8985-23bf8751269f,true
+573,DAIRY,0,,3,9efa619d-bdc9-4978-b719-f49aa3ed5d59,true
+114,MEAT,10,Not for use in sheep producing milk for human consumption,2,f0fe243f-cb2e-44c6-af7b-3d67ed9fcf43,true
+132,DAIRY,0,Horse - meat: 1 day,3,ee64b194-2496-4faa-a092-58d22bd1635c,true
+176,MEAT,2,Turkeys: 5 days; Ducks: 9 days. Not for use in laying birds producing eggs for human consumption.,1,ea4b3eee-ceac-4525-9582-73ca4497ed14,true
+177,DAIRY,2,Not for use in sheep producing milk for human consumption.,3,fc990f39-066a-4868-a232-4270f784b68f,true
+180,MEAT,16,Not for use in sheep producing milk for human consumption.,1,fc990f39-066a-4868-a232-4270f784b68f,true
+182,MEAT,23,Not for use in sheep producing milk for human consumption.,3,8f3c9057-5b50-41ca-a710-9be2388f3534,true
+1055,MEAT,20,,3,8550fc0b-2ff8-4710-aa83-47a7015963fb,true
+155,MEAT,5,,3,e407d713-976b-4ad7-a332-6eda14e77bb5,true
+162,MEAT,5,Not to be used in sheep producing milk for human consumption,2,2d0bf00c-8ee0-421a-987d-3f8cdcbb153e,true
+313,MEAT,5,,1,628a7080-da9b-41ce-be9e-26e5b848bc39,true
+196,MEAT,42,"If Apotil is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving. If it is administered to ewes during the dry period or to pregnant ewes, milk should not be used for human consumption until 18 days after lambing.",2,86a9c0a2-3842-4140-a83e-52ee96d86523,true
+327,MEAT,8,,3,4b389df6-6b28-4021-a6bb-a8dfd9123cfe,true
+293,MEAT,0,,3,9847bfc8-748f-4e9a-870e-cfa32844ee54,true
+333,DAIRY,0,,3,e021fcc1-323a-409e-9c94-1cc6a546e624,true
+317,DAIRY,6,,3,897f3471-bd47-4c29-abf2-dea399956432,true
+231,MEAT,50,Horse: Meat and offal; 50 days. Not authorised for use in horses producing milk for human consumption.,3,3ec71c30-8765-49ac-aa6e-4817c5c633f1,true
+234,MEAT,18,Not for use in sheep producing milk for human consumption,3,e8b4d545-94d4-4d1e-ac33-399de751d340,true
+239,MEAT,49,Do not use in lactating dairy cows. Do not use in non-lactating dairy cows incl. pregnant dairy heifers within 60 days of calving.,3,2065c3f2-13b7-4475-a284-bb7e172be40f,true
+253,MEAT,1,Offal: 1 day,3,969fbc58-7d20-492d-bf00-228feafbb3dd,true
+265,MEAT,28,See datasheets - Must not be used in treatment of lactating cows. Not intended for use within 49 days of calving.,3,42e50018-0332-4806-830f-f819e76f24d5,true
+267,MEAT,28,See datasheet - must not be used in treatment of lactating cows. Not intended for use in within 49 days of calving.,3,5c410880-43d8-4274-bb80-9b9040ce9a25,true
+298,DAIRY,0,,3,528fb9fa-5155-4664-bb8d-e57f9095898e,true
+377,MEAT,21,Horses: Do not use in horses intended for human consumption,3,6846f1f3-3872-476d-893d-4e03f398d0a1,true
+271,DAIRY,0,,3,d2ca743c-4d9f-4c23-92f5-0e21e74a9d16,true
+1074,DAIRY,0,,3,cf58e450-6d1f-4c7a-bf92-b6cd893f6589,true
+315,MEAT,5,,3,a6038199-a788-4b19-81cd-63930b2637eb,true
+318,MEAT,4,,3,897f3471-bd47-4c29-abf2-dea399956432,true
+334,MEAT,0,,3,e021fcc1-323a-409e-9c94-1cc6a546e624,true
+331,DAIRY,0,Not for use in sheep producing milk for human consumption,3,10d4f75a-69a0-4ce5-913d-b7c57a84c7d5,true
+349,MEAT,77,Cattle/Sheep milk - Not permitted for use in lactating animals producing milk for human consumption.,1,7557a648-9bd4-467f-87a5-e2d4bf27a9a6,true
+747,MEAT,0,"Horse, Goat: Zero days",2,22210759-0e88-49e7-a048-c3c8a65890db,true
+343,DAIRY,0,Not for use in animals producing milk for human consumption.,3,e5a5631d-ac25-478a-97c2-85a55c68bd86,false
+357,MEAT,0,,1,60a8a39f-143a-4fb0-a03b-9094a44dc6f6,true
+403,DAIRY,0,,3,b51551fa-0f86-4192-bda6-6fd96e43690f,true
+406,DAIRY,6,,3,9eacdf55-8f85-4bd9-b938-4e51d4f3ccd9,true
+54,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption.,3,62dabc2c-a592-4011-a924-fb8634d5db87,false
+386,DAIRY,0,,3,86123e55-f2e9-4db8-837c-229a35a1d1b4,true
+387,MEAT,0,,3,86123e55-f2e9-4db8-837c-229a35a1d1b4,true
+388,MEAT,0,,2,86123e55-f2e9-4db8-837c-229a35a1d1b4,true
+390,DAIRY,0,,3,07d8b435-2ba6-4ee7-b78c-3f8ea5a0d85e,true
+397,MEAT,0,,2,87cf9465-9daf-4137-b0ae-3bc2dc0fde74,true
+401,DAIRY,0,,3,7a611c46-3c50-4e39-956b-330791199acf,true
+402,MEAT,8,,3,7a611c46-3c50-4e39-956b-330791199acf,true
+57,MEAT,70,Not permitted for use in lactating animals producing milk for human consumption.,3,7f71bf01-55d3-43d3-88ac-6c147f60742c,true
+1078,MEAT,35,Sheep Milk: Zero hours,2,19ad7135-4a6a-47ce-86d8-bf9cd17464f0,true
+59,DAIRY,4,Horses: 8 days,3,3d25552e-22df-43a0-9e71-0cfcda9848a1,true
+952,MEAT,0,,3,847b4296-8197-41fb-95fe-f412fd090339,true
+414,MEAT,0,Do not use in lactating sheep or cattle producing milk for human consumption,2,abbaad46-e90a-426b-b821-e257657bf9c9,true
+419,MEAT,17,Sheep Milk: Zero hours,3,c07404bf-65e6-4083-adb9-9d3ac45de75a,true
+146,MEAT,0,,2,68b45587-8b28-4a55-82f7-1db927d98f80,true
+425,MEAT,22,,1,4077e8d9-e2bf-4064-912d-5d17cbe55962,true
+63,MEAT,28,Not to be used in horses intended for human consumption.,3,b34dedcd-afcb-4eb4-b982-dd963cb9355c,true
+440,DAIRY,0,Horses: meat and offal: 1 day. Not for use in mares producing milk for human consumption.,3,01ab2346-36e6-4f06-a3cf-711bf3406028,true
+441,MEAT,2,Horses: meat and offal: 1 day. Not for use in mares producing milk for human consumption.,3,01ab2346-36e6-4f06-a3cf-711bf3406028,true
+448,MEAT,22,"Do not use in lactating cattle producing milk for human consumption. Do not use in pregnant cows or heifers, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,e92570d3-d290-47c4-8fe7-9059fbbe705d,true
+473,MEAT,3,Can be safely used during pregnancy and lactation.,1,a58be92b-2b6e-40da-8cc1-54e8889b5198,true
+525,MEAT,15,Milk from cows may be used for human consumption at any time following treatment.,3,742fb18b-5406-4ba4-8e66-6a6dbc9406b0,true
+1092,MEAT,20,,1,f1226a59-241f-455d-93c1-fc208963a371,true
+507,MEAT,28,"Not to be used on animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers, within 60 days of calving.",3,634de0b0-bf5c-4161-a021-2a8def217209,true
+514,MEAT,0,,1,5da32d27-0f22-481d-9a01-1bc4f829b5a0,true
+537,MEAT,6,,3,48d54f04-7e1e-4949-8312-34770d7d1868,true
+538,MEAT,2,,1,48d54f04-7e1e-4949-8312-34770d7d1868,true
+542,MEAT,56,Not authorised for use in ewes producing milk for human consumption including during the dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.,2,ac475b6f-4076-4193-a910-235851306cb1,true
+547,MEAT,10,84 hours (sub-cutaneous use),3,366a62e8-2aa9-4415-9f90-2b2c00522033,true
+581,MEAT,3,,1,ceb6f4cf-221c-4139-9100-6f8fa479cb57,true
+67,MEAT,13,Meat and offal 13 days,3,7dfa2e96-9653-4f80-9307-ff890a36f160,true
+588,MEAT,0,,2,278e84f6-70fa-405f-b60b-a606cc38f8fa,true
+591,MEAT,0,,3,2a8e1974-468f-406d-a3af-ded2a7a13352,true
+600,DAIRY,0,,3,f3ea1a7a-b99b-4d5b-9e54-5307dfc2056e,true
+622,MEAT,4,Cattle - meat = After IV administration = 1 day; After IM administration = 4 days; Horses - meat = 1 day,1,000bf381-9af6-4d62-b4bd-ffa4af838163,true
+611,MEAT,37,"Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers, within 60 days of calving. Do not use in sheep producing milk for human consumption.",2,e39b29c0-6a3e-42ec-9dca-23632cd9ecba,true
+614,MEAT,19,,1,138aa225-94df-411f-8bc5-1824c95ad3b2,true
+626,DAIRY,0,,3,6611aa1e-dc62-4c74-b841-a3e521ed1d96,true
+629,DAIRY,0,,3,7bebc020-b8ba-4d87-b9a1-ab88020220e7,true
+632,DAIRY,0,,3,9606f40d-43d1-415d-a8b3-d43662e550ad,true
+1066,MEAT,0,,2,c61fa781-f83f-470f-9903-2376f327a1be,true
+1067,MEAT,0,,1,c61fa781-f83f-470f-9903-2376f327a1be,true
+73,MEAT,0,,3,77eddc46-605c-4193-b333-012349d9a65a,true
+646,DAIRY,5,Horses: 5 days. Not authorised for use in horses producing milk for human consumption,3,7931c170-316d-49b7-854a-7b2dd643fe24,true
+647,MEAT,15,Horses: 5 days. Not authorised for use in horses producing milk for human consumption,3,7931c170-316d-49b7-854a-7b2dd643fe24,true
+648,MEAT,5,Horses: 5 days. Not authorised for use in horses producing milk for human consumption,1,7931c170-316d-49b7-854a-7b2dd643fe24,true
+662,MEAT,4,,1,d66ff6bd-9ffb-4f20-9966-b3e46971eec6,true
+1144,MEAT,0,,1,35898615-508f-4cb5-a67e-dab7b0fac8ff,true
+673,MEAT,15,Horse meat and offal: 5 days,3,b6c1f5e3-5c52-4575-961b-9aad47c4741e,true
+675,MEAT,5,,1,504f19f0-f075-4a9d-8d03-df62d29a41aa,true
+717,MEAT,28,Not to be used in animals producing milk for human consumption. Not to be used in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,aab4bd5b-abb4-4310-bfee-1f5ae2857a6f,true
+725,MEAT,14,,1,ecfbe7de-46e1-4827-8e7d-6497d12a2c44,true
+803,MEAT,0,,1,d3f798e9-cb2c-42b9-85c2-e11fd3304478,true
+796,MEAT,0,,1,cb0ce2e6-5fc7-49e8-b492-9b5926aa9f9f,true
+799,MEAT,0,,1,38160b4e-33a9-4bf9-97ad-b2d3fc58cdf6,true
+116,DAIRY,0,Do not use in cows producing milk for human consumption,3,dfe40c94-af69-45e7-a714-822efbb4ed12,false
+768,MEAT,2,,3,56adce96-8d38-4bf3-aced-05c532168c52,true
+798,MEAT,0,,1,347d762b-af30-4cb8-bba5-3ab58c2de696,true
+800,MEAT,0,,1,053f4322-c98c-4071-a98b-8318dd3f0935,true
+940,MEAT,77,Cattle & Sheep: Not authorised for use in lactating animals producing milk for human consumption.,1,a3efcbc0-1e42-48cb-8258-ce5997633fd2,true
+948,DAIRY,0,"The product is not permitted for use during lactation in animals producing milk for human consumption.When used in non-lactating cattle: Milk for human consumption may only be taken from 84 hours after calving. Not intended for use within 41 days of calving. If calving occurs before 41 days after treatment, milk for human consumption may only be taken after 41 days plus 84 hours after the treatment.",3,67763022-551b-48d1-bec1-12aff2fd10b0,false
+777,DAIRY,5,,3,53b6f74e-15e2-4ddf-bc0b-96ce59e19c35,true
+780,MEAT,0,Do not use in laying hens producing eggs for human consumption,1,7c6146db-7872-4407-9348-bd0844cd4968,true
+786,MEAT,14,,3,0c6e3603-e5e5-445f-b175-b23f2a95810a,true
+842,MEAT,21,,3,fd606398-4eb5-4948-a2df-22eb2bdbe08e,true
+129,DAIRY,5,Horses: 5 days,3,af6c7dba-538d-469f-b7da-273ce242c664,true
+827,MEAT,0,,1,80aabf3f-f3be-48ac-a471-8a9c7e4d007a,true
+831,MEAT,0,,1,c43fa809-e5cf-4c9a-acf6-e7172b038042,true
+834,DAIRY,6,Horse: Meat - 5 days. Not authorised for use in horses producing milk for human consumption,3,402acc0c-48dc-4894-9161-06f7ef81bda8,true
+848,MEAT,0,,3,f8784474-29b3-4c3f-a73a-ec93cc247e15,true
+855,DAIRY,0,,3,2f912202-43c5-4acc-b985-105fcca1657d,true
+887,DAIRY,0,,3,6aff2100-82f3-4557-809f-c9e91c0ca9b0,true
+866,MEAT,0,,2,67fdfe53-6e83-4bc7-b0c1-8cf5c5528ae1,true
+874,MEAT,4,"Chicken meat: 3 days, following a dose rate of 10 mg/kg body weight for 4 days; 9 days, following a dose rate of 20 mg/kg body weight for 4 days. Eggs: Not authorised for use in birds producing eggs for human consumption. Do not use within 4 weeks of onset of laying.",1,28b07a33-249e-41fa-b81c-2d0d940bbb05,true
+1139,MEAT,18,Additional Info,2,6c95111e-ca7e-4b83-93b2-beac30400151,true
+882,DAIRY,0,,3,5823673f-e0f4-406d-be20-7b99ceaa5b7b,true
+930,MEAT,21,,1,fcb34ee4-706a-46a1-b756-96c3932808fd,true
+909,DAIRY,0,,3,d613466c-2bcd-4804-927c-e5ec6e53fd22,true
+949,MEAT,56,"The product is not permitted for use during lactation in animals producing milk for human consumption.When used in non-lactating cattle: Milk for human consumption may only be taken from 84 hours after calving. Not intended for use within 41 days of calving. If calving occurs before 41 days after treatment, milk for human consumption may only be taken after 41 days plus 84 hours after the treatment.",3,67763022-551b-48d1-bec1-12aff2fd10b0,true
+1103,MEAT,22,Not authorised for use in animals producing milk for human consumption. ,3,aad4e6f5-afd1-443c-9577-48c5c9454129,true
+978,MEAT,0,,3,0d0a08d8-35b1-4a89-bccc-6d34c28c63ea,true
+956,DAIRY,0,Not authorised for use in cattle and sheep producing milk for human consumption including the dry period. Do not use during the last trimester of pregnancy in heifers which are intended to produce milk for human consumption. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption,3,adec271c-f21e-4b07-933e-cb75431fc1bd,false
+1024,DAIRY,0,Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation. Not to be used in animals producing milk for human consumption.,3,0e59dc82-069f-4c01-949e-05579e85c4a7,false
+980,MEAT,10,"If treated at least 35 days before calving, milk must not be used for 36 hours after calving. If treated less than 35 days before calving, milk must not be used for 37 days after treatment.",3,488b8cc0-db0e-4028-bf4c-5eed5089a4de,true
+981,DAIRY,6,Cattle Meat: s/c 13 days; i/m 23 days,3,4160a1dc-9e66-4c32-8e62-ecad493444cf,true
+984,MEAT,28,,1,72d3f84a-33df-4307-820d-bc19e70b6480,true
+993,MEAT,0,Meat and offal: zero days; Milk: zero hours.,3,07eedf48-75cf-4dea-b662-f7fc0a981748,true
+994,DAIRY,0,Horses: Meat and offal/milk - zero days/hours,3,251b98e1-6b62-4c0b-ae83-3ecc318172b3,true
+996,DAIRY,0,Horse meat: Zero days.,3,67440aeb-9dc0-466f-aa3f-f0f7ea63be57,true
+1003,MEAT,21,,1,961208a8-f013-4db8-9b24-91e93bf9847a,true
+1012,DAIRY,0,Cattle - milk = Not to be used in cattle producing milk for human consumption; Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,746a20f3-1eee-468a-8fe7-e5394d78f5e8,false
+1021,MEAT,0,Vitbee 250: Sheep; zero days: Horse & Foal meat: zero days/Vitbee 1000: Horse & Foal meat: zero days,2,bf27dc03-4a39-4abb-b181-760bd625753b,false
+1022,DAIRY,0,Horse meat: Zero days,3,db61b3bc-c395-4a9e-8b0c-5df38ebec8ec,true
+1026,DAIRY,0,Horses: Meat and offal: 1 day,3,9f314ad2-d051-4b06-a819-c225f2f36831,true
+1040,DAIRY,6,Not for use in sheep producing milk for human consumption,3,f7c2727b-46e9-4a70-8c26-2ec6421c73bc,true
+1041,MEAT,14,Not for use in sheep producing milk for human consumption,3,f7c2727b-46e9-4a70-8c26-2ec6421c73bc,true
+1042,MEAT,21,Not for use in sheep producing milk for human consumption,2,f7c2727b-46e9-4a70-8c26-2ec6421c73bc,true
+1048,MEAT,47,"Not authorised for use in lactating animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,878a7009-6455-4634-adbf-5c81bc14ff42,true
+1034,MEAT,14,Withdrawal Period Sheep - milk: 7 days,2,d929a9bf-6075-4c74-89dd-dc480fadcdb9,true
+99,DAIRY,4,Do not use in sheep producing milk for human consumption,3,440e3575-3e36-465d-818c-43d03e8700ff,true
+104,MEAT,49,"Not to be used in animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers within 60 days of calving.",3,352e4966-a5e2-4cc6-a05f-b223fb051253,true
+718,DAIRY,0,,3,d5899a3e-e00a-4327-b835-38baac833a8c,true
+724,MEAT,39,Milk: Not permitted for use in lactating animals producing milk for human consumption including pregnant animals intended to produce milk for human consumption.,2,d157f3a2-3cf0-4d05-92b2-7a3caa90530f,true
+744,MEAT,0,,2,1a7aaac1-91b4-4399-b26b-7b6dd93b20dc,true
+750,MEAT,12,Sheep milk: 168 hours (7 days). Not to be used in horses intended for human consumption.,3,8f747621-02b7-4364-8cb0-3cf68d43b95d,true
+794,MEAT,0,,1,e8cfe1de-3f2c-4d04-99e5-47ef86eb3602,true
+758,MEAT,19,Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving. Do not use in sheep producing milk for human consumption.,1,4d3a0d1a-eee4-4627-9659-d6146b1352b3,true
+117,MEAT,49,Do not use in cows producing milk for human consumption,3,dfe40c94-af69-45e7-a714-822efbb4ed12,true
+762,MEAT,20,,3,2b45e5a4-d0cc-41b9-9b23-b420cf4b460f,true
+766,MEAT,62,,3,2c8b7454-a0c3-4502-b6ef-9974d7937b0c,true
+126,DAIRY,4,Horse - meat: 8 days. Not authorised for use in horses producing milk for human consumption.,3,d7e33c56-200f-4c5b-b779-8744cef7b5a5,true
+128,MEAT,2,Horse - meat: 8 days. Not authorised for use in horses producing milk for human consumption.,1,d7e33c56-200f-4c5b-b779-8744cef7b5a5,true
+1072,MEAT,42,,2,21ecd2ec-0ec1-4ad3-a292-e3123deed150,true
+773,MEAT,0,Do not use in laying hens producing eggs for human consumption,1,fb3424d3-dce7-4cf9-909c-4631cac1796f,true
+789,MEAT,0,When used for superovulation with prostaglandin - Milk 48 hours after 2nd prostaglandin; Meat 28 days,2,d7202432-229d-43f9-9c30-ba43c608afc5,true
+124,DAIRY,0,,3,8326e4fb-a812-470d-98b9-5d23f651d8e6,true
+840,MEAT,4,Horse meat and offal - 4 days,1,0db9a155-2533-407e-add2-0861e6844b4b,true
+818,DAIRY,0,Not to be used in trout intended for human consumption. Horse and rabbit: Zero days.,3,0b194743-335f-4bc4-98ea-4a8cc4746ed8,true
+130,MEAT,15,Horses: 5 days,3,af6c7dba-538d-469f-b7da-273ce242c664,true
+822,MEAT,9,,1,5945c1ce-0286-4850-a5da-5c476db11cbe,true
+846,MEAT,0,,3,42d5f9c9-dfa9-46e9-830e-e72428353e09,true
+886,MEAT,14,,2,5b02facb-98d3-462b-809e-984ea44ea65e,true
+868,MEAT,30,Not permitted for use in lactating animals producing milk for human consumption,3,35fe3434-9ffd-4105-aa36-b2ce732bdebe,true
+881,MEAT,0,Sheep Meat: 10 days from the last treatment; Pig Meat: 12 days from the last treatment,1,d80ca297-7a7c-43a5-b68e-5213d78a76e7,false
+134,MEAT,42,Sheep: Not authorised for use in ewes producing milk for human consumption incl dry period. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption.,2,7cefd9df-8a11-4eb7-a203-8b020663e3a2,true
+1137,DAIRY,1,Additional Info,3,6c95111e-ca7e-4b83-93b2-beac30400151,true
+876,MEAT,0,Not to be used in animals intended for human consumption. Treated animals may never be slaughtered for human or animal consumption. Horses must have been declared as not intended for human consumption under national horse passport legislation.,3,557a844e-b34b-4ccc-a535-745ff9ada97e,false
+900,MEAT,0,,1,11da1a76-a7ec-4534-aaf5-f45d5a627cd9,true
+906,MEAT,42,,3,2cd72daf-09cc-4b9f-8cf3-e3127481fbeb,true
+917,DAIRY,5,,3,2f7fe3f1-a4a9-45c1-879d-a6d385ab37dc,true
+912,DAIRY,7,,3,357351b4-1714-4960-8d2b-5dbbf12d4c32,true
+935,MEAT,70,Sheep milk: 18 days,3,fc793756-8b50-422c-affb-3bba338cbcd4,true
+968,MEAT,16,,1,3c48b4ea-94ed-493f-a644-be3245f01fef,true
+973,DAIRY,6,,3,405e1439-9799-4e77-9068-7319bcc5ad2f,true
+1104,MEAT,16,Not authorised for use in animals producing milk for human consumption. ,2,aad4e6f5-afd1-443c-9577-48c5c9454129,true
+965,MEAT,0,Poultry meat - Chickens: Zero Days @ 20-50 mg/kg; 1 day @ 50-200mg/kg. Turkeys: Zero Days,1,95723047-05e3-433e-ac42-c138fdda844a,true
+976,MEAT,10,,3,848de37d-915f-4086-ba32-0a48a595706e,true
+989,MEAT,0,,2,06f0e161-176d-42f5-842b-b03fd48e1fc4,true
+1007,DAIRY,4,,3,33d2f0f3-66f1-42b7-83e0-9dbae0f36f37,true
+1011,MEAT,9,,1,b99775d6-96aa-4e51-9e68-ab0d0556eafa,true
+1017,DAIRY,0,,3,85c88c2b-7961-4ce6-abc5-f63f8474113b,true
+149,MEAT,0,,3,2c8e61c6-60a3-4e5b-b78d-55ae442af617,true
+1039,MEAT,21,Not for use in sheep producing milk for human consumption,2,08450e2f-0be6-48e6-9822-6ed2f35e97ca,true
+1043,MEAT,7,Not authorised for use in animals producing milk for human consumption.,2,5148f2b4-368a-4cd9-a406-828c277b6041,true
+1031,MEAT,16,"Not authorised for use in lactating animals producing milk for human consumption.Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months (cows, heifers) or 1 month (ewes) of expected parturition.",1,e640af95-645b-4783-a9c5-de64eaf8f08a,true
+211,DAIRY,0,Do not use in milking cows or sheep producing milk for human consumption.,3,7ce62d9f-2090-4af3-bbaa-44348d231e21,false
+213,MEAT,42,Do not use in milking cows or sheep producing milk for human consumption.,2,7ce62d9f-2090-4af3-bbaa-44348d231e21,true
+954,MEAT,5,Turkeys: 3 days. Do not administer to birds producing eggs intended for human consumption.,1,b7695572-9cfd-4944-a896-79e5debf0981,true
+167,MEAT,14,Not for use in sheep producing milk for human consumption,3,f4f33db5-86dc-42a8-b5a4-b5651a843dbd,true
+1253,DAIRY,0,,3,069b2db6-67c1-449a-9ee0-c6492e0e75bb,true
+1175,MEAT,22,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,a4440588-61d4-4bde-9355-8730b1e5dc14,true
+1251,DAIRY,0,,3,4dfdfa78-4b64-4b32-8d9d-cc48d01ec493,true
+1202,MEAT,14,,3,80f44659-c18b-4d7f-acf7-2077693e18a8,true
+1203,MEAT,12,,1,80f44659-c18b-4d7f-acf7-2077693e18a8,true
+1053,MEAT,5,,2,951f56ae-6f51-41d1-8270-6aceb2059452,true
+210,MEAT,240,,3,e1a0cd6e-ecc9-4399-837e-4334bd1c2cdb,true
+736,MEAT,7,Do not use in sheep producing milk for human consumption,2,06821154-316f-4c4d-be64-b8083a15a6c2,true
+1189,MEAT,63,Not permitted for use in lactating animals producing milk for human consumption.,3,83f723e3-82e4-4b7e-b3d8-2c1c1711fceb,true
+1201,DAIRY,6,,3,80f44659-c18b-4d7f-acf7-2077693e18a8,true
+1206,MEAT,28,Not to be used in horses intended for human consumption - see data sheet,3,318aa823-6644-44c8-a1e1-03b21de41585,true
+1167,DAIRY,0,"Not authorised for use in animals producing milk for human consumption
+Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition",3,794ed5c3-954a-407f-8c5d-6993eac40287,false
+1170,MEAT,13,"Not authorised for use in animals producing milk for human consumption
+Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition",1,794ed5c3-954a-407f-8c5d-6993eac40287,true
+1220,MEAT,70,Not to be used in sheep producing milk for human consumption.,2,8ebd81d2-1961-4e04-bd9a-a26f20ae2bdf,true
+1133,MEAT,0,,3,680b54e0-8927-4941-b7fb-45fa3f52442f,true
+374,MEAT,1,Not permitted for use in animals producing milk for human consumption,3,e3f34eb1-b1f9-4260-9b56-43f3581f1961,true
+1227,MEAT,0,48 hours after 2nd prostaglandin treatment. Meat 28 days,1,f1b5dfb7-34db-4465-b645-e07944f9c5ba,true
+1228,MEAT,0,,1,713a134a-838d-4907-9bff-5e9f20fe338d,true
+1178,DAIRY,0,Cattle Milk: not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition. Cattle Meat & offal: 18 days following i/v administration 28 days following i/m administration. Horses: Meat and Offal: 15 days. Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition.,3,4897dbd1-cf85-4c5a-ac81-9162568b3976,false
+426,DAIRY,11,Do not use in sheep producing milk for human consumption. Do not use in horses intended for human consumption,3,5e51ca03-bef5-41f2-847e-ac6231873399,true
+505,MEAT,0,Stained part of the pig skin must be removed prior to the rest of the animal being used for human consumption.,1,fad83119-8af6-4a2b-916d-562293729cc5,true
+635,MEAT,0,,1,8b4542ea-4973-492e-b287-9652cbf24ea9,true
+727,MEAT,64,Not for use in lactating animals producing milk for human consumption,3,e63b5484-5f2d-4c6b-9b55-75193dbedd23,true
+860,MEAT,0,,3,5adea736-b7a7-47ff-bb9d-a6702916f8ac,true
+920,MEAT,31,,3,e6164ead-4354-42bf-a02a-0143cfd1126e,true
+926,MEAT,18,Licensed for use in sheep producing milk for human consumption. Sheep Milk Withdrawal: 7 days,1,c4b24ff6-472c-40b2-9043-8fef4b5f095a,true
+159,MEAT,2,,1,41123862-0a23-4088-908f-87dbbdbd7bae,true
+1056,DAIRY,0,,3,8550fc0b-2ff8-4710-aa83-47a7015963fb,true
+1057,MEAT,20,,3,1d391f20-b907-4c7a-9771-61e7bf59b995,true
+216,DAIRY,5,"Sheep milk: 72 hours, Goats meat and offal: 6 days, Goats milk: 96 hours.",3,71cdc690-25ea-4179-ac6b-0d19582c5d17,true
+218,MEAT,4,"Sheep milk: 72 hours, Goats meat and offal: 6 days, Goats milk: 96 hours.",2,71cdc690-25ea-4179-ac6b-0d19582c5d17,true
+1059,MEAT,15,,3,0392031e-2baa-4032-b2ab-21e71936800c,true
+33,DAIRY,5,Contraindicated for use in sheep producing milk for human consumption,3,55704b4e-7a24-4ede-bda3-c730cb499e00,true
+35,MEAT,29,Contraindicated for use in sheep producing milk for human consumption,2,55704b4e-7a24-4ede-bda3-c730cb499e00,true
+247,MEAT,15,,3,47a0e678-4e31-4bd3-866d-a376730cc506,true
+248,DAIRY,4,Not for use in ewes producing milk for human consumption or food processing,3,7ff7f238-203e-4d2f-a8e6-5ce38f26a77c,true
+251,MEAT,24,Not for use in ewes producing milk for human consumption or food processing,1,7ff7f238-203e-4d2f-a8e6-5ce38f26a77c,true
+501,MEAT,18,Sheep milk: 168 hours (7 days),1,6a1e7e5d-2d39-4667-8b1b-fa03b96bb3ca,true
+266,DAIRY,7,See datasheet - must not be used in treatment of lactating cows. Not intended for use in within 49 days of calving.,3,5c410880-43d8-4274-bb80-9b9040ce9a25,true
+269,DAIRY,0,,3,d61a7cd3-6cb2-431f-8b14-80b73a2fd622,true
+381,MEAT,42,,3,01b643cb-8cf1-4f35-b2b4-d58608089ceb,true
+378,DAIRY,4,Combined Therapy: When using this product and Combiclav Injection in combination: Meat and offal: 42 days Milk: 84 hours From the last treatment of Combiclav Injection following the minimum posology regime.,3,8790e1c2-0df0-47b9-bd21-31a7d1c7e8d4,true
+279,MEAT,24,Do not use in sheep producing milk for human consumption,2,00cb480a-6723-4cf9-80f2-70d2b7d68c21,true
+280,DAIRY,0,,3,862c716e-1cc8-481e-8843-3a69f646cae9,true
+292,DAIRY,0,,3,9847bfc8-748f-4e9a-870e-cfa32844ee54,true
+1097,DAIRY,0,,3,87198791-73b3-4a85-957b-4dab4bbff5ec,true
+39,MEAT,0,,3,da12a36b-6d50-4cde-a806-1b9f2185298c,true
+1075,MEAT,0,,3,cf58e450-6d1f-4c7a-bf92-b6cd893f6589,true
+1083,DAIRY,0,,3,2f481fae-0993-4742-864b-dd176b376dd2,true
+306,MEAT,0,,3,087b3daa-7a6b-4470-991e-902ff36cf506,true
+308,MEAT,0,,3,9555d507-94b5-4d61-9318-7ed5c2b06a39,true
+310,MEAT,21,,3,040d0ef8-a7ea-46a6-b89f-8be51745cefc,true
+336,MEAT,21,,3,92c5117e-034a-4cc8-9624-bf2e7640a929,true
+372,MEAT,0,,1,481ad6b6-596a-4f79-8043-377ab2f12c7a,true
+365,MEAT,7,Not authorised for use in animals producing milk for human consumption.,2,cbd6c585-b13e-466c-a419-8729955a5d49,true
+44,DAIRY,0,Milk: Not authorised for use in cattle and sheep for human consumption,3,02f8f1aa-22af-4912-86ca-f50b0fc4bba8,false
+46,MEAT,28,Milk: Not authorised for use in cattle and sheep for human consumption,2,02f8f1aa-22af-4912-86ca-f50b0fc4bba8,true
+385,MEAT,0,,3,4554f672-8f98-446b-a28d-b65f03229107,true
+394,MEAT,0,,2,bd7a2e85-b0d6-44ea-b2e6-aab3d2d4357d,true
+396,MEAT,0,,3,87cf9465-9daf-4137-b0ae-3bc2dc0fde74,true
+60,MEAT,8,Horses: 8 days,3,3d25552e-22df-43a0-9e71-0cfcda9848a1,true
+420,MEAT,35,Sheep Milk: Zero hours,2,c07404bf-65e6-4083-adb9-9d3ac45de75a,true
+62,DAIRY,2,Not to be used in horses intended for human consumption.,3,b34dedcd-afcb-4eb4-b982-dd963cb9355c,true
+469,MEAT,49,Not to be used in sheep producing milk for human consumption,2,8ddc0efa-4225-47a4-adc6-cd112906e372,true
+475,DAIRY,0,,3,b480910e-840f-4d0d-9940-e5d6d217c2f2,true
+476,MEAT,0,,3,b480910e-840f-4d0d-9940-e5d6d217c2f2,true
+456,MEAT,0,,1,405116b5-b7fd-4f41-b9af-162d07d83403,true
+485,MEAT,14,Not for use in sheep producing milk for human consumption,3,be98813f-073a-4940-8034-081faf2f7502,true
+1111,MEAT,35,,3,fef2b7e4-ea9c-44ea-a452-49c21789b0cd,true
+462,MEAT,12,Not for use in horses intended for human consumption,3,c4db0c51-69e6-4a0b-b23b-a53c013a5bcf,true
+465,MEAT,0,,3,4d3cd6a5-7d8b-4e8a-99c0-c9fe6275e777,true
+1085,DAIRY,6,,3,13e1ee5a-4a83-4c99-a0d6-047222f16470,true
+1086,MEAT,35,,3,13e1ee5a-4a83-4c99-a0d6-047222f16470,true
+520,MEAT,63,Sheep and Goats milk: zero hours,3,b88823cf-fd45-4e3a-b96d-bc03bfd7acd4,true
+554,DAIRY,0,,3,599ae49a-9bec-433b-8fbc-403ca387f67a,true
+562,MEAT,7,,1,c31b385d-1a46-437c-b405-8817fac340d6,true
+557,MEAT,0,Pigs: Dose 1 mg/kg body weight for 5 days: 3 days; Dose 2.5 mg/kg body weight for 2 days: 4 days,1,ea6351de-c861-4f4a-bd81-de1acc4f03d9,false
+1114,DAIRY,0,,3,6e43205b-7615-4211-9ed4-e393b04cb020,true
+508,MEAT,0,Calves: Meat & Offal: I/V 5 days; S/C 12 days; Not authorised for use in animals producing milk for human consumption.,3,e6956557-c57c-431d-8b5d-12f75cb04775,false
+516,MEAT,2,Withdrawal periods apply to meat and offal,3,472868e6-f9d0-488c-9bb9-a32453888392,true
+533,DAIRY,0,Not for use in horses intended for human consumption,3,317a3145-a2e3-45a0-aa02-eec1123c41a3,true
+541,MEAT,27,Not authorised for use in ewes producing milk for human consumption including during the dry period.,2,58bfad17-a572-4ab1-b9ea-d25d810360ab,true
+530,MEAT,0,,1,d7d4041b-e37f-4b07-bc58-ba56260b4ba0,true
+5,MEAT,0,,1,a69c0585-22a7-43ec-a702-966f66b1b190,true
+550,MEAT,14,Not permitted use in lactating animals producing milk for human consumption.,3,5d3c43c2-d990-44d4-957b-6db0160fdac9,true
+66,MEAT,3,,3,5d41eba9-9c3a-4d2a-bc33-2466e229d0c5,true
+583,MEAT,0,,1,ea0270fb-49b1-48e6-9e36-d000dc0fe114,true
+740,MEAT,49,Not to be used on animals producing milk for human consumption,2,520b11bf-e9b3-4a1d-b00b-b9666d7e45e3,true
+589,DAIRY,0,Not for use in cattle producing milk for human consumption,3,98c339b7-8e9e-47e2-b087-bbf2ca909145,false
+592,MEAT,0,,3,0585e454-562f-47a1-9b56-dcd971f13ef0,true
+601,MEAT,0,,3,f3ea1a7a-b99b-4d5b-9e54-5307dfc2056e,true
+618,MEAT,30,Not permitted for use in lactating animals producing milk for human consumption.,3,0d8deb58-e993-47f5-aaf8-a998c9f842bb,true
+608,MEAT,0,,2,6fe51172-5d39-422b-8fbb-47fb3476878f,true
+609,DAIRY,0,"Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers, within 60 days of calving. Do not use in sheep producing milk for human consumption.",3,e39b29c0-6a3e-42ec-9dca-23632cd9ecba,false
+640,MEAT,0,Chicken meat: 5 days.,1,4d5a474f-d981-458a-b735-4165f2f22ce9,true
+666,DAIRY,5,,3,90dfc584-7256-4592-8ca5-765674a6a3af,true
+89,MEAT,2,Horse: Meat and offal - 2 days,3,c21c87d3-ebeb-4b4f-a81c-c27782ccba23,true
+636,DAIRY,0,,3,826404e3-10a3-433d-9630-d486023aaabe,true
+651,MEAT,1,Horses: not to be used in horses intended for slaughter for human consumption,1,02c2b6c3-1a4b-47a5-a9ae-a52225be7f93,true
+85,DAIRY,0,Sheep milk: Zero hours,3,07e81508-3e54-409d-aaa3-4f72897a09e9,true
+86,MEAT,0,Sheep milk: Zero hours,3,07e81508-3e54-409d-aaa3-4f72897a09e9,true
+657,MEAT,4,,1,17a4ff82-9321-4f1a-b24e-59461fc0e2e3,true
+659,MEAT,4,,1,86c90ab8-5407-4404-a105-89b13c885ada,true
+94,MEAT,15,Horse meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption.,3,f6d42bc9-c0f8-49ea-8bd7-d0b0e0dd06ef,true
+709,MEAT,7,,3,54dd1c88-4e68-4629-8ce1-0b26e675feb8,true
+710,DAIRY,5,See datasheet,3,63c60c0e-e4b6-4596-9790-c6a62236eebe,true
+729,MEAT,6,If milk is to be used for human consumption animals should not be treated within 60 days prior to the commencement of lactation,2,d6ea0d15-6bb3-421e-a765-9d5a7fa215d4,true
+730,DAIRY,30,,3,1861b563-5140-4a5c-bdb6-c8cd57fbd86f,true
+698,MEAT,60,"Not for use in sheep producing milk for human consumption, or horses intended for human consumption",1,726e9201-e1cf-4d64-8ce9-6276be53df5b,true
+695,MEAT,4,Horse Meat Withdrawal- 4 days,1,b3e9f72c-09d2-4536-9e17-61dc9c4bb928,true
+101,MEAT,7,Do not use in sheep producing milk for human consumption,2,440e3575-3e36-465d-818c-43d03e8700ff,true
+754,MEAT,200,"Not for use in cattle producing milk for human consumption, or dairy heifers within 200 days of parturition.",3,8fec8bdf-239b-4fdb-b3cd-15e429d881da,true
+764,MEAT,20,,3,8dfa4979-fbcd-4da3-992f-787a96441bda,true
+121,MEAT,23,Milk for human consumption may only be taken from cows after 60 hours from the last treatment. Not to be used in sheep producing milk for human consumption,3,68b870b2-1a93-4772-90a8-b1d575eb9236,true
+127,MEAT,8,Horse - meat: 8 days. Not authorised for use in horses producing milk for human consumption.,3,d7e33c56-200f-4c5b-b779-8744cef7b5a5,true
+864,MEAT,0,Meat: 42 days post 2nd vaccination (meat and offal),1,8b26db4d-fcad-4c8d-b85d-c95e96bb8f8f,false
+770,DAIRY,5,,3,c3d8734a-73e7-4ede-9e49-3af4e659ba94,true
+774,MEAT,12,Turkeys (meat & offal): 2 days. Turkey eggs: Zero days,3,872ea65e-425e-40a6-a2fa-7f34d98f3229,true
+776,MEAT,1,,1,c0311758-9fd5-4d89-aa6d-ffcf9bf08f02,true
+812,DAIRY,1,Not to be used in horses intended for human consumption.,3,5a163e7d-63e0-433d-a64a-d673fb07d615,true
+807,MEAT,0,,1,52549c64-5721-4575-9877-5ed0064deda6,true
+809,MEAT,1,,3,24ec3483-3396-446a-a6b8-d298fd6210c0,true
+810,MEAT,1,,1,24ec3483-3396-446a-a6b8-d298fd6210c0,true
+825,MEAT,0,Offal: Zero days,1,0db3e5bc-9673-435f-b1b5-c2acb2669680,true
+832,DAIRY,4,,3,da56f69d-5952-495c-b433-386d3f404b6c,true
+835,MEAT,15,Horse: Meat - 5 days. Not authorised for use in horses producing milk for human consumption,3,402acc0c-48dc-4894-9161-06f7ef81bda8,true
+847,DAIRY,0,,3,f8784474-29b3-4c3f-a73a-ec93cc247e15,true
+856,MEAT,0,,3,2f912202-43c5-4acc-b985-105fcca1657d,true
+884,MEAT,4,,1,8fda00d3-6028-4bf2-9d4d-9017f3576e0a,true
+889,MEAT,0,,1,bb1da42f-d217-4d86-84be-3787df9f660b,true
+890,DAIRY,0,,3,b98d8e0b-60f6-419c-82c0-ad3673eb8155,true
+894,MEAT,18,,1,5b14dbb4-81ec-4c1c-8f63-eb975b998839,true
+1136,MEAT,18,,1,09e02379-ea47-49a5-a314-dd1b1e67cbd0,true
+878,MEAT,12,Horse meat (IV) - 12 days,3,e7f909c2-0770-4965-8fc5-ae055fc747ca,true
+875,DAIRY,0,Not to be used in animals intended for human consumption. Treated animals may never be slaughtered for human or animal consumption. Horses must have been declared as not intended for human consumption under national horse passport legislation.,3,557a844e-b34b-4ccc-a535-745ff9ada97e,false
+897,MEAT,0,,1,ffb3d640-7b38-49b9-b9e1-7879f2a4ba6f,true
+932,MEAT,42,Broilers: 12 days. Turkeys: 19 days. Not permitted for use in laying birds producing eggs for human consumption.,3,b983236c-9f88-4096-84f0-83f45db1064d,true
+905,DAIRY,3,,3,2cd72daf-09cc-4b9f-8cf3-e3127481fbeb,true
+955,MEAT,0,,3,067cc653-a5b9-477c-ae9d-98f22ced4430,true
+139,MEAT,0,Do not use on the udder of lactating animals if their milk is intended for human consumption. Withdrawal period - Goat meat: Zero days. Withdrawal period - Rabbit meat: Zero days.,3,78686f40-9a8c-4a0e-a790-6c9c45a9cf20,true
+140,MEAT,0,Do not use on the udder of lactating animals if their milk is intended for human consumption. Withdrawal period - Goat meat: Zero days. Withdrawal period - Rabbit meat: Zero days.,2,78686f40-9a8c-4a0e-a790-6c9c45a9cf20,true
+908,MEAT,35,"Not permitted for use in lactating animals producing milk for human consumption. Do not use in pregnant cows or heifers, which are intended to produce milk for human consumption, within 2 months (60 days) of expected parturition.",3,d8c87258-9226-415c-a147-dae80e5c4bdf,true
+913,MEAT,36,,3,357351b4-1714-4960-8d2b-5dbbf12d4c32,true
+962,MEAT,0,,1,0ebecd4d-7f8e-4dac-9a9b-02e5b817e76d,true
+963,MEAT,0,Do not use in laying hens producing eggs for human consumption,1,0657b0c2-5c76-4cc6-99bf-34806abec1b0,true
+975,DAIRY,5,,3,848de37d-915f-4086-ba32-0a48a595706e,true
+971,DAIRY,4,"If calving occurs before 28 days after the last treatment, milk for human consumption may only be taken after 28 days plus 84 hours after the last treatment",3,48493bc8-64bf-4164-b057-acd2b79381d9,true
+990,MEAT,0,,1,06f0e161-176d-42f5-842b-b03fd48e1fc4,true
+1001,MEAT,0,Horse meat and offal: Zero days.,3,712412f5-41fe-4c03-807b-4e5b3d9d27a6,true
+1036,MEAT,56,"Not authorised for use in lactating animals producing milk for human consumption. Do not use in pregnant cows, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,bbd76fff-287d-4ef5-8523-417a1a41fe6c,true
+1045,MEAT,0,,3,0af6307e-c5f4-4b0f-a0c0-55b248e13179,true
+1028,DAIRY,0,"Not authorised for use in lactating animals producing milk for human consumption.Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months (cows, heifers) or 1 month (ewes) of expected parturition.",3,e640af95-645b-4783-a9c5-de64eaf8f08a,false
+18,MEAT,20,Sheep Milk: 7 days,1,0018676f-ac25-43bd-943c-8332c1c04950,true
+1081,MEAT,10,Not for use in sheep producing milk for human consumption.,2,dd8cebef-26f1-4d76-bd79-72d1a07a3db6,true
+1073,MEAT,15,,3,c8f4f908-b0cb-4d85-a98d-4675e71403df,true
+212,MEAT,63,Do not use in milking cows or sheep producing milk for human consumption.,3,7ce62d9f-2090-4af3-bbaa-44348d231e21,true
+1245,MEAT,0,,2,5895daca-c330-4689-b497-2702d94013d3,true
+37,DAIRY,3,Horses: Not to be used in horses intended for human consumption.,3,b6e27f20-e888-4691-ba6b-11c31e0a9e55,true
+38,MEAT,10,Horses: Not to be used in horses intended for human consumption.,3,b6e27f20-e888-4691-ba6b-11c31e0a9e55,true
+1177,MEAT,13,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,a4440588-61d4-4bde-9355-8730b1e5dc14,true
+187,MEAT,28,Not for use in lactating animals producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant dairy heifers within 60 days prior to calving.,3,bc2a2082-5248-4d77-b772-ffefbaddf5c7,true
+1255,MEAT,0,,2,4aa40110-1499-4c00-9e04-c947bcef4158,true
+1250,MEAT,2,Horse meat and offal - 2 days. Do not use in mares producing milk for human consumption.,1,4d514eb7-a767-476f-b67d-f434ef9b8028,true
+707,MEAT,7,,3,56f70c98-6b21-42fd-bfa6-367e1db58d57,true
+1052,DAIRY,3,,3,951f56ae-6f51-41d1-8270-6aceb2059452,true
+165,MEAT,5,Not for use in sheep producing milk for human consumption,2,345571a4-e8f2-470e-950a-180201d2c6b5,true
+1240,MEAT,0,,3,d09a3fb6-5626-46da-af04-b30515fa4b13,true
+706,DAIRY,4,,3,56f70c98-6b21-42fd-bfa6-367e1db58d57,true
+1194,MEAT,12,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,3,b0a387ee-5066-4b85-a30b-4d6075171c80,true
+29,DAIRY,0,Do not use in milking cows or sheep producing milk for human consumption.,3,aff05d96-ab69-47c0-874d-13aad660bd68,false
+1223,MEAT,10,,3,d129a8f3-1056-4333-8093-874eff219b07,true
+728,MEAT,2,,1,22b9adff-90fc-42f0-8a94-f767ec08960f,true
+16,MEAT,41,Sheep Milk: 7 days,3,0018676f-ac25-43bd-943c-8332c1c04950,true
+704,DAIRY,4,,3,4d7582cc-c167-4298-9de0-79ab03007856,true
+1185,DAIRY,0,,3,7db4632f-2d4d-4134-a1c6-11f29ae3d696,true
+684,MEAT,42,"Cattle milk: if the product is administered to cows during the dry period or to pregnant dairy heifers, milk should not be used for human consumption until 36 days after calving.",2,4c567290-88df-4121-94e3-afb83e3f1ba5,true
+1169,MEAT,16,"Not authorised for use in animals producing milk for human consumption
+Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition",2,794ed5c3-954a-407f-8c5d-6993eac40287,true
+10,MEAT,0,Animals must not be slaughtered for human consumption during treatment.,2,e86fd6c9-8792-40a7-8b53-15976e1832b6,true
+755,DAIRY,0,Do not use in cattle producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving. Do not use in sheep producing milk for human consumption.,3,4d3a0d1a-eee4-4627-9659-d6146b1352b3,false
+1225,MEAT,0,48 hours after 2nd prostaglandin treatment. Meat 28 days,3,f1b5dfb7-34db-4465-b645-e07944f9c5ba,true
+1236,MEAT,22,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,0bb2e085-d8cd-4652-84f2-53ef8f04679f,true
+1238,MEAT,13,"Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,0bb2e085-d8cd-4652-84f2-53ef8f04679f,true
+428,MEAT,5,Do not use in sheep producing milk for human consumption. Do not use in horses intended for human consumption,2,5e51ca03-bef5-41f2-847e-ac6231873399,true
+491,MEAT,35,See data sheet for further information on sheep and horses,3,ed4f9311-3951-43c7-a93c-e235301f4899,true
+598,MEAT,0,Horses: meat - Zero days,3,df01281e-6895-4bf1-8985-23bf8751269f,true
+179,MEAT,10,Not for use in sheep producing milk for human consumption.,2,fc990f39-066a-4868-a232-4270f784b68f,true
+158,MEAT,2,,1,1fa9af91-ea88-47df-a2cd-e6e9355fc177,true
+19,DAIRY,8,20 mg/kg dose: Cattle Meat & offal: 28 days/Pigs Meat & offal 14 days/ Sheep Meat & offal 28 days. 30mg/kg dose: Cattle Meat & Offal: 35 days/Pigs Meat & Offal 28 days/Sheep Meat & Offal 28 days. Sheep milk - 8 days,3,8eb443c6-637f-4c6d-93eb-e6eefa70ed51,true
+311,DAIRY,0,,3,628a7080-da9b-41ce-be9e-26e5b848bc39,true
+191,MEAT,28,Do not use in lactating cows producing milk for human consumption. Do not use in cattle producing milk for human consumption or in dairy cows within 60 days prior to calving.,1,8707b271-357c-4dd4-b11c-5d078fadd96b,true
+255,MEAT,0,,3,db3dce9d-6015-4f96-bb1a-a7092109d4da,true
+243,MEAT,31,Not for use in animals producing milk for human consumption,3,b48a493a-3afc-40c7-8131-fd762c78961f,true
+225,MEAT,13,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,1,92d9fa03-1eb4-4c99-90df-77091d2073d7,true
+328,MEAT,5,,1,4b389df6-6b28-4021-a6bb-a8dfd9123cfe,true
+322,MEAT,4,,3,67d9913e-7faf-4faf-bd6b-bdc3f443b8ae,true
+200,MEAT,1,,1,c32c4e61-fc02-4877-84f1-a88d6ed8c023,true
+223,MEAT,12,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,3,92d9fa03-1eb4-4c99-90df-77091d2073d7,true
+25,DAIRY,0,,3,686eab2e-0d4c-4395-8c9b-977a51aa54ab,true
+205,MEAT,0,,2,a44f7b0b-022d-4449-a90f-4ae4b0d3cb41,true
+296,DAIRY,4,,3,314aeb58-f98e-4e98-ba51-90fef648bfb7,true
+297,MEAT,10,,3,314aeb58-f98e-4e98-ba51-90fef648bfb7,true
+232,MEAT,20,Horse: Meat and offal; 50 days. Not authorised for use in horses producing milk for human consumption.,1,3ec71c30-8765-49ac-aa6e-4817c5c633f1,true
+244,DAIRY,0,Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant dairy heifers within 60 days of calving.,3,a6deaf4f-2e18-4680-ad3a-ec71a211aa15,false
+576,DAIRY,0,,3,1ce97d88-cbb2-434a-b90b-acc77a2cdef4,true
+579,MEAT,135,,3,89010b23-0847-4f85-afc6-a2dc086e8546,true
+376,DAIRY,4,Horses: Do not use in horses intended for human consumption,3,6846f1f3-3872-476d-893d-4e03f398d0a1,true
+274,MEAT,0,Do not use during pregnancy and lactation,3,d4aea40b-95a4-4dfe-8f99-bad849211f83,true
+276,MEAT,0,,3,f972eb98-7b87-480c-bdd3-daf11bdc3352,true
+277,DAIRY,4,Do not use in sheep producing milk for human consumption,3,00cb480a-6723-4cf9-80f2-70d2b7d68c21,true
+278,MEAT,19,Do not use in sheep producing milk for human consumption,3,00cb480a-6723-4cf9-80f2-70d2b7d68c21,true
+7,MEAT,213,,3,4065745c-7deb-4fb5-8a97-7e698246a7d6,true
+314,DAIRY,2,,3,a6038199-a788-4b19-81cd-63930b2637eb,true
+330,MEAT,2,1 day after calving when the dry period is more than 5 weeks. 36 days after treatment where the dry period is 5 weeks or less.,3,f1bef1e1-04f4-4db8-8742-d5f491583f8e,true
+335,DAIRY,54,,3,92c5117e-034a-4cc8-9624-bf2e7640a929,true
+4,MEAT,14,Not for use in animals from which milk is produced for human consumption. Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation.,3,90c4a163-b495-456c-9f84-dc057ff6c8a6,true
+113,MEAT,0,,1,6958843b-c316-4b8d-8120-d960367a707a,true
+745,DAIRY,0,"Horse, Goat: Zero days",3,22210759-0e88-49e7-a048-c3c8a65890db,true
+791,MEAT,0,,1,81a09a80-e2e4-4748-bd69-ff6785f43b73,true
+404,MEAT,2,,3,b51551fa-0f86-4192-bda6-6fd96e43690f,true
+52,MEAT,35,,3,60e0669d-4b4a-42d3-bd20-8db2a52e2340,true
+432,DAIRY,4,Horses - meat and offal 8 days. Not authorised for use in horses producing milk for human consumption.,3,b9da4c77-eae0-46fd-896d-ac446e12dbff,true
+443,DAIRY,1,Horse meat and offal: 2 days; Horse milk: 12 hours.,3,9cf9f4a7-00e9-4c71-bc5f-f06ecc7c0bb4,true
+383,MEAT,56,Not authorised for use in ewes producing milk for human consumption,2,31cfa8a2-13a8-4ef9-9c5f-79e20329e3fd,true
+942,MEAT,63,Not authorised for use in lactating animals producing milk for human consumption,3,8692e60e-1ff9-4faa-bb18-9fead49050b8,true
+943,MEAT,42,Not authorised for use in lactating animals producing milk for human consumption,2,8692e60e-1ff9-4faa-bb18-9fead49050b8,true
+56,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption.,3,7f71bf01-55d3-43d3-88ac-6c147f60742c,false
+410,MEAT,104,"Milk: Not permitted for use in dairy sheep, at any stage of life.",2,d761b24d-19ea-4102-8b35-4d20024a6a64,true
+445,MEAT,4,Chickens:Meat and offal: 3 days (at a dose rate of 10 mg/kg b.w.)/Meat and offal: 9 days (at a dose rate of 20 mg/kg b.w.).,1,f3adedf9-7d82-47c6-8755-c2c5a9559957,true
+447,MEAT,8,Not authorised for use in laying birds producing eggs for human consumption,1,d691231a-2b32-4f04-bc88-f6dc21d477c6,true
+449,MEAT,16,"Do not use in lactating cattle producing milk for human consumption. Do not use in pregnant cows or heifers, which are intended to produce milk for human consumption, within 2 months of expected parturition.",2,e92570d3-d290-47c4-8fe7-9059fbbe705d,true
+468,MEAT,28,,3,210cac8d-512b-44d8-8d73-cb9633f12761,true
+455,MEAT,0,,3,405116b5-b7fd-4f41-b9af-162d07d83403,true
+453,MEAT,21,Not to be used in horses intended for human consumption,3,72544e6e-042e-4235-808a-c899fda8b01f,true
+521,DAIRY,0,"Meat and Offal: Cattle - 15 days; Sheep - 2 days; Goats - 1 day. Milk - zero hours for cattle, sheep and goats.",3,72faffa0-5a1b-4b65-8d82-96c509e65e67,true
+551,MEAT,10,Not permitted use in lactating animals producing milk for human consumption.,1,5d3c43c2-d990-44d4-957b-6db0160fdac9,true
+555,MEAT,0,,3,599ae49a-9bec-433b-8fbc-403ca387f67a,true
+564,DAIRY,0,Not for use in sheep producing milk for human consumption,3,c79d2a98-7f37-4c27-9032-78ba35be1175,true
+506,DAIRY,0,"Not to be used on animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers, within 60 days of calving.",3,634de0b0-bf5c-4161-a021-2a8def217209,false
+534,MEAT,1,Not for use in horses intended for human consumption,3,317a3145-a2e3-45a0-aa02-eec1123c41a3,true
+582,MEAT,0,,1,96be299f-a4fc-4bac-b340-c8e60aa0b9fd,true
+586,MEAT,0,Zero days meat withdrawal for Goats.,2,ea580042-df0a-47ab-a74a-9dd1d9970577,true
+68,DAIRY,1,Horses: 2 days,3,b638f76a-d33f-4a30-98f6-9dbe25e6c12e,true
+619,MEAT,18,Not permitted for use in lactating animals producing milk for human consumption.,1,0d8deb58-e993-47f5-aaf8-a998c9f842bb,true
+595,DAIRY,0,,3,461195af-485c-45eb-972a-5a8d2155f94b,true
+1142,DAIRY,0,Horses: meat - Zero days,3,1e7dd5cf-1c9f-476e-86f6-bf6b90d61efd,true
+82,MEAT,0,,3,7f6f9411-bfca-435f-a776-8943d985574c,true
+645,MEAT,0,The product is not intended for use during pregnancy and lactation.,3,d0bbc415-308c-4438-b34f-59473e7b6199,true
+72,MEAT,0,Horse meat: Zero days,1,ef447018-7506-4efe-82a6-91cc70023abf,true
+638,MEAT,20,Do not use in cattle and sheep producing milk for human consumption,3,7ee1ed0e-13a0-440d-a6a6-9bc10f7b6b70,true
+671,MEAT,0,,3,498a5859-8f17-4ee5-9297-7bd3e9e7da4b,true
+74,MEAT,28,Not to be used on animals producing milk for human consumption. This product must not be used in cattle and sheep producing milk for human consumption.,3,084bd93e-c282-4b24-a046-23492e5f1536,true
+76,MEAT,14,Not to be used in cattle and sheep producing milk for human consumption,3,cc3b1e80-87e3-4a26-ad4a-b48dc49d51f0,true
+650,MEAT,2,Horses: not to be used in horses intended for slaughter for human consumption,3,02c2b6c3-1a4b-47a5-a9ae-a52225be7f93,true
+654,MEAT,7,,3,8efab6ca-a989-4f08-b295-779bdbc4d5b3,true
+93,DAIRY,6,Horse meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption.,3,f6d42bc9-c0f8-49ea-8bd7-d0b0e0dd06ef,true
+676,MEAT,8,Not for use in birds producing or intending to produce eggs for human consumption.,1,f1644844-a779-4209-8e80-06359cece23e,true
+681,MEAT,42,Sheep milk: 432 hours (18 days). Cattle and Sheep -,2,4d3d9c99-644c-4c9d-89d2-4e982b476fc1,true
+1118,MEAT,15,,3,e9609f7f-be11-41a8-a5a2-8316d4529b64,true
+689,MEAT,2,,1,ed715f6f-0b4f-4ce6-96fe-c3401c297c49,true
+708,DAIRY,4,,3,54dd1c88-4e68-4629-8ce1-0b26e675feb8,true
+97,MEAT,28,,3,36108629-5255-4381-bbb0-8f4ba0a6c09f,true
+693,DAIRY,0,Horse Meat Withdrawal- 4 days,3,b3e9f72c-09d2-4536-9e17-61dc9c4bb928,true
+716,DAIRY,0,Not to be used in animals producing milk for human consumption. Not to be used in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,aab4bd5b-abb4-4310-bfee-1f5ae2857a6f,false
+107,DAIRY,0,Sheep Milk: Zero hours/Horses: Zero days,3,4eb1544c-cef6-48a0-927c-588ca3d66918,true
+723,MEAT,30,Milk: Not permitted for use in lactating animals producing milk for human consumption including pregnant animals intended to produce milk for human consumption.,3,d157f3a2-3cf0-4d05-92b2-7a3caa90530f,true
+739,MEAT,28,,2,4ca6d67c-0e1c-4415-9073-ada5406be672,true
+1127,MEAT,0,Horse and Goat Zero days,1,bdd96d62-1dc0-4a9b-9a91-987016c0413a,true
+759,MEAT,70,Do not treat sheep producing milk for human consumption,2,edace2fa-bb82-4af3-b3a4-04f5606edc4f,true
+763,MEAT,3,,1,2b45e5a4-d0cc-41b9-9b23-b420cf4b460f,true
+802,MEAT,0,,1,5b3a2f2b-35fc-4587-8d1c-754b2694cad5,true
+801,MEAT,0,,1,b177b81e-e450-4edd-bf6e-5c98c75f2fd0,true
+805,MEAT,0,,1,a88e31df-70e7-4701-b135-87beac26cfdc,true
+1071,MEAT,22,Horses: Meat and offal: 10 Days Milk: The product is not authorised for use in lactating mares producing milk for human consumption.,1,077e682f-5380-474f-ab7c-3af728b84a65,true
+938,MEAT,63,Cattle & Sheep: Not authorised for use in lactating animals producing milk for human consumption.,3,a3efcbc0-1e42-48cb-8258-ce5997633fd2,true
+947,MEAT,0,,3,abf9e578-38cd-4680-bf5b-c0ca5e13f1a0,true
+775,MEAT,1,Turkeys (meat & offal): 2 days. Turkey eggs: Zero days,1,872ea65e-425e-40a6-a2fa-7f34d98f3229,true
+815,MEAT,21,Rabbits: 4 days,1,74459c43-03a6-4a9f-b008-9f15ab14dc44,true
+1069,DAIRY,2,Horses: Meat and offal: 10 Days Milk: The product is not authorised for use in lactating mares producing milk for human consumption.,3,077e682f-5380-474f-ab7c-3af728b84a65,true
+1135,MEAT,7,Not authorized for use in laying birds producing eggs for human consumption,1,ba9ce4fd-1bd7-4721-86f2-0c7b0c779283,true
+839,MEAT,4,Horse meat and offal - 4 days,3,0db9a155-2533-407e-add2-0861e6844b4b,true
+131,MEAT,5,Horses: 5 days,1,af6c7dba-538d-469f-b7da-273ce242c664,true
+844,MEAT,0,,3,b3bd1547-8c9f-4dea-a6c6-a24b97c975d4,true
+845,DAIRY,0,,3,42d5f9c9-dfa9-46e9-830e-e72428353e09,true
+851,DAIRY,0,,3,ac2bd3ff-bc8c-4d6c-8a56-173a83ae158d,true
+853,DAIRY,0,,3,ad1a6a11-ed85-4d01-ba13-158f17cc04e8,true
+857,DAIRY,0,Do not use in horses intended for human consumption,3,e3df68e1-289e-45de-898e-ab9dd69aacc3,true
+135,DAIRY,0,Not authorised for use in ewes producing milk for human consumption,3,3556de1d-44a2-452c-9638-94c91da247e0,true
+873,MEAT,0,Do not use in cows producing milk for human consumption,1,5a09611a-aab1-4f52-9bed-cd3290271522,true
+1140,MEAT,9,Additional Info,1,6c95111e-ca7e-4b83-93b2-beac30400151,true
+883,MEAT,0,,3,5823673f-e0f4-406d-be20-7b99ceaa5b7b,true
+138,DAIRY,0,Do not use on the udder of lactating animals if their milk is intended for human consumption. Withdrawal period - Goat meat: Zero days. Withdrawal period - Rabbit meat: Zero days.,3,78686f40-9a8c-4a0e-a790-6c9c45a9cf20,true
+910,MEAT,0,,3,d613466c-2bcd-4804-927c-e5ec6e53fd22,true
+936,MEAT,42,Sheep milk: 18 days,2,fc793756-8b50-422c-affb-3bba338cbcd4,true
+959,DAIRY,5,,3,d1dccb59-8d43-4888-888d-0f72a16024cb,true
+960,MEAT,28,,3,d1dccb59-8d43-4888-888d-0f72a16024cb,true
+964,MEAT,14,Poultry meat - Chickens: Zero Days @ 20-50 mg/kg; 1 day @ 50-200mg/kg. Turkeys: Zero Days,3,95723047-05e3-433e-ac42-c138fdda844a,true
+982,MEAT,0,Cattle Meat: s/c 13 days; i/m 23 days,3,4160a1dc-9e66-4c32-8e62-ecad493444cf,false
+1016,MEAT,66,Not to be used in cattle producing milk for human consumption. Not to be used in non-lactating dairy cows including pregnant heifers within 60 days of calving,3,74cd3594-a89a-42f7-9e77-79bc7b1da12d,true
+1035,DAIRY,0,"Not authorised for use in lactating animals producing milk for human consumption. Do not use in pregnant cows, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,bbd76fff-287d-4ef5-8523-417a1a41fe6c,false
+1033,MEAT,13,Withdrawal Period Sheep - milk: 7 days,3,d929a9bf-6075-4c74-89dd-dc480fadcdb9,true
+31,MEAT,42,Do not use in milking cows or sheep producing milk for human consumption.,2,aff05d96-ab69-47c0-874d-13aad660bd68,true
+17,MEAT,24,Sheep Milk: 7 days,2,0018676f-ac25-43bd-943c-8332c1c04950,true
+169,DAIRY,4,,3,0adf963a-e26c-438a-ab03-c85ee642d5d0,true
+1243,DAIRY,0,,3,5895daca-c330-4689-b497-2702d94013d3,true
+1244,MEAT,0,,3,5895daca-c330-4689-b497-2702d94013d3,true
+1259,MEAT,1,Horses: Meat and Offal: 1 day. Milk: Not authorised for use in lactating animals producing milk for human consumption.,3,4910c05a-63a2-494e-a4b2-8ff5b4098654,true
+1094,MEAT,4,Not authorised for use in birds producing eggs for human consumption.,1,00e4b8df-fb72-415b-aac0-a113c9a1a313,true
+164,MEAT,14,Not for use in sheep producing milk for human consumption,3,345571a4-e8f2-470e-950a-180201d2c6b5,true
+1200,MEAT,13,"Sheep milk: 72 hours, Goats meat: 6 days, Goats milk: 96 hours",1,81942b4b-fe38-427e-bb51-41a5313003d3,true
+151,MEAT,0,,3,904de9bc-9622-45b6-b6f1-9f057af14b95,true
+153,MEAT,8,,3,6849c3f4-a81a-41dd-9701-e046f4e28215,true
+1222,DAIRY,5,,3,d129a8f3-1056-4333-8093-874eff219b07,true
+12,MEAT,0,Sheep milk: Zero hours,3,807a0118-6b67-4b5b-8cfe-9d32689aa455,true
+208,MEAT,10,Ducks (meat): 4 days. Not to be used in laying birds producing eggs for human consumption,1,e004b500-c2dd-4c26-b862-6f4030db5feb,true
+8,DAIRY,0,Animals must not be slaughtered for human consumption during treatment.,3,e86fd6c9-8792-40a7-8b53-15976e1832b6,true
+1204,MEAT,10,,1,5a627e00-6f99-4a35-afa3-10aea5fe53fc,true
+1182,MEAT,19,,3,44bfabb5-dafb-451d-9c10-d245242bfff3,true
+1183,DAIRY,0,Horses - meat: Zero days,3,bc0b508d-9ac8-4362-bc64-797075eb2429,true
+1211,MEAT,31,"Not permitted for use in lactating cattle producing milk for human consumption. Do not use in non-lactating diary cows, including pregnant dairy heifers, within 60 days of calving.",3,2c4e9e3c-0049-4014-bb2f-121842a77b09,true
+1172,MEAT,16,Not authorised for use in lactating animals producing milk for human consumption. ,2,19e49208-747e-4614-8674-75c368e076a0,true
+1132,DAIRY,0,,3,680b54e0-8927-4941-b7fb-45fa3f52442f,true
+1124,DAIRY,0,Horse and Goat Zero days,3,bdd96d62-1dc0-4a9b-9a91-987016c0413a,true
+1179,MEAT,0,Cattle Milk: not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition. Cattle Meat & offal: 18 days following i/v administration 28 days following i/m administration. Horses: Meat and Offal: 15 days. Not authorised for use in animals producing milk for human consumption. Do not use in pregnant animals which are intended to produce milk for human consumption within 2 months of expected parturition.,3,4897dbd1-cf85-4c5a-ac81-9162568b3976,false
+502,DAIRY,0,Stained part of the pig skin must be removed prior to the rest of the animal being used for human consumption.,3,fad83119-8af6-4a2b-916d-562293729cc5,true
+503,MEAT,0,Stained part of the pig skin must be removed prior to the rest of the animal being used for human consumption.,3,fad83119-8af6-4a2b-916d-562293729cc5,true
+43,MEAT,0,Sheep milk: Zero hours,2,99265db6-3cfc-4910-b171-6095197a4562,true
+859,DAIRY,0,,3,5adea736-b7a7-47ff-bb9d-a6702916f8ac,true
+924,MEAT,31,Licensed for use in sheep producing milk for human consumption. Sheep Milk Withdrawal: 7 days,3,c4b24ff6-472c-40b2-9043-8fef4b5f095a,true
+925,MEAT,9,Licensed for use in sheep producing milk for human consumption. Sheep Milk Withdrawal: 7 days,2,c4b24ff6-472c-40b2-9043-8fef4b5f095a,true
+1054,MEAT,15,,3,8e86c63f-1fe8-4937-a3e8-dda3ce41815f,true
+178,MEAT,18,Not for use in sheep producing milk for human consumption.,3,fc990f39-066a-4868-a232-4270f784b68f,true
+161,MEAT,14,Not to be used in sheep producing milk for human consumption,3,2d0bf00c-8ee0-421a-987d-3f8cdcbb153e,true
+320,MEAT,2,Milk: 1 day after calving when dry period is more than 5 weeks/36 days after treatment when dry period is 5 weeks or less,3,b093884a-710b-4f97-88e8-e1c484ea9200,true
+188,MEAT,10,"Do not use in lactating sheep producing milk for human consumption. Sheep must not be treated within 60 days prior to the commencement of lactation, if milk is to be used for human consumption.",2,e554e17a-1fe6-409d-8887-73b4ffd14434,true
+189,DAIRY,0,Do not use in lactating cows producing milk for human consumption. Do not use in cattle producing milk for human consumption or in dairy cows within 60 days prior to calving.,3,8707b271-357c-4dd4-b11c-5d078fadd96b,false
+192,DAIRY,0,Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,9da16e54-a80a-4c54-b951-86a5677ec199,false
+193,MEAT,66,Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows including pregnant heifers within 60 days of calving.,3,9da16e54-a80a-4c54-b951-86a5677ec199,true
+290,DAIRY,0,,3,95facc6c-b7b1-45ee-ae66-bcbc305f7c36,true
+241,MEAT,28,Do not use in lactating dairy cows. Do not use in non-lactating dairy cows incl. pregnant dairy heifers within 60 days of calving.,1,2065c3f2-13b7-4475-a284-bb7e172be40f,true
+227,MEAT,14,,3,94c95dfd-66e5-4bf3-9a05-7b0f49051196,true
+198,MEAT,0,Rabbit Meat Zero days. Not for use in birds producing or intended to produce eggs for human consumption. Do not use within 4 weeks of the start of the laying period.,1,c946d0f3-15ee-4f98-a3b0-e05c93b01f7a,true
+201,MEAT,28,,3,0957a1ad-f512-42d8-b93c-7be83a4c306b,true
+222,DAIRY,0,Not authorised for use in cattle producing milk for human consumption. Sheep milk: 72 hours. Goats meat and offal: 6 days. Goats milk 96 hours.,3,92d9fa03-1eb4-4c99-90df-77091d2073d7,false
+26,MEAT,0,,3,686eab2e-0d4c-4395-8c9b-977a51aa54ab,true
+324,MEAT,8,,3,fe2ecd8e-6f27-4d50-a269-435014078129,true
+332,MEAT,19,Not for use in sheep producing milk for human consumption,3,10d4f75a-69a0-4ce5-913d-b7c57a84c7d5,true
+237,MEAT,28,Not intended for use in animals producing milk for human consumption,3,702d4356-3253-4300-a344-bd18e2e9d87b,true
+260,MEAT,0,,2,d9e5689d-5e44-496c-8803-2ee32a2eef2e,true
+495,MEAT,35,See data sheet for further information on sheep and horses,3,b3cdfc9b-41e0-42b9-8ea2-707badd2862a,true
+578,DAIRY,3,,3,89010b23-0847-4f85-afc6-a2dc086e8546,true
+338,DAIRY,0,"Cattle offal : 8 days, Pig offal: 5 days",3,b9b9c499-e9e7-4a48-898e-4fb0c8cf1014,true
+382,MEAT,56,Not authorised for use in cattle producing milk for human consumption including during the dry period. Do not use during the last trimester of pregnancy in heifers which are intended to produce milk for human consumption.,3,92877074-f18b-4baf-bdf5-a34f90c9f43a,true
+283,MEAT,0,,3,615e20ce-cc5f-4f5d-9cc6-18e801d87043,true
+1063,MEAT,66,,3,fe89be80-3136-4e7b-8af0-d62968dc34e9,true
+712,DAIRY,3,Horse: not to be used in horses intended for human consumption,3,c83db833-4b96-45bd-8c06-c6f31c519325,true
+3,DAIRY,0,Not for use in animals from which milk is produced for human consumption. Not to be used in horses intended for human consumption. Treated horses may never be slaughtered for human consumption. The horse must have been declared as not intended for human consumption under national horse passport legislation.,3,90c4a163-b495-456c-9f84-dc057ff6c8a6,false
+347,MEAT,63,Cattle/Sheep milk - Not permitted for use in lactating animals producing milk for human consumption.,3,7557a648-9bd4-467f-87a5-e2d4bf27a9a6,true
+352,MEAT,0,Horses: Meat - Zero days,3,0c86892d-a383-42ae-9958-85090fac83af,true
+112,MEAT,0,,2,6958843b-c316-4b8d-8120-d960367a707a,true
+746,MEAT,0,"Horse, Goat: Zero days",3,22210759-0e88-49e7-a048-c3c8a65890db,true
+341,MEAT,63,Pig offal: 77 days. Cattle offal: 63 days. Not authorised for use in animals producing milk for human consumption.,3,7daac09a-cb57-48eb-9e90-0e1a87a6342e,true
+342,MEAT,77,Pig offal: 77 days. Cattle offal: 63 days. Not authorised for use in animals producing milk for human consumption.,1,7daac09a-cb57-48eb-9e90-0e1a87a6342e,true
+345,MEAT,20,Not for use in animals producing milk for human consumption.,2,e5a5631d-ac25-478a-97c2-85a55c68bd86,true
+355,MEAT,0,,3,3ad9b942-ae83-4176-8f64-3521eabc7836,true
+371,MEAT,4,"See datasheet, when using Cobactan MC and Cobactan 25 mg/ml in combination.",3,b0840599-a3c6-453c-89ff-e6713e962f4c,true
+375,MEAT,0,,1,b4ceb7e7-ca6b-47db-b1f9-18a1e36f8477,true
+361,MEAT,47,Not for use in sheep producing milk for human consumption,2,6a376505-3f26-412a-a9b9-957a5d7fd382,true
+366,MEAT,58,See data sheet. Not authorised for cattle producing milk for human consumption including dry period.,3,f269eb3d-e4bb-499d-964b-70f7137db893,true
+384,DAIRY,0,,3,4554f672-8f98-446b-a28d-b65f03229107,true
+416,MEAT,17,Not for use in ewes producing milk for human consumption,3,504a8c1b-69de-446b-8f07-5b6ccfd0d7bd,true
+1076,DAIRY,0,Sheep Milk: Zero hours,3,19ad7135-4a6a-47ce-86d8-bf9cd17464f0,true
+431,MEAT,0,Horses: Zero days,3,9b594bf3-1afb-41c7-9edb-fb030c6f2423,true
+945,MEAT,42,,2,8126a7af-7683-43ac-87a9-f1bade11be90,true
+951,DAIRY,0,,3,847b4296-8197-41fb-95fe-f412fd090339,true
+411,MEAT,31,Milk: not permitted for use in sheep producing milk intended for human consumption,2,6df72c51-bce3-4783-9c5d-6f6f17a64478,true
+418,DAIRY,0,Sheep Milk: Zero hours,3,c07404bf-65e6-4083-adb9-9d3ac45de75a,true
+1107,MEAT,5,,3,118ffcee-8ffc-465d-b28c-4f22fcf43f75,true
+442,MEAT,3,Horses: meat and offal: 1 day. Not for use in mares producing milk for human consumption.,1,01ab2346-36e6-4f06-a3cf-711bf3406028,true
+450,MEAT,13,"Do not use in lactating cattle producing milk for human consumption. Do not use in pregnant cows or heifers, which are intended to produce milk for human consumption, within 2 months of expected parturition.",1,e92570d3-d290-47c4-8fe7-9059fbbe705d,true
+479,MEAT,8,,3,446d0ae2-2589-49a5-b803-717a512af803,true
+470,MEAT,12,The product can be administered to sows at any stage of pregnancy or lactation. This product can be used in breeding animals,1,44f9d865-3b77-47c8-8cea-8f544eaecb0c,true
+472,MEAT,0,,1,60ec7328-0871-4342-86fb-7cb9a4bfbd72,true
+458,MEAT,18,Not for use in sheep producing milk for human consumption,3,ceaa18ab-de50-4076-a1e9-82af2d9dfd58,true
+461,DAIRY,3,Not for use in horses intended for human consumption,3,c4db0c51-69e6-4a0b-b23b-a53c013a5bcf,true
+523,MEAT,2,"Meat and Offal: Cattle - 15 days; Sheep - 2 days; Goats - 1 day. Milk - zero hours for cattle, sheep and goats.",2,72faffa0-5a1b-4b65-8d82-96c509e65e67,true
+526,DAIRY,0,,3,c363b75a-8941-49ca-bd15-388a6109b825,true
+529,MEAT,15,,3,0c6ca1df-fb4a-4227-89c2-c3e882f0b05b,true
+552,DAIRY,2,See datasheet for further information.,3,4bd09c56-5f1c-46d0-8d24-3877f2597c93,true
+556,MEAT,0,Pigs: dose 1 mg/kg body weight for 5 days: 3 days/dose 2.5 mg/kg body weight for 2 days: 4 days,1,0e1665aa-fd6a-41e3-859f-03d89c7315c2,false
+558,MEAT,37,Not permitted for use in lactating animals producing milk for human consumption.,3,d74946a8-6e3a-4b08-b1cb-4261c09369fc,true
+560,MEAT,7,,1,32c18c59-d50c-455c-ad37-5b747c9161eb,true
+1089,DAIRY,8,,3,f1226a59-241f-455d-93c1-fc208963a371,true
+1091,MEAT,24,,2,f1226a59-241f-455d-93c1-fc208963a371,true
+1117,MEAT,0,,1,6e43205b-7615-4211-9ed4-e393b04cb020,true
+517,MEAT,2,Withdrawal periods apply to meat and offal,1,472868e6-f9d0-488c-9bb9-a32453888392,true
+519,DAIRY,0,Sheep and Goats milk: zero hours,3,b88823cf-fd45-4e3a-b96d-bc03bfd7acd4,true
+531,DAIRY,0,Not to be used in horses intended for human consumption.,3,ce6bb595-73b8-4ed9-a58b-a99031dcc7d9,true
+65,DAIRY,1,,3,5d41eba9-9c3a-4d2a-bc33-2466e229d0c5,true
+580,MEAT,20,,3,ceb6f4cf-221c-4139-9100-6f8fa479cb57,true
+599,MEAT,0,,1,c5f67aa3-6526-4119-9f77-6f077ea915b1,true
+621,MEAT,0,Cattle - meat = After IV administration = 1 day; After IM administration = 4 days; Horses - meat = 1 day,3,000bf381-9af6-4d62-b4bd-ffa4af838163,false
+610,MEAT,49,"Do not use in cattle producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers, within 60 days of calving. Do not use in sheep producing milk for human consumption.",3,e39b29c0-6a3e-42ec-9dca-23632cd9ecba,true
+594,MEAT,0,,1,75a71eef-325b-44a8-92a5-d2b40778ca30,true
+612,DAIRY,0,Do not use in cows producing milk for human consumption and in non-lactating dairy cows including pregnant heifers within 60 days of calving,3,46aacf18-4ade-4e66-b572-4742b9fa58cc,false
+79,MEAT,5,Must not be used in cattle and sheep producing milk for human consumption.,3,7b8414db-eb83-40ea-8d83-055be1701f79,true
+669,MEAT,2,Horses Meat and offal: 2 days,3,2fde4e14-55f3-4910-bb03-fc01f6b09988,true
+670,DAIRY,0,,3,498a5859-8f17-4ee5-9297-7bd3e9e7da4b,true
+628,MEAT,0,,2,6611aa1e-dc62-4c74-b841-a3e521ed1d96,true
+630,MEAT,0,,3,7bebc020-b8ba-4d87-b9a1-ab88020220e7,true
+631,MEAT,13,,3,967e0be8-bdb0-40c7-b6f1-af77d7bf4247,true
+655,DAIRY,2,,3,17a4ff82-9321-4f1a-b24e-59461fc0e2e3,true
+661,MEAT,6,,3,d66ff6bd-9ffb-4f20-9966-b3e46971eec6,true
+90,DAIRY,6,Horse meat and offal: 5 days. Not authorised for use in horses producing milk for human consumption.,3,d5be7c5d-b341-4a95-930b-839a90299833,true
+687,DAIRY,0,96 hours post calving in cows with a dry period of more than 50 days. 50 days plus 96 hours after treatment from cows with a dry period of 50 days or less.,3,38fb6868-62a6-4e1d-907c-946e79aea4a8,false
+686,MEAT,7,,3,8d33da91-f87c-4508-a331-35ad2c8b1a3f,true
+96,DAIRY,0,,3,36108629-5255-4381-bbb0-8f4ba0a6c09f,true
+98,MEAT,0,,3,92f573cd-8d2b-4ab4-a950-a81015604530,true
+102,MEAT,14,Do not us in sheep producing milk for human consumption,2,45d5e321-8e81-4049-ae55-d31a15554de6,true
+108,MEAT,0,Sheep Milk: Zero hours/Horses: Zero days,3,4eb1544c-cef6-48a0-927c-588ca3d66918,true
+1120,DAIRY,0,Horses: Meat and offal: 1 day; Milk: Zero hours,3,db1b72db-09c3-4ce4-83be-272e9a258e71,true
+105,MEAT,42,"Not to be used in animals producing milk for human consumption. Do not use in non-lactating dairy cows, including pregnant heifers within 60 days of calving.",2,352e4966-a5e2-4cc6-a05f-b223fb051253,true
+749,DAIRY,5,Sheep milk: 168 hours (7 days). Not to be used in horses intended for human consumption.,3,8f747621-02b7-4364-8cb0-3cf68d43b95d,true
+118,MEAT,42,Do not use in cows producing milk for human consumption,2,dfe40c94-af69-45e7-a714-822efbb4ed12,true
+120,DAIRY,0,Milk for human consumption may only be taken from cows after 60 hours from the last treatment. Not to be used in sheep producing milk for human consumption,3,68b870b2-1a93-4772-90a8-b1d575eb9236,false
+861,DAIRY,5,,3,7e5b4ad9-f04f-4cb5-a884-544e128afb94,true
+862,MEAT,13,,3,7e5b4ad9-f04f-4cb5-a884-544e128afb94,true
+779,MEAT,16,,1,53b6f74e-15e2-4ddf-bc0b-96ce59e19c35,true
+1129,MEAT,2,,1,e26e8912-03bb-4b07-817c-619999b71ef5,true
+843,DAIRY,0,,3,b3bd1547-8c9f-4dea-a6c6-a24b97c975d4,true
+821,MEAT,0,Milk: Zero hours,2,729c196e-b66e-43ab-af2a-638b7acab4a8,true
+824,MEAT,0,Offal: Zero days,3,0db3e5bc-9673-435f-b1b5-c2acb2669680,true
+833,MEAT,10,,3,da56f69d-5952-495c-b433-386d3f404b6c,true
+854,MEAT,0,,3,ad1a6a11-ed85-4d01-ba13-158f17cc04e8,true
+858,MEAT,1,Do not use in horses intended for human consumption,3,e3df68e1-289e-45de-898e-ab9dd69aacc3,true
+891,MEAT,0,,3,b98d8e0b-60f6-419c-82c0-ad3673eb8155,true
+867,DAIRY,0,Not permitted for use in lactating animals producing milk for human consumption,3,35fe3434-9ffd-4105-aa36-b2ce732bdebe,false
+871,DAIRY,0,Do not use in cows producing milk for human consumption,3,5a09611a-aab1-4f52-9bed-cd3290271522,false
+899,MEAT,0,,1,9fb6e85b-f236-4380-b0fe-a9d7d87783cb,true
+901,MEAT,0,,1,ae9ebd45-7b03-4bff-a536-8c2851ab6ed7,true
+902,MEAT,9,,3,6b1f0801-958b-44d5-9565-414a2390d1af,true
+141,MEAT,14,Do not use on the udder of lactating animals if their milk is intended for human consumption. Withdrawal period - Goat meat: Zero days. Withdrawal period - Rabbit meat: Zero days.,1,78686f40-9a8c-4a0e-a790-6c9c45a9cf20,true
+918,MEAT,7,,3,2f7fe3f1-a4a9-45c1-879d-a6d385ab37dc,true
+927,MEAT,0,Pig meat; Meat & offal: 2 days (8.8 mg tiamulin hydrogen fumarate); 4 days (20 mg tiamulin hydrogen fumarate). Poultry meat; Meat & offal: Chickens - 2 days; Turkeys - 6 days.,1,d8171ff5-8df0-42cc-8152-5acc5099648b,false
+934,DAIRY,36,Sheep milk: 18 days,3,fc793756-8b50-422c-affb-3bba338cbcd4,true
+967,MEAT,28,,3,3c48b4ea-94ed-493f-a644-be3245f01fef,true
+957,MEAT,60,Not authorised for use in cattle and sheep producing milk for human consumption including the dry period. Do not use during the last trimester of pregnancy in heifers which are intended to produce milk for human consumption. Do not use within 1 year prior to the first lambing in ewes intended to produce milk for human consumption,3,adec271c-f21e-4b07-933e-cb75431fc1bd,true
+969,DAIRY,0,,3,c80908c5-58bf-48ee-8ad7-0198d4651e57,true
+992,DAIRY,0,Meat and offal: zero days; Milk: zero hours.,3,07eedf48-75cf-4dea-b662-f7fc0a981748,true
+997,MEAT,0,Horse meat: Zero days.,3,67440aeb-9dc0-466f-aa3f-f0f7ea63be57,true
+1027,MEAT,1,Horses: Meat and offal: 1 day,3,9f314ad2-d051-4b06-a819-c225f2f36831,true
+986,MEAT,0,,1,2f58ee11-fb93-471b-94f7-0b60ec167e9e,true
+1000,DAIRY,0,Horse meat and offal: Zero days.,3,712412f5-41fe-4c03-807b-4e5b3d9d27a6,true
+1004,MEAT,0,Turkeys: meat and offal: 6 days,1,16d3cdaf-34df-4db7-8eee-20bf85cd4b4c,false
+1015,MEAT,28,Do not use within 60 days of calving/Not for use in cows producing milk for human consumption,3,0b1e8401-fc11-41b1-88df-e95ebadf9ec9,true
+1010,MEAT,0,,2,628e2a76-643b-44e4-8464-61d8bbc36382,true
+1023,MEAT,0,Horse meat: Zero days,3,db61b3bc-c395-4a9e-8b0c-5df38ebec8ec,true
+1037,DAIRY,6,Not for use in sheep producing milk for human consumption,3,08450e2f-0be6-48e6-9822-6ed2f35e97ca,true
+1047,DAIRY,0,"Not authorised for use in lactating animals producing milk for human consumption. Do not use in pregnant animals, which are intended to produce milk for human consumption, within 2 months of expected parturition.",3,878a7009-6455-4634-adbf-5c81bc14ff42,false
+1044,DAIRY,0,,3,0af6307e-c5f4-4b0f-a0c0-55b248e13179,true
+1046,MEAT,0,,2,0af6307e-c5f4-4b0f-a0c0-55b248e13179,true

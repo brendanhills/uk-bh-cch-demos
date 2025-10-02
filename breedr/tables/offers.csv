@@ -1,0 +1,5 @@
+id,price,status,currency_id,entity_id,entity_type_id,price_unit,business_unit_id,created_at,created_by_id,updated_at,offered_number,comment,produced_lot_id,to_lot_id,to_want_id,has_accepted_listing,tac_accept_record_id,collection_date,total_price_on_creation,response_date
+7798,404.83,ACCEPTED,1,,,HEAD,3117,2021-07-30 15:00:04.328746,3521,2021-07-30 15:00:04.328765,99,,,726,,true,,,40078.17,2021-08-03 09:05:14.399267
+7796,455.28,ACCEPTED,1,,,HEAD,3117,2021-07-30 14:59:02.299613,3521,2021-07-30 14:59:02.299632,21,,,728,,true,,,9560.88,2021-07-30 15:19:33.077638
+7797,455.28,ACCEPTED,1,,,HEAD,3117,2021-07-30 14:59:33.315009,3521,2021-07-30 14:59:33.315029,32,,,727,,true,,,14568.96,2021-07-30 15:20:03.372995
+8054,475.0,ACCEPTED,1,,,HEAD,3117,2022-09-20 19:47:44.190269,5186,2022-09-20 19:47:44.190285,90,,,1139,,true,1011.0,,42750.0,2022-09-20 19:48:00.276821

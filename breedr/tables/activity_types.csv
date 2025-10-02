@@ -1,0 +1,11 @@
+id,name,image,is_copyable,is_public,image_svg,slug,position,is_extendable,is_system
+12,TechCare,system/activities/activitytype/image/Techcare.png,false,false,,techcare,0,true,false
+10,Notes,Notes.png,false,false,,notes,1,true,false
+3,Performance,performance.png,true,true,performance.svg,performance,2,true,false
+4,Breeding,breeding.png,false,false,Breeding.svg,breeding,3,true,false
+9,Treatments,treatment.png,false,true,svgWeight_icon.svg,treatments,4,true,false
+1,Vet & Med,cabinet.png,true,true,cabinet2x.svg,vaccination,5,true,false
+11,Feed,feed.png,true,false,feed2x.svg,feed,6,true,false
+6,Birth & Death,birth_death.png,true,true,,birth-death,8,false,false
+2,Movement,move.png,false,true,,movement,9,false,false
+5,Financial,auction.png,false,false,,financial,10,false,false

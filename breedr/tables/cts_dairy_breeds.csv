@@ -1,0 +1,69 @@
+breed_name,cts_breed_code,is_dairy
+Abondance,AB,1
+Abondance Cross,ABX,1
+Angler Rotvieh,AR,1
+Angler Rotvieh Cross,ARX,1
+Australian Lowline,ALL,1
+Australian Lowline Cross,ALLX,1
+Ayrshire,AY,1
+Ayrshire Cross,AYX,1
+Blue Albion,BAL,1
+Blue Albion Cross,BALX,1
+British Friesian,BF,1
+British Friesian Cross,BFX,1
+Brown Swiss,BS,1
+Brown Swiss Cross,BSX,1
+Cross Breed Dairy,CD,1
+Dairy Shorthorn,DS,1
+Dairy Shorthorn Cross,DSX,1
+Danish Red,DR,1
+Danish Red Cross,DRX,1
+East Finnish Brown,EFB,1
+East Finnish Brown Cross,EFBX,1
+Estonian Red,ER,1
+Estonian Red Cross,ERX,1
+Frisona Espagnola,FE,1
+Frisona Espagnola Cross,FEX,1
+Fleckvieh,FKV,1
+Fleckvieh Cross,FRX,1
+Guernsey,GU,1
+Guernsey Cross,GUX,1
+Holstein,HO,1
+Holstein Cross,HOX,1
+Holstein Friesian,HF,1
+Holstein Friesian Cross,HFX,1
+Jersey,JE,1
+Jersey Cross,JEX,1
+Kerry,KE,1
+Kerry Cross,KEX,1
+Montbeliarde,MO,1
+Montbeliarde Cross,MOX,1
+Lakenvelder,LV,1
+Lakenvelder Cross,LVX,1
+Northern Dairy Shorthorn,NDS,1
+Northern Dairy Shorthorn Cross,NDSX,1
+Normande,NO,1
+Normande Cross,NOX,1
+Norwegian Red,NR,1
+Norwegian Red Cross,NRX,1
+Other Dairy,OD,1
+Pie Rouge,PR,1
+Pie Rouge Cross,PRX,1
+Rotebunde,ROT,1
+Rotebunde Cross,ROTX,1
+Rouge Flamande,RF,1
+Rouge Flamande Cross,RFX,1
+Swedish Black and White,SBW,1
+Swedish Black and White Cross,SBWX,1
+Swedish Red,SR,1
+Swedish Red Cross,SRX,1
+Swedish Red Polled,SRP,1
+Swedish Red and White,SRW,1
+Swedish Red and White Cross,SRWX,1
+Swiss Braunvieh,SB,1
+Swiss Braunvieh Cross,SBX,1
+Swiss Grey,SG,1
+Swiss Grey Cross,SGX,1
+Swiss Orig Braunvieh,SOB,1
+Swiss Orig Braunvieh Cross,SOBX,1
+Water Buffalo,BU,1
