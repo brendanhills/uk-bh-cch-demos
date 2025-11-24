@@ -5,16 +5,23 @@ from google.cloud import storage
 from google import genai
 from PIL import Image
 import io
+import os
+from dotenv import load_dotenv
 import vertexai
 from datetime import datetime
-
-# Google API client imports for Docs and Drive
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
-
-# Imports for service account impersonation
 import google.auth
 from google.auth.impersonated_credentials import Credentials
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Google API client imports for Docs and Drive
+
+
+# Imports for service account impersonation
+
 
 # --- Configuration & Page Setup ---
 st.set_page_config(
@@ -24,6 +31,20 @@ st.set_page_config(
 )
 
 # --- Helper Functions ---
+
+# Function to list GCS buckets
+@st.cache_data(ttl=600)
+def list_gcs_buckets(project):
+    """Lists all available GCS buckets for the project."""
+    try:
+        storage_client = storage.Client(project)
+        buckets = [bucket.name for bucket in storage_client.list_buckets()]
+        return buckets
+    except Exception as e:
+        st.error("Failed to list GCS buckets.")
+        st.error(f"Error: {e}")
+        st.info("Please ensure you have authenticated correctly with GCP.")
+        return []
 
 # Function to list image files in a GCS bucket
 @st.cache_data(ttl=600)  # Cache the file list for 10 minutes
@@ -61,8 +82,9 @@ def get_gcs_image(gs_path, file_name):
         return None
 
 def get_bucket_and_path(gs_path):
-    bucket_name = gs_path.split("/",3)[2]
-    image_path =  gs_path.split("/",3)[3]
+    parts = gs_path.split("/", 3)
+    bucket_name = parts[2]
+    image_path = parts[3] if len(parts) > 3 else ""
     return bucket_name, image_path
 
 # Function to call Vertex AI Gemini API
@@ -125,7 +147,7 @@ def analyze_image_with_vertex_gemini(image, system_instruction, prompt):
             ),
         )
 
-        response = genai_client.models.generate_content_stream(
+        response = genai_client.models.generate_content(
             model = model,
             contents = contents,
             config = generate_content_config,
@@ -314,12 +336,12 @@ def create_google_doc(
 # --- Sidebar for Configuration ---
 with st.sidebar:
     st.header("⚙️ Configuration")
-    st.markdown("Settings are now loaded from the `.streamlit/secrets.toml` file.")
     
-    # Load configuration from secrets file
-    gcp_project_id = st.secrets.get("gcp", {}).get("project_id")
-    gcp_location = st.secrets.get("gcp", {}).get("location")
-    gcs_bucket_name = st.secrets.get("gcp", {}).get("bucket_name")
+    # Load configuration from environment variables or secrets file
+    gcp_project_id = os.environ.get("GOOGLE_CLOUD_PROJECT") or st.secrets.get("gcp", {}).get("project_id")
+    gcp_location = os.environ.get("GOOGLE_CLOUD_LOCATION") or st.secrets.get("gcp", {}).get("location")
+    gcs_bucket_from_secrets = st.secrets.get("gcp", {}).get("bucket_name")
+    gcs_folder_from_secrets = st.secrets.get("gcp", {}).get("folder_name")
     default_prompt = st.secrets.get("app", {}).get("default_prompt")
     default_system_instruction = st.secrets.get("app", {}).get("default_system_instruction")
 
@@ -329,7 +351,48 @@ with st.sidebar:
     # Display loaded configuration
     st.write(f"**Project ID:** `{gcp_project_id}`")
     st.write(f"**Location:** `{gcp_location}`")
-    st.write(f"**Bucket Name:** `{gcs_bucket_name}`")
+    
+    available_buckets = list_gcs_buckets(gcp_project_id)
+    
+    if available_buckets:
+        bucket_name_from_secrets = ""
+        if gcs_bucket_from_secrets:
+            if gcs_bucket_from_secrets.startswith("gs://"):
+                bucket_name_from_secrets = gcs_bucket_from_secrets.split('/')[2]
+            else:
+                # Assume it's either 'bucket-name' or 'bucket-name/folder'
+                bucket_name_from_secrets = gcs_bucket_from_secrets.split('/')[0]
+
+        default_index = 0
+        if bucket_name_from_secrets in available_buckets:
+            default_index = available_buckets.index(bucket_name_from_secrets)
+
+        selected_bucket = st.selectbox(
+            "Select GCS Bucket:",
+            options=available_buckets,
+            index=default_index
+        )
+
+        folder_name = gcs_folder_from_secrets
+        folder_path = st.text_input(
+            "Optional: Folder path within bucket (e.g., 'cad_drawings/project_x')",
+            folder_name
+        )
+        
+        if folder_path:
+            gcs_bucket_name = f"gs://{selected_bucket}/{folder_path}"
+        else:
+            gcs_bucket_name = f"gs://{selected_bucket}"
+            
+        st.write(f"**Selected GCS Path:** `{gcs_bucket_name}`")
+    else:
+        st.warning("Could not list any GCS buckets. Please check your GCP project configuration and permissions.")
+        gcs_bucket_name = st.text_input(
+            "GCS Bucket Name:",
+            value=gcs_bucket_from_secrets,
+            placeholder="e.g. my-cad-bucket/folder"
+        )
+        st.write(f"**Bucket Name:** `{gcs_bucket_name}`")
 
 
 st.title("🤖 Gemini CAD Drawing Analyzer")
@@ -416,22 +479,13 @@ if gcp_project_id and gcp_location and gcs_bucket_name:
                             "prompt": prompt,
                         }
 
-                        # This generator yields chunks for streaming and builds the full text
-                        def stream_and_collect_generator():
-                            response_parts = []
-                            # Ensure analysis_stream is not None before iterating
-                            # This handles cases where analyze_image_with_vertex_gemini might return None for analysis_stream
-                            # due to an error, but the outer if analysis_stream: check might not catch it immediately.
-                            for chunk in analysis_stream or []: 
-                                response_parts.append(chunk.text)
-                                yield chunk.text
-                            # Once the stream is complete, save the full text and config to session state.
-                            st.session_state.full_response_text = "".join(response_parts)
-                            st.session_state.gemini_config = gemini_config
+                        # Directly get the text from the non-streamed response
+                        full_response_text = analysis_stream.text
+                        st.write(full_response_text)
 
-                        # st.write_stream will render the output as it comes in and consumes the generator.
-                        # After it's done, our generator has populated session_state.
-                        st.write_stream(stream_and_collect_generator)
+                        # Once the response is complete, save the full text and config to session state.
+                        st.session_state.full_response_text = full_response_text
+                        st.session_state.gemini_config = gemini_config
                     else:
                         st.error("The analysis failed. Please check the error messages above.")
 
