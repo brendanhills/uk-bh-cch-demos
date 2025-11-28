@@ -2,15 +2,16 @@ import pandas as pd
 import os
 import json
 
-# CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), "data_agents.csv")
-CSV_FILE_PATH=r".\data_agents_2.csv"
+CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), "data_agents.csv")
+#CSV_FILE_PATH=r".\data_agents_2.csv"
 # CSV_FILE_PATH = "data_agents.csv"
 
 def load_parcel_data() -> str:
+    print(f"Reading date file {CSV_FILE_PATH}")
     # print("Starting load_parcel_data")
     try:
         df = pd.read_csv(CSV_FILE_PATH)
-        # print("five rows of data", df.head())
+        #print("five rows of data", df.head())
         columns = ["AccountNumber",
                    "Barcode",
                    "AggregationKey",
@@ -27,7 +28,7 @@ def load_parcel_data() -> str:
         pd.set_option('display.max_columns', None)
         pd.set_option('display.width', None)
         pd.set_option('display.max_colwidth', None)
-        # print("*******data**********", df.head())
+        #print("*******data**********", df.head())
         if df.empty:
             raise ValueError("No data loaded from csv")
         parcel_data_records = df.to_dict(orient="records")

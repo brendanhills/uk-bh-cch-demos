@@ -1,0 +1,5 @@
+{
+  "name": "GPX Route Organizer",
+  "description": "An intelligent tool to analyze, classify, and rename your GPX cycling route files. Upload a GPX file to get insights on ride type, length, climbing, location, and a suggested new file name and folder structure.",
+  "requestFramePermissions": []
+}

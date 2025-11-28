@@ -30,3 +30,6 @@ agents/solar_agent/.python-version
 agents/solar_agent/solar_agent/agent.py
 
 
+gpx_route_organizer/node_modules/*
+breedr/dbml-error.log
+breedr/credential.json
