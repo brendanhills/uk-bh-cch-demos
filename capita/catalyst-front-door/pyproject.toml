@@ -1,0 +1,48 @@
+[project]
+name = "catalyst_front_door"
+version = "0.1.0"
+description = "Catalyst Front Door assistant using ADK"
+authors = [{ name = "Brendan Hills", email = "brendanhills@google.com" }]
+license = "Apache-2.0"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-adk>=1.8.0",
+    "langchain>=0.3.0,<0.4.0",
+    "google-cloud-aiplatform[agent-engines,evaluation]>=1.93.0",
+    "python-dotenv>=1.1.0",
+    "toolbox-core>=0.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
+    "agent-starter-pack>=0.14.1",
+]
+
+[project.optional-dependencies]
+lint = [
+    "types-pyyaml>=6.0.12.20240917",
+    "types-requests>=2.32.0.20240914",
+]
+
+
+[tool.pytest.ini_options]
+pythonpath = "."
+asyncio_default_fixture_loop_scope = "function"
+
+[build-system]
+requires = ["uv_build>=0.8.14,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+# This configuration file is used by goo.gle/agent-starter-pack to power remote templating.
+# It defines the template's properties and settings.
+[tool.agent-starter-pack]
+example_question = "Can you help me debug a login page issue?"
+
+[tool.agent-starter-pack.settings]
+agent_directory = "catalyst_front_door"
