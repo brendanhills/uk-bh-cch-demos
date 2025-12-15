@@ -14,6 +14,7 @@ sources:
      database: ideasdb
      user: postgres
      password: eER*zRz4zp4ZtgzPUDru
+
 tools:
   search-ideas:
     kind: postgres-sql
@@ -95,7 +96,7 @@ tools:
         description: The urgency of the ideas to retrieve (an integer from 1 to 5).
     statement: SELECT * FROM ideas WHERE urgency = $1;
 
-  create_initial_idea:
+  create-new-idea:
     kind: postgres-sql
     source: postgresql
     description: Create a new software idea with only title, submitter, and description.
@@ -113,62 +114,23 @@ tools:
       INSERT INTO ideas (title, submitter, description)
       VALUES ($1, $2, $3)
       RETURNING id;
-
-  create_new_idea:
+  
+  create-idea-link:
     kind: postgres-sql
     source: postgresql
-    description: Create a new software idea.
+    description: "Creates a directional link between two ideas, specifying the nature of their relationship."
     parameters:
-      - name: title
-        type: string
-        description: The title of the new idea.
-      - name: submitter
-        type: string
-        description: The email of the person who submitted the idea.
-      - name: description
-        type: string
-        description: (Optional) A detailed description of the idea.
-      - name: request_type
-        type: string
-        description: (Optional) The type of the request.
-      - name: business_owner
-        type: string
-        description: (Optional) The business owner of the idea.
-      - name: roi
-        type: string
-        description: (Optional) The return on investment.
-      - name: strategic_impact
-        type: string
-        description: (Optional) The strategic impact of the idea.
-      - name: stage
-        type: string
-        description: '(Optional) The initial stage of the idea. Default is ''Draft''.'
-      - name: pdf_url
-        type: string
-        description: (Optional) The URL to a PDF document.
-      - name: summary
-        type: string
-        description: (Optional) A summary of the idea.
-      - name: business_unit
-        type: string
-        description: (Optional) The business unit for the idea.
-      - name: impact_area
-        type: string
-        description: (Optional) The impact area of the idea.
-      - name: urgency
-        type: integer
-        description: (Optional) The urgency of the idea, from 1 (low) to 5 (high).
-      - name: proposition_area
-        type: string
-        description: (Optional) The proposition area for the idea.
-      - name: pr_faq_doc
-        type: string
-        description: (Optional) A JSON string for the PR/FAQ document.
-    statement: |
-      INSERT INTO ideas (title, submitter, description, request_type, business_owner, roi, strategic_impact, stage, pdf_url, summary, business_unit, impact_area, urgency, proposition_area, pr_faq_doc)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8, 'Draft'), $9, $10, $11, $12, $13, $14, $15::jsonb)
-      RETURNING id;
-
+      - name: "idea_id_from"
+        type: "integer"
+        description: "The ID of the idea that the link originates from."
+      - name: "idea_id_to"
+        type: "integer"
+        description: "The ID of the idea that the link points to."
+      - name: "relationship"
+        type: "string"
+        description: "The type of relationship. Must be one of: 'extends', 'duplicate', 'supersedes'."
+    statement: "INSERT INTO linked_ideas (idea_id_from, idea_id_to, relationship) VALUES ($1, $2, $3::relationship_type);"
+  
   update-idea-title:
     kind: postgres-sql
     source: postgresql
@@ -346,21 +308,19 @@ tools:
       - name: sql_query
         type: string
         description: The SQL query to execute.
-    statement: |
-      $1
+    statement:  $1
 
 toolsets:
-  ideas_toolset:
+  ideas-toolset:
     - search-ideas
     - get-idea-by-id
     - get-ideas-by-submitter
     - get-ideas-by-stage
     - get-ideas-by-urgency
     - get-ideas-by-date-range
-    - update-idea-urgency
+    - create-idea-link
     - update-idea-stage
-    - create_new_idea
-    - create_initial_idea
+    - create-new-idea
     - update-idea-title
     - update-idea-description
     - update-idea-request-type
@@ -369,6 +329,7 @@ toolsets:
     - update-idea-strategic-impact
     - update-idea-pdf-url
     - update-idea-summary
+    - update-idea-urgency
     - update-idea-business-unit
     - update-idea-impact-area
     - update-idea-proposition-area

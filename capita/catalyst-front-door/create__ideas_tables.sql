@@ -57,3 +57,26 @@ CREATE TRIGGER ideas_stage_update_trigger
 AFTER UPDATE ON ideas
 FOR EACH ROW
 EXECUTE FUNCTION log_idea_stage_change();
+
+-- Enum type for relationship between ideas
+CREATE TYPE relationship_type AS ENUM ('extends', 'duplicate', 'supersedes');
+
+-- Table to store relationships between ideas
+CREATE TABLE linked_ideas (
+    id SERIAL PRIMARY KEY,
+    idea_id_from INTEGER NOT NULL,
+    idea_id_to INTEGER NOT NULL,
+    relationship relationship_type NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_idea_from
+        FOREIGN KEY(idea_id_from)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_idea_to
+        FOREIGN KEY(idea_id_to)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_linked_ideas_idea_id_from ON linked_ideas (idea_id_from);
+CREATE INDEX idx_linked_ideas_idea_id_to ON linked_ideas (idea_id_to);

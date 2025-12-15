@@ -43,6 +43,20 @@ search_agent = Agent(
 
 search_tool = AgentTool(search_agent)
 
+search_service_catalog = Agent(
+    model="gemini-2.5-flash",
+    name="search_service_catalog",
+    instruction="""
+    You are a tool to search the company's internal service catalog and list of available software.
+    However, this search has not been implemented yet and you should return a polite message to the user saying that this service has not been implemented yet.
+    """,
+)
+
+service_catalog_tool = AgentTool(search_service_catalog)
+
+agent_tools = [search_tool, service_catalog_tool]
+
+
 # ----- Example of a Google Cloud Tool (MCP Toolbox for Databases) -----
 TOOLBOX_URL = os.getenv("MCP_TOOLBOX_URL", "http://127.0.0.1:5000")
 
@@ -50,7 +64,7 @@ TOOLBOX_URL = os.getenv("MCP_TOOLBOX_URL", "http://127.0.0.1:5000")
 # If the toolbox server is not available (e.g., in CI), set to empty list
 try:
     toolbox = ToolboxSyncClient(TOOLBOX_URL)
-    toolbox_tools = toolbox.load_toolset("ideas_toolset")
+    toolbox_tools = toolbox.load_toolset("ideas-toolset")
     logger.info(f"Loaded {len(toolbox_tools)} tools from Toolbox at {TOOLBOX_URL}")
 
 except Exception:
@@ -62,20 +76,22 @@ except Exception:
 # ----- Example of an MCP Tool (streamable-http) -----
 # If GitHub token is not available (e.g., in CI), set to None
 try:
-    mcp_tools = MCPToolset(
-        connection_params=StreamableHTTPConnectionParams(
-            url="https://api.githubcopilot.com/mcp/",
-            headers={
-                "Authorization": "Bearer " + os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
-            },
-        ),
-        # Read only tools
-        tool_filter=[
-            "search_ideas",
-            "list_ideas",
-            "get_idea",
-        ]
-   )
+    mcp_tools = [
+        MCPToolset(
+            connection_params=StreamableHTTPConnectionParams(
+                url="https://api.githubcopilot.com/mcp/",
+                headers={
+                    "Authorization": "Bearer " + os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
+                },
+            ),
+            # Read only tools
+            tool_filter=[
+                "search_ideas",
+                "list_ideas",
+                "get_idea",
+            ]
+        )
+ ]
 except Exception:
     # GitHub MCP server not available or token missing
     mcp_tools = None
