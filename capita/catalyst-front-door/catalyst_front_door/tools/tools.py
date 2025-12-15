@@ -13,13 +13,12 @@
 # limitations under the License.
 # add docstring to this module
 
-from datetime import datetime  # noqa: I001
+import logging
 import os
 
 from google.adk.agents import Agent
 from google.adk.tools.google_search_tool import google_search
 from google.adk.tools.agent_tool import AgentTool
-from google.adk.tools.langchain_tool import LangchainTool
 from google.adk.tools.mcp_tool import MCPToolset, StreamableHTTPConnectionParams
 from toolbox_core import ToolboxSyncClient
 
@@ -28,13 +27,8 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-
-# ----- Example of a Function tool -----
-def get_current_date() -> dict:
-    """
-    Get the current date in the format YYYY-MM-DD
-    """
-    return {"current_date": datetime.now().strftime("%Y-%m-%d")}
+# Set up logging
+logger = logging.getLogger(__name__)
 
 
 # ----- Example of a Built-in Tool -----
@@ -56,9 +50,12 @@ TOOLBOX_URL = os.getenv("MCP_TOOLBOX_URL", "http://127.0.0.1:5000")
 # If the toolbox server is not available (e.g., in CI), set to empty list
 try:
     toolbox = ToolboxSyncClient(TOOLBOX_URL)
-    toolbox_tools = toolbox.load_toolset("tickets_toolset")
+    toolbox_tools = toolbox.load_toolset("ideas_toolset")
+    logger.info(f"Loaded {len(toolbox_tools)} tools from Toolbox at {TOOLBOX_URL}")
+
 except Exception:
     # Toolbox server not available, set to empty list
+    logger.warning(f"Toolbox server at {TOOLBOX_URL} not available, using empty list of tools")
     toolbox_tools = []
 
 
@@ -74,14 +71,11 @@ try:
         ),
         # Read only tools
         tool_filter=[
-            "search_repositories",
-            "search_issues",
-            "list_issues",
-            "get_issue",
-            "list_pull_requests",
-            "get_pull_request",
-        ],
-    )
+            "search_ideas",
+            "list_ideas",
+            "get_idea",
+        ]
+   )
 except Exception:
     # GitHub MCP server not available or token missing
     mcp_tools = None
