@@ -1,0 +1,9 @@
+FrontDoor Agent - the root agent that is a traffic director
+Brainstormer - clarify the idea, suggest improvements, find gaps or risks and help the user to identify mitigations
+Internal Researcher Agent - assesses business impact, determines alignment, finds previous submissions and existing tools in Capita that match the idea
+External Researcher Agent - finds market trends, are there existing technologies, can we buy  it, or some parts of it?
+PR/FAQ generator - to create the output doc
+Reviewer - a loop with the user where we present the draft PR/FAQ and ask for feedback or improvements
+Catalyst Submission Agent - store this submission in a structured DB, search for other similar submissions.  Find a submission based on ID or description
+Handoff - send a structured output to Salesforce
+

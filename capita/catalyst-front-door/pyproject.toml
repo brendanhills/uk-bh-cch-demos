@@ -7,7 +7,7 @@ license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "google-adk>=1.8.0",
+    "google-adk[eval]>=1.8.0",
     "langchain>=0.3.0,<0.4.0",
     "google-cloud-aiplatform[agent-engines,evaluation]>=1.93.0",
     "python-dotenv>=1.1.0",
