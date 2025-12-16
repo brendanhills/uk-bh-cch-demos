@@ -19,16 +19,22 @@ tools:
   search-ideas:
     kind: postgres-sql
     source: postgresql
-    description: Search for ideas based on a query string in their title and description.
+    description: Search for ideas based on a the contents of the title, description, and summary.
     parameters:
-      - name: query
+      - name: title
         type: string
-        description: The query to search for.
+        description: The title of the idea to search for.
+      - name: description
+        type: string
+        description: (Optional) A description of the idea to search for.
+      - name: summary
+        type: string
+        description: (Optional) A summary of the idea to search for.
     statement: |
-      SELECT id, title, description, submitter, urgency, stage
-      FROM ideas
-      WHERE title ILIKE '%' || $1 || '%' OR description ILIKE '%' || $1 || '%'
-      LIMIT 10;
+      SELECT * FROM ideas
+      ORDER BY embedding_vector
+      <-> embedding('text-embedding-005', $1 || ' ' || COALESCE($2, '') || ' ' || COALESCE($3, '')::vector
+      LIMIT 3
 
   get-idea-by-id:
     kind: postgres-sql
@@ -115,7 +121,7 @@ tools:
       VALUES ($1, $2, $3)
       RETURNING id;
   
-  create-idea-link:
+  link-ideas:
     kind: postgres-sql
     source: postgresql
     description: "Creates a directional link between two ideas, specifying the nature of their relationship."
@@ -318,7 +324,7 @@ toolsets:
     - get-ideas-by-stage
     - get-ideas-by-urgency
     - get-ideas-by-date-range
-    - create-idea-link
+    - link-ideas
     - update-idea-stage
     - create-new-idea
     - update-idea-title

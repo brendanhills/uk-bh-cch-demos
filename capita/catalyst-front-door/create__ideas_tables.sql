@@ -1,3 +1,9 @@
+##Enums
+-- Enum type for relationship between ideas
+CREATE TYPE relationship_type AS ENUM ('extends', 'duplicate', 'supersedes');
+
+##Tables
+
 CREATE TABLE ideas (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -15,16 +21,9 @@ CREATE TABLE ideas (
     impact_area VARCHAR(100),
     urgency SMALLINT CHECK (urgency >= 1 AND urgency <= 5), -- Assuming a rating from 1 (low) to 5 (high)
     proposition_area VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    pr_faq_doc JSONB
+    pr_faq_doc JSONB,
+    embedding_vector vector );
 );
-
--- Optional: Add an index for frequently searched columns like submitter or business_owner
-CREATE INDEX idx_ideas_submitter ON ideas (submitter);
-CREATE INDEX idx_ideas_business_owner ON ideas (business_owner);
-CREATE INDEX idx_ideas_stage ON ideas (stage);
-
-
 -- Table to store the history of status changes for each idea
 CREATE TABLE idea_status_history (
     id SERIAL PRIMARY KEY,
@@ -37,7 +36,64 @@ CREATE TABLE idea_status_history (
         ON DELETE CASCADE -- If an idea is deleted, its status history will also be deleted
 );
 
+
+-- Table to store relationships between ideas
+CREATE TABLE linked_ideas (
+    id SERIAL PRIMARY KEY,
+    idea_id_from INTEGER NOT NULL,
+    idea_id_to INTEGER NOT NULL,
+    relationship relationship_type NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_idea_from
+        FOREIGN KEY(idea_id_from)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_idea_to
+        FOREIGN KEY(idea_id_to)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE
+);
+
+
+##Indexes
+CREATE INDEX idx_ideas_submitter ON ideas (submitter);
+CREATE INDEX idx_ideas_business_owner ON ideas (business_owner);
+CREATE INDEX idx_ideas_stage ON ideas (stage);
 CREATE INDEX idx_idea_status_history_idea_id ON idea_status_history (idea_id);
+
+CREATE INDEX ON ideas
+  USING hnsw (embedding_vector vector_cosine_ops)
+  WITH (m = 16, ef_construction = 64);
+
+
+CREATE INDEX idx_linked_ideas_idea_id_from ON linked_ideas (idea_id_from);
+CREATE INDEX idx_linked_ideas_idea_id_to ON linked_ideas (idea_id_to);
+
+##Triggers
+
+-- Function to update the embedding vector
+CREATE OR REPLACE FUNCTION update_embedding_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- For INSERTs, or if the relevant text columns have changed during an UPDATE
+    IF (TG_OP = 'INSERT' OR
+        (NEW.title, NEW.description, NEW.summary) IS DISTINCT FROM (OLD.title, OLD.description, OLD.summary))
+    THEN
+        NEW.embedding_vector = embedding(
+            'text-embedding-005',
+            NEW.title || ' ' || COALESCE(NEW.description, '') || ' ' || COALESCE(NEW.summary, '')
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to automatically update the embedding_vector on insert or update
+CREATE TRIGGER ideas_embedding_update_trigger
+BEFORE INSERT OR UPDATE ON ideas
+FOR EACH ROW
+EXECUTE FUNCTION update_embedding_vector();
+
 
 -- Function to insert into idea_status_history
 CREATE OR REPLACE FUNCTION log_idea_stage_change()
@@ -57,26 +113,3 @@ CREATE TRIGGER ideas_stage_update_trigger
 AFTER UPDATE ON ideas
 FOR EACH ROW
 EXECUTE FUNCTION log_idea_stage_change();
-
--- Enum type for relationship between ideas
-CREATE TYPE relationship_type AS ENUM ('extends', 'duplicate', 'supersedes');
-
--- Table to store relationships between ideas
-CREATE TABLE linked_ideas (
-    id SERIAL PRIMARY KEY,
-    idea_id_from INTEGER NOT NULL,
-    idea_id_to INTEGER NOT NULL,
-    relationship relationship_type NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_idea_from
-        FOREIGN KEY(idea_id_from)
-        REFERENCES ideas(id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_idea_to
-        FOREIGN KEY(idea_id_to)
-        REFERENCES ideas(id)
-        ON DELETE CASCADE
-);
-
-CREATE INDEX idx_linked_ideas_idea_id_from ON linked_ideas (idea_id_from);
-CREATE INDEX idx_linked_ideas_idea_id_to ON linked_ideas (idea_id_to);

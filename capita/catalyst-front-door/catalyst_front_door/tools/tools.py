@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 # ----- Example of a Built-in Tool -----
-search_agent = Agent(
+google_search_agent = Agent(
     model="gemini-2.5-flash",
     name="search_agent",
     instruction="""
@@ -41,7 +41,7 @@ search_agent = Agent(
     tools=[google_search],
 )
 
-search_tool = AgentTool(search_agent)
+google_search_tool = AgentTool(google_search_agent)
 
 search_service_catalog = Agent(
     model="gemini-2.5-flash",
@@ -54,7 +54,7 @@ search_service_catalog = Agent(
 
 service_catalog_tool = AgentTool(search_service_catalog)
 
-agent_tools = [search_tool, service_catalog_tool]
+agent_tools = [google_search_tool, service_catalog_tool]
 
 
 # ----- Example of a Google Cloud Tool (MCP Toolbox for Databases) -----
