@@ -31,10 +31,12 @@ tools:
         type: string
         description: (Optional) A summary of the idea to search for.
     statement: |
-      SELECT * FROM ideas
-      ORDER BY embedding_vector
-      <-> embedding('text-embedding-005', $1 || ' ' || COALESCE($2, '') || ' ' || COALESCE($3, '')::vector
+      SELECT *
+      FROM "ideas"
+      ORDER BY "embedding_vector" <-> embedding('text-embedding-005', $1 || ' ' || COALESCE($2, '') || ' ' || COALESCE($3, ''))::vector NULLS LAST
       LIMIT 3
+
+
 
   get-idea-by-id:
     kind: postgres-sql
@@ -293,6 +295,18 @@ tools:
         description: The ID of the idea.
     statement: UPDATE ideas SET pr_faq_doc = $1::jsonb WHERE id = $2;
 
+  get-linked-ideas:
+    kind: postgres-sql
+    source: postgresql
+    description: Retrieve all ideas linked to a given idea ID, including the relationship type.
+    parameters:
+      - name: idea_id
+        type: integer
+        description: The ID of the idea for which to find linked ideas.
+    statement: |
+      SELECT idea_id_from, idea_id_to, relationship
+      FROM linked_ideas
+
   get-ideas-by-date-range:
     kind: postgres-sql
     source: postgresql
@@ -306,15 +320,6 @@ tools:
         description: The end date (inclusive) for the range (e.g., 'YYYY-MM-DD').
     statement: SELECT * FROM ideas WHERE submission_date BETWEEN $1::timestamp AND $2::timestamp;
 
-  execute-sql:
-    kind: postgres-sql
-    source: postgresql
-    description: Execute an arbitrary SQL query.
-    parameters:
-      - name: sql_query
-        type: string
-        description: The SQL query to execute.
-    statement:  $1
 
 toolsets:
   ideas-toolset:
@@ -324,6 +329,7 @@ toolsets:
     - get-ideas-by-stage
     - get-ideas-by-urgency
     - get-ideas-by-date-range
+    - get-linked-ideas
     - link-ideas
     - update-idea-stage
     - create-new-idea
@@ -340,4 +346,5 @@ toolsets:
     - update-idea-impact-area
     - update-idea-proposition-area
     - update-idea-pr-faq-doc
+    - get-linked-ideas
  

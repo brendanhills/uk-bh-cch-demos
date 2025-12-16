@@ -36,11 +36,13 @@ def read_file(filename) -> str:
 prd_file = "CatalystFrontDoorPrd.md"
 product_owners_file = "product_owners.yaml"
 request_types_file =  "request_types.yaml"
+service_catalog_file = "service_catalog.yaml"
 
 
 prd_content = read_file(prd_file)
 product_owners = read_file(product_owners_file)
 request_types = read_file(request_types_file)
+service_catalog = read_file(service_catalog_file)
 
 
 # Build tools list, filtering out empty/None values
@@ -102,21 +104,22 @@ intelligent_triage = LlmAgent(
                 • Pre-sales engagements: early-stage solutioning and ideation to support business development.
             2. Detect duplicates or similar ideas using the search-ideas tool.
                 Find similar or linked ideas and link them together using the 'link-ideas' tool.
-            3. Search internal product lists for potential, pre-built solutions to the request.
+                You can find the details of linked ideas by using the 'get-linked-ideas' tool.
+            3. Search internal service catalog  lists for potential, pre-built solutions to the request.
                 This enables the agent to ask the user if an existing solution (“one we have built earlier”) fits their needs offering a link to the relevant product for review.
-                use the service_catalog_tool tool to do this
+                use the service_catalog_tool tool to do this and pass this service catalog: {service_catalog}
             4. Assign an appropriate business_owner to this idea based on the client or proposition area, using a ruleset (to be created).
                 This ensures that requests are routed to the most relevant owner for review and progression using the mapping in the
                 {product_owners} list
 
                 • If there is no clear owner, then the request should default to Ben Morgan
             5. Make sure you do appropriate due diligence and background analysis by:
-                • Searching the web using the 'google_search_tool' tool
+                • Searching the web using the 'external_search_tool' 
                 • Reviewing external market trends and comparable technologies
             6.  **Gaps & Risks:** "What are the unknowns or potential risks associated with this idea?"
 
                 
-            You must complete at least one web search with the 'google_search_tool' tool.
+            You must complete at least one web search with the 'external_search_tool' tool.
             You must complete at least one internal search with the 'service_catalog_tool' tool.
             You must complete at least one search of existing ideas with the 'search-ideas' tool.
 
@@ -161,9 +164,6 @@ field_checker = LlmAgent(
     """,
     tools=all_tools # type: ignore
 )
-
-
-
 
 
 pr_faq_generator = LlmAgent( 

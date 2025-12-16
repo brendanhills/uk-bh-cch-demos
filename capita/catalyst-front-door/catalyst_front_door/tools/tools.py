@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # add docstring to this module
+"""This module defines the tools available to the agents."""
 
 import logging
 import os
@@ -32,30 +33,29 @@ logger = logging.getLogger(__name__)
 
 
 # ----- Example of a Built-in Tool -----
-google_search_agent = Agent(
+external_search_agent = Agent(
     model="gemini-2.5-flash",
-    name="search_agent",
+    name="external_search_agent",
     instruction="""
     You're a specialist in Google Search.
     """,
     tools=[google_search],
 )
-
-google_search_tool = AgentTool(google_search_agent)
+external_search_tool = AgentTool(external_search_agent)
+external_search_tool.description = "Use this tool to search the internet for up-to-date information. To validate the users idea, find externally available tools, and suggest improvements and gaps etc"
 
 search_service_catalog = Agent(
     model="gemini-2.5-flash",
     name="search_service_catalog",
     instruction="""
-    You are a tool to search the company's internal service catalog and list of available software.
-    However, this search has not been implemented yet and you should return a polite message to the user saying that this service has not been implemented yet.
+    You are a tool to search the company's internal service catalog and list of available software, which will be provided as a YAML document.
+    You will be given a user's query and the content of a service catalog in YAML format. Your task is to answer the user's query based ONLY on the information in the service catalog.
     """,
 )
-
 service_catalog_tool = AgentTool(search_service_catalog)
+service_catalog_tool.description = "Search the company's internal service catalog. The user's query and the service catalog content must be provided as arguments."
 
-agent_tools = [google_search_tool, service_catalog_tool]
-
+agent_tools = [external_search_tool, service_catalog_tool]
 
 # ----- Example of a Google Cloud Tool (MCP Toolbox for Databases) -----
 TOOLBOX_URL = os.getenv("MCP_TOOLBOX_URL", "http://127.0.0.1:5000")
@@ -81,7 +81,7 @@ try:
             connection_params=StreamableHTTPConnectionParams(
                 url="https://api.githubcopilot.com/mcp/",
                 headers={
-                    "Authorization": "Bearer " + os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
+                    "Authorization": "Bearer " + str(os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN")),
                 },
             ),
             # Read only tools
