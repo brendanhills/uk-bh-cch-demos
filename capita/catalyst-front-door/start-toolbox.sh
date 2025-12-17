@@ -1,3 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 cd ./deployment/mcp-toolbox/
+if [ -e ./toolbox ]
+then
+    	echo "toolbox found"
+else
+	echo "Installing toolbox"
+	export VERSION=0.23.0
+	curl -L -o toolbox https://storage.googleapis.com/genai-toolbox/v$VERSION/linux/amd64/toolbox
+	chmod +x toolbox
+fi
 ./toolbox --tools-file tools.yaml --log-level DEBUG
