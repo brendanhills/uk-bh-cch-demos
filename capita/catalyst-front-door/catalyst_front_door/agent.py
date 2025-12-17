@@ -2,8 +2,24 @@
 
 import logging
 import os
+import requests
 from google.adk.agents import LlmAgent
+from google.adk.tools import ToolContext
 from .tools.tools import mcp_tools, agent_tools, toolbox_tools
+
+def before_tool_callback(tool_context: ToolContext):
+    """Fetches user email before tool execution."""
+    if "access_token" in tool_context.auth:
+        access_token = tool_context.auth["access_token"]
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo", headers=headers
+        )
+        if response.status_code == 200:
+            user_info = response.json()
+            if "email" in user_info:
+                tool_context.session_state["user_email"] = user_info["email"]
+    return None
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +82,7 @@ input_capture_agent = LlmAgent(
         You are an innovation partner. Your role is to help the user capture and develop their initial idea.
         Start by having a friendly conversation to understand their idea. Avoid a long list of questions.
         Guide them to describe the core concept. Once you have a high level understanding, generate a concise and descriptive title (no more than 10 words) from their description.
-        You'll also need the submitter's email address.
-        Once you have the generated title, the description, and the submitter's email, use the 'create-new-idea' tool to create a record of the idea.
+        Once you have the generated title and the description, use the 'create-new-idea' tool to create a record of the idea, using the user_email from the session state as the submitter.
         Remember to keep the conversation natural and encouraging. You are here to help them plant the seed of a great idea.
         Store the returned idea ID for other agents to use.
         Users initiate a submission using chat or voice. The agent supports four primary request types:
@@ -237,24 +252,24 @@ root_agent = LlmAgent(
     model=GEMINI_PRO,
     name="catalyst_front_door",
     description="The Catalyst Lab “Front Door” AI Agent is a digital entry point for capturing, ideating and processing ideas across Capita.",
-    instruction="""
-        Immediately start with a friendly greeting and let the user know what you can do.
-
-        You are the root agent for the Catalyst Front Door.
-        Your job is to help the user develop their by calling the appropriate sub-agents.
-
-       Call the sub_agents in order, make sure you go through all of these steps:
-        1. 'input_capture_agent'
-        2. 'intelligent_triage'
-        3. 'field_checker'
-        4. 'pr_faq_generator'
-        5. 'refinement_loop'
-        6. 'submission_creator'
-
-        Make sure all of the fields of the idea are filled out and stored in the database.
-
-        Make sure that the user has seen the pr_faq draft and approved it. The pr_faq is the most important part of this process.
-""" + f"\n\nHere is the product requirements document for your reference:\n\n{prd_content}",
+        instruction="""        Immediately start with a friendly greeting and let the user know what you can do.
+    
+            You are the root agent for the Catalyst Front Door.
+            Your job is to help the user develop their by calling the appropriate sub-agents.
+    
+           Call the sub_agents in order, make sure you go through all of these steps:
+            1. 'input_capture_agent'
+            2. 'intelligent_triage'
+            3. 'field_checker'
+            4. 'pr_faq_generator'
+            5. 'refinement_loop'
+            6. 'submission_creator'
+    
+            Make sure all of the fields of the idea are filled out and stored in the database.
+    
+            Make sure that the user has seen the pr_faq draft and approved it. The pr_faq is the most important part of this process.
+    """ + f"\n\nHere is the product requirements document for your reference:\n\n{prd_content}",
+        before_tool_callback=before_tool_callback,
     sub_agents=[
         input_capture_agent,
         intelligent_triage,
@@ -265,3 +280,7 @@ root_agent = LlmAgent(
         list_ideas_agent,
     ],
 )
+
+from google.adk.apps.app import App
+
+app = App(root_agent=root_agent, name="catalyst_front_door")

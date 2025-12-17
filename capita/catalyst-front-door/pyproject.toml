@@ -7,10 +7,12 @@ license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "cloud-sql-python-connector[pg8000]>=1.19.0",
     "google-adk[eval]>=1.8.0",
     "google-cloud-aiplatform[agent-engines,evaluation]>=1.93.0",
     "python-dotenv>=1.1.0",
     "toolbox-core>=0.1.0",
+    "requests>=2.31.0",
 ]
 
 [dependency-groups]

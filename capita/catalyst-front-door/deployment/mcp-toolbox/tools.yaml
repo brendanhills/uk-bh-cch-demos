@@ -1,19 +1,19 @@
 sources:
-  #postgresql: # GCP -  CLOUD SQL
-    #kind: cloud-sql-postgres
-    #project: uk-bh-experiments-argolis
-    #region: us-central1
-    #instance: software-assistant
-    #database: ideasdb
-    #user: postgres
-    #password: eER*zRz4zp4ZtgzPUDru
-  postgresql: # LOCAL
-     kind: postgres
-     host: 127.0.0.1
-     port: 5432
-     database: ideasdb
-     user: postgres
-     password: eER*zRz4zp4ZtgzPUDru
+  postgresql: # GCP -  CLOUD SQL
+    kind: cloud-sql-postgres
+    project: uk-bh-experiments-argolis
+    region: us-central1
+    instance: software-assistant
+    database: ideasdb
+    user: ${DB_USER}
+    password: ${DB_PASS}
+  #postgresql: # LOCAL
+      #kind: postgres
+      #host: 127.0.0.1
+      #port: 5432
+      #database: ideasdb
+      #user: postgres
+      #password: eER*zRz4zp4ZtgzPUDru
 
 tools:
   search-ideas:
@@ -320,6 +320,12 @@ tools:
         description: The end date (inclusive) for the range (e.g., 'YYYY-MM-DD').
     statement: SELECT * FROM ideas WHERE submission_date BETWEEN $1::timestamp AND $2::timestamp;
 
+  get-all-ideas:
+    kind: postgres-sql
+    source: postgresql
+    description: Retrieve all ideas from the database.
+    statement: SELECT * FROM ideas ORDER BY id ASC;
+
 
 toolsets:
   ideas-toolset:
@@ -330,11 +336,12 @@ toolsets:
     - get-ideas-by-urgency
     - get-ideas-by-date-range
     - get-linked-ideas
-    - link-ideas
-    - update-idea-stage
+    - get-all-ideas
     - create-new-idea
+    - link-ideas
     - update-idea-title
     - update-idea-description
+    - update-idea-stage
     - update-idea-request-type
     - update-idea-business-owner
     - update-idea-roi
@@ -346,5 +353,4 @@ toolsets:
     - update-idea-impact-area
     - update-idea-proposition-area
     - update-idea-pr-faq-doc
-    - get-linked-ideas
  
