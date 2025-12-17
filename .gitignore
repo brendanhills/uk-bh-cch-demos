@@ -33,3 +33,18 @@ agents/solar_agent/solar_agent/agent.py
 gpx_route_organizer/node_modules/*
 breedr/dbml-error.log
 breedr/credential.json
+agents/connector-test-agent.zip
+capita/catalyst-front-door/cloud-sql-proxy
+capita/catalyst-front-door/core.*
+capita/catalyst-front-door/nohup.out
+capita/catalyst-front-door/package-lock.json
+capita/catalyst-front-door/package.json
+capita/catalyst-front-door/.backup_*
+capita/catalyst-front-door/.gemini/settings.json
+capita/catalyst-front-door/deployment/mcp-toolbox/toolbox
+<<<<<<< HEAD
+=======
+ineos/mv_data/archive.zip
+toolbox_test/my_agent/.adk/session.db
+capita/catalyst-front-door/catalyst_front_door/.adk/session.db
+>>>>>>> 3acd29b (Ready to record video)
