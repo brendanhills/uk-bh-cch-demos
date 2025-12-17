@@ -1,0 +1,2 @@
+id,slug,name,value_type,color,is_system,is_lifetime,is_active,owner_id,created_at,updated_at,deactivated_at,text_color,is_removable,reporting_code
+f04f581a-d34c-4a62-8b0d-5d3efbbb19a3,SLUGNAME,SLUGNAME,NONE,#1488e1,false,true,true,3331,2023-04-12 14:23:15.510525,2024-04-30 10:33:05.273268,,#000000,true,

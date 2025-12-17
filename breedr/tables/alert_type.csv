@@ -1,0 +1,22 @@
+code,name,disabled,object_type
+bulling,Bulling,false,"{ANIMAL,GROUP}"
+wrong-loc,Wrong location,true,"{ANIMAL,GROUP,FIELD}"
+under-perform,Under performing,false,"{ANIMAL,GROUP,FIELD}"
+tb-test,TB test,false,"{ANIMAL,GROUP,FIELD}"
+sell,Sell,false,"{ANIMAL,GROUP,FIELD}"
+needs-med,Needs medicine,true,"{ANIMAL,GROUP,FIELD}"
+lame,Lame,true,"{ANIMAL,GROUP,FIELD}"
+injured,Injured,true,"{ANIMAL,GROUP,FIELD}"
+dosed,Dosed medicine,true,"{ANIMAL,GROUP,FIELD}"
+dehorn,Dehorn,true,"{ANIMAL,GROUP,FIELD}"
+cull,Cull,false,"{ANIMAL,GROUP,FIELD}"
+change-group,Change group,false,"{ANIMAL,GROUP,FIELD}"
+castrate,Castrate,true,"{ANIMAL,GROUP,FIELD}"
+change-loc,Change location,false,"{ANIMAL,GROUP,FIELD}"
+apply-treatment,Apply Treatment,false,"{ANIMAL,GROUP,FIELD}"
+administer-med,Administer Med,false,"{ANIMAL,GROUP,FIELD}"
+monitor,Monitor,false,"{ANIMAL,GROUP,FIELD}"
+custom,Custom,false,"{ANIMAL,GROUP,FIELD}"
+lost-tag,Lost tag,false,{ANIMAL}
+temp,Temperature,false,{ANIMAL}
+pregnancy-due-date,Pregnancy Due Date,false,"{ANIMAL,GROUP}"

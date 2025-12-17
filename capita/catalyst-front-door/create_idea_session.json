@@ -1,0 +1,50 @@
+# Do note that some fields are removed for sake of making this doc readable.
+{
+  "eval_set_id": "home_automation_agent_light_on_off_set",
+  "name": "",
+  "description": "This is an eval set that is used for unit testing `x` behavior of the Agent",
+  "eval_cases": [
+    {
+      "eval_id": "eval_case_id",
+      "conversation": [
+        {
+          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Unique identifier for the invocation.
+          "user_content": { # Content provided by the user in this invocation. This is the query.
+            "parts": [
+              {
+                "text": "Turn off device_2 in the Bedroom."
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { # Final response from the agent that acts as a reference of benchmark.
+            "parts": [
+              {
+                "text": "I have set the device_2 status to off."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ # Tool use trajectory in chronological order.
+              {
+                "args": {
+                  "location": "Bedroom",
+                  "device_id": "device_2",
+                  "status": "OFF"
+                },
+                "name": "set_device_info"
+              }
+            ],
+            "intermediate_responses": [] # Any intermediate sub-agent responses.
+          },
+        }
+      ],
+      "session_input": { # Initial session input.
+        "app_name": "home_automation_agent",
+        "user_id": "test_user",
+        "state": {}
+      },
+    }
+  ],
+}

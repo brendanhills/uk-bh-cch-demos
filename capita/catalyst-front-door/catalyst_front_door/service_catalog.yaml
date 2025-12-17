@@ -1,0 +1,59 @@
+services:
+  - name: CRM System
+    description: Manages customer interactions, sales pipelines, and customer data to improve business relationships and drive sales growth.
+    owner: Sales Department
+    status: Operational
+    tech_stack:
+      - Salesforce
+      - Apex
+      - Lightning Web Components
+  - name: ERP System
+    description: Integrates and manages core business processes like finance, human resources, manufacturing, and supply chain within a single system.
+    owner: Finance Department
+    status: Operational
+    tech_stack:
+      - SAP S/4HANA
+      - ABAP
+      - Fiori
+  - name: HR Portal
+    description: Provides employees with self-service access to HR-related information, such as payroll, benefits, time off requests, and company policies.
+    owner: HR Department
+    status: Operational
+    tech_stack:
+      - Workday
+      - Java
+      - React
+  - name: Marketing Automation
+    description: Automates repetitive marketing tasks, nurtures leads, and measures campaign performance across multiple channels.
+    owner: Marketing Department
+    status: Operational
+    tech_stack:
+      - HubSpot
+      - Python
+      - Django
+  - name: Data Analytics Platform
+    description: Collects, processes, and analyzes large datasets to generate actionable insights, identify trends, and support data-driven decision-making.
+    owner: Data Science Team
+    status: Operational
+    tech_stack:
+      - Google Cloud Platform
+      - BigQuery
+      - Looker
+      - Python
+      - R
+  - name: Internal Communication Platform
+    description: Facilitates real-time communication and collaboration among employees through chat, video conferencing, and file sharing.
+    owner: IT Department
+    status: Operational
+    tech_stack:
+      - Slack
+      - Microsoft Teams
+      - Node.js
+  - name: Document Management System
+    description: Organizes, stores, secures, and tracks electronic documents, ensuring easy retrieval and compliance with document retention policies.
+    owner: Operations Department
+    status: Operational
+    tech_stack:
+      - SharePoint
+      - Microsoft 365
+      - .NET

@@ -1,0 +1,5 @@
+id,name,gestation_days,position,slug,enabled,colour,image,enabled_predictions,batch_name
+2,Sheep,100,2,sheep,true,#5F7E5F,system/animals/animaltype/image/sheep.svg,false,MOB
+5,Goats,150,5,goats,true,#FF880C,,false,MOB
+3,Cattle,100,1,cattle,true,#996243,system/animals/animaltype/image/cattle.svg,true,HERD
+1,Pigs,100,3,pigs,false,#B1525C,system/animals/animaltype/image/pig.svg,false,BATCH
