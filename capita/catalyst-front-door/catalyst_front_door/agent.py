@@ -2,24 +2,8 @@
 
 import logging
 import os
-import requests
 from google.adk.agents import LlmAgent
-from google.adk.tools import ToolContext
-from .tools.tools import mcp_tools, agent_tools, toolbox_tools
-
-def before_tool_callback(tool_context: ToolContext):
-    """Fetches user email before tool execution."""
-    if "access_token" in tool_context.auth:
-        access_token = tool_context.auth["access_token"]
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = requests.get(
-            "https://www.googleapis.com/oauth2/v3/userinfo", headers=headers
-        )
-        if response.status_code == 200:
-            user_info = response.json()
-            if "email" in user_info:
-                tool_context.session_state["user_email"] = user_info["email"]
-    return None
+from .tools.tools import agent_tools, toolbox_tools
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +51,6 @@ def get_tools():
     tools = agent_tools
     if toolbox_tools:  # Only add if not empty list
         tools.extend(toolbox_tools) # type: ignore
-    if mcp_tools is not None:  # Only add if not None
-        tools.extend(mcp_tools) # type: ignore
     logger.debug(f"Tools: {tools}")
     return tools
 
@@ -269,7 +251,6 @@ root_agent = LlmAgent(
     
             Make sure that the user has seen the pr_faq draft and approved it. The pr_faq is the most important part of this process.
     """ + f"\n\nHere is the product requirements document for your reference:\n\n{prd_content}",
-        before_tool_callback=before_tool_callback,
     sub_agents=[
         input_capture_agent,
         intelligent_triage,
