@@ -12,4 +12,4 @@ fi
 export DB_USER=postgres
 export DB_PASS=$(gcloud secrets versions access latest --secret=db-password)
 
-./toolbox --tools-file tools.yaml --log-level DEBUG
+./toolbox --tools-file tools.yaml --log-level DEBUG --allowed-origins=127.0.0.1 --port=5000
