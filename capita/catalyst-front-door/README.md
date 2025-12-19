@@ -215,39 +215,6 @@ CREATE TABLE idea_status_history (
 CREATE INDEX idx_idea_status_history_idea_id ON idea_status_history (idea_id);
 ```
 
-Insert some sample data:
-
-```SQL
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Login Page Freezes After Multiple Failed Attempts', 'Users are reporting that after 3 failed login attempts, the login page becomes unresponsive and requires a refresh. No specific error message is displayed.', 'samuel.green@example.com', 5, 'Draft', 'Innovation ideas', 'Product Team', 150000.00, 'High user impact, security risk', 'Digital Solutions', 'User Experience', 'Login Security');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Dashboard Sales Widget Intermittent Data Loading Failure', 'The "Sales Overview" widget on the main dashboard intermittently shows a loading spinner but no data. Primarily affects Chrome browser users.', 'maria.rodriguez@example.com', 4, 'Review', 'Customer requests', 'Sales Team', 80000.00, 'Moderate revenue impact', 'Sales Operations', 'Data Accuracy', 'Sales Performance');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Broken Link in Footer - Privacy Policy', 'The "Privacy Policy" hyperlink located in the website footer leads to a 404 "Page Not Found" error.', 'maria.rodriguez@example.com', 1, 'Implemented', 'Internal build requests', 'Legal Team', 0.00, 'Legal compliance', 'Legal & Compliance', 'Website Integrity');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('UI Misalignment on Mobile Landscape View (iOS)', 'On specific iOS devices (e.g., iPhone 14 models), the top navigation bar shifts downwards when the device is viewed in landscape orientation, obscuring content.', 'maria.rodriguez@example.com', 3, 'Review', 'Innovation ideas', 'UI/UX Team', 5000.00, 'Minor user experience impact', 'Digital Solutions', 'User Experience', 'Mobile Responsiveness');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Critical XZ Utils Backdoor Detected in Core Dependency (CVE-2024-3094)', 'Urgent: A sophisticated supply chain compromise (CVE-2024-3094) has been identified in XZ Utils versions 5.6.0 and 5.6.1. This malicious code potentially allows unauthorized remote SSH access by modifying liblzma. Immediate investigation and action required for affected Linux/Unix systems and services relying on XZ Utils.', 'frank.white@example.com', 5, 'Draft', 'Internal build requests', 'Security Team', 0.00, 'Critical security vulnerability', 'IT Operations', 'Security', 'System Security');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Database Connection Timeouts During Peak Usage', 'The application is experiencing frequent database connection timeouts, particularly during peak hours (10 AM - 12 PM EDT), affecting all users and causing service interruptions.', 'frank.white@example.com', 4, 'Draft', 'Customer requests', 'Database Team', 0.00, 'High system availability impact', 'IT Operations', 'Performance', 'System Stability');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Export to PDF Truncates Long Text Fields in Reports', 'When generating PDF exports of reports containing extensive text fields, the text is abruptly cut off at the end of the page instead of wrapping or continuing to the next page.', 'samuel.green@example.com', 4, 'Draft', 'Innovation ideas', 'Reporting Team', 20000.00, 'Moderate data integrity impact', 'Business Intelligence', 'Data Presentation', 'Reporting Accuracy');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Search Filter "Date Range" Not Applying Correctly', 'The "Date Range" filter on the search results page does not filter records accurately; results outside the specified date range are still displayed.', 'samuel.green@example.com', 3, 'Implemented', 'Customer requests', 'Search Team', 5000.00, 'Minor data accuracy impact', 'Digital Solutions', 'Search Functionality', 'Data Filtering');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Typo in Error Message: "Unathorized Access"', 'The error message displayed when a user attempts an unauthorized action reads "Unathorized Access" instead of "Unauthorized Access."', 'maria.rodriguez@example.com', 1, 'Implemented', 'Internal build requests', 'QA Team', 0.00, 'Minor user experience impact', 'QA & Testing', 'User Experience', 'Error Messaging');
-
-INSERT INTO ideas (title, description, submitter, urgency, stage, request_type, business_owner, roi, strategic_impact, business_unit, impact_area, proposition_area) VALUES
-('Intermittent File Upload Failures for Large Files', 'Users are intermittently reporting that file uploads fail without a clear error message or explanation, especially for files exceeding 10MB in size.', 'frank.white@example.com', 4, 'Draft', 'Customer requests', 'DevOps Team', 0.00, 'High user frustration impact', 'IT Operations', 'File Management', 'Upload Stability');
-```
 
 ### 3 - Run the MCP Toolbox for Databases Server.
 
@@ -416,34 +383,30 @@ CREATE EXTENSION IF NOT EXISTS google_ml_integration CASCADE;
 CREATE EXTENSION IF NOT EXISTS vector CASCADE;
 GRANT EXECUTE ON FUNCTION embedding TO postgres;
 
+CREATE TYPE relationship_type AS ENUM ('extends', 'duplicate', 'supersedes');
+
 CREATE TABLE ideas (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     submitter VARCHAR(100) NOT NULL CHECK (submitter ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'),
-    submission_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     request_type VARCHAR(50),
     business_owner VARCHAR(100),
-    roi NUMERIC(10, 2), -- Return on Investment, e.g., 1234567.89 or 99.99 for percentage
+    roi VARCHAR(255),
     strategic_impact TEXT,
-    stage VARCHAR(50) DEFAULT 'Draft', -- e.g., 'Draft', 'Review', 'Approved', 'Implemented'
-    pdf_url VARCHAR(255), -- Assuming this stores a URL or path to a PDF
+    stage VARCHAR(50) DEFAULT 'Draft',
+    pdf_url VARCHAR(255),
     summary TEXT,
-    business_unit VARCHAR(100), -- Corrected spelling from 'buisness_unit'
+    business_unit VARCHAR(100),
     impact_area VARCHAR(100),
-    urgency SMALLINT CHECK (urgency >= 1 AND urgency <= 5), -- Assuming a rating from 1 (low) to 5 (high)
+    urgency SMALLINT CHECK (urgency >= 1 AND urgency <= 5),
     proposition_area VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    pr_faq_doc JSONB
+    pr_faq_doc JSONB,
+    embedding_vector vector
 );
 
--- Optional: Add an index for frequently searched columns like submitter or business_owner
-CREATE INDEX idx_ideas_submitter ON ideas (submitter);
-CREATE INDEX idx_ideas_business_owner ON ideas (business_owner);
-CREATE INDEX idx_ideas_stage ON ideas (stage);
-
-
--- Table to store the history of status changes for each idea
 CREATE TABLE idea_status_history (
     id SERIAL PRIMARY KEY,
     idea_id INTEGER NOT NULL,
@@ -452,10 +415,85 @@ CREATE TABLE idea_status_history (
     CONSTRAINT fk_idea
         FOREIGN KEY(idea_id)
         REFERENCES ideas(id)
-        ON DELETE CASCADE -- If an idea is deleted, its status history will also be deleted
+        ON DELETE CASCADE
 );
 
+CREATE TABLE linked_ideas (
+    id SERIAL PRIMARY KEY,
+    idea_id_from INTEGER NOT NULL,
+    idea_id_to INTEGER NOT NULL,
+    relationship relationship_type NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_idea_from
+        FOREIGN KEY(idea_id_from)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_idea_to
+        FOREIGN KEY(idea_id_to)
+        REFERENCES ideas(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_ideas_submitter ON ideas (submitter);
+CREATE INDEX idx_ideas_business_owner ON ideas (business_owner);
+CREATE INDEX idx_ideas_stage ON ideas (stage);
 CREATE INDEX idx_idea_status_history_idea_id ON idea_status_history (idea_id);
+
+CREATE INDEX ON ideas
+  USING hnsw (embedding_vector vector_cosine_ops)
+  WITH (m = 16, ef_construction = 64);
+
+CREATE INDEX idx_linked_ideas_idea_id_from ON linked_ideas (idea_id_from);
+CREATE INDEX idx_linked_ideas_idea_id_to ON linked_ideas (idea_id_to);
+
+CREATE OR REPLACE FUNCTION update_embedding_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT' OR
+        (NEW.title, NEW.description, NEW.summary) IS DISTINCT FROM (OLD.title, OLD.description, OLD.summary))
+    THEN
+        NEW.embedding_vector = embedding(
+            'text-embedding-005',
+            NEW.title || ' ' || COALESCE(NEW.description, '') || ' ' || COALESCE(NEW.summary, '')
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ideas_embedding_update_trigger
+BEFORE INSERT OR UPDATE ON ideas
+FOR EACH ROW
+EXECUTE FUNCTION update_embedding_vector();
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = NOW();
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_ideas_updated_at
+BEFORE UPDATE ON ideas
+FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE OR REPLACE FUNCTION log_idea_stage_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.stage IS DISTINCT FROM OLD.stage THEN
+        INSERT INTO idea_status_history (idea_id, stage)
+        VALUES (NEW.id, NEW.stage);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER ideas_stage_update_trigger
+AFTER UPDATE ON ideas
+FOR EACH ROW
+EXECUTE FUNCTION log_idea_stage_change();
 ```
 
 ### 5 - Load in sample data.
@@ -538,6 +576,9 @@ Now that we have a Cloud SQL database, we can deploy the MCP Toolbox for Databas
 
 First, update `deployment/mcp-toolbox/tools.yaml` for your Cloud SQL instance:
 
+> [!NOTE]
+> The placeholders `${PROJECT_ID}`, `${DB_USER}`, and `${DB_PASS}` in `tools.yaml` are designed to be resolved at runtime by the Cloud Run environment variables and secrets. You do not need to manually replace these values within the `tools.yaml` file itself when deploying to Cloud Run; they will be automatically injected by the deployment process.
+
 ```yaml
   postgresql:
     kind: cloud-sql-postgres
@@ -580,8 +621,8 @@ gcloud run deploy toolbox \
     --image us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:latest \
     --service-account toolbox-identity \
     --region us-central1 \
-    --set-secrets "/app/tools.yaml=tools:latest" \
-    --set-env-vars="PROJECT_ID=$PROJECT_ID,DB_USER=postgres,DB_PASS=admin" \
+    --set-secrets "/app/tools.yaml=tools:latest,DB_PASS=db-password:latest" \
+    --set-env-vars="PROJECT_ID=$PROJECT_ID,DB_USER=postgres" \
     --args="--tools-file=/app/tools.yaml","--address=0.0.0.0","--port=8080" \
     --allow-unauthenticated
 ```

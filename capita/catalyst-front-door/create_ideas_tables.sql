@@ -23,7 +23,7 @@ CREATE TABLE ideas (
     proposition_area VARCHAR(100),
     pr_faq_doc JSONB,
     embedding_vector vector );
-);
+
 -- Table to store the history of status changes for each idea
 CREATE TABLE idea_status_history (
     id SERIAL PRIMARY KEY,
