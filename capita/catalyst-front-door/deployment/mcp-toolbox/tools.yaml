@@ -34,8 +34,7 @@ tools:
       SELECT *
       FROM "ideas"
       ORDER BY "embedding_vector" <-> embedding('text-embedding-005', $1 || ' ' || COALESCE($2, '') || ' ' || COALESCE($3, ''))::vector NULLS LAST
-      LIMIT 3
-
+      LIMIT 10
 
 
   get-idea-by-id:
@@ -47,62 +46,6 @@ tools:
         type: integer
         description: The unique ID of the idea.
     statement: SELECT * FROM ideas WHERE id = $1;
-
-  get-ideas-by-submitter:
-    kind: postgres-sql
-    source: postgresql
-    description: Search for ideas based on submitter (email).
-    parameters:
-      - name: submitter
-        type: string
-        description: The email of the submitter.
-    statement: SELECT * FROM ideas WHERE submitter ILIKE '%' || $1 || '%';
-
-  update-idea-urgency:
-    kind: postgres-sql
-    source: postgresql
-    description: Update the urgency of a idea based on its ID.
-    parameters:
-      - name: urgency
-        type: integer
-        description: The urgency of the idea. An integer from 1 to 5.
-      - name: id
-        type: integer
-        description: The ID of the idea.
-    statement: UPDATE ideas SET urgency = $1 WHERE id = $2;
-
-  update-idea-stage:
-    kind: postgres-sql
-    source: postgresql
-    description: Update the stage of a idea based on its ID.
-    parameters:
-      - name: stage
-        type: string
-        description: The new stage of the idea (e.g., 'New', 'In Progress', 'Closed', 'Resolved').
-      - name: id
-        type: integer
-        description: The ID of the idea.
-    statement: UPDATE ideas SET stage = $1 WHERE id = $2;
-
-  get-ideas-by-stage:
-    kind: postgres-sql
-    source: postgresql
-    description: Search for ideas based on their current stage.
-    parameters:
-      - name: stage
-        type: string
-        description: The stage of the ideas to retrieve (e.g., 'New', 'In Progress', 'Closed', 'Resolved').
-    statement: SELECT * FROM ideas WHERE stage ILIKE '%' || $1 || '%';
-
-  get-ideas-by-urgency:
-    kind: postgres-sql
-    source: postgresql
-    description: Search for ideas based on their urgency.
-    parameters:
-      - name: urgency
-        type: integer
-        description: The urgency of the ideas to retrieve (an integer from 1 to 5).
-    statement: SELECT * FROM ideas WHERE urgency = $1;
 
   create-new-idea:
     kind: postgres-sql
@@ -139,161 +82,19 @@ tools:
         description: "The type of relationship. Must be one of: 'extends', 'duplicate', 'supersedes'."
     statement: "INSERT INTO linked_ideas (idea_id_from, idea_id_to, relationship) VALUES ($1, $2, $3::relationship_type);"
   
-  # update-idea-title:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the title of an idea based on its ID.
-  #   parameters:
-  #     - name: title
-  #       type: string
-  #       description: The new title for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET title = $1 WHERE id = $2;
 
-  # update-idea-description:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the description of an idea based on its ID.
-  #   parameters:
-  #     - name: description
-  #       type: string
-  #       description: The new description for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET description = $1 WHERE id = $2;
-
-  # update-idea-request-type:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the request_type of an idea based on its ID.
-  #   parameters:
-  #     - name: request_type
-  #       type: string
-  #       description: The new request_type for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET request_type = $1 WHERE id = $2;
-
-  # update-idea-business-owner:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the business_owner of an idea based on its ID.
-  #   parameters:
-  #     - name: business_owner
-  #       type: string
-  #       description: The new business_owner for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET business_owner = $1 WHERE id = $2;
-
-  # update-idea-roi:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the roi of an idea based on its ID.
-  #   parameters:
-  #     - name: roi
-  #       type: string
-  #       description: The new roi for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET roi = $1 WHERE id = $2;
-
-  # update-idea-strategic-impact:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the strategic_impact of an idea based on its ID.
-  #   parameters:
-  #     - name: strategic_impact
-  #       type: string
-  #       description: The new strategic_impact for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET strategic_impact = $1 WHERE id = $2;
-
-  # update-idea-pdf-url:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the pdf_url of an idea based on its ID.
-  #   parameters:
-  #     - name: pdf_url
-  #       type: string
-  #       description: The new pdf_url for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET pdf_url = $1 WHERE id = $2;
-
-  # update-idea-summary:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the summary of an idea based on its ID.
-  #   parameters:
-  #     - name: summary
-  #       type: string
-  #       description: The new summary for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET summary = $1 WHERE id = $2;
-
-  # update-idea-business-unit:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the business_unit of an idea based on its ID.
-  #   parameters:
-  #     - name: business_unit
-  #       type: string
-  #       description: The new business_unit for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET business_unit = $1 WHERE id = $2;
-
-  # update-idea-impact-area:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the impact_area of an idea based on its ID.
-  #   parameters:
-  #     - name: impact_area
-  #       type: string
-  #       description: The new impact_area for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET impact_area = $1 WHERE id = $2;
-
-  # update-idea-proposition-area:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the proposition_area of an idea based on its ID.
-  #   parameters:
-  #     - name: proposition_area
-  #       type: string
-  #       description: The new proposition_area for the idea.
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET proposition_area = $1 WHERE id = $2;
-
-  # update-idea-pr-faq-doc:
-  #   kind: postgres-sql
-  #   source: postgresql
-  #   description: Update the pr_faq_doc of an idea based on its ID.
-  #   parameters:
-  #     - name: pr_faq_doc
-  #       type: string
-  #       description: The new pr_faq_doc for the idea (as a JSON string).
-  #     - name: id
-  #       type: integer
-  #       description: The ID of the idea.
-  #   statement: UPDATE ideas SET pr_faq_doc = $1::jsonb WHERE id = $2;
+  update-idea-pr-faq-json:
+    kind: postgres-sql
+    source: postgresql
+    description: Update the pr_faq_doc of an idea based on its ID.
+    parameters:
+      - name: pr_faq_doc
+        type: string
+        description: The new pr_faq_doc for the idea (as a JSON string).
+      - name: id
+        type: integer
+        description: The ID of the idea.
+    statement: UPDATE ideas SET pr_faq_doc = $1::jsonb WHERE id = $2;
 
   update-idea:
     kind: postgres-sql
@@ -336,9 +137,6 @@ tools:
       - name: proposition_area
         type: string
         description: (Optional) The new proposition_area for the idea.
-      - name: pr_faq_doc
-        type: string
-        description: (Optional) The new pr_faq_doc for the idea (as a JSON string).
     statement: |
       UPDATE ideas
       SET
@@ -352,52 +150,58 @@ tools:
         strategic_impact = COALESCE($9, strategic_impact),
         summary = COALESCE($10, summary),
         business_unit = COALESCE($11, business_unit),
-        proposition_area = COALESCE($12, proposition_area),
-        pr_faq_doc = COALESCE($13::jsonb, pr_faq_doc)
+        proposition_area = COALESCE($12, proposition_area) 
       WHERE id = $1;
 
   get-linked-ideas:
-    kind: postgres-sql
-    source: postgresql
-    description: Retrieve all ideas linked to a given idea ID, including the relationship type.
-    parameters:
-      - name: idea_id
-        type: integer
-        description: The ID of the idea for which to find linked ideas.
-    statement: |
-      SELECT idea_id_from, idea_id_to, relationship
-      FROM linked_ideas
-
-  get-ideas-by-date-range:
-    kind: postgres-sql
-    source: postgresql
-    description: Retrieve ideas created within a specific date range.
-    parameters:
-      - name: start_date
-        type: string
-        description: The start date (inclusive) for the range (e.g., 'YYYY-MM-DD').
-      - name: end_date
-        type: string
-        description: The end date (inclusive) for the range (e.g., 'YYYY-MM-DD').
-    statement: SELECT * FROM ideas WHERE submission_date BETWEEN $1::timestamp AND $2::timestamp;
-
-  get-all-ideas:
-    kind: postgres-sql
-    source: postgresql
-    description: Retrieve all ideas from the database.
-    statement: SELECT * FROM ideas ORDER BY id ASC;
+     kind: postgres-sql
+     source: postgresql
+     description: Retrieve all ideas linked to a given idea ID, including the relationship type.
+     parameters:
+       - name: idea_id
+         type: integer
+         description: The ID of the idea for which to find linked ideas.
+     statement: |
+       SELECT idea_id_from, idea_id_to, relationship
+       FROM linked_ideas;
+ 
+  get-ideas:
+     kind: postgres-sql
+     source: postgresql
+     description: Retrieve ideas from the database, with optional filters. If no filters are provided, all ideas are returned.
+     parameters:
+       - name: submitter
+         type: string
+         description: (Optional) The email of the submitter to search for (case-insensitive).
+       - name: stage
+         type: string
+         description: (Optional) The stage of the ideas to retrieve (e.g., 'New', 'In Progress', 'Closed', 'Resolved').
+       - name: urgency
+         type: integer
+         description: (Optional) The urgency of the ideas to retrieve (an integer from 1 to 5).
+       - name: start_date
+         type: string
+         description: (Optional) The start date for a creation date range (e.g., 'YYYY-MM-DD').
+       - name: end_date
+         type: string
+         description: (Optional) The end date for a creation date range (e.g., 'YYYY-MM-DD').
+     statement: |
+       SELECT * FROM ideas
+       WHERE ($1 IS NULL OR submitter ILIKE '%' || $1 || '%')
+       AND ($2 IS NULL OR stage ILIKE '%' || $2 || '%')
+       AND ($3 IS NULL OR urgency = $3)
+       AND ($4 IS NULL OR submission_date >= $4::timestamp)
+       AND ($5 IS NULL OR submission_date <= $5::timestamp)
+       ORDER BY id ASC;
 
 
 toolsets:
   ideas-toolset:
     - search-ideas
     - get-idea-by-id
-    - get-ideas-by-submitter
-    - get-ideas-by-stage
-    - get-ideas-by-urgency
-    - get-ideas-by-date-range
+    - get-ideas
     - get-linked-ideas
-    - get-all-ideas
     - create-new-idea
     - link-ideas
     - update-idea
+    - update-idea-pr-faq-json
