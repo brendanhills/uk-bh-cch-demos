@@ -4,6 +4,7 @@ import logging
 import os
 from google.adk.agents import LlmAgent
 from .tools.tools import agent_tools, toolbox_tools
+from google.adk.apps.app import App
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +65,7 @@ input_capture_agent = LlmAgent(
         You are an innovation partner. Your role is to help the user capture and develop their initial idea.
         Start by having a friendly conversation to understand their idea. Avoid a long list of questions.
         Guide them to describe the core concept. Once you have a high level understanding, generate a concise and descriptive title (no more than 10 words) from their description.
-        Once you have the generated title and the description, use the 'create-new-idea' tool to create a record of the idea, using the user_email from the session state as the submitter.
+        Once you have the generated title and the description, use the 'create-new-idea' tool to create a record of the idea, using the user_email.  Ask the user for their email address if you don't already have it.
         Remember to keep the conversation natural and encouraging. You are here to help them plant the seed of a great idea.
         Store the returned idea ID for other agents to use.
         Users initiate a submission using chat or voice. The agent supports four primary request types:
@@ -88,8 +89,7 @@ intelligent_triage = LlmAgent(
         - **Gaps & Risks:** What are the unknowns? What could go wrong?
         - **Iterative Development:** What would be a simple first version (MVP)? How can we build on it over time?
 
-        As you discuss and uncover new details, you should use the specific update tools available to you to enrich the idea's record in the database.
-        For example, if you learn about the return on investment, use the 'update-idea-roi' tool. If you get a new description, use the 'update-idea-description' tool.
+        As you discuss and uncover new details, you should use the 'update-idea' tool available to you to enrich the idea's record in the database.
         Call these tools as soon as you have new information to save progress. You must provide the idea ID and the new value for the field you are updating.
         Your role is to be a supportive collaborator, helping the user to think more deeply about their idea and its potential.
 
@@ -100,6 +100,7 @@ intelligent_triage = LlmAgent(
                 • Internal build requests: suggestions for propositions, tools, processes, or capabilities to be developed internally.
                 • Pre-sales engagements: early-stage solutioning and ideation to support business development.
             2. Detect duplicates or similar ideas using the search-ideas tool.
+                When you search, if the summary field is empty, then pass an empty string "" as the summary.
                 Find similar or linked ideas and link them together using the 'link-ideas' tool.
                 You can find the details of linked ideas by using the 'get-linked-ideas' tool.
             3. Search internal service catalog  lists for potential, pre-built solutions to the request.
@@ -154,11 +155,11 @@ field_checker = LlmAgent(
             7.  **Proposition Area:** "What proposition area does this idea belong to?"
 
 
-        As you discuss and uncover new details, you **must** use the specific update tools available to you to enrich the idea's record in the database **immediately**.
-        For example, after the user provides the 'request_type', call the 'update-idea-request_type' tool. You must provide the idea ID and the new value for the field you are updating.
+        As you discuss and uncover new details, you **must** use the 'update-idea' tool available to you to enrich the idea's record in the database **immediately**.
         Once the user has completed all of the fields, pass control over to the 'pr_faq_generator' agent.
 
-    """,
+        If you get an error from a tool, fix the problem and try again 3 times.
+      """,
     tools=all_tools # type: ignore
 )
 
@@ -172,9 +173,9 @@ pr_faq_generator = LlmAgent(
         2. The summary should use data from the conversation and contextual web searches.
         3. The FAQs should be relevant to the request and not generic.
         4. Present the summary to the user for review and refinement.  Display it in a nicely formatted way so it's easy for the user to read.
-        5. Once the user approves, convert the generated document to JSON and use the 'update-idea-pr_faq_doc' tool to save it in the 'pr_faq_doc' column for the given idea ID.
-        6. Create a text only summary of the pr_faq_doc and store it in the summary field of the ideas table using the 'update-idea-summary' tool.
-        6. Ensure clarity and alignment before final submission.
+        5. Once the user approves, convert the generated document to valid JSON and use the 'update-idea-pr-faq-json' tool to save it in the 'pr_faq_doc' column for the given idea ID.
+        6. Create a text only summary of the pr_faq_doc and store it in the summary field of the ideas table using the 'update-idea' tool.
+        7. Ensure clarity and alignment before final submission.
 
         Once the user has approved the pr_faq_doc, pass control over to the 'refinement_loop' agent.
         """,
@@ -194,10 +195,13 @@ refinement_loop = LlmAgent(
         3. Re-run the research and analysis steps to generate an updated summary.
         4. Use the update_* tools to update the idea in the database.
         5. Present a revised PR/FAQ document to the user for review and refinement.  Display it in a nicely formatted way so it's easy for the user to read.
-        6. Once the user approves,  convert the generated document to JSON and use the 'update-idea-pr_faq_doc' tool to save it in the 'pr_faq_doc' column for the given idea ID.
+        6. Once the user approves,  convert the generated document to JSON and use the 'update-idea' tool to save it in the 'pr_faq_doc' column for the given idea ID.
         7. Return the revised version to the user for final approval.
 
         Once the user has given final approval, pass control over to the 'submission_creator' agent.
+
+        If you get an error from a tool, fix the problem and try again 3 times.
+
     """,
     tools=all_tools # type: ignore
 )
@@ -222,9 +226,19 @@ list_ideas_agent = LlmAgent(
     name="list_ideas_agent",
     model=GEMINI_FLASH,
     instruction="""
-        You list ideas from the database. Use the 'search-ideas' tool.
+        You list ideas from the database. Use the 'search-ideas' tool if you need to search for a particular idea, or the 'list-ideas' tool to list all ideas.
         You can ask for a search query, or search for all ideas if no query is provided.
         """,
+    tools=all_tools # type: ignore
+)
+
+graph_linked_ideas_agent = LlmAgent(
+    name="graph_linked_ideas_agent",
+    model=GEMINI_PRO,
+    description="Graph all the ideas that are linked to this one",
+    instruction="""
+        Your job is to create a graph of the ideas that are linked to this one using the tool 'get-linked-ideas'
+    """,
     tools=all_tools # type: ignore
 )
 
@@ -250,6 +264,9 @@ root_agent = LlmAgent(
             Make sure all of the fields of the idea are filled out and stored in the database.
     
             Make sure that the user has seen the pr_faq draft and approved it. The pr_faq is the most important part of this process.
+
+            If you get an error from a tool or agent, fix the problem and try again 3 times.
+
     """ + f"\n\nHere is the product requirements document for your reference:\n\n{prd_content}",
     sub_agents=[
         input_capture_agent,
@@ -262,6 +279,6 @@ root_agent = LlmAgent(
     ],
 )
 
-from google.adk.apps.app import App
+
 
 app = App(root_agent=root_agent, name="catalyst_front_door")
