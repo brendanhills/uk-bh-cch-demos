@@ -48,3 +48,4 @@ ineos/mv_data/archive.zip
 toolbox_test/my_agent/.adk/session.db
 capita/catalyst-front-door/catalyst_front_door/.adk/session.db
 >>>>>>> 3acd29b (Ready to record video)
+adk_eval/hello_world/.adk/*

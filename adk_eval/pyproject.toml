@@ -6,7 +6,17 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "google-adk>=1.21.0",
-    "google-cloud-aiplatform[evaluation]>=1.132.0",
+    "google-cloud-aiplatform[evaluation,agent_engines,adk]>=1.132.0",
+    "ipykernel>=7.1.0",
     "rouge-score>=0.1.2",
     "tabulate>=0.9.0",
+]
+
+[dependency-groups]
+dev = [
+    {include-group = "test"},
+]
+test = [
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
 ]
