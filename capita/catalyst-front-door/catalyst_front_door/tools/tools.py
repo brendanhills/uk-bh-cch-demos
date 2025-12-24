@@ -71,27 +71,3 @@ except Exception:
     # Toolbox server not available, set to empty list
     logger.warning(f"Toolbox server at {TOOLBOX_URL} not available, using empty list of tools")
     toolbox_tools = []
-
-
-# ----- Example of an MCP Tool (streamable-http) -----
-# If GitHub token is not available (e.g., in CI), set to None
-try:
-    mcp_tools = [
-        MCPToolset(
-            connection_params=StreamableHTTPConnectionParams(
-                url="https://api.githubcopilot.com/mcp/",
-                headers={
-                    "Authorization": "Bearer " + str(os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN")),
-                },
-            ),
-            # Read only tools
-            tool_filter=[
-                "search_ideas",
-                "list_ideas",
-                "get_idea",
-            ]
-        )
- ]
-except Exception:
-    # GitHub MCP server not available or token missing
-    mcp_tools = None
