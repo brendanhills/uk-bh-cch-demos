@@ -47,3 +47,5 @@ toolbox_test/my_agent/.adk/session.db
 capita/catalyst-front-door/catalyst_front_door/.adk/session.db
 adk_eval/hello_world/.adk/*
 capita/catalyst-front-door/front_door_code.tar
+ge_handson/.terraform/*
+ge_handson/terraform.tfstate.backup
