@@ -3,29 +3,22 @@
 # A "doctor" script to check if the local environment is correctly set up
 # to run Terraform against Google Cloud, specifically for GCS and Discovery Engine.
 
+set -eo pipefail
+
 DEBUG=false
 
-set -eo pipefail
+# Source the common configuration file
+source "$(dirname "$0")/config.sh"
 
 # Function to check if a command exists
 command_exists() {
   command -v "$1" &> /dev/null
 }
 
-main() {
-  if ! command_exists terraform; then
-    echo "🗣 terraform command not found. Please install Terraform." >&2
-    exit 1
-  fi
-
-  if ! command_exists gcloud; then
-    echo "🗣 gcloud command not found. Please install the Google Cloud SDK and authenticate." >&2
-    exit 1
-  fi
-
+check_project_config() {
   local gcloud_project
   gcloud_project=$(gcloud config get-value project 2>/dev/null)
-  if [[ -z "$gcloud_project" ]]; then
+  if [[ -z "${gcloud_project}" ]]; then
     echo "🗣 No GCP project is configured in gcloud. Please run: gcloud config set project YOUR_PROJECT_ID" >&2
     exit 1
   fi
@@ -33,7 +26,7 @@ main() {
   # Check for project mismatch
   if [ -f "terraform.tfvars" ]; then
     tf_project=$(grep -E '^\s*project_id\s*=' terraform.tfvars | sed -E 's/.*=\s*//' | tr -d '" ')
-    if [ -n "$tf_project" ] && [ "$gcloud_project" != "$tf_project" ]; then
+    if [ -n "${tf_project}" ] && [ "${gcloud_project}" != "${tf_project}" ]; then
       echo "❗ Mismatch Detected!"
       echo "  Your active gcloud project is:         '$gcloud_project'"
       echo "  Your terraform.tfvars project is:      '$tf_project'"
@@ -44,34 +37,46 @@ main() {
     fi
   fi
 
-  local project_id=$gcloud_project
-  local user
-  user=$(gcloud config get-value account 2>/dev/null)
-  echo "🔎 Checking environment for project '$project_id' and user '$user'...
-"
+  # Export for other functions to use
+  export project_id=$gcloud_project
+  export user=$(gcloud config get-value account 2>/dev/null)
+}
 
-  local all_checks_passed=true
-
-  # 1. Check for required IAM roles
-  echo "🔑 Checking for required IAM roles..."
-  local required_roles=("roles/storage.admin" "roles/discoveryengine.admin")
+check_admin_roles() {
+  echo "🔑 Checking for required admin IAM roles for '$user'..."
   local user_roles
-
-  user_roles=$(gcloud projects get-iam-policy "$project_id" --flatten="bindings[].members" --format="json" 2>/dev/null | jq -r --arg user "user:$user" '.[] | select(.bindings.members == $user) | .bindings.role' || true)
-
-  for role in "${required_roles[@]}"; do
+  # Extract roles for the current user from the pre-fetched IAM policy
+  user_roles=$(echo "$iam_policy" | jq -r --arg user "user:$user" '.[] | select(.bindings.members == $user) | .bindings.role')
+  for role in "${ADMIN_ROLES[@]}"; do
     if grep -q "^$role$" <<< "$user_roles"; then
       echo "✅ IAM role found: $role"
     else
-      all_checks_passed=false
-      echo "❌ IAM role missing: $role"
+      echo "❌ Admin role missing for '$user': $role"
       echo "   ➡ To fix, run: gcloud projects add-iam-policy-binding $project_id --member=\"user:$user\" --role=\"$role\""
+      exit 1
     fi
   done
+}
 
-  # 2. Check for ADC quota project
-  echo "
-💰 Checking for Application Default Credentials (ADC) quota project..."
+check_gemini_user_roles() {
+  echo "👥 Checking for Gemini Enterprise end-user roles..."
+  for gemini_user in "${GEMINI_USERS[@]}"; do
+    # Extract roles for the specific Gemini user from the pre-fetched IAM policy
+    user_roles=$(echo "$iam_policy" | jq -r --arg user "user:$gemini_user" '.[] | select(.bindings.members == $user) | .bindings.role')
+    for role in "${GEMINI_USER_ROLES[@]}"; do
+      if grep -q "^$role$" <<< "$user_roles"; then
+        echo "✅ Role '$role' found for user: $gemini_user"
+      else
+        all_checks_passed=false
+        echo "❌ Role '$role' missing for user: $gemini_user"
+        echo "   ➡ To fix, re-run the ./setup_env.sh script."
+      fi
+    done
+  done
+}
+
+check_adc() {
+  echo "💰 Checking for Application Default Credentials (ADC) quota project..."
   local adc_file="$HOME/.config/gcloud/application_default_credentials.json"
   local quota_project=""
 
@@ -98,15 +103,14 @@ main() {
     echo "   ➡ To fix, run: gcloud auth application-default login"
     exit 1
   fi
+}
 
-  # 3. Check for required APIs
-  echo "
-☁️ Checking for enabled APIs..."
-  local required_apis=("discoveryengine.googleapis.com" "storage.googleapis.com")
+check_apis() {
+  echo "☁️ Checking for enabled APIs..."
   local enabled_apis_output
   enabled_apis_output=$(gcloud services list --enabled --project="$project_id" --format="value(NAME)" 2>/dev/null || true)
 
-  for api in "${required_apis[@]}"; do
+  for api in "${REQUIRED_APIS[@]}"; do
     if grep -q "^$api$" <<< "$enabled_apis_output"; then
       echo "✅ API enabled: $api"
     else
@@ -115,10 +119,10 @@ main() {
       echo "   ➡ To fix, run: gcloud services enable $api --project=$project_id"
     fi
   done
+}
 
-  # 4. Check for Gemini Enterprise License/Entitlement
-  echo "
-📜 Checking for Gemini Enterprise license..."
+check_license() {
+  echo "📜 Checking for Gemini Enterprise license..."
   local de_location="us" # Use a common location for the check
   if [ -f "terraform.tfvars" ]; then
       # If location is specified in tfvars, use it for a more accurate check
@@ -172,7 +176,8 @@ main() {
     if [[ "$(jq '(.userLicenses | length // 0) > 0' "$response")" == "true" ]]; then
         echo "✅ Gemini Enterprise license is active. Found the following assignments:"
         # Parse the JSON response and print a summary for each license found.
-        jq -r '.userLicenses[] | "  - User: \(.userPrincipal), State: \(.licenseAssignmentState), Type: \(.licenseConfig | split("/")[-1])"' "$response"
+        # Filter for only ASSIGNED licenses and handle cases where licenseConfig might be null.
+        jq -r '.userLicenses[] | select(.licenseAssignmentState == "ASSIGNED") | "  - User: \(.userPrincipal), State: \(.licenseAssignmentState), Type: \(.licenseConfig // "N/A" | split("/")[-1])"' "$response"
     else
         all_checks_passed=false
         echo "❌ Gemini Enterprise license is not active for this project."
@@ -207,11 +212,86 @@ main() {
   fi
   rm -f "$response"
 
-  # Final summary
-  if [[ "$all_checks_passed" == true ]]; then
-    echo "🎉 Your environment is correctly configured! You can now run 'terraform plan' and then 'terraform apply'."
+}
+
+check_idp() {
+  echo "🆔 Checking for Discovery Engine IdP configuration..."
+  local idp_check_url="https://discoveryengine.googleapis.com/v1/projects/${project_id}/locations/global/identityMappingStores"
+  local idp_response
+  idp_response=$(mktemp)
+  local idp_http_status
+
+  local idp_curl_command="curl -s -w '%{http_code}' \
+    -H 'Authorization: Bearer ${access_token}' \
+    -H 'x-goog-user-project: ${project_id}' \
+    '${idp_check_url}' \
+    -o '${idp_response}'"
+
+  idp_http_status=$(eval "${idp_curl_command}")
+
+  if [[ "$idp_http_status" -eq 200 ]]; then
+      # Check if the 'identityMappingStores' array exists and is not empty
+      if [[ "$(jq '(.identityMappingStores | length // 0) > 0' "$idp_response")" == "true" ]]; then
+          echo "✅ Discovery Engine IdP is configured."
+      else
+          all_checks_passed=false
+          echo "❌ Discovery Engine IdP is not configured."
+          echo "   This is a one-time setup required for connectors like Google Drive and Gmail."
+          echo "   ➡ To fix, follow these manual steps:"
+          echo "     1. Go to Data Stores in the console: https://console.cloud.google.com/gen-app-builder/data-stores?project=${project_id}"
+          echo "     2. Click 'NEW DATA STORE' and select 'Google Drive'."
+          echo "     3. In the configuration panel, click 'CONFIGURE' next to 'Identity provider'."
+          echo "     4. Select 'Google Workspace', click 'SAVE', and then you can CANCEL the data store creation."
+      fi
   else
-    echo "❗ Please run the suggested commands to fix your environment, then re-run this script to confirm all issues are resolved."
+      echo "⚠️ Could not check for IdP configuration. API call failed with HTTP status ${idp_http_status}."
+  fi
+  rm -f "$idp_response"
+
+}
+
+main() {
+  if ! command_exists terraform; then
+    echo "🗣 terraform command not found. Please install Terraform." >&2
+    exit 1
+  fi
+
+  if ! command_exists gcloud; then
+    echo "🗣 gcloud command not found. Please install the Google Cloud SDK and authenticate." >&2
+    exit 1
+  fi
+
+  check_project_config
+  echo "🔎 Checking environment for project '$project_id' and user '$user'..."
+
+  # This global variable is used by check functions to track the overall status.
+  all_checks_passed=true
+
+  # Fetch the entire IAM policy once to avoid multiple gcloud calls.
+  echo "Fetching project IAM policy for analysis..."
+  iam_policy=$(gcloud projects get-iam-policy "$project_id" --flatten="bindings[].members" --format="json" 2>/dev/null)
+  if [[ -z "$iam_policy" ]]; then
+    echo "❌ Could not fetch IAM policy for project '$project_id'. Please check permissions."
+    exit 1
+  fi
+  export iam_policy
+
+  check_admin_roles
+  echo
+  check_gemini_user_roles
+  echo
+  check_adc
+  echo
+  check_apis
+  echo
+  check_license
+  echo
+  check_idp
+
+  if [[ "$all_checks_passed" == true ]]; then
+    echo -e "\n🎉 Your environment is correctly configured! You can now run 'terraform plan' and then 'terraform apply'."
+  else
+    echo -e "\n❗ Please run the suggested commands to fix your environment, then re-run this script to confirm all issues are resolved."
     exit 1
   fi
 }

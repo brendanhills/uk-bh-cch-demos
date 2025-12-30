@@ -50,4 +50,4 @@ capita/catalyst-front-door/front_door_code.tar
 ge_handson/.terraform/*
 ge_handson/terraform.tfstate.backup
 ge_handson/terraform.tfstate
-ge_handson/.terraform.lock.hcl
+ge_handson/tfplan
