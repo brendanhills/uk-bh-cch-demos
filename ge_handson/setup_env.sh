@@ -61,7 +61,18 @@ APIS_TO_ENABLE=(
 )
 for api in "${APIS_TO_ENABLE[@]}"; do
   echo "   - Enabling $api..."
-  gcloud services enable "$api" --project="${PROJECT_ID}"
+  # Attempt to enable the API, capturing stderr to check for specific errors.
+  if ! gcloud services enable "$api" --project="${PROJECT_ID}" 2> >(tee /dev/stderr | grep -q "FAILED_PRECONDITION: The terms of service"); then
+    # The command failed, and the error was the ToS precondition.
+    echo "❌ Terms of Service for '$api' must be accepted." >&2
+    echo "   Please visit the following URL to accept the terms, then re-run this script:" >&2
+    echo "   ➡ https://console.cloud.google.com/terms/cloud?project=${PROJECT_ID}" >&2
+    exit 1
+  elif [ ${PIPESTATUS[0]} -ne 0 ]; then
+    # The command failed for a different reason.
+    echo "❌ An unexpected error occurred while trying to enable '$api'. Please review the error message above." >&2
+    exit 1
+  fi
 done
 
 # 3. Grant IAM Roles
@@ -69,6 +80,7 @@ echo "3. Granting required IAM roles..."
 ROLES_TO_GRANT=(
   "roles/storage.admin"
   "roles/discoveryengine.admin"
+  "roles/serviceusage.serviceUsageConsumer"
 )
 for role in "${ROLES_TO_GRANT[@]}"; do
   echo "   - Granting $role to $USER_EMAIL..."

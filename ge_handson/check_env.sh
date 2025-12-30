@@ -3,6 +3,8 @@
 # A "doctor" script to check if the local environment is correctly set up
 # to run Terraform against Google Cloud, specifically for GCS and Discovery Engine.
 
+DEBUG=false
+
 set -eo pipefail
 
 # Function to check if a command exists
@@ -37,7 +39,7 @@ main() {
       echo "  Your terraform.tfvars project is:      '$tf_project'"
       echo "  These should match to avoid applying permissions to the wrong project."
       echo "
-  To fix, run: gcloud config set project $tf_project"
+  To fix, run: gcloud config set project $tf_project or edit terraform.tfvars"
       exit 1
     fi
   fi
@@ -74,27 +76,27 @@ main() {
   local quota_project=""
 
   if ! gcloud auth application-default print-access-token &>/dev/null; then
-    all_checks_passed=false
     echo "❌ Application Default Credentials are not logged in."
     echo "   ➡ To fix, run: gcloud auth application-default login"
+    exit 1
   elif [ -f "$adc_file" ]; then
       quota_project=$(jq -r '.quota_project_id' "$adc_file" 2>/dev/null || true)
 
       if [[ -z "$quota_project" || "$quota_project" == "null" ]]; then
-        all_checks_passed=false
         echo "❌ ADC quota project is not set."
         echo "   ➡ To fix, run: gcloud auth application-default set-quota-project $project_id"
+        exit 1
       elif [[ "$quota_project" != "$project_id" ]]; then
-        all_checks_passed=false
         echo "❌ ADC quota project ('$quota_project') does not match active gcloud project ('$project_id')."
         echo "   ➡ To fix, run: gcloud auth application-default set-quota-project $project_id"
+        exit 1
       else
         echo "✅ ADC quota project is set to: $quota_project"
       fi
   else
-    all_checks_passed=false
     echo "❌ ADC configuration file not found at $adc_file."
     echo "   ➡ To fix, run: gcloud auth application-default login"
+    exit 1
   fi
 
   # 3. Check for required APIs
@@ -137,28 +139,64 @@ main() {
       return
   fi
 
+  # Make a single API call to get both status and output
+  local response
+  response=$(mktemp)
   local http_status
-  local license_is_active=false
 
-  http_status=$(curl -s -o /dev/null -w "% {http_code}" -H "Authorization: Bearer $access_token" "https://discoveryengine.googleapis.com/v1/projects/$project_id/locations/$de_location/collections/default_collection/engines")
-  license_check_output=$(curl -s -H "Authorization: Bearer $access_token" "https://discoveryengine.googleapis.com/v1/projects/$project_id/locations/$de_location/collections/default_collection/engines")
-
-  if [[ "$http_status" -eq 200 ]]; then
-    license_is_active=true
+  # Build the command as a string to be printed and then executed with eval.
+  # Using eval ensures that the nested quotes for headers are interpreted correctly.
+  local curl_command
+  curl_url="https://${de_location}-discoveryengine.googleapis.com/v1/projects/${project_id}/locations/${de_location}/userStores/default_user_store/userLicenses"
+  if $DEBUG; then
+    echo "curl_url ${curl_url}"
   fi
 
-  if [[ "$license_is_active" == true ]]; then
-    echo "✅ Gemini Enterprise license appears to be active."
+  curl_command="curl -s -w '%{http_code}' \
+    -H 'Authorization: Bearer ${access_token}' \
+    -H 'x-goog-user-project: ${project_id}' \
+    '${curl_url}' \
+    -o '${response}'"
+
+  if $DEBUG; then
+    echo "🐞 Preparing to execute curl command:"
+    echo "${curl_command}"
+  fi
+  http_status=$(eval "${curl_command}")
+  license_check_output=$(cat "$response")
+
+
+  if [[ "$http_status" -eq 200 ]]; then
+    # A 200 OK is good, but we must verify the 'userLicenses' array is not empty.
+    # An empty array or object means the API is on, but no license is active.
+    if [[ "$(jq '(.userLicenses | length // 0) > 0' "$response")" == "true" ]]; then
+        echo "✅ Gemini Enterprise license is active. Found the following assignments:"
+        # Parse the JSON response and print a summary for each license found.
+        jq -r '.userLicenses[] | "  - User: \(.userPrincipal), State: \(.licenseAssignmentState), Type: \(.licenseConfig | split("/")[-1])"' "$response"
+    else
+        all_checks_passed=false
+        echo "❌ Gemini Enterprise license is not active for this project."
+        echo "   The API call succeeded, but no active license was found in the response."
+        echo "   ➡ To fix, you may need to start a trial. Follow these steps:"
+        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$project_id"
+        echo "     2. IMPORTANT: When prompted, make sure you choose the location '$de_location' to match your Terraform configuration."
+        echo "     3. After activating the trial, wait a few minutes and re-run this script."
+    fi
   else
-    if echo "$license_check_output" | grep -q "SERVICE_DISABLED"; then
+    all_checks_passed=false
+    echo "❌ Received HTTP status ${http_status} when checking the Gemini Enterprise license."
+    #echo "Full error message:"
+    #cat "$response"
+        
+    if grep -q "SERVICE_DISABLED" "$response"; then
         all_checks_passed=false
         echo "❌ Gemini Enterprise license may be missing or disabled for this project."
         echo "   The API returned a 'SERVICE_DISABLED' error."
         echo "   ➡ To fix, you may need to start a trial. Follow these steps:"
         echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start"
-        echo "     2. Click the blue \"Start 30-day cost-free trial\" button."
-        echo "     3. IMPORTANT: When prompted, make sure you choose the location '$de_location' to match your Terraform configuration."
-        echo "     4. After activating the trial, wait a few minutes and re-run this script."
+        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$project_id"
+        echo "     2. IMPORTANT: When prompted, make sure you choose the location '$de_location' to match your Terraform configuration."
+        echo "     3. After activating the trial, wait a few minutes and re-run this script."
     else
         all_checks_passed=false
         echo "⚠️ Could not definitively check for Gemini Enterprise license. The API call failed with an unexpected error:"
@@ -167,6 +205,7 @@ main() {
         echo "--- End API Error ---"
     fi
   fi
+  rm -f "$response"
 
   # Final summary
   if [[ "$all_checks_passed" == true ]]; then
