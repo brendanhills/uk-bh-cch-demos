@@ -8,4 +8,5 @@ dependencies = [
     "dotenv>=0.9.9",
     "google-api-core>=2.28.1",
     "google-cloud-discoveryengine>=0.16.0",
+    "google-cloud-storage>=2.0.0",
 ]

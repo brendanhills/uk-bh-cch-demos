@@ -133,94 +133,106 @@ grant_iam_roles() {
 
 configure_idp() {
   echo -e "5. Configuring Discovery Engine Identity Provider (IdP)..."
+  echo "⚠️ IdP configuration is a manual step required for ACL-enabled connectors (like Google Drive and Gmail)."
+  echo "   This script cannot fully automate IdP setup due to complex API requirements."
+  echo "   Please follow these manual steps to configure IdP if you intend to use ACL-enabled connectors:"
+  echo "     1. Go to Data Stores in the console: https://console.cloud.google.com/gen-app-builder/data-stores?project=${PROJECT_ID}"
+  echo "     2. Click 'NEW DATA STORE' and select 'Google Drive'."
+  echo "     3. In the configuration panel, click 'CONFIGURE' next to 'Identity provider'."
+  echo "     4. Select 'Google Workspace', click 'SAVE', and then you can CANCEL the data store creation."
+  echo "   Skipping automated IdP setup."
 
-  # This is required for ACL-enabled connectors like Google Drive and Gmail.
-  # First, check if an IdP mapping store already exists to make the script idempotent.
-  ACCESS_TOKEN=$(gcloud auth print-access-token)
-  IDP_CHECK_URL="https://discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/global/identityMappingStores"
+  # The original IdP configuration logic is commented out below for reference,
+  # as it proved too complex for full automation in this script.
 
-  if $DEBUG; then
-    echo "🐞 DEBUG: Checking for IdP at URL: ${IDP_CHECK_URL}"
-    echo "🐞 DEBUG: curl -s -H \"Authorization: Bearer ...\" -H \"X-Goog-User-Project: ${PROJECT_ID}\" \"${IDP_CHECK_URL}\""
-  fi
+  # ACCESS_TOKEN=$(gcloud auth print-access-token)
+  # IDP_CHECK_URL="https://discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/global/identityMappingStores"
 
-  IDP_RESPONSE=$(curl -s -H "Authorization: Bearer ${ACCESS_TOKEN}" -H "X-Goog-User-Project: ${PROJECT_ID}" "${IDP_CHECK_URL}")
+  # if $DEBUG; then
+  #   echo "🐞 DEBUG: Checking for IdP at URL: ${IDP_CHECK_URL}"
+  #   echo "🐞 DEBUG: curl -s -H \"Authorization: Bearer ...\" -H \"X-Goog-User-Project: ${PROJECT_ID}\" \"${IDP_CHECK_URL}\""
+  # fi
 
-  IDP_EXISTS=$(echo "${IDP_RESPONSE}" | jq '(.identityMappingStores | length // 0) > 0')
+  # # Capture both response body and HTTP code
+  # IDP_RESPONSE_FULL=$(curl -s -w "%{http_code}" -H "Authorization: Bearer ${ACCESS_TOKEN}" -H "X-Goog-User-Project: ${PROJECT_ID}" "${IDP_CHECK_URL}")
+  # IDP_RESPONSE_BODY=$(echo "${IDP_RESPONSE_FULL}" | sed '$d')
+  # IDP_HTTP_CODE=$(echo "${IDP_RESPONSE_FULL}" | tail -n1)
 
-  if [[ "${IDP_EXISTS}" == "true" ]]; then
-    echo "   - ✅ IdP is already configured."
-  else
-    echo "   - IdP not found. Attempting to create it..."
+  # IDP_EXISTS=$(echo "${IDP_RESPONSE_BODY}" | jq '(.identityMappingStores | length // 0) > 0' 2>/dev/null) # Add 2>/dev/null to suppress jq errors if response is not valid JSON
 
-    # This is a workaround for a 'chicken-and-egg' API requirement.
-    # We must first create a temporary aclConfig to "prime" the project,
-    # which then allows the identityMappingStore to be created.
-    echo "     - Priming project with temporary global ACL config..."
-    ACL_CONFIG_URL="https://discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/global/aclConfig"
-    PRIME_CURL_COMMAND="curl -s -w '%{http_code}' -X PATCH \
-      -H \"Authorization: Bearer ${ACCESS_TOKEN}\" \
-      -H 'Content-Type: application/json' \
-      -H \"X-Goog-User-Project: ${PROJECT_ID}\" \
-      \"${ACL_CONFIG_URL}\" \
-      -d '{\"idp_config\": {}}'
-      "
+  # if [[ "${IDP_EXISTS}" == "true" ]]; then
+  #   echo "   - ✅ IdP is already configured."
+  # else
+  #   echo "   - IdP not found. Attempting to create it..."
 
-    if $DEBUG; then
-      echo "🐞 DEBUG: Priming IdP at URL: ${ACL_CONFIG_URL}"
-      echo "🐞 DEBUG: ${PRIME_CURL_COMMAND}"
-    fi
-    PRIME_RESPONSE=$(eval "${PRIME_CURL_COMMAND}")  
+  #   # This is a workaround for a 'chicken-and-egg' API requirement.
+  #   # We must first create a temporary aclConfig to "prime" the project,
+  #   # which then allows the identityMappingStore to be created.
+  #   echo "     - Priming project with temporary global ACL config..."
+  #   ACL_CONFIG_URL="https://discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/global/aclConfig"
+  #   PRIME_CURL_COMMAND="curl -s -w '%{http_code}' -X PATCH \
+  #     -H \"Authorization: Bearer ${ACCESS_TOKEN}\" \
+  #     -H 'Content-Type: application/json' \
+  #     -H \"X-Goog-User-Project: ${PROJECT_ID}\" \
+  #     \"${ACL_CONFIG_URL}\" \
+  #     -d '{\"idp_config\": {\"google_workspace_config\": {}}}'
+  #     "
 
+  #   if $DEBUG; then
+  #     echo "🐞 DEBUG: Priming IdP at URL: ${ACL_CONFIG_URL}"
+  #     echo "🐞 DEBUG: ${PRIME_CURL_COMMAND}"
+  #   fi
+  #   PRIME_RESPONSE_FULL=$(eval "${PRIME_CURL_COMMAND}")
+  #   PRIME_RESPONSE_BODY=$(echo "${PRIME_RESPONSE_FULL}" | sed '$d')
+  #   PRIME_HTTP_CODE=$(echo "${PRIME_RESPONSE_FULL}" | tail -n1)
+    
 
-    PRIME_HTTP_CODE=$(echo "$PRIME_RESPONSE" | tail -n1)
-    if [[ "$PRIME_HTTP_CODE" -ne 200 ]]; then
-        PRIME_BODY=$(echo "$PRIME_RESPONSE" | sed '$d')
-        # A 404 here is okay, it means it was already primed. Any other error is a failure.
-        if [[ "$PRIME_HTTP_CODE" -ne 404 ]]; then
-            echo "   - ❌ Failed to prime project with ACL config." >&2
-            echo "${PRIME_BODY}" >&2
-        fi
-    fi
+  #   if [[ "$PRIME_HTTP_CODE" -ne 200 ]]; then
+  #       # A 404 here is okay, it means it was already primed. Any other error is a failure.
+  #       if [[ "$PRIME_HTTP_CODE" -ne 404 ]]; then
+  #           echo "   - ❌ Failed to prime project with ACL config." >&2
+  #           echo "${PRIME_RESPONSE_BODY}" >&2
+  #           exit 1 # Exit if priming failed unexpectedly
+  #       fi
+  #   fi
 
-    # Create a unique name for the store based on the project ID.
-    IDP_STORE_ID="idp-for-${PROJECT_ID}"
-    curl_url="${IDP_CHECK_URL}?identityMappingStoreId=${IDP_STORE_ID}"
+  #   # Create a unique name for the store based on the project ID.
+  #   IDP_STORE_ID="idp-for-${PROJECT_ID}"
+  #   curl_url="https://discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/global/identityMappingStores?identityMappingStoreId=${IDP_STORE_ID}" # Use full URL, not IDP_CHECK_URL part.
     
    
-    curl_command="curl -s -w '%{http_code}' \
-      -X POST \
-      -H 'Content-Type: application/json' \
-      -H \"Authorization: Bearer ${ACCESS_TOKEN}\" \
-      -H 'x-goog-user-project: ${PROJECT_ID}' \
-      '${curl_url}' \
-      -d '{\"name\": \"${IDP_STORE_ID}\"}'"
+  #   CREATE_CURL_COMMAND="curl -s -w '%{http_code}' \
+  #     -X POST \
+  #     -H 'Content-Type: application/json' \
+  #     -H \"Authorization: Bearer ${ACCESS_TOKEN}\" \
+  #     -H 'x-goog-user-project: ${PROJECT_ID}' \
+  #     '${curl_url}' \
+  #     -d '{\"name\": \"projects/${PROJECT_ID}/locations/global/identityMappingStores/${IDP_STORE_ID}\"}'" # Use full resource name in payload
 
-    if $DEBUG; then
-      echo "🐞 DEBUG: Creating IdP at URL: ${curl_url}"
-      echo "🐞 DEBUG: ${curl_command}"
-    fi
+  #   if $DEBUG; then
+  #     echo "🐞 DEBUG: Creating IdP at URL: ${curl_url}"
+  #     echo "🐞 DEBUG: ${CREATE_CURL_COMMAND}"
+  #   fi
 
-    CREATE_HTTP_CODE=$(eval "${curl_command}")
-    #CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n1)
+  #   CREATE_RESPONSE_FULL=$(eval "${CREATE_CURL_COMMAND}")
+  #   CREATE_RESPONSE_BODY=$(echo "${CREATE_RESPONSE_FULL}" | sed '$d')
+  #   CREATE_HTTP_CODE=$(echo "${CREATE_RESPONSE_FULL}" | tail -n1)
     
-    if [[ "$CREATE_HTTP_CODE" -ge 200 && "$CREATE_HTTP_CODE" -lt 300 ]]; then
-      echo "   - ✅ Successfully created Identity Provider mapping store."
-    else
-      CREATE_BODY=$(echo "$CREATE_RESPONSE" | sed '$d')
-      echo "   - ❌ Failed to create Identity Provider." >&2
-      echo "     Received HTTP status ${CREATE_HTTP_CODE}. Error:" >&2
-      echo "${CREATE_BODY}" >&2
-      exit 1
-    finally
-      # Clean up the temporary ACL config.
-      echo "     - Cleaning up temporary ACL config..."
-      curl -s -X DELETE \
-        -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-        -H "X-Goog-User-Project: ${PROJECT_ID}" \
-        "${ACL_CONFIG_URL}" > /dev/null
-    fi
-  fi
+  #   if [[ "$CREATE_HTTP_CODE" -ge 200 && "$CREATE_HTTP_CODE" -lt 300 ]]; then
+  #     echo "   - ✅ Successfully created Identity Provider mapping store."
+  #   else
+  #     echo "   - ❌ Failed to create Identity Provider." >&2
+  #     echo "     Received HTTP status ${CREATE_HTTP_CODE}. Error:" >&2
+  #     echo "${CREATE_RESPONSE_BODY}" >&2
+  #     exit 1
+  #   fi
+  # fi
+  # # Clean up the temporary ACL config. This runs unconditionally.
+  # echo "     - Cleaning up temporary ACL config..."
+  # curl -s -X DELETE \
+  #   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  #   -H "X-Goog-User-Project: ${PROJECT_ID}" \
+  #   "${ACL_CONFIG_URL}" > /dev/null
 }
 
 main() {

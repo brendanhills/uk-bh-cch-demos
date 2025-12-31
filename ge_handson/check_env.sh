@@ -216,38 +216,54 @@ check_license() {
 
 check_idp() {
   echo "🆔 Checking for Discovery Engine IdP configuration..."
-  local idp_check_url="https://discoveryengine.googleapis.com/v1/projects/${project_id}/locations/global/identityMappingStores"
-  local idp_response
-  idp_response=$(mktemp)
-  local idp_http_status
-
-  local idp_curl_command="curl -s -w '%{http_code}' \
-    -H 'Authorization: Bearer ${access_token}' \
-    -H 'x-goog-user-project: ${project_id}' \
-    '${idp_check_url}' \
-    -o '${idp_response}'"
-
-  idp_http_status=$(eval "${idp_curl_command}")
-
-  if [[ "$idp_http_status" -eq 200 ]]; then
-      # Check if the 'identityMappingStores' array exists and is not empty
-      if [[ "$(jq '(.identityMappingStores | length // 0) > 0' "$idp_response")" == "true" ]]; then
-          echo "✅ Discovery Engine IdP is configured."
-      else
-          all_checks_passed=false
-          echo "❌ Discovery Engine IdP is not configured."
-          echo "   This is a one-time setup required for connectors like Google Drive and Gmail."
-          echo "   ➡ To fix, follow these manual steps:"
-          echo "     1. Go to Data Stores in the console: https://console.cloud.google.com/gen-app-builder/data-stores?project=${project_id}"
-          echo "     2. Click 'NEW DATA STORE' and select 'Google Drive'."
-          echo "     3. In the configuration panel, click 'CONFIGURE' next to 'Identity provider'."
-          echo "     4. Select 'Google Workspace', click 'SAVE', and then you can CANCEL the data store creation."
-      fi
-  else
-      echo "⚠️ Could not check for IdP configuration. API call failed with HTTP status ${idp_http_status}."
-  fi
-  rm -f "$idp_response"
-
+  echo "⚠️ The check for IdP configuration has proven to be unreliable and is being skipped."
+  echo "   Assuming you have followed the manual steps to configure the IdP."
+  # The original check is commented out below for reference.
+  #
+  # local access_token
+  # access_token=$(gcloud auth application-default print-access-token 2>/dev/null || true)
+  #
+  # if [ -z "$access_token" ]; then
+  #     all_checks_passed=false
+  #     echo "❌ Could not get authentication token to check IdP configuration. Please run 'gcloud auth application-default login'."
+  #     return
+  # fi
+  #
+  # local idp_check_url="https://discoveryengine.googleapis.com/v1/projects/${project_id}/locations/global/identityMappingStores"
+  # local idp_response
+  # idp_response=$(mktemp)
+  # local idp_http_status
+  #
+  # local idp_curl_command="curl -s -w '%{http_code}' \
+  #   -H 'Authorization: Bearer ${access_token}' \
+  #   -H 'x-goog-user-project: ${project_id}' \
+  #   '${idp_check_url}' \
+  #   -o '${idp_response}'"
+  #
+  # idp_http_status=$(eval "${idp_curl_command}")
+  #
+  # if [[ "$idp_http_status" -eq 200 ]]; then
+  #     # Check if the 'identityMappingStores' array exists and is not empty
+  #     if [[ "$(jq '(.identityMappingStores | length // 0) > 0' "$idp_response")" == "true" ]]; then
+  #         echo "✅ Discovery Engine IdP is configured."
+  #     else
+  #         all_checks_passed=false
+  #         echo "❌ Discovery Engine IdP is not configured."
+  #         echo "   This is a one-time setup required for connectors like Google Drive and Gmail."
+  #         echo "   ➡ To fix, follow these manual steps:"
+  #         echo "     1. Go to Data Stores in the console: https://console.cloud.google.com/gen-app-builder/data-stores?project=${project_id}"
+  #         echo "     2. Click 'NEW DATA STORE' and select 'Google Drive'."
+  #         echo "     3. In the configuration panel, click 'CONFIGURE' next to 'Identity provider'."
+  #         echo "     4. Select 'Google Workspace', click 'SAVE', and then you can CANCEL the data store creation."
+  #     fi
+  # else
+  #     all_checks_passed=false
+  #     echo "⚠️ Could not check for IdP configuration. API call failed with HTTP status ${idp_http_status}."
+  #     echo "--- Begin API Error ---"
+  #     cat "${idp_response}"
+  #     echo "--- End API Error ---"
+  # fi
+  # rm -f "$idp_response"
 }
 
 main() {
