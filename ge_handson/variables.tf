@@ -1,21 +1,24 @@
-
 variable "project_id" {
-  description = "The GCP project ID."
+  description = "The project ID to deploy to."
   type        = string
 }
 
 variable "region" {
-  description = "The GCP region."
+  description = "The region to deploy to."
   type        = string
 }
 
 variable "location" {
-  description = "The GCP location for the GCS bucket."
+  description = "The location to deploy to."
   type        = string
 }
 
-variable "bucket_name" {
-  description = "The name of the GCS bucket."
+variable "gcs_data_store_id" {
+  description = "The ID of the GCS data store created by the Python script."
   type        = string
-  default     = "gemini-datastore"
+}
+
+variable "gdrive_data_store_id" {
+  description = "The ID of the Google Drive data store created by the Python script."
+  type        = string
 }

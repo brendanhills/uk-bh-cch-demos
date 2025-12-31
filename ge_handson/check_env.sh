@@ -16,19 +16,21 @@ command_exists() {
 }
 
 check_project_config() {
-  local gcloud_project
-  gcloud_project=$(gcloud config get-value project 2>/dev/null)
-  if [[ -z "${gcloud_project}" ]]; then
-    echo "🗣 No GCP project is configured in gcloud. Please run: gcloud config set project YOUR_PROJECT_ID" >&2
-    exit 1
+  if [ -z "${PROJECT_ID}" ]; then # If PROJECT_ID is not set from config.sh
+    local gcloud_project=$(gcloud config get-value project 2>/dev/null)
+    if [[ -z "${gcloud_project}" ]]; then
+      echo "🗣 No GCP project is configured in gcloud. Please run: gcloud config set project YOUR_PROJECT_ID" >&2
+      exit 1
+    fi
+    export PROJECT_ID=$gcloud_project # Export if set from gcloud
   fi
 
   # Check for project mismatch
   if [ -f "terraform.tfvars" ]; then
     tf_project=$(grep -E '^\s*project_id\s*=' terraform.tfvars | sed -E 's/.*=\s*//' | tr -d '" ')
-    if [ -n "${tf_project}" ] && [ "${gcloud_project}" != "${tf_project}" ]; then
+    if [ -n "${tf_project}" ] && [ "${PROJECT_ID}" != "${tf_project}" ]; then # Use exported PROJECT_ID here
       echo "❗ Mismatch Detected!"
-      echo "  Your active gcloud project is:         '$gcloud_project'"
+      echo "  Your active gcloud project is:         '$PROJECT_ID'"
       echo "  Your terraform.tfvars project is:      '$tf_project'"
       echo "  These should match to avoid applying permissions to the wrong project."
       echo "
@@ -37,8 +39,7 @@ check_project_config() {
     fi
   fi
 
-  # Export for other functions to use
-  export project_id=$gcloud_project
+  # Export for other functions to use (already exported or set above)
   export user=$(gcloud config get-value account 2>/dev/null)
 }
 
@@ -52,7 +53,7 @@ check_admin_roles() {
       echo "✅ IAM role found: $role"
     else
       echo "❌ Admin role missing for '$user': $role"
-      echo "   ➡ To fix, run: gcloud projects add-iam-policy-binding $project_id --member=\"user:$user\" --role=\"$role\""
+      echo "   ➡ To fix, run: gcloud projects add-iam-policy-binding $PROJECT_ID --member=\"user:$user\" --role=\"$role\""
       exit 1
     fi
   done
@@ -62,9 +63,9 @@ check_gemini_user_roles() {
   echo "👥 Checking for Gemini Enterprise end-user roles..."
   for gemini_user in "${GEMINI_USERS[@]}"; do
     # Extract roles for the specific Gemini user from the pre-fetched IAM policy
-    user_roles=$(echo "$iam_policy" | jq -r --arg user "user:$gemini_user" '.[] | select(.bindings.members == $user) | .bindings.role')
+    user_roles=$(echo "$iam_policy" | jq -r --arg user "user:$gemini_user" '.[] | select(.bindings.members[]? == $user) | .bindings.role')
     for role in "${GEMINI_USER_ROLES[@]}"; do
-      if grep -q "^$role$" <<< "$user_roles"; then
+      if echo "$user_roles" | grep -q "^$role$"; then
         echo "✅ Role '$role' found for user: $gemini_user"
       else
         all_checks_passed=false
@@ -91,9 +92,9 @@ check_adc() {
         echo "❌ ADC quota project is not set."
         echo "   ➡ To fix, run: gcloud auth application-default set-quota-project $project_id"
         exit 1
-      elif [[ "$quota_project" != "$project_id" ]]; then
-        echo "❌ ADC quota project ('$quota_project') does not match active gcloud project ('$project_id')."
-        echo "   ➡ To fix, run: gcloud auth application-default set-quota-project $project_id"
+      elif [[ "$quota_project" != "$PROJECT_ID" ]]; then
+        echo "❌ ADC quota project ('$quota_project') does not match active gcloud project ('$PROJECT_ID')."
+        echo "   ➡ To fix, run: gcloud auth application-default set-quota-project $PROJECT_ID"
         exit 1
       else
         echo "✅ ADC quota project is set to: $quota_project"
@@ -108,8 +109,7 @@ check_adc() {
 check_apis() {
   echo "☁️ Checking for enabled APIs..."
   local enabled_apis_output
-  enabled_apis_output=$(gcloud services list --enabled --project="$project_id" --format="value(NAME)" 2>/dev/null || true)
-
+        enabled_apis_output=$(gcloud services list --enabled --project="$PROJECT_ID" --format="value(NAME)" 2>/dev/null || true)
   for api in "${REQUIRED_APIS[@]}"; do
     if grep -q "^$api$" <<< "$enabled_apis_output"; then
       echo "✅ API enabled: $api"
@@ -119,6 +119,51 @@ check_apis() {
       echo "   ➡ To fix, run: gcloud services enable $api --project=$project_id"
     fi
   done
+}
+
+check_service_account_setup() {
+  echo "👤 Checking Service Account setup..."
+  local sa_name="${GEMINI_END_USER_SA_NAME}"
+  local sa_email="${sa_name}@${PROJECT_ID}.iam.gserviceaccount.com"
+
+  # 1. Check for Service Account existence
+  echo "   - Checking if service account '${sa_email}' exists..."
+  if ! gcloud iam service-accounts describe "${sa_email}" &> /dev/null; then
+    all_checks_passed=false
+    echo "   ❌ Service account '${sa_email}' does not exist."
+    echo "      ➡ To fix, run: ./setup_env.sh"
+    return
+  else
+    echo "   ✅ Service account '${sa_email}' exists."
+  fi
+
+  # 2. Check for IAM policy binding on the service account
+  echo "   - Checking IAM policy for '${sa_email}'..."
+  local sa_iam_policy
+  sa_iam_policy=$(gcloud iam service-accounts get-iam-policy "${sa_email}" --format="json" 2>/dev/null || true)
+
+  if [[ -z "$sa_iam_policy" ]]; then
+    all_checks_passed=false
+    echo "   ❌ Could not fetch IAM policy for service account '${sa_email}'. Please check permissions."
+    echo "      ➡ To fix, run: ./setup_env.sh"
+    return
+  fi
+
+  local member_group="group:${GEMINI_END_USERS_GROUP}"
+  local role="roles/iam.serviceAccountUser"
+  local binding_exists="false"
+
+  if echo "$sa_iam_policy" | jq -e ".bindings[] | select(.role == \"${role}\") | .members[] | select(. == \"${member_group}\")" &> /dev/null; then
+    binding_exists="true"
+  fi
+
+  if [[ "$binding_exists" == "true" ]]; then
+    echo "   ✅ Role '${role}' for member '${member_group}' found on service account '${sa_email}'."
+  else
+    all_checks_passed=false
+    echo "   ❌ Role '${role}' for member '${member_group}' not found on service account '${sa_email}'."
+    echo "      ➡ To fix, run: ./setup_env.sh"
+  fi
 }
 
 check_license() {
@@ -151,14 +196,14 @@ check_license() {
   # Build the command as a string to be printed and then executed with eval.
   # Using eval ensures that the nested quotes for headers are interpreted correctly.
   local curl_command
-  curl_url="https://${de_location}-discoveryengine.googleapis.com/v1/projects/${project_id}/locations/${de_location}/userStores/default_user_store/userLicenses"
+  curl_url="https://${de_location}-discoveryengine.googleapis.com/v1/projects/${PROJECT_ID}/locations/${de_location}/userStores/default_user_store/userLicenses"
   if $DEBUG; then
     echo "curl_url ${curl_url}"
   fi
 
   curl_command="curl -s -w '%{http_code}' \
     -H 'Authorization: Bearer ${access_token}' \
-    -H 'x-goog-user-project: ${project_id}' \
+    -H 'x-goog-user-project: ${PROJECT_ID}' \
     '${curl_url}' \
     -o '${response}'"
 
@@ -183,7 +228,7 @@ check_license() {
         echo "❌ Gemini Enterprise license is not active for this project."
         echo "   The API call succeeded, but no active license was found in the response."
         echo "   ➡ To fix, you may need to start a trial. Follow these steps:"
-        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$project_id"
+        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$PROJECT_ID"
         echo "     2. IMPORTANT: When prompted, make sure you choose the location '$de_location' to match your Terraform configuration."
         echo "     3. After activating the trial, wait a few minutes and re-run this script."
     fi
@@ -199,7 +244,7 @@ check_license() {
         echo "   The API returned a 'SERVICE_DISABLED' error."
         echo "   ➡ To fix, you may need to start a trial. Follow these steps:"
         echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start"
-        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$project_id"
+        echo "     1. Navigate to: https://console.cloud.google.com/gemini-enterprise/start?project=$PROJECT_ID"
         echo "     2. IMPORTANT: When prompted, make sure you choose the location '$de_location' to match your Terraform configuration."
         echo "     3. After activating the trial, wait a few minutes and re-run this script."
     else
@@ -278,16 +323,16 @@ main() {
   fi
 
   check_project_config
-  echo "🔎 Checking environment for project '$project_id' and user '$user'..."
+  echo "🔎 Checking environment for project '$PROJECT_ID' and user '$user'..."
 
   # This global variable is used by check functions to track the overall status.
   all_checks_passed=true
 
   # Fetch the entire IAM policy once to avoid multiple gcloud calls.
   echo "Fetching project IAM policy for analysis..."
-  iam_policy=$(gcloud projects get-iam-policy "$project_id" --flatten="bindings[].members" --format="json" 2>/dev/null)
+  iam_policy=$(gcloud projects get-iam-policy "$PROJECT_ID" --flatten="bindings[].members" --format="json" 2>/dev/null)
   if [[ -z "$iam_policy" ]]; then
-    echo "❌ Could not fetch IAM policy for project '$project_id'. Please check permissions."
+    echo "❌ Could not fetch IAM policy for project '$PROJECT_ID'. Please check permissions."
     exit 1
   fi
   export iam_policy
@@ -299,6 +344,8 @@ main() {
   check_adc
   echo
   check_apis
+  echo
+  check_service_account_setup
   echo
   check_license
   echo

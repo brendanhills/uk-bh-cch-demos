@@ -51,3 +51,6 @@ ge_handson/.terraform/*
 ge_handson/terraform.tfstate.backup
 ge_handson/terraform.tfstate
 ge_handson/tfplan
+ge_handson/datastores.auto.tfvars
+ge_handson/dummy.txt
+ge_handson/project_iam_policy.json

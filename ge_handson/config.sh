@@ -22,6 +22,9 @@
 export PROJECT_ID="ge-hands-on25tst-101"
 export REGION="us-central1"
 export LOCATION="us"
+# Google Group for Gemini Enterprise end-users.
+export GEMINI_END_USERS_GROUP="gemini-enterprise-end-users@googlegroups.com"
+
 
 
 # --- File Generation Logic ---
@@ -49,6 +52,7 @@ cat > .env << EOL
 PROJECT_ID="${PROJECT_ID}"
 LOCATION="${LOCATION}"
 REGION="${REGION}"
+GEMINI_END_USERS_GROUP="${GEMINI_END_USERS_GROUP}"
 EOL
 echo "✅ .env file generated."
 
@@ -61,13 +65,14 @@ echo "✅ .env file generated."
 
 # List of required APIs for the project.
 REQUIRED_APIS=(
-  "discoveryengine.googleapis.com"
-  "storage.googleapis.com"
   "serviceusage.googleapis.com"
   "logging.googleapis.com"
-  "aiplatform.googleapis.com"
   "cloudresourcemanager.googleapis.com"
-  "iam.googleapis.com"
+  aiplatform.googleapis.com 
+  discoveryengine.googleapis.com 
+  storage.googleapis.com 
+  iam.googleapis.com 
+  compute.googleapis.com
 )
 
 # Roles for the administrator account running the setup.
@@ -77,6 +82,7 @@ ADMIN_ROLES=(
   "roles/serviceusage.serviceUsageConsumer"
   "roles/logging.viewer"
   "roles/aiplatform.user"
+  "roles/iam.serviceAccountAdmin"
 )
 
 # End-users to be granted viewer/user access to the Gemini Enterprise application.
@@ -91,5 +97,10 @@ GEMINI_USER_ROLES=(
   "roles/discoveryengine.user"
   "roles/aiplatform.user"
 )
+
+# Name for the Gemini end-user service account.
+GEMINI_END_USER_SA_NAME="gemini-end-user"
+
+
 
 echo -e "\nConfiguration complete. Variables are exported for this session."

@@ -37,9 +37,39 @@ Run the `setup_env.sh` script. This will enable the correct APIs and grant the n
 
 You can verify the setup at any time by running `./check_env.sh`.
 
-### 3. Deploy Infrastructure with Terraform
+**Important: Manual Configuration Steps**
+Some Discovery Engine features, like Identity Provider (IdP) configuration for ACL-enabled connectors (e.g., Google Drive, Gmail), cannot be fully automated and require manual intervention in the Google Cloud Console.
 
-Use Terraform to deploy the core infrastructure, including the Discovery Engine search engine.
+-   **Identity Provider (IdP) for ACL-enabled Connectors:**
+    To configure the IdP for your Gemini Enterprise app (required for Google Drive and Gmail data stores), visit the following URL. You will need to replace `LOCATION` with your project's location (from `config.sh`) and `ENGINE_ID` with the ID of your search engine (output from `terraform apply`).
+
+    `https://console.cloud.google.com/gemini-enterprise/locations/LOCATION/engines/ENGINE_ID/overview/identity?orgonly=true&walkthrough_id=gemini-enterprise--identity-v1--create--quickstart`
+
+-   **GMail Data Store**: Direct GMail data store creation is not yet supported via the API and needs to be done manually in the Google Cloud Console.
+
+### 3. Install Python Dependencies
+
+Run the following command to install the required Python packages.
+
+```bash
+# Install dependencies
+uv sync
+```
+
+### 4. Create GCS Bucket and Data Stores
+
+Run the script that creates the GCS bucket and associated data stores. These data stores are required by the search engine that will be created in the next step.
+
+```bash
+# Run the datastores script
+uv run python datastores.py
+```
+
+**Note on GMail Data Store**: Direct GMail data store creation is not yet supported via the API and needs to be done manually in the Google Cloud Console.
+
+### 5. Deploy Infrastructure with Terraform
+
+Use Terraform to deploy the core infrastructure, including the Discovery Engine search engine which will connect to the data stores created in the previous step.
 
 ```bash
 # Initialize Terraform (only needs to be run once)
@@ -48,19 +78,5 @@ terraform init
 # Apply the Terraform configuration
 terraform apply --auto-approve
 ```
-
-### 4. Install Python Dependencies & Setup GE Data Stores etc
-
-Run the following commands to install Python packages and then run the script that sets up Gemini Enterprise. This script creates the GCS bucket and associated data stores.
-
-```bash
-# Install dependencies
-uv sync
-
-# Run the ge_setup script
-uv run ge_setup.py
-```
-
-**Note on GMail Data Store**: Direct GMail data store creation is not yet supported via the API and needs to be done manually in the Google Cloud Console.
 
 After completing these steps, your core infrastructure and data stores will be set up.

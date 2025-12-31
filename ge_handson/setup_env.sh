@@ -99,8 +99,25 @@ enable_apis() {
   echo "   - ✅ All required APIs are enabled."
 }
 
+create_service_accounts() {
+  echo -e "\n4. Creating service accounts..."
+  local sa_name="${GEMINI_END_USER_SA_NAME}"
+  local sa_email="${sa_name}@${PROJECT_ID}.iam.gserviceaccount.com"
+
+  echo "   - Checking if service account '${sa_name}' exists..."
+  if gcloud iam service-accounts describe "${sa_email}" &> /dev/null; then
+    echo "     ✅ Service account '${sa_email}' already exists."
+  else
+    echo "     - Creating service account '${sa_name}'..."
+    gcloud iam service-accounts create "${sa_name}" \
+      --display-name "Gemini End User" \
+      --project="${PROJECT_ID}"
+    echo "     ✅ Service account '${sa_email}' created."
+  fi
+}
+
 grant_iam_roles() {
-  echo -e "4. Granting required IAM roles..."
+  echo -e "\n5. Granting required IAM roles..."
 
   # Combine all admin roles into a single gcloud command for the setup user
   echo "   - Granting required admin roles to setup user ('${USER_EMAIL}')..."
@@ -129,6 +146,14 @@ grant_iam_roles() {
     gcloud projects add-iam-policy-binding "${PROJECT_ID}" --member="user:${user}" ${gemini_user_role_args} --condition=None > /dev/null
     echo "       ✅ Granted: ${GEMINI_USER_ROLES[*]}"
   done
+
+  echo "   - Granting Service Account User role to the end-users group..."
+  local sa_email="${GEMINI_END_USER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+  if $DEBUG; then
+    echo "🐞 DEBUG: gcloud iam service-accounts add-iam-policy-binding \"${sa_email}\" --member=\"group:${GEMINI_END_USERS_GROUP}\" --role=\"roles/iam.serviceAccountUser\""
+  fi
+  gcloud iam service-accounts add-iam-policy-binding "${sa_email}" --member="group:${GEMINI_END_USERS_GROUP}" --role="roles/iam.serviceAccountUser" > /dev/null
+  echo "     ✅ Granted Service Account User role to '${GEMINI_END_USERS_GROUP}'."
 }
 
 configure_idp() {
@@ -268,6 +293,7 @@ main() {
   set_project
   setup_adc
   enable_apis
+  create_service_accounts
   grant_iam_roles
   configure_idp
 
