@@ -1,0 +1,18 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Python File with arg",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "args": ["gs://uk-bh-experiments-argolis-us/capita/test_test-transcript-connector.wav"],
+            // Explicitly tell the debugger where to find the .env file.
+            // ${fileDirname} resolves to the directory of the currently open file (main.py).
+            "envFile": "${fileDirname}/.env"
+        }
+    ]
+}

@@ -7,3 +7,8 @@ requires-python = ">=3.13"
 dependencies = [
     "google-cloud-aiplatform>=1.71.1",
 ]
+
+[tool.uv.workspace]
+members = [
+    "transcribe",
+]
