@@ -8,10 +8,10 @@ dependencies = [
     "audioop-lts>=0.2.2",
     "dotenv>=0.9.9",
     "ffmpeg-python>=0.2.0",
+    "google-cloud-speech>=2.35.0",
     "google-cloud-storage>=2.19.0",
     "google-genai>=1.56.0",
     "gradio>=6.2.0",
     "pydub>=0.25.1",
     "pytest>=8.0.0",
-    "yt-dlp>=2025.12.8",
 ]

@@ -9,10 +9,10 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
-            "args": ["gs://uk-bh-experiments-argolis-us/capita/test_test-transcript-connector.wav"],
-            // Explicitly tell the debugger where to find the .env file.
-            // ${fileDirname} resolves to the directory of the currently open file (main.py).
-            "envFile": "${fileDirname}/.env"
+            "args": [
+                "gs://uk-bh-experiments-argolis-us/capita/test_test-transcript-connector.wav"
+            ],
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
