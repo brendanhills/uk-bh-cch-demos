@@ -54,3 +54,4 @@ ge_handson/tfplan
 ge_handson/datastores.auto.tfvars
 ge_handson/dummy.txt
 ge_handson/project_iam_policy.json
+capita/transcribe/output.json

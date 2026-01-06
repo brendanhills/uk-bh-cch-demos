@@ -5,15 +5,12 @@ import json
 import logging
 import os
 import io
-import wave
 
 from pydub import AudioSegment
 from google.api_core.client_options import ClientOptions
 from google.api_core import exceptions
 from google.cloud import speech_v2 as cs
-from google.cloud.speech_v2 import SpeechClient
-from google.cloud import storage
-from types import SimpleNamespace
+from google.cloud.storage import Client as StorageClient
 from dotenv import load_dotenv
 
 # Configure logging
@@ -31,11 +28,8 @@ GCP_RECOGNIZER_ID = os.getenv("GCP_RECOGNIZER_ID")
 GCP_TRANSCRIPTION_MODEL = os.environ.get("GCP_TRANSCRIPTION_MODEL", "telephony")
 LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", "en-US")
 CUSTOMER_CHANNEL = os.environ.get("CUSTOMER_CHANNEL", "channel_1")
+OUTPUT_FILENAME = "output.json"
 
-# Create a simple settings object to be compatible with the original _handle_transcription function
-settings = SimpleNamespace(
-    customer_channel=CUSTOMER_CHANNEL
-)
 
 # A simple check for the most important settings.
 assert GCP_PROJECT_ID, "🚨 PROJECT_ID not found in .env file."
@@ -55,8 +49,10 @@ class AudioStream:
 class TranscriptionService:
     """Service to transcribe audio using Google Cloud Speech-to-Text."""
 
-    def __init__(self, gcs_uri: str):
+    def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float):
         self.gcs_uri = gcs_uri
+        self.customer_channel = customer_channel
+        self.buffer_timeout = buffer_timeout
         self.transcribe_client = cs.SpeechAsyncClient(
             client_options=ClientOptions(
                 api_endpoint=f"{GCP_LOCATION}-speech.googleapis.com"
@@ -74,10 +70,12 @@ class TranscriptionService:
         self.stream = AudioStream()
         self.audio_data = None # To hold the audio data in memory
 
+
+
     async def _get_audio_properties(self):
         """Reads the WAV file from GCS to determine audio properties."""
         try:
-            storage_client = storage.Client()
+            storage_client = StorageClient()
             bucket_name, blob_name = self.gcs_uri.replace("gs://", "").split("/", 1)
             bucket = storage_client.bucket(bucket_name)
             blob = bucket.blob(blob_name)
@@ -88,18 +86,36 @@ class TranscriptionService:
             
             # Use pydub to read properties from the in-memory data
             audio_segment = AudioSegment.from_file(io.BytesIO(self.audio_data))
-            self.number_of_channels = audio_segment.channels
+            if audio_segment.channels == 2:
+                left, right = audio_segment.split_to_mono()
+                if left.raw_data == right.raw_data:
+                    logger.info("Both audio channels are identical. Treating as mono.")
+                    mono_audio = audio_segment.set_channels(1)
+                    # The audio data needs to be updated to the mono version
+                    # so that _stream_audio_from_gcs uses the correct data.
+                    self.audio_data = mono_audio.export(format="wav").read()
+                    self.number_of_channels = 1
+                    self.enable_channel_identification = False
+                else:
+                    self.number_of_channels = 2
+            else:
+                self.number_of_channels = audio_segment.channels
+                self.enable_channel_identification = False
+
             self.media_sample_rate_hz = audio_segment.frame_rate
-            logger.info(f"Audio properties: {self.number_of_channels} channels, {self.media_sample_rate_hz} Hz")
+            logger.info(f"Audio properties: {self.number_of_channels} channels, {self.media_sample_rate_hz} Hz, enable_channel_identification: {self.enable_channel_identification}")
         except Exception as e:
             logger.error(f"Failed to read audio properties from GCS: {e}")
             raise
+        finally:
+            storage_client.close()
 
     async def _stream_audio_from_gcs(self):
         """Downloads and streams a WAV file from GCS into the audio queue."""
         try:
             # Convert the audio to raw PCM (LINEAR16) data which the API expects
-            audio_segment = AudioSegment.from_file(io.BytesIO(self.audio_data))
+            audio_segment = AudioSegment.from_file(io.BytesIO(self.audio_data)) # type: ignore 
+            audio_segment = audio_segment.set_sample_width(2)
             pcm_data = audio_segment.set_frame_rate(self.media_sample_rate_hz).set_channels(self.number_of_channels).raw_data
 
             # Stream the converted PCM data from memory
@@ -167,20 +183,23 @@ class TranscriptionService:
                 if result.is_final:
                     if not alt.words:
                         continue
-                    logger.debug(f"Final result: {result.alternatives[0].transcript}")
+                    logger.debug(f"Final result:{result.alternatives[0].transcript}")
                     assert (
                         result.alternatives is not None and len(result.alternatives) > 0
                     ), "No alternatives found in result."
 
                     self.full_transcript += "\n" + result.alternatives[0].transcript
-                    if result.channel_tag:
+                    #BH CHange
+                    # Default channel_tag to 1 if it doesn't exist (for single-channel audio)
+                    channel_tag = result.channel_tag if result.channel_tag else 1
+                    if channel_tag:
                         end_time = getattr(  # noqa: F841
                             result, "result_end_offset", None
                         ) or getattr(result, "end_time", None)
-                        seconds = end_time.total_seconds()
+                        seconds = end_time.total_seconds() #type: ignore
                         result_end_dt = self.stream.start_time + datetime.timedelta(seconds=seconds)
                         # Based on the env the audio channels of customer and agent will set
-                        if settings.customer_channel.lower() == "channel_1":
+                        if self.customer_channel.lower() == "channel_1":
                             self.accumulated_transcript_chunks.append(
                             {
                                 "speaker": (
@@ -208,17 +227,101 @@ class TranscriptionService:
                                 ),
                             }
                             )
+                        logger.debug(f"{self.stream.start_time + datetime.timedelta(seconds=seconds)}: channel_{result.channel_tag }")
                         self.accumulated_length += len(
                         result.alternatives[0].transcript.split()
                         )
 
+    def _process_result_buffer(self, buffer):
+        if not buffer:
+            return
+        
+        buffer.sort(key=lambda r: r.result_end_offset.total_seconds())
+        for result in buffer:
+            if not result.alternatives:
+                continue
+            alt = result.alternatives[0]
+
+            if not alt.words:
+                continue
+            logger.debug(f"Buffered Final result: {result.alternatives[0].transcript}")
+            assert (
+                result.alternatives is not None and len(result.alternatives) > 0
+            ), "No alternatives found in result."
+
+            self.full_transcript += "\n" + result.alternatives[0].transcript
+            
+            # Default channel_tag to 1 if it doesn't exist (for single-channel audio)
+            channel_tag = getattr(result, 'channel_tag', 1)
+
+            seconds = result.result_end_offset.total_seconds()
+            result_end_dt = self.stream.start_time + datetime.timedelta(seconds=seconds)
+
+            speaker = "speaker" # Default for single-channel
+            if self.enable_channel_identification:
+                if self.customer_channel.lower() == "channel_1":
+                    self.accumulated_transcript_chunks.append(
+                    {
+                        "speaker": ("customer" if result.channel_tag == 1 else "agent"),
+                        "text": result.alternatives[0].transcript,
+                        "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                    )
+                else:
+                    self.accumulated_transcript_chunks.append(
+                    {
+                        "speaker": ("customer" if result.channel_tag == 2 else "agent"),
+                        "text": result.alternatives[0].transcript,
+                        "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                    )
+                self.accumulated_length += len(result.alternatives[0].transcript.split())
+
+    async def _handle_buffered_transcription(self):
+        responses = await self.transcribe_client.streaming_recognize(
+            requests=self.request_generator()
+        )
+        
+        buffer = []
+        # BUFFER_TIMEOUT = 0.5 # seconds
+        # Use the configurable buffer_timeout
+        BUFFER_TIMEOUT = self.buffer_timeout
+
+        async def buffer_processor():
+            while True:
+                await asyncio.sleep(BUFFER_TIMEOUT)
+                if buffer:
+                    self._process_result_buffer(buffer)
+                    buffer.clear()
+        
+        processor_task = asyncio.create_task(buffer_processor())
+
+        try:
+            async for response in responses:
+                for result in response.results:
+                    if result.is_final:
+                        buffer.append(result)
+        finally:
+            processor_task.cancel()
+            # process any remaining items in the buffer
+            self._process_result_buffer(buffer)
+            buffer.clear()
+
     def _format_output(self):
         """Formats the transcript chunks into the desired JSON structure."""
-        # Return the transcript chunks in the order they were received, without sorting or grouping.
-        return self.accumulated_transcript_chunks
+        # Create a copy to compare against after sorting
+        original_chunks = list(self.accumulated_transcript_chunks)
+        sorted_chunks = sorted(original_chunks, key=lambda x: x['timestamp'])
+ 
+        if original_chunks != sorted_chunks:
+            # Calculate how many items were not in their correct sorted position.
+            out_of_order_count = sum(1 for i, j in zip(original_chunks, sorted_chunks) if i != j)
+            logger.info(f"{out_of_order_count} transcript chunks were out of order from a total of {len(original_chunks)} and have been sorted by timestamp.")
+ 
+        return sorted_chunks
     
     
-    async def create_recognizer(self, recognizer_id: str ) -> cs.Recognizer:
+    async def find_or_create_recognizer(self, recognizer_id: str ) -> cs.Recognizer:
         """Creates a recognizer with a unique ID and default recognition configuration.
         Args:
             recognizer_id (str): The unique identifier for the recognizer to be created.
@@ -226,7 +329,6 @@ class TranscriptionService:
             cloud_speech.Recognizer: The created recognizer object with configuration.
         """
         logger.info("Creating recognizer...")
-        # Instantiates a client
         get_request = cs.GetRecognizerRequest(
             name=f"projects/{GCP_PROJECT_ID}/locations/{GCP_LOCATION}/recognizers/{recognizer_id}"
         )
@@ -254,29 +356,41 @@ class TranscriptionService:
         except exceptions.NotFound:
             logger.info(f"Recognizer '{recognizer_id}' not found, creating it...")
             try:
-                operation = await self.transcribe_client.create_recognizer(request=create_request)
+                operation = await self.transcribe_client.create_recognizer(request=create_request) # type: ignore
                 recognizer = await operation.result()
                 logger.info(f"Successfully created recognizer: {recognizer.name}")
                 return recognizer
             except Exception as e:
                 logger.error(f"Failed to create recognizer: {e}")
                 raise
+        except exceptions.PermissionDenied as e:
+            logger.warning(f"Permission denied creating recognizer '{recognizer_id}', possibly due to recent deletion. Retrying with a unique ID. Original error: {e}")
+            # This can happen if the recognizer was recently deleted and the name is not yet available.
+            # We'll try creating it again with a unique suffix.
+            unique_recognizer_id = f"{recognizer_id}-{int(datetime.datetime.now().timestamp())}"
+            create_request.recognizer_id = unique_recognizer_id
+            operation = await self.transcribe_client.create_recognizer(request=create_request) # type: ignore
+            recognizer = await operation.result()
+            logger.info(f"Successfully created recognizer with unique ID: {recognizer.name}")
+            return recognizer
 
-    async def run(self):
+    async def run(self, use_buffered: bool = False):
         """Runs the transcription process."""
         global GCP_RECOGNIZER_ID
 
-        if GCP_RECOGNIZER_ID == "_":
-            new_recognizer = await self.create_recognizer(recognizer_id="my-recognizer-telephony")
-            self.recognizer = new_recognizer.name
-        else:
-            self.recognizer = self.transcribe_client.recognizer_path(GCP_PROJECT_ID, GCP_LOCATION, GCP_RECOGNIZER_ID)
+        new_recognizer = await self.find_or_create_recognizer(recognizer_id=GCP_RECOGNIZER_ID) # type: ignore
+        self.recognizer = new_recognizer.name
+        logger.info(f"Using recognizer: {self.recognizer}")
+
         logger.info("Getting audio properties...")
         await self._get_audio_properties()
 
         logger.info("Starting transcription process...")
         streamer_task = asyncio.create_task(self._stream_audio_from_gcs())
-        handler_task = asyncio.create_task(self._handle_transcription())
+        if use_buffered:
+            handler_task = asyncio.create_task(self._handle_buffered_transcription())
+        else:
+            handler_task = asyncio.create_task(self._handle_transcription())
 
         await asyncio.gather(streamer_task, handler_task)
 
@@ -286,29 +400,46 @@ class TranscriptionService:
         formatted_output = self._format_output()
         
         # Save to file
-        output_filename = "output.json"
-        with open(output_filename, "w") as f:
+        with open(OUTPUT_FILENAME, "w") as f:
             json.dump(formatted_output, f, indent=2)
-        logger.info(f"Transcription output saved to {output_filename}")
+        logger.info(f"Transcription output saved to {OUTPUT_FILENAME}")
 
 
 async def main():
     """Main function to run the transcription service."""
 
         
-    parser = argparse.ArgumentParser(description="Transcribe a WAV file from GCS.")
+    parser = argparse.ArgumentParser(description="Transcribe an audio file from GCS.")
     parser.add_argument(
         "gcs_uri",
-        help="The GCS URI of the WAV file to transcribe (e.g., gs://bucket/file.wav)",
+        help="The GCS URI of the audio file to transcribe (e.g., gs://bucket/file.mp3 or gs://bucket/file.wav)",
+    )
+    parser.add_argument(
+        "--customer-channel",
+        default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"),
+        help="The channel of the customer's audio. Can be 'channel_1' or 'channel_2'.",
+    )
+    parser.add_argument(
+        '--use-buffered', 
+        action='store_true', 
+        help='Enable to use the buffered transcription handler.'
+    )
+    parser.add_argument(
+        '--buffer-timeout',
+        type=float,
+        default=0.5,
+        help='Timeout in seconds for the buffered transcription handler to flush results.'
     )
     args = parser.parse_args()
 
-    if not args.gcs_uri.startswith("gs://") or not args.gcs_uri.endswith(".wav"):
-        logger.error("Please provide a valid GCS URI for a .wav file.")
-        return
+    transcription_service = TranscriptionService(gcs_uri=args.gcs_uri, customer_channel=args.customer_channel, buffer_timeout=args.buffer_timeout)
+    await transcription_service.run(args.use_buffered)
 
-    transcription_service = TranscriptionService(gcs_uri=args.gcs_uri)
-    await transcription_service.run()
+
+    print(f"Transcription output from {OUTPUT_FILENAME}:")
+    with open(OUTPUT_FILENAME, "r") as f:
+        print(f.readlines())
+
 
 if __name__ == "__main__":
     asyncio.run(main())
