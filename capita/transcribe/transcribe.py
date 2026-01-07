@@ -14,7 +14,7 @@ from google.cloud.storage import Client as StorageClient
 from dotenv import load_dotenv
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # --- Environment Settings ---
@@ -193,9 +193,13 @@ class TranscriptionService:
                     # Default channel_tag to 1 if it doesn't exist (for single-channel audio)
                     channel_tag = result.channel_tag if result.channel_tag else 1
                     if channel_tag:
+                        # Use result_end_offset if available, otherwise fall back to the end_offset of the last word.
                         end_time = getattr(  # noqa: F841
                             result, "result_end_offset", None
                         ) or getattr(result, "end_time", None)
+                        if not end_time and alt.words:
+                            end_time = alt.words[-1].end_offset
+ 
                         seconds = end_time.total_seconds() #type: ignore
                         result_end_dt = self.stream.start_time + datetime.timedelta(seconds=seconds)
                         # Based on the env the audio channels of customer and agent will set
@@ -234,9 +238,10 @@ class TranscriptionService:
 
     def _process_result_buffer(self, buffer):
         if not buffer:
-            return
+            return []
         
-        buffer.sort(key=lambda r: r.result_end_offset.total_seconds())
+        buffer_transcript_chunks = []
+
         for result in buffer:
             if not result.alternatives:
                 continue
@@ -254,28 +259,46 @@ class TranscriptionService:
             # Default channel_tag to 1 if it doesn't exist (for single-channel audio)
             channel_tag = getattr(result, 'channel_tag', 1)
 
-            seconds = result.result_end_offset.total_seconds()
+            # Use result_end_offset if available, otherwise fall back to the end_offset of the last word.
+            end_time = getattr(result, "result_end_offset", None)
+            if not end_time and alt.words:
+                end_time = alt.words[-1].end_offset
+
+            seconds = end_time.total_seconds() # type: ignore
             result_end_dt = self.stream.start_time + datetime.timedelta(seconds=seconds)
 
-            speaker = "speaker" # Default for single-channel
             if self.enable_channel_identification:
                 if self.customer_channel.lower() == "channel_1":
-                    self.accumulated_transcript_chunks.append(
+                    buffer_transcript_chunks.append(
                     {
-                        "speaker": ("customer" if result.channel_tag == 1 else "agent"),
+                        "speaker": ("customer" if channel_tag == 1 else "agent"),
                         "text": result.alternatives[0].transcript,
                         "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
                     }
                     )
                 else:
-                    self.accumulated_transcript_chunks.append(
+                    buffer_transcript_chunks.append(
                     {
-                        "speaker": ("customer" if result.channel_tag == 2 else "agent"),
+                        "speaker": ("customer" if channel_tag == 2 else "agent"),
                         "text": result.alternatives[0].transcript,
                         "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
                     }
                     )
                 self.accumulated_length += len(result.alternatives[0].transcript.split())
+        
+        # Create a copy to compare against after sorting
+        original_chunks = list(buffer_transcript_chunks)
+        sorted_chunks = sorted(original_chunks, key=lambda x: x['timestamp'])
+ 
+        if original_chunks != sorted_chunks:
+            # Calculate how many items were not in their correct sorted position.
+            out_of_order_count = sum(1 for i, j in zip(original_chunks, sorted_chunks) if i != j)
+            logger.info(f"{out_of_order_count} buffer transcript chunks were out of order from a total of {len(original_chunks)} and have been sorted by timestamp.")
+        else:
+            logger.info("The buffer transcript chunks did not need to be sorted")
+
+        return sorted_chunks
+
 
     async def _handle_buffered_transcription(self):
         responses = await self.transcribe_client.streaming_recognize(
@@ -283,15 +306,14 @@ class TranscriptionService:
         )
         
         buffer = []
-        # BUFFER_TIMEOUT = 0.5 # seconds
-        # Use the configurable buffer_timeout
         BUFFER_TIMEOUT = self.buffer_timeout
 
         async def buffer_processor():
             while True:
                 await asyncio.sleep(BUFFER_TIMEOUT)
                 if buffer:
-                    self._process_result_buffer(buffer)
+                    processed_chunks = self._process_result_buffer(buffer)
+                    self.accumulated_transcript_chunks.extend(processed_chunks)
                     buffer.clear()
         
         processor_task = asyncio.create_task(buffer_processor())
@@ -304,7 +326,8 @@ class TranscriptionService:
         finally:
             processor_task.cancel()
             # process any remaining items in the buffer
-            self._process_result_buffer(buffer)
+            processed_chunks = self._process_result_buffer(buffer)
+            self.accumulated_transcript_chunks.extend(processed_chunks)
             buffer.clear()
 
     def _format_output(self):
@@ -317,6 +340,8 @@ class TranscriptionService:
             # Calculate how many items were not in their correct sorted position.
             out_of_order_count = sum(1 for i, j in zip(original_chunks, sorted_chunks) if i != j)
             logger.info(f"{out_of_order_count} transcript chunks were out of order from a total of {len(original_chunks)} and have been sorted by timestamp.")
+        else:
+            logger.info("The transcript chunks did not need to be sorted")
  
         return sorted_chunks
     

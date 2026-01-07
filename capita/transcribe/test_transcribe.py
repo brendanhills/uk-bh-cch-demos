@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import logging
 import pytest
 import tempfile
 from datetime import datetime
@@ -42,12 +43,15 @@ def temp_output_file():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("audio_uri", AUDIO_SAMPLES)
 @pytest.mark.parametrize("use_buffered, buffer_timeout", BUFFER_CONFIGS)
-async def test_transcription_produces_valid_output(monkeypatch, temp_output_file, audio_uri, use_buffered, buffer_timeout):
+async def test_transcription_produces_valid_output(monkeypatch, caplog, temp_output_file, audio_uri, use_buffered, buffer_timeout):
     """
     Tests that the transcription process runs and produces a valid, sorted JSON output.
     This test is parameterized to run on multiple audio files and with both
     buffered and non-buffered transcription handlers.
     """
+    # Set the log level for the caplog fixture to capture INFO-level messages
+    caplog.set_level(logging.INFO)
+
     # Construct arguments for the main script
     args = ["transcribe.py", audio_uri]
     if use_buffered:
@@ -68,16 +72,17 @@ async def test_transcription_produces_valid_output(monkeypatch, temp_output_file
         content = f.read()
         if not content:
             pytest.fail(f"Output file is empty for {audio_uri} with use_buffered={use_buffered}")
+        
+        print(f"\n--- Output for {audio_uri} (buffered={use_buffered}, timeout={buffer_timeout}) ---")
+        print(content)
+        print("--------------------------------------------------")
         output_data = json.loads(content)
-        print(json.dumps(output_data))
+        
+    # 0. Check there is some output
+    assert output_data, f"No transcription data produced for {audio_uri} with use_buffered={use_buffered}"
+
     # 1. Check that the output is a list
     assert isinstance(output_data, list), "Output should be a list of transcript segments."
-
-    if not output_data:
-        # It's possible some audio files produce no transcription, which is valid.
-        # We can just note it and pass the test.
-        print(f"Warning: No transcription data produced for {audio_uri}")
-        return
 
     # 2. Check the structure of each item in the list
     for item in output_data:
@@ -89,6 +94,12 @@ async def test_transcription_produces_valid_output(monkeypatch, temp_output_file
     # 3. Check that timestamps are chronologically sorted
     timestamps = [datetime.strptime(item['timestamp'], "%Y-%m-%d %H:%M:%S") for item in output_data]
     assert timestamps == sorted(timestamps), "Timestamps are not in chronological order."
+
+    # 4. Check that the sorting log message is present
+    log_text = caplog.text
+    sorted_message_found = "have been sorted by timestamp" in log_text
+    not_sorted_message_found = "did not need to be sorted" in log_text
+    assert sorted_message_found or not_sorted_message_found, "Sorting log message not found in output."
 
 def test_environment_variables_are_set():
     """Tests if necessary environment variables for the application are set."""
