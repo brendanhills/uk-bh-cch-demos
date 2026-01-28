@@ -267,37 +267,24 @@ class TranscriptionService:
             seconds = end_time.total_seconds() # type: ignore
             result_end_dt = self.stream.start_time + datetime.timedelta(seconds=seconds)
 
+            chunk = {
+                "text": result.alternatives[0].transcript,
+                "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp_dt": result_end_dt, # Keep datetime for sorting
+            }
+
             if self.enable_channel_identification:
                 if self.customer_channel.lower() == "channel_1":
-                    buffer_transcript_chunks.append(
-                    {
-                        "speaker": ("customer" if channel_tag == 1 else "agent"),
-                        "text": result.alternatives[0].transcript,
-                        "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
-                    }
-                    )
+                    chunk["speaker"] = ("customer" if channel_tag == 1 else "agent")
                 else:
-                    buffer_transcript_chunks.append(
-                    {
-                        "speaker": ("customer" if channel_tag == 2 else "agent"),
-                        "text": result.alternatives[0].transcript,
-                        "timestamp": result_end_dt.strftime("%Y-%m-%d %H:%M:%S"),
-                    }
-                    )
-                self.accumulated_length += len(result.alternatives[0].transcript.split())
+                    chunk["speaker"] = ("customer" if channel_tag == 2 else "agent")
+            else:
+                 chunk["speaker"] = "unknown"
+            
+            buffer_transcript_chunks.append(chunk)
+            self.accumulated_length += len(result.alternatives[0].transcript.split())
         
-        # Create a copy to compare against after sorting
-        original_chunks = list(buffer_transcript_chunks)
-        sorted_chunks = sorted(original_chunks, key=lambda x: x['timestamp'])
- 
-        if original_chunks != sorted_chunks:
-            # Calculate how many items were not in their correct sorted position.
-            out_of_order_count = sum(1 for i, j in zip(original_chunks, sorted_chunks) if i != j)
-            logger.info(f"{out_of_order_count} buffer transcript chunks were out of order from a total of {len(original_chunks)} and have been sorted by timestamp.")
-        else:
-            logger.info("The buffer transcript chunks did not need to be sorted")
-
-        return sorted_chunks
+        return buffer_transcript_chunks
 
 
     async def _handle_buffered_transcription(self):
@@ -305,16 +292,49 @@ class TranscriptionService:
             requests=self.request_generator()
         )
         
-        buffer = []
-        BUFFER_TIMEOUT = self.buffer_timeout
+        raw_buffer = []
+        jitter_buffer = []
+        max_seen_timestamp = self.stream.start_time
+        
+        # Use buffer_timeout as the "stability window"
+        STABILITY_WINDOW = self.buffer_timeout
+        CHECK_INTERVAL = 0.1 
 
         async def buffer_processor():
+            nonlocal max_seen_timestamp
             while True:
-                await asyncio.sleep(BUFFER_TIMEOUT)
-                if buffer:
-                    processed_chunks = self._process_result_buffer(buffer)
-                    self.accumulated_transcript_chunks.extend(processed_chunks)
-                    buffer.clear()
+                await asyncio.sleep(CHECK_INTERVAL)
+                
+                # 1. Process new raw results into chunks
+                if raw_buffer:
+                    new_chunks = self._process_result_buffer(raw_buffer)
+                    jitter_buffer.extend(new_chunks)
+                    raw_buffer.clear()
+                    
+                    # Update max_seen_timestamp
+                    if new_chunks:
+                        latest_chunk_time = max(c['timestamp_dt'] for c in new_chunks)
+                        if latest_chunk_time > max_seen_timestamp:
+                            max_seen_timestamp = latest_chunk_time
+
+                # 2. Sort the jitter buffer
+                jitter_buffer.sort(key=lambda x: x['timestamp_dt'])
+
+                # 3. Emit chunks that are outside the stability window
+                cutoff_time = max_seen_timestamp - datetime.timedelta(seconds=STABILITY_WINDOW)
+                
+                emit_count = 0
+                while jitter_buffer and jitter_buffer[0]['timestamp_dt'] <= cutoff_time:
+                    chunk = jitter_buffer.pop(0)
+                    # Remove the helper key before finalizing
+                    del chunk['timestamp_dt']
+                    self.accumulated_transcript_chunks.append(chunk)
+                    # In a real app, you would yield this to a UI/frontend here
+                    emit_count += 1
+                
+                if emit_count > 0:
+                    logger.debug(f"Emitted {emit_count} chunks from jitter buffer.")
+
         
         processor_task = asyncio.create_task(buffer_processor())
 
@@ -322,13 +342,24 @@ class TranscriptionService:
             async for response in responses:
                 for result in response.results:
                     if result.is_final:
-                        buffer.append(result)
+                        raw_buffer.append(result)
         finally:
             processor_task.cancel()
-            # process any remaining items in the buffer
-            processed_chunks = self._process_result_buffer(buffer)
-            self.accumulated_transcript_chunks.extend(processed_chunks)
-            buffer.clear()
+            
+            # Flush remaining raw buffer
+            if raw_buffer:
+                new_chunks = self._process_result_buffer(raw_buffer)
+                jitter_buffer.extend(new_chunks)
+                raw_buffer.clear()
+            
+            # Sort and flush remaining jitter buffer
+            jitter_buffer.sort(key=lambda x: x['timestamp_dt'])
+            for chunk in jitter_buffer:
+                if 'timestamp_dt' in chunk:
+                    del chunk['timestamp_dt']
+                self.accumulated_transcript_chunks.append(chunk)
+            
+            jitter_buffer.clear()
 
     def _format_output(self):
         """Formats the transcript chunks into the desired JSON structure."""
