@@ -12,6 +12,7 @@ dependencies = [
     "google-cloud-storage>=2.19.0",
     "google-genai>=1.56.0",
     "pydub>=0.25.1",
+    "yt-dlp>=2025.1.26",
 ]
 
 [dependency-groups]

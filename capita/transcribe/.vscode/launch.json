@@ -4,12 +4,22 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "test_transcribe_new.py"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        },
         {
             "name": "Python Debugger: test_test-transcript-connector",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/transcribe.py",
             "args": [
                 "gs://uk-bh-experiments-argolis-us/capita/test_test-transcript-connector.wav"
             ],
@@ -19,7 +29,7 @@
             "name": "Python Debugger: speech_medical_conversation_2",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/transcribe.py",
             "args": [
                 "gs://uk-bh-experiments-argolis-us/capita/speech_medical_conversation_2.wav"
             ],
@@ -29,7 +39,7 @@
             "name": "Python Debugger: resources_sample-calls",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/transcribe.py",
             "args": [
                 "gs://uk-bh-experiments-argolis-us/capita/resources_sample-calls.mp3"
             ],
@@ -39,11 +49,10 @@
             "name": "Python Debugger: 4520",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/transcribe.py",
             "args": [
-                "--use-buffered",
                 "--buffer-timeout=5",
-                "gs://gs://uk-bh-experiments-argolis-us/capita/4520.mp3"
+                "gs://uk-bh-experiments-argolis-us/capita/4520.mp3"
             ],
             "envFile": "${workspaceFolder}/.env"
         }
