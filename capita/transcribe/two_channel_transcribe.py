@@ -2,12 +2,16 @@ import argparse
 import asyncio
 import os
 import textwrap
-from transcribe_common import TranscriptionService, OUTPUT_FILENAME, logger
+from transcribe_common import TranscriptionService, GCP_MODEL_STEREO
+from transcribe_common import TranscriptionService, GCP_MODEL_STEREO, logger
 
 class TwoChannelTranscriptionService(TranscriptionService):
     def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float):
-        super().__init__(gcs_uri, buffer_timeout, enable_multi_channel=True)
+        # Use a specific recognizer ID for stereo
+        rec_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-stereo"
+        super().__init__(gcs_uri, buffer_timeout, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_MODEL_STEREO)
         self.customer_channel = customer_channel
+        self.previous_ts = None
 
     def _create_transcript_chunk(self, result):
         """Creates a chunk with speaker identification based on channel."""
@@ -42,9 +46,14 @@ class TwoChannelTranscriptionService(TranscriptionService):
         LEFT_COL_WIDTH = 45 # Width for wrapping text
         RIGHT_COL_OFFSET = 60 # Start position for Channel 2
         
-        # Prepare the full first line: Timestamp + [Speaker] + "Text"
-        # Adding speaker label to the text line for clarity
-        full_content = f'{time_part} [{speaker}] "{text}"'
+        if self.previous_ts is not None and self.previous_ts > time_part:
+            out_of_order_flag = "Warn: 🚨"
+        else:
+            out_of_order_flag = ""
+        self.previous_ts = time_part
+            
+        # Prepare the full first line: Timestamp +  "Text"
+        full_content = f'{speaker}: {out_of_order_flag}{time_part} "{text}"' 
         
         if channel_tag == 1:
             # Left Column (Channel 1)
@@ -65,7 +74,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Transcribe a two-channel audio file from GCS.")
     parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
     parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"))
-    parser.add_argument('--use-buffered', action='store_true', help='Enable buffered transcription.')
+    parser.add_argument('--use-buffered', action='store_true', default = False, help='Enable buffered transcription.')
     parser.add_argument('--buffer-timeout', type=float, default=0.5)
     
     args = parser.parse_args()
