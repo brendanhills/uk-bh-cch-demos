@@ -154,6 +154,9 @@ class TranscriptionService:
                         features=cs.RecognitionFeatures(
                             multi_channel_mode=multi_channel_config,
                             enable_word_time_offsets=True,
+                            enable_automatic_punctuation=True,
+                            interim_results=True,
+                            enable_word_confidence=True
                         ),
                         language_codes=[self.language_code],
                         model=self.gcp_transcription_model,

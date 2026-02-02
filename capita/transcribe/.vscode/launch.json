@@ -49,9 +49,9 @@
             "name": "Python Debugger: 4520",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/transcribe.py",
+            "program": "${file}",
             "args": [
-                "--buffer-timeout=5",
+
                 "gs://uk-bh-experiments-argolis-us/capita/4520.mp3"
             ],
             "envFile": "${workspaceFolder}/.env"
