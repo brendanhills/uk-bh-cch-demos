@@ -47,7 +47,7 @@ class TwoChannelTranscriptionService(TranscriptionService):
         RIGHT_COL_OFFSET = 60 # Start position for Channel 2
         
         if self.previous_ts is not None and self.previous_ts > time_part:
-            out_of_order_flag = "Warn: 🚨"
+            out_of_order_flag = "Out of order: 🚨"
         else:
             out_of_order_flag = ""
         self.previous_ts = time_part

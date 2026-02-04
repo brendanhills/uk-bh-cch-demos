@@ -11,13 +11,14 @@ This project simulates real-time transcription of audio files stored in Google C
     *   **Color Coding:** Distinguishes speakers with ANSI colors (Green for Caller, Orange for Agent).
     *   **Smart Attribution:** Detects and tags corrected speaker assignments with a bold red `[RE-ATTRIBUTED]` label.
 *   **Playback Sync:** Generates a clickable **Google Cloud Console URL** (with your active `gcloud` account) so you can listen to the audio while watching the transcription.
-*   **Two Specialized Modes:**
-    *   **Mono (V1):** Uses STT V1 API with Diarization for mixed single-channel audio.
-    *   **Stereo (V2):** Uses STT V2 API with Multi-Channel recognition for split-channel telephony.
+*   **Demonstrate/Tests Two Different Transcription Modes:**
+    *  Both approaches assume that the audio is has 2 channels - one with each speaker on a phone call.
+    *   **Mono (V1):** Uses STT V1 API with Diarization.  Merges two channels into a single-channel audio in real time.
+    *   **Two Channel (V2):** Uses STT V2 API with Multi-Channel recognition.
 
 ## Prerequisites
 
-1.  **Python 3.9+** and `uv` (recommended) or `pip`.
+1.  **Python 3.11+** and `uv` (recommended) or `pip`.
 2.  **Google Cloud SDK (`gcloud`)** installed and authenticated.
     ```bash
     gcloud auth application-default login
@@ -28,11 +29,11 @@ This project simulates real-time transcription of audio files stored in Google C
 ## 1. Mono Transcription (V1)
 **Script:** `mono_transcribe_v1.py`
 
-Best for **mixed audio** where multiple speakers are on a single track.
+Demonstrates using the Speedch diarization option where two speakers are on a single channel.
 
 *   **Logic:** Uses the Google Cloud Speech-to-Text **V1 API** with `enable_speaker_diarization=True`.
 *   **Diarization:** AI analyzes voice signatures to distinguish speakers.
-*   **On-the-Fly Mix-down:** Automatically merges stereo channels into a single mono stream chunk-by-chunk to simulate a mixed source.
+*   **On-the-Fly Mix-down:** The `simulate_audio.py` script automatically merges stereo channels into a single mono stream chunk-by-chunk to simulate processing a multi channel source.
 *   **Output:** Single column with `[Speaker 1]` or `[Speaker 2]` labels.
 
 ### Usage
@@ -43,11 +44,11 @@ uv run mono_transcribe_v1.py gs://your-bucket/file.mp3 --wait-for-play
 ## 2. Stereo Transcription (V2)
 **Script:** `two_channel_transcribe_v2.py`
 
-Best for **telephony audio** where Agent and Caller are on separate tracks.
+Demonstratesusing multi channel processing where Agent and Caller are on separate channels.
 
 *   **Logic:** Uses the Google Cloud Speech-to-Text **V2 API** with `multi_channel_mode=SEPARATE_RECOGNITION_PER_CHANNEL`.
-*   **Speaker ID:** Maps hardware channels directly to "Caller" vs "Agent" (highly reliable).
-*   **Output:** **Two-column layout** (Left for Caller, Right for Agent) for easy reading of conversational flow.
+*   **Speaker ID:** Maps audio channels directly to "Caller" vs "Agent" (highly reliable).
+*   **Output:** **Two-column layout** (Left for Caller, Right for Agent) for easy reading of conversational flow.  Has additional logic to keep the output in the right order.
 
 ### Usage
 ```bash
@@ -57,8 +58,8 @@ uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --wait-for-
 ## Common Arguments
 
 *   `gcs_uri`: The full `gs://...` path to your audio file.
-*   `--wait-for-play`: Pauses execution after generating the Console URL, allowing you to start audio playback before transcription begins.
-*   `--customer-channel`: (Stereo only) Specify which channel is the customer (`channel_1` or `channel_2`).
+*   `--wait-for-play`: Pauses execution after generating the Console URL, allowing you to start audio playback before transcription begins so you can listen to the audio as it's being transcribed.
+*   `--customer-channel`: (Stereo only) Specify which channel is the customer (`channel_1` or `channel_2`).  
 
 ---
 
@@ -77,9 +78,9 @@ uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --wait-for-
 ### 1. Audio Simulation (`AudioStreamSimulator`)
 The simulator mimics a live websocket or microphone stream using a static file:
 1.  **Preparation:** It downloads the file and standardises it to raw Linear16 PCM data.
-2.  **The Stream Generator:** It slices the file into small chunks (e.g., 250ms of audio).
+2.  **The Stream Generator:** It slices the file into small chunks (default is 250ms) of audio.
 3.  **Real-Time Throttling:** It calculates the playback duration of each chunk and **sleeps** accordingly. This ensures the transcription happens at the actual speed of conversation.
-4.  **On-the-Fly Mono:** For the Mono demo, it uses `audioop` to mix stereo channels down to one *per chunk* as they are yielded.
+4.  **On-the-Fly Mono:** For the Mono approach, it uses `audioop` to mix stereo channels down to one *per chunk* as they are yielded.
 
 ### 2. API Request Generation (`generate_requests`)
 The transcription service consumes the iterator from the simulator:
@@ -96,6 +97,7 @@ The real-time typing effect is achieved by handling **Interim Results** (`is_fin
 *    tentative transcripts are printed immediately with a `... ` prefix.
 *   In Stereo (V2), we currently print these on new lines to provide a stable, readable "scrolling thought" log.
 *   When a result becomes **Final**, the interim line is cleared (using `\r\033[K`), and the permanent, color-coded text is printed.
+*   In Stereo (V2) mode we detect any chunks that are out of order and flag those `Out of order: 🚨`
 
 ### 5. Playback Synchronization (`--wait-for-play`)
 1.  The script generates a link to the Google Cloud Console for the file.

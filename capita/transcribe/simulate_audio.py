@@ -87,7 +87,7 @@ class AudioStreamSimulator:
         else:
             self.channels = self.source_channels
 
-        self.audio_bytes = seg.set_sample_width(2).rw_data
+        self.audio_bytes = seg.set_sample_width(2).raw_data
         self.bytes_per_sec = self.sample_rate * self.source_channels * 2
 
         logger.info(
