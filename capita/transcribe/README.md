@@ -116,6 +116,7 @@ This simulator provides a robust foundation for real-time transcription. Future 
 *   **Live Translation:** Real-time translation of the conversation into multiple languages, enabling support for multi-lingual contact centers.
 *   **Custom Vocabulary:** Integration of industry-specific terminology and phrases to improve accuracy for niche sectors (e.g., medical, legal, or technical support).
 *   **Direct Stream Support:** Expanding beyond GCS simulation to support live streaming from WebSockets (e.g., Twilio Media Streams) or local microphone inputs.
+*   **Evaluation Framework:** Developing a "Golden Set" of ground-truth transcripts. This could be achieved by running high-quality offline batch transcriptions (using Chirp 2 or 3) on the test files and then automatically comparing those results with the real-time simulated output to calculate Word Error Rate (WER) and monitor attribution drift.
 
 ---
 
