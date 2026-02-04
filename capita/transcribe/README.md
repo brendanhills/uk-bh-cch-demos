@@ -7,14 +7,25 @@ This project simulates real-time transcription of audio files stored in Google C
 *   **Real-Time Simulation:** Streams audio from GCS in small chunks to simulate a live broadcast or phone call.
 *   **Modular Architecture:** Separates audio source logic (GCS, streaming, mix-down) from transcription logic.
 *   **Visual Polish:**
-    *   **Interim Results:** Displays real-time "Draft" updates as words are spoken.
-    *   **Color Coding:** Distinguishes speakers with ANSI colors (Green for Caller, Orange for Agent).
-    *   **Smart Attribution:** Detects and tags corrected speaker assignments with a bold red `[RE-ATTRIBUTED]` label.
-*   **Playback Sync:** Generates a clickable **Google Cloud Console URL** (with your active `gcloud` account) so you can listen to the audio while watching the transcription.
-*   **Demonstrate/Tests Two Different Transcription Modes:**
-    *  Both approaches assume that the audio is has 2 channels - one with each speaker on a phone call.
-    *   **Mono (V1):** Uses STT V1 API with Diarization.  Merges two channels into a single-channel audio in real time.
-    *   **Two Channel (V2):** Uses STT V2 API with Multi-Channel recognition.
+    *   **In-Column Drafts:** Displays real-time "typing" updates within the correct speaker column.
+    *   **Color Coding:** Distinguishes speakers with ANSI colors (Green for Caller, Yellow for Agent).
+    *   **Smart Attribution:** Detects and tags corrected speaker assignments in V1 mode.
+*   **Unified Modes:** Supports toggling between high-speed "Low Latency" and high-flow "Readability" modes.
+
+## Script Comparison
+
+| Feature | `mono_transcribe_v1.py` | `two_channel_transcribe_v2.py` | `transcribe.py` |
+| :--- | :--- | :--- | :--- |
+| **API Version** | **Speech-to-Text V1** | **Speech-to-Text V2** | **Speech-to-Text V2** |
+| **Audio Input** | Mixed Mono (Summed) | **Stereo (Independent)** | **Stereo (Independent)** |
+| **Speaker ID** | **Diarization** (AI Voice) | **Multi-Channel** (Wire) | **Multi-Channel** (Wire) |
+| **ID Reliability**| Moderate | **Perfect** | **Perfect** |
+| **Speaker Labels**| Speaker 1 / 2 | **Caller / Agent** | Caller / Agent |
+| **Ordering** | Stable (Single Stream) | **Dual-Mode** (Latency/Read) | Sequential (3s delay) |
+| **Tuning** | Static | **Dynamic** (Gaps, Blocking) | Static (Stability Window) |
+| **UI Layout** | Single Column | **Two-Column Colored** | Two-Column Colored |
+| **Interim View** | Single Gray Line | **In-Column Live Drafts** | Single Gray Line |
+| **Best Use Case** | Legacy 1-channel files | **Live Dashboards / Demos** | Customer Code Baseline |
 
 ## Prerequisites
 
@@ -22,84 +33,81 @@ This project simulates real-time transcription of audio files stored in Google C
 2.  **Google Cloud SDK (`gcloud`)** installed and authenticated.
     ```bash
     gcloud auth application-default login
-    gcloud auth login  # Required for generating the Console URL with ?authuser
+    gcloud auth login
     ```
 3.  **Environment Variables:** Copy `env.example` to `.env` and configure your project details.
+
+---
 
 ## 1. Mono Transcription (V1)
 **Script:** `mono_transcribe_v1.py`
 
-Demonstrates using the Speedch diarization option where two speakers are on a single channel.
+*   **Logic:** Uses the STT **V1 API** with `enable_speaker_diarization=True`.
+*   **Deduplication:** Employs fuzzy string matching to handle V1's iterative diarization updates, ensuring "corrected" sentences replace their earlier drafts rather than appearing twice.
+*   **Usage:**
+    ```bash
+    uv run mono_transcribe_v1.py gs://your-bucket/file.mp3 --wait-for-play
+    ```
 
-*   **Logic:** Uses the Google Cloud Speech-to-Text **V1 API** with `enable_speaker_diarization=True`.
-*   **Diarization:** AI analyzes voice signatures to distinguish speakers.
-*   **On-the-Fly Mix-down:** The `simulate_audio.py` script automatically merges stereo channels into a single mono stream chunk-by-chunk to simulate processing a multi channel source.
-*   **Output:** Single column with `[Speaker 1]` or `[Speaker 2]` labels.
-
-### Usage
-```bash
-uv run mono_transcribe_v1.py gs://your-bucket/file.mp3 --wait-for-play
-```
-
-## 2. Stereo Transcription (V2)
+## 2. Stereo Transcription (V2) - Unified
 **Script:** `two_channel_transcribe_v2.py`
 
-Demonstratesusing multi channel processing where Agent and Caller are on separate channels.
+The primary demonstration script. Uses separate audio channels for perfect speaker identification.
 
-*   **Logic:** Uses the Google Cloud Speech-to-Text **V2 API** with `multi_channel_mode=SEPARATE_RECOGNITION_PER_CHANNEL`.
-*   **Speaker ID:** Maps audio channels directly to "Caller" vs "Agent" (highly reliable).
-*   **Output:** **Two-column layout** (Left for Caller, Right for Agent) for easy reading of conversational flow.  Has additional logic to keep the output in the right order.
+*   **Usage:**
+    ```bash
+    # High Speed (Arrival Order)
+    uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --mode low_latency
 
-### Usage
-```bash
-uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --wait-for-play
-```
+    # High Flow (Chronological Order)
+    uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --mode readability
+    ```
 
-## Common Arguments
+### Dual-Mode Mechanisms
+The service dynamically adjusts its behavior based on the `--mode` flag using three core mechanisms implemented in `transcribe_common.py`:
 
-*   `gcs_uri`: The full `gs://...` path to your audio file.
-*   `--wait-for-play`: Pauses execution after generating the Console URL, allowing you to start audio playback before transcription begins so you can listen to the audio as it's being transcribed.
-*   `--customer-channel`: (Stereo only) Specify which channel is the customer (`channel_1` or `channel_2`).  
+1.  **Stability Threshold (`STABILITY_THRESHOLD`):**
+    *   **Mechanism:** Implements a "Lookback Window." An utterance is only released to the console once the audio playhead has progressed $X$ seconds past the utterance's start time.
+    *   **Purpose:** Resolves asynchronous "race conditions" between channels by allowing late-arriving past events to be sorted before display.
+2.  **Gap-Based Splitting (`GAP_THRESHOLD`):**
+    *   **Mechanism:** Monitors silence durations between words within a single API result. If silence exceeds the threshold, the result is partitioned into multiple chunks.
+    *   **Purpose:** Breaks up long, dense monologues into smaller, natural conversational turns.
+3.  **Active Interim Blocking (`ACTIVE_BLOCKING`):**
+    *   **Mechanism:** Tracks the start time of "Active Interims" (ongoing speech). It blocks the release of any finalized chunk that started *after* currently active speech began.
+    *   **Purpose:** Prevents short interruptions from "lapping" a long monologue that is still being processed.
+
+| Feature | `low_latency` Mode (Default) | `readability` Mode |
+| :--- | :--- | :--- |
+| **Priority** | Minimum Latency (Speed) | Flow & Readability (Order) |
+| **Mechanism 1: Stability** | `0.0s` (Instant print) | `1.5s` (Delayed sort) |
+| **Mechanism 2: Gaps** | `Disabled` (Single block) | `0.8s` (Natural breaks) |
+| **Mechanism 3: Blocking** | `Off` (Arrival order) | `On` (Strict chronological) |
+
+---
+
+## 3. Legacy Baseline Transcription
+**Script:** `transcribe.py`
+
+A self-contained script maintained to be as close as possible to the original code provided by the customer, while including the essential stability fixes for a readable demo.
 
 ---
 
 ## Architecture
 
-*   **`simulate_audio.py`**: A standalone module that handles the "Real-Time Simulation" infrastructure:
-    *   GCS File Download & Google Console URL generation.
-    *   Audio property inspection (using `pydub`).
-    *   **Throttled Streaming:** An async generator that "plays" the file chunks.
-    *   **On-the-Fly Conversion:** Mixes down stereo chunks to mono in real-time if required.
-*   **`transcribe_common.py`**: Contains the base transcription logic (UI helpers, deduplication, and V2 API scaffolding).
-*   The scripts (`mono_transcribe_v1.py` and `two_channel_transcribe_v2.py`) instantiate the simulator and pipe the resulting stream into the transcription service.
+*   **`simulate_audio.py`**: Handles real-time infrastructure. Throttled audio upload to match playback speed and optional mono down-mixing.
+*   **`transcribe_common.py`**: The engine room. Contains the `BaseTranscriptionService` which manages the stability buffers, active-speech tracking, and the columnar UI logic.
+*   **`two_channel_transcribe_v2.py`**: The unified frontend. Configures the common engine with specific thresholds for the `low_latency` and `readability` modes.
 
 ## Code Logic Walkthrough
 
 ### 1. Audio Simulation (`AudioStreamSimulator`)
-The simulator mimics a live websocket or microphone stream using a static file:
-1.  **Preparation:** It downloads the file and standardises it to raw Linear16 PCM data.
-2.  **The Stream Generator:** It slices the file into small chunks (default is 250ms) of audio.
-3.  **Real-Time Throttling:** It calculates the playback duration of each chunk and **sleeps** accordingly. This ensures the transcription happens at the actual speed of conversation.
-4.  **On-the-Fly Mono:** For the Mono approach, it uses `audioop` to mix stereo channels down to one *per chunk* as they are yielded.
+The simulator mimics a live websocket stream using a static file:
+1.  **Preparation:** Normalizes audio to Linear16 PCM (16-bit, 8/16kHz).
+2.  **Real-Time Throttling:** Calculates the precise time each 250ms chunk *should* be sent and sleeps accordingly.
 
-### 2. API Request Generation (`generate_requests`)
-The transcription service consumes the iterator from the simulator:
-*   **First Request:** Contains the *Configuration* (Codec, Sample Rate, Model, Diarization settings).
-*   **Subsequent Requests:** As the simulator yields audio chunks, the generator wraps them in API requests and sends them to Google.
-
-### 3. Deduplication & Re-attribution
-The V1 Diarization API can be "jittery," sometimes re-sending a slightly corrected version of a sentence.
-*   **Logic:** We maintain a `speaker_history` buffer. We use `difflib` (sequence matching) to see if a incoming chunk is a duplicate or a re-attribution (same text, different speaker).
-*   **Tagging:** If the system changes its mind about who said something, it marks the line with a bold red **`[RE-ATTRIBUTED]`** tag.
-
-### 4. UI Polish & Interim Results
-The real-time typing effect is achieved by handling **Interim Results** (`is_final=False`):
-*    tentative transcripts are printed immediately with a `... ` prefix.
-*   In Stereo (V2), we currently print these on new lines to provide a stable, readable "scrolling thought" log.
-*   When a result becomes **Final**, the interim line is cleared (using `\r\033[K`), and the permanent, color-coded text is printed.
-*   In Stereo (V2) mode we detect any chunks that are out of order and flag those `Out of order: 🚨`
-
-### 5. Playback Synchronization (`--wait-for-play`)
-1.  The script generates a link to the Google Cloud Console for the file.
-2.  It appends `?authuser=...` using your active local `gcloud` account.
-3.  It pauses with `input()`. Upon Enter, it resets the internal `start_time` to `now()`, ensuring the transcription timestamps match your playback.
+### 2. Response Processing (`process_responses`)
+As API results arrive, they are routed through the following pipeline:
+1.  **Interim Tracking:** The `start_time` of any draft result is recorded to inform the Blocking logic.
+2.  **Turn Splitting:** Finalized results are inspected for word-level silence gaps.
+3.  **Stability Buffering:** Chunks are held in a sorting queue until they are older than the `STABILITY_THRESHOLD` AND are not blocked by earlier active speech.
+4.  **Columnar Rendering:** The `_print_in_column` method uses ANSI escape codes to overwrite draft lines with finalized text in real-time.

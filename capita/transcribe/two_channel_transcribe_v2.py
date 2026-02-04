@@ -1,116 +1,97 @@
+"""
+Unified Two-Channel Transcription Service (STT V2)
+
+This script provides a high-quality, real-time transcription experience for stereo audio files.
+It supports two primary modes:
+1. LOW_LATENCY: Minimum latency, printing results the moment they are finalized by the API.
+2. READABILITY: Prioritizes conversational flow using a stability buffer and active blocking.
+"""
+
 import argparse
 import asyncio
 import os
-import textwrap
+import logging
 from transcribe_common import TranscriptionService, GCP_TRANSCRIPTION_MODEL
 from simulate_audio import AudioStreamSimulator
 
-class TwoChannelTranscriptionService(TranscriptionService):
-    def __init__(self, sample_rate: int, channels: int, customer_channel: str):
-        # Use a specific recognizer ID for stereo
-        rec_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-stereo"
-        super().__init__(sample_rate, channels, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_TRANSCRIPTION_MODEL)
+# Configure professional logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+class UnifiedTwoChannelService(TranscriptionService):
+    """
+    Subclass of the common TranscriptionService tailored for 2-channel stereo audio.
+    Implements speaker mapping and mode-based logic tuning.
+    """
+    def __init__(self, sample_rate: int, channels: int, customer_channel: str, 
+                 mode: str = "low_latency"):
+        # Initialize the base V2 service with multi-channel support enabled
+        super().__init__(sample_rate, channels, enable_multi_channel=True)
         self.customer_channel = customer_channel
-        self.previous_ts = None
+        self.recognizer_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-unified"
+        
+        # Configure logic thresholds based on the selected mode
+        if mode == "readability":
+            # READABILITY MODE: Prefers perfect ordering over speed
+            self.STABILITY_THRESHOLD = 1.5  # Seconds to wait for asynchronous results
+            self.GAP_THRESHOLD = 0.8        # Seconds of silence to trigger a turn split
+            self.ACTIVE_BLOCKING = True     # Hold short utterances if a monologue is ongoing
+        else: 
+            # LOW LATENCY MODE: Prefers raw speed
+            self.STABILITY_THRESHOLD = 0.0
+            self.GAP_THRESHOLD = 0.0
+            self.ACTIVE_BLOCKING = False
 
-    def _create_transcript_chunk(self, result):
-        """Creates a chunk with speaker identification based on channel."""
-        timestamp = self._get_timestamp(result)
+    def _print_in_column(self, text, channel, is_final, ts_only=None):
+        """
+        Maps numeric channel tags (1, 2) to human-readable labels (Caller, Agent)
+        before passing to the standardized columnar display logic.
+        """
+        speaker = "Caller" if (self.customer_channel == f"channel_{channel}") else "Agent"
         
-        # Determine channel tag (default to 1)
-        channel_tag = getattr(result, 'channel_tag', 1) or 1
-        
-        # Determine speaker
-        if self.customer_channel.lower() == "channel_1":
-            speaker = "Caller" if channel_tag == 1 else "Agent"
-        else:
-            speaker = "Caller" if channel_tag == 2 else "Agent"
-        
-        return {
-            "speaker": speaker,
-            "channel_tag": channel_tag,
-            "text": result.alternatives[0].transcript,
-            "timestamp": timestamp,
-        }
-
-    def _print_chunk(self, chunk):
-        speaker = chunk.get("speaker", "Speaker")
-        channel_tag = chunk.get("channel_tag", 1)
-        text = chunk.get("text", "")
-        
-        # Extract time only (HH:MM:SS.f) from "YYYY-MM-DD HH:MM:SS.f"
-        full_ts = chunk.get("timestamp", "")
-        time_part = full_ts.split(" ")[1] if " " in full_ts else full_ts
-        
-        # Determine column parameters
-        LEFT_COL_WIDTH = 45 # Width for wrapping text
-        RIGHT_COL_OFFSET = 60 # Start position for Channel 2
-        
-        if self.previous_ts is not None and self.previous_ts > time_part:
-            out_of_order_flag = "Out of order: 🚨"
-        else:
-            out_of_order_flag = ""
-        self.previous_ts = time_part
+        # We only prepend the speaker label to finalized chunks to keep drafts clean
+        if is_final:
+            text = f"{speaker}: {text}"
             
-        # Determine Color
-        color = self.COLOR_SPEAKER_1 if channel_tag == 1 else self.COLOR_SPEAKER_2
-        colored_text = f'{color}"{text}"{self.COLOR_RESET}'
-
-        # Prepare the full first line: Timestamp +  "Text"
-        full_content = f'{speaker}: {out_of_order_flag}{time_part} {colored_text}' 
-        
-        if channel_tag == 1:
-            # Left Column (Channel 1)
-            indent_str = " " * 12 
-            wrapper = textwrap.TextWrapper(width=LEFT_COL_WIDTH, subsequent_indent=indent_str)
-            print(wrapper.fill(full_content), flush=True)
-                
-        else:
-            # Right Column (Channel 2)
-            offset_str = " " * RIGHT_COL_OFFSET
-            # Width needs to account for the offset
-            wrapper = textwrap.TextWrapper(width=RIGHT_COL_OFFSET + LEFT_COL_WIDTH, 
-                                         initial_indent=offset_str, 
-                                         subsequent_indent=offset_str + " " * 12)
-            print(wrapper.fill(full_content), flush=True)
+        super()._print_in_column(text, channel, is_final, ts_only)
 
 async def main():
-    parser = argparse.ArgumentParser(description="Transcribe a two-channel audio file from GCS.")
-    parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
-    parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"))
-    parser.add_argument('--wait-for-play', action='store_true', help='Wait for user input before starting stream.')
-    
+    """CLI Entrypoint for the Unified Stereo Transcription demo."""
+    parser = argparse.ArgumentParser(description="Unified Two-Channel Transcription Demo")
+    parser.add_argument("gcs_uri", help="The GCS URI of the stereo audio file (gs://...)")
+    parser.add_argument("--mode", choices=["low_latency", "readability"], default="low_latency", 
+                        help="Toggles between raw speed ('low_latency') and conversational order ('readability').")
+    parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"),
+                        help="Defines which audio channel (1 or 2) belongs to the customer.")
     args = parser.parse_args()
 
-    # Determine headers based on arg
-    ch1_label = "Channel 1"
-    ch2_label = "Channel 2"
-    
-    if args.customer_channel == "channel_1":
-        ch1_label += " (Caller)"
-        ch2_label += " (Agent)"
+    # 1. UI Setup: Determine specific settings for the header display
+    if args.mode == "readability":
+        stability, gap, blocking = 1.5, 0.8, "On"
     else:
-        ch1_label += " (Agent)"
-        ch2_label += " (Caller)"
+        stability, gap, blocking = 0.0, 0.0, "Off"
 
-    # Print Header
+    print(f"\nMode: {args.mode.upper()}")
+    print(f"Settings: Stability={stability}s, GapSplit={gap}s, ActiveBlocking={blocking}")
+    
+    ch1_label = "Channel 1 (Caller)" if args.customer_channel == "channel_1" else "Channel 1 (Agent)"
+    ch2_label = "Channel 2 (Agent)" if args.customer_channel == "channel_1" else "Channel 2 (Caller)"
     print(f"{ch1_label:<60} {ch2_label}")
-    print("-" * 100)
+    print("-" * 120)
 
-    # 1. Setup Simulator
-    # Force mono is False for V2 Stereo
+    # 2. Audio Simulation: Initialize the real-time audio streamer
     simulator = AudioStreamSimulator(args.gcs_uri, force_mono=False)
     await simulator.prepare()
-    simulator.generate_signed_url()
     
-    if args.wait_for_play:
-        simulator.wait_for_user_start()
-
-    # 2. Setup Service
-    service = TwoChannelTranscriptionService(simulator.sample_rate, simulator.channels, args.customer_channel)
+    # 3. Service Execution: Instantiate and run the unified service
+    service = UnifiedTwoChannelService(simulator.sample_rate, simulator.channels, 
+                                       args.customer_channel, mode=args.mode)
     
-    # 3. Run
+    # Pipe the simulated real-time stream into the transcription engine
     await service.run(simulator.stream())
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nDemo stopped by user.")

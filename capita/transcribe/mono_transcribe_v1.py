@@ -1,3 +1,10 @@
+"""
+Mono Transcription Service (STT V1) with AI Diarization
+
+This script demonstrates speaker separation when both parties are mixed onto a 
+single audio channel. It uses voice fingerprinting (Diarization) to identify speakers.
+"""
+
 import asyncio
 import argparse
 import datetime
@@ -10,20 +17,23 @@ from google.cloud import speech_v1 as speech
 from transcribe_common import BaseTranscriptionService
 from simulate_audio import AudioStreamSimulator
 
-# --- Configuration & Setup ---
+# Configure professional logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class MonoTranscriptionServiceV1(BaseTranscriptionService):
-    """Service for streaming audio transcription with Google Cloud Speech-to-Text V1."""
+    """
+    Subclass using the STT V1 API. 
+    Includes sophisticated deduplication logic to handle V1's iterative diarization updates.
+    """
 
     def __init__(self, sample_rate: int, channels: int):
         super().__init__(sample_rate, channels)
         self.client = speech.SpeechAsyncClient()
-        self.speaker_history = {} 
+        self.speaker_history = {} # Used for deduplication
 
     async def generate_requests(self, audio_stream):
-        """Yields streaming requests for the V1 API."""
+        """Generates V1 API requests with phone-optimized diarization settings."""
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=self.sample_rate,
@@ -33,7 +43,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
                 min_speaker_count=2,
                 max_speaker_count=2,
             ),
-            model="phone_call",
+            model="phone_call", # Enhanced model for high-accuracy phone calls
             use_enhanced=True,
         )
         
@@ -45,14 +55,14 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         yield speech.StreamingRecognizeRequest(streaming_config=streaming_config)
 
         start_time = time.time()
-        # Iterate over the provided audio stream
         async for chunk in audio_stream:
-            if time.time() - start_time > 240:
+            # V1 has a strict session limit; we guard against hanging
+            if time.time() - start_time > 300: 
                 return
             yield speech.StreamingRecognizeRequest(audio_content=chunk)
 
     async def process_responses(self, stream):
-        """Consumes responses from the API."""
+        """Processes responses from the V1 API."""
         try:
             async for response in stream:
                 if not response.results:
@@ -63,23 +73,29 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
                     continue
 
                 if not result.is_final:
-                    if result.alternatives:
-                        text = result.alternatives[0].transcript
-                        self._clear_interim_output()
-                        self._print_interim_output(text)
+                    # Show interim draft at the bottom
+                    text = result.alternatives[0].transcript
+                    self._clear_interim_output()
+                    self._print_interim_output(text)
                     self.last_was_heartbeat = True
                     continue
                 
+                # Clear draft before printing permanent text
                 self._clear_interim_output()
-
                 if self.last_was_heartbeat:
                     self.last_was_heartbeat = False
                 self._process_single_result(result)
+        except Exception as e:
+            logger.error(f"Error processing V1 stream: {e}")
         finally:
             self._clear_interim_output() 
 
     def _should_print_chunk(self, chunk):
-        """Deduplicates chunks based on history (V1 specific)."""
+        """
+        V1 Diarization often 'corrects' itself by re-sending chunks.
+        This method uses fuzzy matching to detect duplicates, corrections, 
+        and speaker re-attributions to keep the output clean.
+        """
         speaker = chunk.get('speaker', 'Unknown')
         ts = chunk.get('timestamp_float', 0.0)
         text = chunk.get('text', '').strip()
@@ -88,7 +104,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
             self.speaker_history[speaker] = []
         history = self.speaker_history[speaker]
         
-        # Check against recent history
+        # 1. Exact Duplicate or Incremental Update Check
         for i in range(len(history) - 1, max(-1, len(history) - 11), -1):
             prev_ts, prev_text = history[i]
             if abs(ts - prev_ts) < 0.5:
@@ -102,7 +118,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
                 history[i] = (ts, text)
                 return True, chunk, "CORRECTION"
 
-        # Check other speakers for re-attribution
+        # 2. Re-attribution Check (Checking if another speaker claimed this text)
         for other_tag, other_hist in self.speaker_history.items():
             if other_tag == speaker: continue
             for p_ts, p_text in other_hist[-10:]:
@@ -116,6 +132,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         return True, chunk, "NEW"
 
     def _print_chunk(self, chunk):
+        """Renders the finalized, deduplicated chunk in the columns."""
         should_print, mod_chunk, chunk_type = self._should_print_chunk(chunk)
         if not should_print or chunk_type == "IGNORE":
             return
@@ -125,34 +142,27 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         timestamp = mod_chunk.get("timestamp", "") 
         speaker_label = f"Speaker {speaker_tag}"
         
+        # UI Prefixing
         prefix = ""
-        if chunk_type == "CORRECTION":
-            prefix = "[CORRECTION] "
-        elif chunk_type == "EXTENSION":
-            prefix = "... "
-        elif chunk_type == "RE-ATTRIBUTION":
-            prefix = "\033[1;31m[RE-ATTRIBUTED]\033[0m "
+        if chunk_type == "CORRECTION": prefix = "[CORRECTION] "
+        elif chunk_type == "EXTENSION": prefix = "... "
+        elif chunk_type == "RE-ATTRIBUTION": prefix = "\033[1;31m[RE-ATTRIBUTED]\033[0m "
             
         color = self.COLOR_SPEAKER_1 if speaker_tag == 1 else self.COLOR_SPEAKER_2
         colored_text = f'{color}"{text}"{self.COLOR_RESET}'
-            
         full_content = f'{timestamp} [{speaker_label}] {prefix}{colored_text}'
         
-        LEFT_COL_WIDTH = 45 
-        RIGHT_COL_OFFSET = 60 
-        
+        # Display in two columns based on speaker tag
         if speaker_tag == 1:
-            indent_str = " " * 12 
-            wrapper = textwrap.TextWrapper(width=LEFT_COL_WIDTH, subsequent_indent=indent_str)
+            wrapper = textwrap.TextWrapper(width=55, subsequent_indent=" " * 12)
             print(wrapper.fill(full_content), flush=True)
         else:
-            offset_str = " " * RIGHT_COL_OFFSET
-            wrapper = textwrap.TextWrapper(width=RIGHT_COL_OFFSET + LEFT_COL_WIDTH, 
-                                         initial_indent=offset_str, 
-                                         subsequent_indent=offset_str + " " * 12)
+            offset = " " * 60
+            wrapper = textwrap.TextWrapper(width=115, initial_indent=offset, subsequent_indent=offset + " " * 12)
             print(wrapper.fill(full_content), flush=True)
 
     def _extract_chunks_from_result(self, result):
+        """Splits a single API result into speaker-indexed chunks."""
         chunks = []
         if not result.alternatives or not result.alternatives[0].words:
             return chunks
@@ -165,7 +175,6 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         for word in words:
             if word.speaker_tag != current_speaker:
                 chunks.append(self._create_chunk_dict(current_speaker, " ".join(current_transcript), current_start_time))
-                
                 current_speaker = word.speaker_tag
                 current_transcript = [word.word]
                 current_start_time = word.start_time.total_seconds()
@@ -174,12 +183,12 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         
         if current_transcript:
             chunks.append(self._create_chunk_dict(current_speaker, " ".join(current_transcript), current_start_time))
-            
         return chunks
 
     def _create_chunk_dict(self, speaker_tag, text, seconds):
+        """Helper to create standardized chunk dictionaries."""
         ts = self.start_time + datetime.timedelta(seconds=seconds) 
-        timestamp = ts.strftime("%Y-%m-%d %H:%M:%S.%f")[:-5]
+        timestamp = ts.strftime("%H:%M:%S.%f")[:-5]
         return {
             "speaker_tag": speaker_tag,
             "text": text,
@@ -196,30 +205,28 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
             self._print_chunk(chunk)
 
     async def run(self, audio_stream):
-        """Main execution flow."""
+        """Main execution flow for V1."""
         self.start_time = datetime.datetime.now(datetime.timezone.utc)
-        self.stream_finished_flag = False
-        
-        logger.info(f"Starting V1 live transcription...")
-        
+        logger.info(f"Starting V1 Mono Transcription demo...")
         try:
             responses_stream = await self.client.streaming_recognize(
                 requests=self.generate_requests(audio_stream)
             )
             await self.process_responses(responses_stream)
         except Exception as e:
-            logger.error(f"Error during streaming_recognize: {e}")
+            logger.error(f"Stream error: {e}")
 
 async def main():
-    parser = argparse.ArgumentParser(description="Transcribe mono audio with V1 Diarization.")
-    parser.add_argument("gcs_uri", help="The GCS URI")
-    parser.add_argument('--wait-for-play', action='store_true', help='Wait for user input before starting stream.')
+    """CLI Entrypoint."""
+    parser = argparse.ArgumentParser(description="Mono Transcription (V1 Diarization) Demo")
+    parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
+    parser.add_argument('--wait-for-play', action='store_true', help='Pauses for user to start audio.')
     args = parser.parse_args()
 
-    print(f"{'Speaker 1':<60} {'Speaker 2'}")
-    print("-" * 100)
+    print(f"\n{'Speaker 1':<60} {'Speaker 2'}")
+    print("-" * 120)
 
-    # 1. Setup Simulator
+    # Simulator: Forcing mono down-mix for V1 processing
     simulator = AudioStreamSimulator(args.gcs_uri, force_mono=True)
     await simulator.prepare()
     simulator.generate_signed_url()
@@ -227,11 +234,11 @@ async def main():
     if args.wait_for_play:
         simulator.wait_for_user_start()
 
-    # 2. Setup Service
     service = MonoTranscriptionServiceV1(simulator.sample_rate, simulator.channels)
-    
-    # 3. Run
     await service.run(simulator.stream())
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nDemo stopped.")
