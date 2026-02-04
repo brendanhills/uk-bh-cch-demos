@@ -1,0 +1,9 @@
+[
+  {
+    "speaker": "unified",
+    "text": "Okay. What about budgets interests you today?",
+    "timestamp": "2026-01-30 17:54:51",
+    "model": "gemini-2.0-flash-live-preview-04-09",
+    "method": "gemini-live-api-vertex-streamed"
+  }
+]

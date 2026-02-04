@@ -1,0 +1,87 @@
+[
+  {
+    "speaker": "agent",
+    "text": "hi good morning",
+    "timestamp": "2026-01-29 14:34:28"
+  },
+  {
+    "speaker": "agent",
+    "text": "I have couple of questions regarding my recent order",
+    "timestamp": "2026-01-29 14:34:32"
+  },
+  {
+    "speaker": "agent",
+    "text": "how do you ship my orders",
+    "timestamp": "2026-01-29 14:34:38"
+  },
+  {
+    "speaker": "agent",
+    "text": "okay",
+    "timestamp": "2026-01-29 14:34:44"
+  },
+  {
+    "speaker": "agent",
+    "text": "how can I track my orders and payment",
+    "timestamp": "2026-01-29 14:34:48"
+  },
+  {
+    "speaker": "agent",
+    "text": "okay thank you",
+    "timestamp": "2026-01-29 14:34:58"
+  },
+  {
+    "speaker": "agent",
+    "text": "what happens if there's been a delivery mishap to my order",
+    "timestamp": "2026-01-29 14:35:02"
+  },
+  {
+    "speaker": "agent",
+    "text": "thank you",
+    "timestamp": "2026-01-29 14:35:22"
+  },
+  {
+    "speaker": "customer",
+    "text": "hi thanks for contacting the store how can I help you",
+    "timestamp": "2026-01-29 14:34:27"
+  },
+  {
+    "speaker": "customer",
+    "text": "okay I will be happy to answer your questions",
+    "timestamp": "2026-01-29 14:34:37"
+  },
+  {
+    "speaker": "customer",
+    "text": "all your orders are sent via Singapore post Limited",
+    "timestamp": "2026-01-29 14:34:43"
+  },
+  {
+    "speaker": "customer",
+    "text": "after logging into your account the status of your checkout history can be found under order history",
+    "timestamp": "2026-01-29 14:34:54"
+  },
+  {
+    "speaker": "customer",
+    "text": "we take such matters very seriously and will look into individual cases thoroughly any sample that falls under the below categories should not be thrown away before taking photo proof in the emailing the photo of the affected sample to us at help at sample list or.com",
+    "timestamp": "2026-01-29 14:35:19"
+  },
+  {
+    "speaker": "customer",
+    "text": "questions that",
+    "timestamp": "2026-01-29 14:35:24"
+  },
+  {
+    "speaker": "customer",
+    "text": "help you with",
+    "timestamp": "2026-01-29 14:35:25"
+  },
+  {
+    "speaker": "agent",
+    "text": "thank you I appreciate it",
+    "timestamp": "2026-01-29 14:35:28"
+  },
+  {
+    "speaker": "customer",
+    "text": "thanks for contacting the store have a good day",
+    "timestamp": "2026-01-29 14:35:32"
+  }
+]
