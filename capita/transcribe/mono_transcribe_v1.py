@@ -2,83 +2,34 @@ import asyncio
 import argparse
 import datetime
 import logging
-import os
-import io
 import textwrap
 import time
-import difflib
 
-from pydub import AudioSegment
-from google.api_core.client_options import ClientOptions
 from google.cloud import speech_v1 as speech
-from google.cloud.storage import Client as StorageClient
-from dotenv import load_dotenv
+from transcribe_common import BaseTranscriptionService
 
 # --- Configuration & Setup ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-GCP_PROJECT_ID = os.getenv("PROJECT_ID")
-GCP_LOCATION = os.getenv("LOCATION", "us") # V1 is global
-
-assert GCP_PROJECT_ID, "Missing PROJECT_ID"
-
-class MonoTranscriptionServiceV1:
+class MonoTranscriptionServiceV1(BaseTranscriptionService):
     """Service for streaming audio transcription with Google Cloud Speech-to-Text V1."""
 
     def __init__(self, gcs_uri: str, buffer_timeout: float = 0.5):
-        self.gcs_uri = gcs_uri
-        self.buffer_timeout = buffer_timeout
+        super().__init__(gcs_uri, buffer_timeout)
         self.client = speech.SpeechAsyncClient()
-        self.audio_q = asyncio.Queue()
-        self.transcript_chunks = []
-        self.start_time = None
-        self.stream_finished_flag = False
-        self.last_was_heartbeat = False
-        
-        # Deduplication state
-        # Key: speaker_tag, Value: list of (timestamp_float, text) tuples
-        self.speaker_history = {} 
-        
-        # Audio properties
-        self.sample_rate = 0
-        self.channels = 0
-        self.audio_bytes = None
-        self.bytes_per_sec = 0
-
-    async def prepare_audio(self):
-        """Downloads audio and determines properties (Rate, Channels)."""
-        logger.info(f"Downloading audio from {self.gcs_uri}...")
-        storage = StorageClient()
-        bucket_name, blob_name = self.gcs_uri.replace("gs://", "").split("/", 1)
-        bucket = storage.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-        raw_audio = blob.download_as_bytes()
-        storage.close()
-
-        seg = AudioSegment.from_file(io.BytesIO(raw_audio))
-        if seg.channels > 1:
-            logger.info("Converting to mono for V1 Diarization...")
-            seg = seg.set_channels(1)
-
-        self.channels = seg.channels
-        self.sample_rate = seg.frame_rate
-        self.audio_bytes = seg.set_sample_width(2).raw_data
-        self.bytes_per_sec = self.sample_rate * self.channels * 2
-        
-        logger.info(f"Audio Ready: {self.channels} channel(s), {self.sample_rate} Hz")
 
     async def stream_audio_chunks(self):
         """Simulates streaming by feeding the queue."""
-        chunk_size = 8000 
+        chunk_size = 8000 # Bytes per chunk
         chunk_duration = chunk_size / self.bytes_per_sec
 
+        # Pre-load 1 second of audio to prime the stream
         preload_chunks = int(1.0 / chunk_duration)
         chunks_queued = 0
 
-        for i in range(0, len(self.audio_bytes), chunk_size):
-            await self.audio_q.put(self.audio_bytes[i:i+chunk_size])
+        for i in range(0, len(self.audio_bytes), chunk_size): # type: ignore
+            await self.audio_q.put(self.audio_bytes[i:i+chunk_size]) # type: ignore
             chunks_queued += 1
             if chunks_queued > preload_chunks:
                 await asyncio.sleep(chunk_duration) 
@@ -145,87 +96,41 @@ class MonoTranscriptionServiceV1:
                     continue
 
                 if not result.is_final:
-                    print(".", end="", flush=True) 
+                    if result.alternatives:
+                        text = result.alternatives[0].transcript
+                        self._clear_interim_output()
+                        self._print_interim_output(text)
                     self.last_was_heartbeat = True
                     continue
                 
+                # Clear any lingering interim text before printing final result
+                self._clear_interim_output()
+
                 if not use_buffered:
                     if self.last_was_heartbeat:
-                        print("", flush=True)
+                        # print("", flush=True) # No longer needed with clear_interim
                         self.last_was_heartbeat = False
                     self._process_single_result(result)
                 else:
                     buffer.append(result)
         finally:
-            if flusher: flusher.cancel()
+            if flusher: flusher.cancel() 
+            self._clear_interim_output() # Clean up at the end
             if buffer: 
                 if self.last_was_heartbeat:
                     print("", flush=True)
                     self.last_was_heartbeat = False
                 self._process_buffer(buffer)
 
-    def _should_print_chunk(self, chunk):
-        """Deduplicates chunks based on history."""
-        speaker = chunk['speaker_tag']
-        ts = chunk['sort_key'] # Float seconds
-        text = chunk['text'].strip()
-        
-        if speaker not in self.speaker_history:
-            self.speaker_history[speaker] = []
-            
-        history = self.speaker_history[speaker]
-        
-        # 1. Check current speaker history (last 10 entries) to filter duplicates/regressions
-        for i in range(len(history) - 1, max(-1, len(history) - 11), -1):
-            prev_ts, prev_text = history[i]
-            
-            # If timestamp is close (within 0.5s)
-            if abs(ts - prev_ts) < 0.5:
-                # Case 0: Regression / Exact Match
-                if prev_text.startswith(text):
-                    return False, None, "IGNORE"
-
-                # Case 1: Extension (new text starts with old text)
-                if text.startswith(prev_text):
-                    new_part = text[len(prev_text):].strip()
-                    if not new_part:
-                        return False, None, "IGNORE"
-                    
-                    history[i] = (ts, text) 
-                    chunk['text'] = new_part
-                    return True, chunk, "EXTENSION"
-                
-                # Case 2: Correction / Variant
-                history[i] = (ts, text)
-                return True, chunk, "CORRECTION"
-
-        # 2. Check other speakers for re-attribution (same text, different speaker)
-        # Only check this if it wasn't caught as a duplicate/extension above
-        for other_tag, other_hist in self.speaker_history.items():
-            if other_tag == speaker: continue
-            for p_ts, p_text in other_hist[-10:]:
-                # Check for significant overlap using difflib
-                matcher = difflib.SequenceMatcher(None, text.lower(), p_text.lower())
-                match = matcher.find_longest_match(0, len(text), 0, len(p_text))
-                
-                # If overlap is significant (e.g., > 20 chars)
-                if match.size > 20:
-                    # This text (or part of it) was already printed for another speaker!
-                    history.append((ts, text))
-                    return True, chunk, "RE-ATTRIBUTION"
-
-        # New entry
-        history.append((ts, text))
-        return True, chunk, "NEW"
-
     def _print_chunk(self, chunk):
+        # Override Base to use V1 specific fields and layout
         should_print, mod_chunk, chunk_type = self._should_print_chunk(chunk)
         if not should_print or chunk_type == "IGNORE":
             return
 
-        speaker_tag = mod_chunk.get("speaker_tag", 1)
-        text = mod_chunk.get("text", "")
-        timestamp = mod_chunk.get("timestamp", "")
+        speaker_tag = mod_chunk.get("speaker_tag", 1) 
+        text = mod_chunk.get("text", "") 
+        timestamp = mod_chunk.get("timestamp", "") 
         speaker_label = f"Speaker {speaker_tag}"
         
         # Determine prefix based on type
@@ -237,7 +142,11 @@ class MonoTranscriptionServiceV1:
         elif chunk_type == "RE-ATTRIBUTION":
             prefix = "[ATTRIBUTION FIX] "
             
-        full_content = f'{timestamp} [{speaker_label}] {prefix}"{text}"'
+        # Apply Colors
+        color = self.COLOR_SPEAKER_1 if speaker_tag == 1 else self.COLOR_SPEAKER_2
+        colored_text = f'{color}"{text}"{self.COLOR_RESET}'
+            
+        full_content = f'{timestamp} [{speaker_label}] {prefix}{colored_text}'
         
         LEFT_COL_WIDTH = 45 
         RIGHT_COL_OFFSET = 60 
@@ -279,13 +188,16 @@ class MonoTranscriptionServiceV1:
         return chunks
 
     def _create_chunk_dict(self, speaker_tag, text, seconds):
-        ts = self.start_time + datetime.timedelta(seconds=seconds)
+        ts = self.start_time + datetime.timedelta(seconds=seconds) 
         timestamp = ts.strftime("%Y-%m-%d %H:%M:%S.%f")[:-5]
         return {
             "speaker_tag": speaker_tag,
             "text": text,
             "timestamp": timestamp,
-            "sort_key": seconds 
+            "sort_key": seconds,
+            # Normalize keys for Base dedupe if needed, though V1 uses 'speaker_tag'
+            "speaker": speaker_tag, 
+            "timestamp_float": seconds
         }
 
     def _process_single_result(self, result):
@@ -305,12 +217,18 @@ class MonoTranscriptionServiceV1:
             self._print_chunk(chunk)
             self.transcript_chunks.append(chunk)
 
-    async def run(self, use_buffered=False):
+    async def run(self, use_buffered=False, wait_for_play=False):
         """Main execution flow."""
         self.start_time = datetime.datetime.now(datetime.timezone.utc)
         self.stream_finished_flag = False
         
+        self._generate_signed_url()
+        
         await self.prepare_audio()
+
+        if wait_for_play:
+            self.wait_for_user_start()
+            self.start_time = datetime.datetime.now(datetime.timezone.utc)
 
         if not self.audio_bytes:
             logger.error("No audio data to transcribe!")
@@ -338,13 +256,14 @@ async def main():
     parser.add_argument("gcs_uri", help="The GCS URI")
     parser.add_argument('--use-buffered', action='store_true', help='Enable buffered.')
     parser.add_argument('--buffer-timeout', type=float, default=5.0)
+    parser.add_argument('--wait-for-play', action='store_true', help='Wait for user input before starting stream.')
     args = parser.parse_args()
 
     print(f"{'Speaker 1':<60} {'Speaker 2'}")
     print("-" * 100)
 
     service = MonoTranscriptionServiceV1(args.gcs_uri, args.buffer_timeout)
-    await service.run(args.use_buffered)
+    await service.run(args.use_buffered, args.wait_for_play)
 
 if __name__ == "__main__":
     asyncio.run(main())
