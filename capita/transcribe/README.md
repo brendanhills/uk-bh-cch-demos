@@ -90,6 +90,33 @@ The service dynamically adjusts its behavior based on the `--mode` flag using th
 
 A self-contained script maintained to be as close as possible to the original code provided by the customer, while including the essential stability fixes for a readable demo.
 
+## Testing
+
+The project includes an integration test suite that verifies all transcription modes using a real audio source. To ensure fast execution, the tests mock playback delays and process the first 10-30 seconds of audio at maximum API speed.
+
+### Running Tests
+```bash
+# Run all integration tests
+uv run pytest test_transcribe_integration.py -s
+```
+
+The suite covers:
+*   **V1 Mono**: Validates diarization and deduplication logic.
+*   **V2 Stereo (Low Latency)**: Validates high-speed multi-channel processing.
+*   **V2 Stereo (Readability)**: Validates stability buffering, active blocking, and gap-based turn splitting.
+*   **Legacy Baseline**: Ensures the customer's improved baseline remains functional.
+
+## Next Steps & Future Development
+
+This simulator provides a robust foundation for real-time transcription. Future enhancements could include:
+
+*   **LLM-Powered Insights:** Integration with Gemini to provide real-time summarization, intent detection, and automated "Next Action" suggestions for agents.
+*   **Web-Based Dashboard:** Transitioning from a CLI to a modern React/Next.js frontend to visualize the two-column conversation with enhanced styling and sentiment heatmaps.
+*   **Advanced PII Redaction:** Automatic real-time redaction of sensitive data such as credit card numbers, addresses, and account IDs using Cloud DLP.
+*   **Live Translation:** Real-time translation of the conversation into multiple languages, enabling support for multi-lingual contact centers.
+*   **Custom Vocabulary:** Integration of industry-specific terminology and phrases to improve accuracy for niche sectors (e.g., medical, legal, or technical support).
+*   **Direct Stream Support:** Expanding beyond GCS simulation to support live streaming from WebSockets (e.g., Twilio Media Streams) or local microphone inputs.
+
 ---
 
 ## Architecture

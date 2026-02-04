@@ -156,6 +156,11 @@ class BaseTranscriptionService:
             for s in stable:
                 ts = self.start_time + datetime.timedelta(seconds=s['start'] + self.restart_offset)
                 ts_str = ts.strftime("%H:%M:%S.%f")[:-5]
+                
+                # SAVE DATA FOR PERMANENCE
+                s['timestamp'] = ts_str
+                self.transcript_chunks.append(s)
+                
                 content = f"[{ts_str}] \"{s['text']}\""
                 self._print_in_column(content, s['channel'], is_final=True, ts_only=ts_str)
 
