@@ -3,13 +3,13 @@ import asyncio
 import os
 import textwrap
 from transcribe_common import TranscriptionService, GCP_TRANSCRIPTION_MODEL
-
+from simulate_audio import AudioStreamSimulator
 
 class TwoChannelTranscriptionService(TranscriptionService):
-    def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float):
+    def __init__(self, sample_rate: int, channels: int, customer_channel: str):
         # Use a specific recognizer ID for stereo
         rec_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-stereo"
-        super().__init__(gcs_uri, buffer_timeout, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_TRANSCRIPTION_MODEL)
+        super().__init__(sample_rate, channels, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_TRANSCRIPTION_MODEL)
         self.customer_channel = customer_channel
         self.previous_ts = None
 
@@ -78,8 +78,6 @@ async def main():
     parser = argparse.ArgumentParser(description="Transcribe a two-channel audio file from GCS.")
     parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
     parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"))
-    parser.add_argument('--use-buffered', action='store_true', default = False, help='Enable buffered transcription.')
-    parser.add_argument('--buffer-timeout', type=float, default=0.5)
     parser.add_argument('--wait-for-play', action='store_true', help='Wait for user input before starting stream.')
     
     args = parser.parse_args()
@@ -99,8 +97,20 @@ async def main():
     print(f"{ch1_label:<60} {ch2_label}")
     print("-" * 100)
 
-    service = TwoChannelTranscriptionService(args.gcs_uri, args.customer_channel, args.buffer_timeout)
-    await service.run(args.use_buffered, args.wait_for_play)
+    # 1. Setup Simulator
+    # Force mono is False for V2 Stereo
+    simulator = AudioStreamSimulator(args.gcs_uri, force_mono=False)
+    await simulator.prepare()
+    simulator.generate_signed_url()
+    
+    if args.wait_for_play:
+        simulator.wait_for_user_start()
+
+    # 2. Setup Service
+    service = TwoChannelTranscriptionService(simulator.sample_rate, simulator.channels, args.customer_channel)
+    
+    # 3. Run
+    await service.run(simulator.stream())
 
 if __name__ == "__main__":
     asyncio.run(main())
