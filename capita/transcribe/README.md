@@ -58,6 +58,7 @@ uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --wait-for-
 
 *   `gcs_uri`: The full `gs://...` path to your audio file.
 *   `--wait-for-play`: Pauses execution after generating the Console URL, allowing you to start audio playback before transcription begins.
+*   `--customer-channel`: (Stereo only) Specify which channel is the customer (`channel_1` or `channel_2`).
 
 ---
 
@@ -66,10 +67,10 @@ uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --wait-for-
 *   **`simulate_audio.py`**: A standalone module that handles the "Real-Time Simulation" infrastructure:
     *   GCS File Download & Google Console URL generation.
     *   Audio property inspection (using `pydub`).
-    *   **Throttled Streaming:** An async generator that "plays" the file chunks at speech speed.
+    *   **Throttled Streaming:** An async generator that "plays" the file chunks.
     *   **On-the-Fly Conversion:** Mixes down stereo chunks to mono in real-time if required.
 *   **`transcribe_common.py`**: Contains the base transcription logic (UI helpers, deduplication, and V2 API scaffolding).
-The scripts (`mono_transcribe_v1.py` and `two_channel_transcribe_v2.py`) instantiate the simulator and pipe the resulting stream into the transcription service.
+*   The scripts (`mono_transcribe_v1.py` and `two_channel_transcribe_v2.py`) instantiate the simulator and pipe the resulting stream into the transcription service.
 
 ## Code Logic Walkthrough
 

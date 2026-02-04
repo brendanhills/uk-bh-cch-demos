@@ -1,10 +1,7 @@
-import asyncio
 import datetime
 import logging
 import os
 import json
-import time
-import difflib
 
 from google.api_core.client_options import ClientOptions
 from google.api_core import exceptions
@@ -31,10 +28,9 @@ assert GCP_RECOGNIZER_ID, "Missing GCP_RECOGNIZER_ID"
 class BaseTranscriptionService:
     """Base Service containing common UI logic and state."""
 
-    def __init__(self, sample_rate: int, channels: int, buffer_timeout: float = 0.5):
+    def __init__(self, sample_rate: int, channels: int):
         self.sample_rate = sample_rate
         self.channels = channels
-        self.buffer_timeout = buffer_timeout
         self.transcript_chunks = []
         self.full_text = ""
         self.start_time = None
@@ -50,59 +46,39 @@ class BaseTranscriptionService:
         self.COLOR_RESET = "\033[0m"
         self.last_interim_text = ""
         self.last_interim_prefix = None
-        
-        # Deduplication state (V1 legacy)
-        self.speaker_history = {} 
 
     def _clear_interim_output(self):
         """Clears the current line."""
         print("\r\033[K", end="", flush=True)
 
     def _print_interim_output(self, text, prefix_label=None):
-        """Prints interim output on a single line."""
+        """
+        Prints interim output on a single line,
+        truncating if necessary.
+        """
+        # Always use a simple prefix for interim results
         prefix_str = "... "
+            
         full_text = prefix_str + text
+        
         try:
             term_width = os.get_terminal_size().columns
         except OSError:
             term_width = 80
+
+        # Truncate to avoid wrapping
         if len(full_text) > term_width - 1:
-            full_text = full_text[:term_width - 4] + "..."
-        print(f"\r{full_text}", end="", flush=True)
+            full_text = full_text[len(full_text) - term_width + 5:] + "..."
+            print(f"\r\033[K{full_text}", end= "", flush=True)
+        else:
+            print(f"\033[K\r{full_text}", end="", flush=True)
 
     def _should_print_chunk(self, chunk):
-        """Deduplicates chunks based on history."""
-        speaker = chunk.get('speaker', 'Unknown')
-        ts = chunk.get('timestamp_float', 0.0)
-        text = chunk.get('text', '').strip()
-        
-        if speaker not in self.speaker_history:
-            self.speaker_history[speaker] = []
-        history = self.speaker_history[speaker]
-        
-        for i in range(len(history) - 1, max(-1, len(history) - 11), -1):
-            prev_ts, prev_text = history[i]
-            if abs(ts - prev_ts) < 0.5:
-                if prev_text.startswith(text): return False, None, "IGNORE"
-                if text.startswith(prev_text):
-                    new_part = text[len(prev_text):].strip()
-                    if not new_part: return False, None, "IGNORE"
-                    history[i] = (ts, text) 
-                    chunk['text'] = new_part
-                    return True, chunk, "EXTENSION"
-                history[i] = (ts, text)
-                return True, chunk, "CORRECTION"
-
-        for other_tag, other_hist in self.speaker_history.items():
-            if other_tag == speaker: continue
-            for p_ts, p_text in other_hist[-10:]:
-                matcher = difflib.SequenceMatcher(None, text.lower(), p_text.lower())
-                match = matcher.find_longest_match(0, len(text), 0, len(p_text))
-                if match.size > 10:
-                    history.append((ts, text))
-                    return True, chunk, "RE-ATTRIBUTION"
-
-        history.append((ts, text))
+        """
+        Determines if a chunk should be printed.
+        Default implementation trusts the API (pass-through).
+        Subclasses (like V1) can override this for deduplication logic.
+        """
         return True, chunk, "NEW"
 
     def _get_timestamp(self, result):
@@ -116,8 +92,8 @@ class BaseTranscriptionService:
 class TranscriptionService(BaseTranscriptionService):
     """Service for streaming audio transcription with Google Cloud Speech-to-Text V2."""
 
-    def __init__(self, sample_rate: int, channels: int, buffer_timeout: float = 0.5, enable_multi_channel: bool = True, enable_diarization: bool = False, recognizer_id: str = None, model_name: str = None):
-        super().__init__(sample_rate, channels, buffer_timeout)
+    def __init__(self, sample_rate: int, channels: int, enable_multi_channel: bool = True, enable_diarization: bool = False, recognizer_id: str = None, model_name: str = None):
+        super().__init__(sample_rate, channels)
         self.enable_multi_channel = enable_multi_channel
         self.enable_diarization = enable_diarization
         self.recognizer_id = recognizer_id or GCP_RECOGNIZER_ID
@@ -190,26 +166,14 @@ class TranscriptionService(BaseTranscriptionService):
         async for chunk in audio_stream:
             yield cs.StreamingRecognizeRequest(audio=chunk)
 
-    async def process_responses(self, stream, use_buffered=False):
+    async def process_responses(self, stream):
         """Consumes responses from the API."""
-        buffer = []
-        async def flush_buffer_loop():
-            while True:
-                await asyncio.sleep(self.buffer_timeout)
-                if buffer:
-                    if self.last_was_heartbeat:
-                        print("", flush=True)
-                        self.last_was_heartbeat = False
-                    self._process_buffer(buffer)
-                    buffer.clear()
-
-        flusher = asyncio.create_task(flush_buffer_loop()) if use_buffered else None
-
         try:
             async for response in stream:
                 for result in response.results:
                     if not result.alternatives: continue
                     if not result.is_final:
+                        # Interim
                         text = result.alternatives[0].transcript
                         tag = getattr(result, "channel_tag", "?")
                         label = f"Ch{tag}"
@@ -217,18 +181,12 @@ class TranscriptionService(BaseTranscriptionService):
                         self.last_was_heartbeat = True
                         continue
                     
+                    # Final
                     self._clear_interim_output()
-                    if not use_buffered:
-                        if self.last_was_heartbeat: self.last_was_heartbeat = False
-                        self._process_single_result(result)
-                    else:
-                        buffer.append(result)
+                    if self.last_was_heartbeat: self.last_was_heartbeat = False
+                    self._process_single_result(result)
         finally:
-            if flusher: flusher.cancel()
             self._clear_interim_output()
-            if buffer:
-                if self.last_was_heartbeat: self.last_was_heartbeat = False
-                self._process_buffer(buffer)
 
     def _process_single_result(self, result):
         if not result.alternatives: return 
@@ -238,22 +196,8 @@ class TranscriptionService(BaseTranscriptionService):
         self.transcript_chunks.append(chunk)
         self._print_chunk(chunk)
 
-    def _process_buffer(self, buffer):
-        temp_chunks = []
-        for result in buffer:
-            if not result.alternatives: continue
-            self.full_text += f"\n{result.alternatives[0].transcript}"
-            temp_chunks.append(self._create_transcript_chunk(result))
-        temp_chunks.sort(key=lambda x: x['timestamp'])
-        for chunk in temp_chunks:
-            self._print_chunk(chunk)
-        self.transcript_chunks.extend(temp_chunks)
-
     def _create_transcript_chunk(self, result):
         raise NotImplementedError
-
-    def _should_print_chunk(self, chunk):
-        return True, chunk, "NEW"
 
     def _print_chunk(self, chunk):
         speaker = chunk.get("speaker", "Speaker")
@@ -261,18 +205,18 @@ class TranscriptionService(BaseTranscriptionService):
         timestamp = chunk.get("timestamp", "")
         print(f"[{timestamp}] {speaker: <10}: {text}", flush=True)
 
-    async def run(self, audio_stream, use_buffered=False):
+    async def run(self, audio_stream):
         """Main execution flow."""
         self.start_time = datetime.datetime.now(datetime.timezone.utc)
         recognizer = await self.get_recognizer()
         
-        logger.info(f"Starting {'buffered' if use_buffered else 'live'} transcription...")
+        logger.info("Starting live transcription...")
         
         try:
             responses_stream = await self.client.streaming_recognize(
                 requests=self.generate_requests(recognizer.name, audio_stream)
             )
-            await self.process_responses(responses_stream, use_buffered)
+            await self.process_responses(responses_stream)
         except Exception as e:
             logger.error(f"Error during streaming_recognize: {e}")
 

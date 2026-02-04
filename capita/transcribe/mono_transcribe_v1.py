@@ -4,6 +4,7 @@ import datetime
 import logging
 import textwrap
 import time
+import difflib
 
 from google.cloud import speech_v1 as speech
 from transcribe_common import BaseTranscriptionService
@@ -19,6 +20,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
     def __init__(self, sample_rate: int, channels: int):
         super().__init__(sample_rate, channels)
         self.client = speech.SpeechAsyncClient()
+        self.speaker_history = {} 
 
     async def generate_requests(self, audio_stream):
         """Yields streaming requests for the V1 API."""
@@ -75,6 +77,43 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
                 self._process_single_result(result)
         finally:
             self._clear_interim_output() 
+
+    def _should_print_chunk(self, chunk):
+        """Deduplicates chunks based on history (V1 specific)."""
+        speaker = chunk.get('speaker', 'Unknown')
+        ts = chunk.get('timestamp_float', 0.0)
+        text = chunk.get('text', '').strip()
+        
+        if speaker not in self.speaker_history:
+            self.speaker_history[speaker] = []
+        history = self.speaker_history[speaker]
+        
+        # Check against recent history
+        for i in range(len(history) - 1, max(-1, len(history) - 11), -1):
+            prev_ts, prev_text = history[i]
+            if abs(ts - prev_ts) < 0.5:
+                if prev_text.startswith(text): return False, None, "IGNORE"
+                if text.startswith(prev_text):
+                    new_part = text[len(prev_text):].strip()
+                    if not new_part: return False, None, "IGNORE"
+                    history[i] = (ts, text) 
+                    chunk['text'] = new_part
+                    return True, chunk, "EXTENSION"
+                history[i] = (ts, text)
+                return True, chunk, "CORRECTION"
+
+        # Check other speakers for re-attribution
+        for other_tag, other_hist in self.speaker_history.items():
+            if other_tag == speaker: continue
+            for p_ts, p_text in other_hist[-10:]:
+                matcher = difflib.SequenceMatcher(None, text.lower(), p_text.lower())
+                match = matcher.find_longest_match(0, len(text), 0, len(p_text))
+                if match.size > 10:
+                    history.append((ts, text))
+                    return True, chunk, "RE-ATTRIBUTION"
+
+        history.append((ts, text))
+        return True, chunk, "NEW"
 
     def _print_chunk(self, chunk):
         should_print, mod_chunk, chunk_type = self._should_print_chunk(chunk)
