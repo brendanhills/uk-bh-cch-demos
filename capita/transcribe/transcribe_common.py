@@ -7,6 +7,7 @@ import json
 import time
 import difflib
 import subprocess
+import audioop
 
 from pydub import AudioSegment
 from google.api_core.client_options import ClientOptions
@@ -110,7 +111,7 @@ class BaseTranscriptionService:
             
         history = self.speaker_history[speaker]
         
-        # Check against recent history
+        # Check against recent history for SAME speaker
         for i in range(len(history) - 1, max(-1, len(history) - 11), -1):
             prev_ts, prev_text = history[i]
             
@@ -130,6 +131,19 @@ class BaseTranscriptionService:
                 
                 history[i] = (ts, text)
                 return True, chunk, "CORRECTION"
+
+        # Check OTHER speakers for re-attribution
+        for other_tag, other_hist in self.speaker_history.items():
+            if other_tag == speaker: continue
+            for p_ts, p_text in other_hist[-10:]:
+                # Check for significant overlap using difflib
+                matcher = difflib.SequenceMatcher(None, text.lower(), p_text.lower())
+                match = matcher.find_longest_match(0, len(text), 0, len(p_text))
+                
+                # If overlap is significant (e.g., > 10 chars)
+                if match.size > 10:
+                    history.append((ts, text))
+                    return True, chunk, "RE-ATTRIBUTION"
 
         history.append((ts, text))
         return True, chunk, "NEW"
@@ -151,11 +165,6 @@ class BaseTranscriptionService:
     async def prepare_audio(self):
         """
         Downloads audio and determines properties (Rate, Channels).
-        
-        KEY DEMO LOGIC:
-        We use pydub to inspect and convert the audio before sending it to Google.
-        The Google Speech API is strict about encoding (Linear16 is safest) and 
-        sample rates. We standardise everything here to ensure the API call works.
         """
         logger.info(f"Downloading audio from {self.gcs_uri}...")
         storage = StorageClient()
@@ -167,50 +176,60 @@ class BaseTranscriptionService:
 
         seg = AudioSegment.from_file(io.BytesIO(raw_audio))
         
-        # Force Mono logic (merges channels)
-        if self.force_mono and seg.channels > 1:
-            logger.info("Forcing audio to mono (merging channels) for V1 Diarization...")
-            seg = seg.set_channels(1)
-        # Smart detection for identical channels (only if not forcing mono)
-        elif seg.channels == 2:
-            left, right = seg.split_to_mono()
-            if left.raw_data == right.raw_data:
-                logger.info("Stereo file detected with identical channels. Treating as mono.")
-                seg = seg.set_channels(1)
-
-        self.channels = seg.channels
+        # Determine source properties
+        self.source_channels = seg.channels
         self.sample_rate = seg.frame_rate
+        
+        # Determine target properties (for API)
+        if self.force_mono:
+            self.channels = 1
+        else:
+            self.channels = self.source_channels
+
         # We enforce 2-byte (16-bit) samples for Linear16 encoding
         self.audio_bytes = seg.set_sample_width(2).raw_data
         
-        # Calculate bytes per second to know how fast to stream
-        self.bytes_per_sec = self.sample_rate * self.channels * 2
+        # Calculate bytes per second based on SOURCE audio (to throttle correctly)
+        self.bytes_per_sec = self.sample_rate * self.source_channels * 2
         
-        logger.info(f"Audio Ready: {self.channels} channel(s), {self.sample_rate} Hz")
+        logger.info(f"Audio Ready: Source {self.source_channels}ch -> Target {self.channels}ch, {self.sample_rate} Hz")
 
     async def stream_audio_chunks(self):
         """
         Simulates streaming by feeding the queue.
-        
-        KEY DEMO LOGIC:
-        In a real app, this audio would come from a microphone or websocket.
-        Here, we 'throttle' the file upload to match the audio's natural speed,
-        so the transcription appears to happen in real-time.
         """
-        chunk_size = 8000 # Bytes per chunk
-        chunk_duration = chunk_size / self.bytes_per_sec
+        # Chunk size for SOURCE audio (e.g. 8000 bytes for mono, 16000 for stereo)
+        # We target ~250ms chunks.
+        # bytes_per_sec was calculated based on source channels in prepare_audio
+        chunk_duration_sec = 0.25 
+        chunk_size = int(self.bytes_per_sec * chunk_duration_sec) 
+        
+        # Ensure chunk_size is aligned to frame size (width * channels)
+        frame_size = 2 * self.source_channels
+        chunk_size = (chunk_size // frame_size) * frame_size
 
-        # Pre-load 1 second of audio to prime the stream (avoids initial lag)
-        preload_chunks = int(1.0 / chunk_duration)
         chunks_queued = 0
 
         for i in range(0, len(self.audio_bytes), chunk_size): # type: ignore
-            await self.audio_q.put(self.audio_bytes[i:i+chunk_size]) # type: ignore
+            chunk = self.audio_bytes[i:i+chunk_size] # type: ignore
+            
+            # ON-THE-FLY CONVERSION:
+            # If we need mono but source is stereo, convert this specific chunk now.
+            if self.force_mono and self.source_channels > 1:
+                # audioop.tomono(fragment, width, lfactor, rfactor)
+                # width=2 (16-bit), factors=0.5 (average L+R)
+                try:
+                    chunk = audioop.tomono(chunk, 2, 0.5, 0.5)
+                except Exception as e:
+                    logger.error(f"Error converting chunk to mono: {e}")
+            
+            await self.audio_q.put(chunk)
             chunks_queued += 1
             
-            # If we've buffered enough, start sleeping to match real-time
-            if chunks_queued > preload_chunks:
-                await asyncio.sleep(chunk_duration) 
+            # Simulate real-time delay
+            # We assume the upload allows some buffer (e.g. 1 sec) before throttling
+            if chunks_queued > (1.0 / chunk_duration_sec):
+                await asyncio.sleep(chunk_duration_sec) 
             
         await self.audio_q.put(None) # EOF: Signal that the stream is done
 
