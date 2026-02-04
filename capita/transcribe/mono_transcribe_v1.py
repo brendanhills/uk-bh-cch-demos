@@ -16,25 +16,9 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
     """Service for streaming audio transcription with Google Cloud Speech-to-Text V1."""
 
     def __init__(self, gcs_uri: str, buffer_timeout: float = 0.5):
-        super().__init__(gcs_uri, buffer_timeout)
+        # Force mono for V1 Diarization to ensure we mix both channels
+        super().__init__(gcs_uri, buffer_timeout, force_mono=True)
         self.client = speech.SpeechAsyncClient()
-
-    async def stream_audio_chunks(self):
-        """Simulates streaming by feeding the queue."""
-        chunk_size = 8000 # Bytes per chunk
-        chunk_duration = chunk_size / self.bytes_per_sec
-
-        # Pre-load 1 second of audio to prime the stream
-        preload_chunks = int(1.0 / chunk_duration)
-        chunks_queued = 0
-
-        for i in range(0, len(self.audio_bytes), chunk_size): # type: ignore
-            await self.audio_q.put(self.audio_bytes[i:i+chunk_size]) # type: ignore
-            chunks_queued += 1
-            if chunks_queued > preload_chunks:
-                await asyncio.sleep(chunk_duration) 
-            
-        await self.audio_q.put(None) # EOF
 
     async def generate_requests(self):
         """Yields streaming requests for the V1 API."""
@@ -140,7 +124,7 @@ class MonoTranscriptionServiceV1(BaseTranscriptionService):
         elif chunk_type == "EXTENSION":
             prefix = "... "
         elif chunk_type == "RE-ATTRIBUTION":
-            prefix = "[ATTRIBUTION FIX] "
+            prefix = "\033[1;31m[RE-ATTRIBUTED]\033[0m "
             
         # Apply Colors
         color = self.COLOR_SPEAKER_1 if speaker_tag == 1 else self.COLOR_SPEAKER_2

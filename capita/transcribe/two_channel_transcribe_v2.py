@@ -2,13 +2,14 @@ import argparse
 import asyncio
 import os
 import textwrap
-from transcribe_common import TranscriptionService, GCP_MODEL_STEREO
+from transcribe_common import TranscriptionService, GCP_TRANSCRIPTION_MODEL
+
 
 class TwoChannelTranscriptionService(TranscriptionService):
     def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float):
         # Use a specific recognizer ID for stereo
         rec_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-stereo"
-        super().__init__(gcs_uri, buffer_timeout, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_MODEL_STEREO)
+        super().__init__(gcs_uri, buffer_timeout, enable_multi_channel=True, recognizer_id=rec_id, model_name=GCP_TRANSCRIPTION_MODEL)
         self.customer_channel = customer_channel
         self.previous_ts = None
 
