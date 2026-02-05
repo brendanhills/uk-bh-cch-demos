@@ -63,16 +63,12 @@ async def main():
                         help="Toggles between raw speed ('low_latency') and conversational order ('readability').")
     parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"),
                         help="Defines which audio channel (1 or 2) belongs to the customer.")
+    parser.add_argument('--wait-for-play', action='store_true', help='Pauses for user to start audio.')
+
     args = parser.parse_args()
 
-    # 1. UI Setup: Determine specific settings for the header display
-    if args.mode == "readability":
-        stability, gap, blocking = 1.5, 0.8, "On"
-    else:
-        stability, gap, blocking = 0.0, 0.0, "Off"
-
     print(f"\nMode: {args.mode.upper()}")
-    print(f"Settings: Stability={stability}s, GapSplit={gap}s, ActiveBlocking={blocking}")
+
     
     ch1_label = "Channel 1 (Caller)" if args.customer_channel == "channel_1" else "Channel 1 (Agent)"
     ch2_label = "Channel 2 (Agent)" if args.customer_channel == "channel_1" else "Channel 2 (Caller)"
@@ -82,11 +78,16 @@ async def main():
     # 2. Audio Simulation: Initialize the real-time audio streamer
     simulator = AudioStreamSimulator(args.gcs_uri, force_mono=False)
     await simulator.prepare()
+    simulator.generate_signed_url()
     
+    if args.wait_for_play:
+        simulator.wait_for_user_start()
+
+
     # 3. Service Execution: Instantiate and run the unified service
     service = UnifiedTwoChannelService(simulator.sample_rate, simulator.channels, 
                                        args.customer_channel, mode=args.mode)
-    
+    print(f"Settings: Stability={service.STABILITY_THRESHOLD}s, GapSplit={service.GAP_THRESHOLD}s, ActiveBlocking={service.ACTIVE_BLOCKING}")
     # Pipe the simulated real-time stream into the transcription engine
     await service.run(simulator.stream())
 
