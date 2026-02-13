@@ -1,0 +1,950 @@
+id,name,animal_type_id,breedr_code,reg_breed_code,reg_name,version,birth_weight,classification,new_classification,region_id,is_obsolete
+d2008d26-de1f-4245-814f-02faa73eaca6,Aberdeen Angus,3,AA,AA,Aberdeen Angus,v1,38.0,Native,NATIVE,GB,false
+34922202-f855-43ef-b422-8136d0786670,Aberblack,2,ABBSH,ABBSH,Aberblack,v1,5.0,Continental,CONTINENTAL,GB,false
+396e5cba-f58f-416d-a3ae-a920a0751444,Australian Lowline,3,ALL,ALL,Australian Lowline,v3,38.0,Native,CONTINENTAL,NI,false
+75bdbbd5-6440-4ebf-be95-f4e9ce164c26,Dexter,3,DEX,DEX,Dexter,v3,38.0,Native,NATIVE,NI,false
+0c05aa40-6789-4734-a55f-0797749b2f6d,East Finish Brown,3,EFB,EFB,East Finish Brown,v3,38.0,B &W,CONTINENTAL,NI,false
+590afe56-65b6-4d72-847f-00177dc16f16,English Park,3,ENP,ENP,English Park,v3,38.0,,NATIVE,NI,false
+d0778d68-ade2-44cd-8045-06086e182963,European Angus,3,EA,EA,European Angus,v3,38.0,,CONTINENTAL,NI,false
+54f3900e-3110-4846-b141-1f4f37b26072,Fleckvieh,3,FKV,FKV,Fleckvieh,v3,38.0,B &W,CONTINENTAL,NI,false
+6e55f20a-2d91-4ba6-965a-d5e056ed6bcc,Friesian,3,FR,FR,Friesian,v3,38.0,,B_&_W,NI,false
+6f0c5540-7940-4cf6-a78a-a0165eb771d7,Frisona Espagnola,3,FE,FRE,Frisona Espagnola,v3,38.0,,CONTINENTAL,NI,false
+44dedebe-5c06-4aac-b552-656a2a3af288,British White,3,BW,BW,British White,v1,38.0,Native,NATIVE,GB,false
+5837be49-1450-4d7f-bf04-5cded9ccc32c,Devon,3,DEV,DEV,Devon,v1,38.0,Native,NATIVE,GB,false
+5353c56b-dd20-4bf1-acd8-334b51fcf38c,Dexter,3,DEX,DEX,Dexter,v1,38.0,Native,NATIVE,GB,false
+92621971-5114-436d-959d-7c8bbc343792,Galloway,3,GA,GAL,Galloway,v3,38.0,,NATIVE,NI,false
+487f3e3f-b94b-434d-b23b-cb92693b29db,Highland,3,HI,HI,Highland,v1,38.0,Native,NATIVE,GB,false
+b6ca06f3-e925-4c88-97b2-882b3305c945,Angler Rotvieh,3,AR,AR,Angler Rotvieh,v1,38.0,Continental,CONTINENTAL,GB,false
+1bb8186a-b804-4559-812b-2053bd9e630a,Luing,3,LU,LU,Luing,v2,38.0,Native,NATIVE,GB,false
+99691be5-9fa8-4e68-805a-6958715004b8,Gayal,3,GAY,GAY,Gayal,v3,38.0,,CONTINENTAL,NI,false
+9094574f-62eb-4ed4-bce0-1bf131d9193d,Aubrac,3,AU,AU,Aubrac,v1,38.0,Continental,CONTINENTAL,GB,false
+6a3f9d2d-b29c-43c2-98e2-7c6b18d51d96,Devon Cross,3,DEVX,DEVX,Devon Cross,v2,38.0,Native,NATIVE,GB,false
+81d22f38-116e-4203-9673-39053ce9a1f3,Dexter Cross,3,DEXX,DEXX,Dexter Cross,v2,38.0,Native,NATIVE,GB,false
+0ee65412-98ba-4c19-847f-ed4c7b8735fc,Luing Cross,3,LUX,LUX,Luing Cross,v2,38.0,Native,NATIVE,GB,false
+00430aad-0d03-4c8b-8e7a-777994181ab9,Aberblack,2,ABBSH,ABBSH,Aberblack,v1,5.0,Continental,CONTINENTAL,NI,false
+73c9c147-4994-400a-9921-ec20c03e7c7f,Hereford,3,HE,HE,Hereford,v2,38.0,Native,NATIVE,GB,false
+ebb95b3c-a14c-4758-8a53-cdfcb3123d1f,Gloucester,3,GL,GLO,Gloucester,v3,38.0,,NATIVE,NI,false
+cda9e4c8-f2a8-4001-a4ea-2532b8d8637d,Hereford Cross,3,HEX,HEX,Hereford Cross,v2,38.0,Native,NATIVE,GB,false
+ecf7a2e9-a246-4b85-91a7-764e0b39199c,Highland Cross,3,HIX,HIX,Highland Cross,v2,38.0,Native,NATIVE,GB,false
+d5fbdc65-2378-4ec3-850f-5c2146d01b59,Irish Moiled Cross,3,IMX,IMX,Irish Moiled Cross,v2,38.0,Native,NATIVE,GB,false
+d3b2ca87-4889-4d59-ab92-2abee7e7e737,Aberblack X,2,ABBXSH,ABBXSH,Aberblack X,v1,5.0,Continental,CONTINENTAL,GB,false
+656f2be1-310f-4227-86ae-40c2a25927bd,Aberblack X,2,ABBXSH,ABBXSH,Aberblack X,v1,5.0,Continental,CONTINENTAL,NI,false
+6c6fdadb-6a3e-47bb-81b5-2b827b0fc616,Kerry Cross,3,KEX,KEX,Kerry Cross,v2,38.0,Native,NATIVE,GB,false
+42ea3aa3-f271-4381-82a2-59d4d1dae526,Lincoln Red,3,LR,LR,Lincoln Red,v2,38.0,Native,NATIVE,GB,false
+fce86cf0-09e2-418f-b8e2-64df3275ba71,Groninger Blaarkop,3,GB,GRB,Groninger Blaarkop,v3,38.0,,CONTINENTAL,NI,false
+17271ff0-03b0-4f93-8bdb-f95e944858b6,Lincoln Red Cross,3,LRX,LRX,Lincoln Red Cross,v2,38.0,Native,NATIVE,GB,false
+1a8453b5-4ad7-4540-a831-fda1118c32ed,Longhorn Cross,3,LHX,LHX,Longhorn Cross,v2,38.0,Native,NATIVE,GB,false
+1d876a2e-704b-44f3-a160-1a778a30432b,Aberdale,2,ABDSH,ABDSH,Aberdale,v1,5.0,Continental,CONTINENTAL,GB,false
+ae5a8292-2dfb-4be1-ad60-9ccf501c4978,Aberdale,2,ABDSH,ABDSH,Aberdale,v1,5.0,Continental,CONTINENTAL,NI,false
+a4d54fea-6829-458e-880b-f9832d6d5393,Murray Grey Cross,3,MGX,MGX,Murray Grey Cross,v2,38.0,Native,NATIVE,GB,false
+7de7261a-f6e4-40b7-b9f8-6ceb8dfbfabd,Riggit Galloway Cross,3,RGX,RGX,Riggit Galloway Cross,v2,38.0,Native,NATIVE,GB,false
+f667598e-bac8-4968-8a94-e7477ccf5410,Shetland Cross,3,SHX,SHX,Shetland Cross,v2,38.0,Native,NATIVE,GB,false
+3b43a3e7-dc17-4339-8a0e-c1bfee509125,South Devon Cross,3,SDX,SDX,South Devon Cross,v2,38.0,Native,NATIVE,GB,false
+674fdaf2-c715-4201-bb36-3fb642ad54df,Speckle Park,3,SP,SP,Speckle Park,v2,38.0,Native,NATIVE,GB,false
+0286d7e6-87f1-444b-9fb6-691067d38d76,Speckle Park Cross,3,SPX,SPX,Speckle Park Cross,v2,38.0,Native,NATIVE,GB,false
+a512b32e-b19e-44b4-a3ab-c8d634df69cc,Australian Lowline,3,ALL,ALL,Australian Lowline,v1,38.0,Continental,CONTINENTAL,GB,false
+93ffdc00-3112-4940-8a8d-7095df2b12ce,Stabiliser Cross,3,STX,STX,Stabiliser Cross,v2,38.0,Native,NATIVE,GB,false
+aa0b9a6c-7e58-4710-b2c5-72f2b4e0012d,Galloway,3,GA,GA,Galloway,v2,38.0,Native,NATIVE,GB,false
+f4a7abfe-0f6c-4510-9b5b-303d710dce1b,Galloway Cross,3,GAX,GAX,Galloway Cross,v2,38.0,Native,NATIVE,GB,false
+166cc580-6032-4d92-a2ca-54f5f3d59bf1,Gloucester,3,GL,GL,Gloucester,v2,38.0,Native,NATIVE,GB,false
+625fafa6-a431-4ce6-bc6d-f716720d013f,Gloucester Cross,3,GLX,GLX,Gloucester Cross,v2,38.0,Native,NATIVE,GB,false
+1e6dc2f5-393c-4933-b21f-9a72c946f2e5,Shortburn,3,SH,SH,Shortburn,v2,38.0,Native,NATIVE,GB,false
+a8b95214-1546-4a92-8456-dea1ff99dc0f,Sussex Cross,3,SUX,SUX,Sussex Cross,v2,38.0,Native,NATIVE,GB,false
+4ffb0bc1-bb37-4ecd-a591-1ebfd9330e01,Tyrone Black,3,TB,TB,Tyrone Black,v2,38.0,Native,NATIVE,GB,false
+df067fce-6aca-40d7-9299-232d7d177f89,Guernsey,3,GU,GU,Guernsey,v1,38.0,B & W,B_&_W,GB,false
+ba666d8b-7fed-440b-a027-86d47beace54,Aberdale X,2,ABDXSH,ABDXSH,Aberdale X,v1,5.0,Continental,CONTINENTAL,GB,false
+2b548e57-6664-4a29-94de-ee432e941cc8,Aberdale X,2,ABDXSH,ABDXSH,Aberdale X,v1,5.0,Continental,CONTINENTAL,NI,false
+efd570f2-3a31-4403-8790-c4cfdb2ae617,Aberfield,2,ABFSH,ABFSH,Aberfield,v1,5.0,Continental,CONTINENTAL,GB,false
+2e231b86-5a31-4ae8-b8d9-22544f2e13af,Aberfield,2,ABFSH,ABFSH,Aberfield,v1,5.0,Continental,CONTINENTAL,NI,false
+b1fefefc-e82a-4ee5-b351-e21f193027aa,Merino,2,MER,,,v1,5.0,Wool,NATIVE,AU,false
+267373e5-ba47-4146-bff7-375a2ab3b27f,Bazadaise,3,BAZ,BAZ,Bazadaise,v1,38.0,Continental,CONTINENTAL,GB,false
+d7b2d256-3102-4e8b-94af-453b8407bd3b,South Devon,3,SD,SD,South Devon,v1,38.0,Native,NATIVE,GB,false
+a59ced26-873d-416e-98de-8082bbeaf1ff,Bison,3,BI,BI,Bison,v1,38.0,Continental,CONTINENTAL,GB,false
+4298014c-62e0-4f8b-bb60-a6d71a7aa1ec,Stabiliser,3,ST,ST,Stabiliser,v1,38.0,Native,NATIVE,GB,false
+bd16fe72-c6a8-4a96-981f-a31c8c4a7b35,Sussex,3,SU,SU,Sussex,v1,38.0,Native,NATIVE,GB,false
+1fa58b28-87be-4ab6-b384-1ff313489e7d,Guernsey,3,GU,GU,Guernsey,v3,38.0,B & W,B_&_W,NI,false
+51521844-937d-48db-b9e2-801ff4a2f8e0,Welsh Black,3,WB,WB,Welsh Black,v1,38.0,Native,NATIVE,GB,false
+25d373bb-825f-409f-b088-16edbf6145dc,Aberfield SR,2,ABFSRSH,ABFSRSH,Aberfield SR,v1,5.0,Continental,CONTINENTAL,GB,false
+2a8544a0-4f7b-4e4f-a06f-c18272edb794,Aberfield SR,2,ABFSRSH,ABFSRSH,Aberfield SR,v1,5.0,Continental,CONTINENTAL,NI,false
+66c589d6-c225-4b3f-97ec-4701bcf4b040,Hereford,3,HE,HER,Hereford,v3,38.0,,NATIVE,NI,false
+f3986f7a-773c-420c-b3c5-ea8d8d8a7f91,Aberfield SR X,2,ABFSRXSH,ABFSRXSH,Aberfield SR X,v1,5.0,Continental,CONTINENTAL,GB,false
+b69a89f0-44ff-4561-b7e5-5976b5a0b4c8,White Galloway,3,WG,WG,White Galloway,v1,38.0,Native,NATIVE,GB,false
+ba7f2ad8-40db-46e2-93d3-713891c98833,Shortburn,3,SHT,SH,Shortburn,v3,38.0,Native,NATIVE,NI,false
+cf67f241-8e18-4465-b84c-ed403aa029a7,Aberfield SR X,2,ABFSRXSH,ABFSRXSH,Aberfield SR X,v1,5.0,Continental,CONTINENTAL,NI,false
+33736b55-3531-45d3-a057-1c6c41ed2e0a,Highland,3,HI,HI,Highland,v3,38.0,Native,NATIVE,NI,false
+aea1ecff-f662-4c38-8662-ec15e1fa3491,Aberfield X,2,ABFXSH,ABFXSH,Aberfield X,v1,5.0,Continental,CONTINENTAL,GB,false
+c5296968-88c3-462d-b94e-0101e6ba9b90,Aberfield X,2,ABFXSH,ABFXSH,Aberfield X,v1,5.0,Continental,CONTINENTAL,NI,false
+e4b16d85-cfe3-4e67-96d6-a9a84833d082,Abermax,2,ABMSH,ABMSH,Abermax,v1,5.0,Continental,CONTINENTAL,GB,false
+e013626b-9393-4310-b053-76096c763fe8,Abermax,2,ABMSH,ABMSH,Abermax,v1,5.0,Continental,CONTINENTAL,NI,false
+1c534598-931e-41f3-90ae-1e02a68ecab1,Abermax X,2,ABMXSH,ABMXSH,Abermax X,v1,5.0,Continental,CONTINENTAL,GB,false
+694b3629-c909-4e92-9edd-e23eea1b3c07,Abermax X,2,ABMXSH,ABMXSH,Abermax X,v1,5.0,Continental,CONTINENTAL,NI,false
+e2a879df-e1ea-493c-9498-5cd450c4ed45,Holstein,3,HO,HOL,Holstein,v3,38.0,,B_&_W,NI,false
+a9e96618-d2b4-4543-b989-9b19fc554929,Abertex,2,ABTSH,ABTSH,Abertex,v1,5.0,Continental,CONTINENTAL,GB,false
+41dd8ff0-11ed-43d0-80d1-3882fb42d0ad,Abertex,2,ABTSH,ABTSH,Abertex,v1,5.0,Continental,CONTINENTAL,NI,false
+e23f6922-6183-4cd0-b824-5f875226b982,Abertex X,2,ABTXSH,ABTXSH,Abertex X,v1,5.0,Continental,CONTINENTAL,GB,false
+515ae497-99f8-40b5-8f7c-e94abc63fdf5,Gelbvieh,3,GE,GE,Gelbvieh,v3,38.0,Continental,CONTINENTAL,NI,false
+d032eeb8-a7ed-4393-82d1-c83fa4d721fe,Abertex X,2,ABTXSH,ABTXSH,Abertex X,v1,5.0,Continental,CONTINENTAL,NI,false
+4f287eb9-df0f-4f4b-8fcd-5a6d6dd90a92,Badger Face Welsh Mountain X,2,BFWMXSH,BFWMXSH,Badger Face Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+29e70cfa-39bf-4505-a5f7-de0dfd931559,Limousin,3,LIM,LIM,Limousin,v3,38.0,Continental,CONTINENTAL,NI,false
+258656f5-0d83-4531-ab56-b94a8166e7b0,Bazadais,3,BAZ,BAZ,Bazadais,v3,38.0,Continental,CONTINENTAL,NI,false
+191a25cf-7ecf-4cfe-9e90-3ebaae4e83d4,Badger Face Welsh Mountain X,2,BFWMXSH,BFWMXSH,Badger Face Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+17201ef0-0fa1-465e-a64a-1e110bc55fed,Irish Moile,3,IM,IM,Irish Moile,v3,38.0,Native,NATIVE,NI,false
+534da95b-7842-4c15-8912-2dc060b44261,Balwen Welsh Mountain X,2,BWMXSH,BWMXSH,Balwen Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+c88fa62b-a1fa-46f3-bca4-7c8c0576710a,Balwen Welsh Mountain X,2,BWMXSH,BWMXSH,Balwen Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+f827f506-dce7-4061-b351-eccc630d9ee3,Blue Albion,3,BAL,BAL,Blue Albion,v1,38.0,Continental,CONTINENTAL,GB,false
+872cd39a-9297-438a-a0e6-48d326c77652,Jersey,3,JE,JER,Jersey,v3,38.0,,B_&_W,NI,false
+67d8f600-a7cc-42c7-9bd8-e78cd452b278,Blue Grey,3,BLG,BLG,Blue Grey,v1,38.0,Continental,CONTINENTAL,GB,false
+0e4da796-76e3-45d7-9032-711fb28022a1,British Blue,3,BRB,BRB,British Blue,v1,38.0,Continental,CONTINENTAL,GB,false
+e4792f2e-0f9f-4bdb-a7d2-bac6482ec9d4,Charolais,3,CH,CH,Charolais,v1,38.0,Continental,CONTINENTAL,GB,false
+a46e11a6-0dd0-41af-a7ce-903c820adabe,Kerry,3,KE,KE,Kerry,v3,38.0,Native,NATIVE,NI,false
+7ab9e5b6-eb0b-49c5-b73a-9c0c553c8c97,Chianina,3,CHI,CHI,Chianina,v1,38.0,Continental,CONTINENTAL,GB,false
+57150c53-c8bb-46e1-a82c-34af6f981180,Chillingham,3,CHL,CHL,Chillingham,v1,38.0,Continental,CONTINENTAL,GB,false
+2a17d10e-ea4a-4354-b860-81a9484ad121,Danish Red,3,DR,DR,Danish Red,v1,38.0,Continental,CONTINENTAL,GB,false
+0b2b3426-62a5-48de-98ca-fdb7e149aecc,Lithuanian Black and White,3,LBW,LBW,Lithuanian Black and White,v3,38.0,,CONTINENTAL,NI,false
+e51370ee-b45b-49f3-ba8d-0eb046beac92,East Finnish Brown,3,EFB,EFB,East Finnish Brown,v1,38.0,Continental,CONTINENTAL,GB,false
+829d10a4-0269-4760-be44-c9a115b62d98,Flekvieh,3,FKV,FKV,Flekvieh,v1,38.0,Continental,CONTINENTAL,GB,false
+e34e1934-55ed-4474-8e2d-933497711182,Gasconne,3,GAS,GAS,Gasconne,v1,38.0,Continental,CONTINENTAL,GB,false
+9e45bd9f-3b3e-4a26-87b9-899e81d69993,Gelbvieh,3,GE,GE,Gelbvieh,v1,38.0,Continental,CONTINENTAL,GB,false
+b2992f54-cc54-4b72-b446-2122480f41df,Irish Moiled,3,IM,IM,Irish Moiled,v1,38.0,Continental,CONTINENTAL,GB,false
+1139abae-f549-4ac0-8560-846afbd2ca57,Kerry,3,KE,KE,Kerry,v1,38.0,Continental,CONTINENTAL,GB,false
+2f225b05-a484-43c9-a817-3b25022ac299,Limousin,3,LIM,LIM,Limousin,v1,38.0,Continental,CONTINENTAL,GB,false
+d8610cb7-25b7-4215-8efd-1f37a28f79f7,Longhorn,3,LH,LH,Longhorn,v1,38.0,Continental,CONTINENTAL,GB,false
+484988ab-9e62-4a05-8d45-429813e2f9dc,Marchigiana,3,MAR,MAR,Marchigiana,v1,38.0,Continental,CONTINENTAL,GB,false
+261746ed-8aa3-45b2-895a-5ea5ab5f903e,Beltex X,2,BTXXSH,BTXXSH,Beltex X,v1,5.0,Continental,CONTINENTAL,GB,false
+4f289821-11cd-4cb2-8fce-1c0f8ebf0803,Beltex X,2,BTXXSH,BTXXSH,Beltex X,v1,5.0,Continental,CONTINENTAL,NI,false
+76c89964-bf5e-43a2-9ce2-82d35233a75c,Berrichon du Cher X,2,BDCXSH,BDCXSH,Berrichon du Cher X,v1,5.0,Continental,CONTINENTAL,GB,false
+59bc694c-a996-4331-b953-5d3c77ee541e,Berrichon du Cher X,2,BDCXSH,BDCXSH,Berrichon du Cher X,v1,5.0,Continental,CONTINENTAL,NI,false
+64cf1e10-9f65-48c7-bbc5-145f31f5f72d,East Finnish Brown Cross,3,EFBX,EFBX,East Finnish Brown Cross,v2,38.0,B &W,B_&_W,GB,false
+3d2045b8-a4d3-4fb5-8503-7ecdcde3ae76,Belgian Blue,3,BB,BB,Belgian Blue,v3,38.0,Continental,CONTINENTAL,NI,false
+09c37d74-b436-41ef-a750-04d614070744,American Lineback,3,LD,LD,American Lineback,v1,38.0,,,US,false
+f1ab763f-5cb5-4061-b972-981ff4e8d9af,Ayrshire,3,AY,AY,Ayrshire,v1,38.0,,,US,false
+2f87e197-5fc6-4c1c-b3a0-e0e6e3526873,Brown Swiss,3,BS,BS,Brown Swiss,v1,38.0,,,US,false
+c4868ec1-6f0a-4da5-801c-d2ded406070e,Girolando,3,GO,GO,Girolando,v1,38.0,,,US,false
+427ed576-e7c1-4639-9eab-0ea6808df1a6,Blue Grey,3,BLG,BLG,Blue Grey,v3,38.0,Native,NATIVE,NI,false
+80547446-468c-48bf-9739-85a40b29e22c,Guernsey,3,GU,GU,Guernsey,v1,38.0,,,US,false
+e331a1c2-1b59-49bf-a2d5-bccaf79fa9f7,Holstein,3,HO,HO,Holstein,v1,38.0,,,US,false
+024b07bf-ccab-41b9-a96f-46d08eeb61f2,Jersey,3,JE,JE,Jersey,v1,38.0,,,US,false
+d6b812c1-71d2-4821-adc1-e7c28de1a26e,Luing,3,LU,LUI,Luing,v3,38.0,Native,NATIVE,NI,false
+479849fc-a3b6-472c-a110-509ea57137f0,Red & White Holstein,3,WW,WW,Red & White Holstein,v1,38.0,,,US,false
+63cabc1d-b5cc-4d18-8d16-83202b86c538,Red Sindhi,3,ES,ES,Red Sindhi,v1,38.0,,,US,false
+db87310c-32d4-4dff-a9e3-a0b37d3ab848,Shorthorn (milking),3,MS,MS,Shorthorn (milking),v1,38.0,,,US,false
+1e6caa2f-88e4-4ac9-9631-7b6a79848b6c,Longhorn,3,LH,LH,Longhorn,v3,38.0,Native,NATIVE,NI,false
+f1746aa9-1d91-460a-85be-aa654a6a9634,International Red Dairy,3,RE,RE,International Red Dairy,v1,38.0,,,US,false
+45c2d5a9-d7df-4582-877b-0b66abb3dcac,Milking Devon,3,MD,MD,Milking Devon,v1,38.0,,,US,false
+6ca106fb-5090-4616-9587-7ad49badc234,Norwegian Red And White,3,NR,NR,Norwegian Red And White,v1,38.0,,,US,false
+239bbdca-96cd-4a73-ae7e-b2a137d9f046,Swedish Red And White,3,SR,SR,Swedish Red And White,v1,38.0,,,US,false
+bfdd283b-710d-44a2-8bc5-a43324fc7299,Dairy Crossbreeds,3,XD,XD,Dairy Crossbreeds,v1,38.0,,,US,false
+fd725341-ddc0-48c9-a0e1-fa1fd3c61c4c,Meuse Rhine Issel,3,MRI,MRI,Meuse Rhine Issel,v1,38.0,Continental,CONTINENTAL,GB,false
+d5534ae0-5329-4e94-ac42-d596e5fffef4,Dairy x Beef Crossbreeds,3,XX,XX,Dairy x Beef Crossbreeds,v1,38.0,,,US,false
+0f62ebe2-5391-40c2-925b-31bd30b09489,Maine Ahjou,3,MA,MAJ,Maine Ahjou,v3,38.0,,CONTINENTAL,NI,false
+69649290-f641-49ef-b069-280ee851d0e3,Malkekorthorn,3,MAL,MAL,Malkekorthorn,v3,38.0,,CONTINENTAL,NI,false
+1b748f13-8756-48ba-b9b4-c50b226944a7,American Aberdeen,3,AD,AD,American Aberdeen,v1,38.0,,,US,false
+49ec744e-c344-487f-9b1c-e325bc824e96,Unknown,2,UNKSH,UNKSH,Unknown,v1,5.0,Continental,CONTINENTAL,GB,false
+73f22d22-f485-4306-9d33-e56daf153784,Meuse Rhine Yssel,3,MRI,MRI,Meuse Rhine Yssel,v3,38.0,B & W,CONTINENTAL,NI,false
+614f8e93-2503-489b-b70c-a22573a30cdc,Aberdeen Angus,3,AA,AA,Aberdeen Angus,v3,38.0,Native,NATIVE,NI,false
+845d7386-d476-4e2c-be94-6227e8268406,Africander,3,AF,AF,Africander,v1,38.0,,,US,false
+ef9bf36d-c6d7-491a-b86a-08bfd9337eaf,Miniature Zebru,3,MZB,MZB,Miniature Zebru,v3,38.0,,CONTINENTAL,NI,false
+f0a3a0ae-729c-4e23-be7c-10a3905d7ee7,Montbeliarde,3,MO,MB,Montbeliarde,v3,38.0,,CONTINENTAL,NI,false
+069cd477-c29e-41b9-8ae7-9135f7151808,Murray Grey,3,MG,MG,Murray Grey,v3,38.0,Native,NATIVE,NI,false
+06af2c76-18b7-461e-8434-6d671aabbf70,Normande,3,NO,NOR,Normande,v3,38.0,,CONTINENTAL,NI,false
+4152ae76-4d16-4f19-95b7-451d6924d1a6,Norweigan Red,3,NR,NR,Norweigan Red,v3,38.0,B & W,CONTINENTAL,NI,false
+1ea93db4-a466-46f6-8b1f-a66672434c0f,Old English,3,OLE,OLE,Old English,v3,38.0,,NATIVE,NI,false
+298d3d65-7bee-4b55-a61d-a8a19cffef43,Parthenais,3,PA,PAR,Parthenais,v3,38.0,,CONTINENTAL,NI,false
+7969dea8-7162-4875-80a5-1dba545176ce,Piemontese,3,PI,PIE,Piemontese,v3,38.0,,CONTINENTAL,NI,false
+96457b64-5958-43c3-baec-ee54da0b2251,Murray Grey,3,MG,MG,Murray Grey,v1,38.0,Continental,CONTINENTAL,GB,false
+8e535e7b-99bd-453d-87c5-31137eb2cd99,Pustertaler,3,PUS,PUS,Pustertaler,v3,38.0,,CONTINENTAL,NI,false
+343e2b1d-cf5d-43b3-b334-ff0027544518,Red Poll,3,RP,RPL,Red Poll,v3,38.0,,NATIVE,NI,false
+2b0c879d-fa8c-4785-a266-f78f22f8e4e0,Reggiana,3,RE,REG,Reggiana,v3,38.0,,CONTINENTAL,NI,false
+d000740d-6040-4787-9cc7-ee1e40a2bd94,American Akaushi,3,AA,AA,American Akaushi,v1,38.0,,,US,false
+fe128006-4bb7-48fc-8dbe-7b7a4db643b7,Romagnola,3,RO,ROM,Romagnola,v3,38.0,,CONTINENTAL,NI,false
+6d67b7b4-7ad2-4e4f-83a0-64bb4a6ac6d0,Norwegian Red,3,NR,NR,Norwegian Red,v1,38.0,Continental,CONTINENTAL,GB,false
+ae691ea0-f49f-409f-9397-d508fd530ab7,Salers,3,SA,SAL,Salers,v3,38.0,,CONTINENTAL,NI,false
+8e3377b3-3cb4-4ab4-ae05-15659a12e716,Angus,3,AN,AN,Angus,v1,38.0,,,US,false
+33ad872b-ffc1-4333-98cd-bcda50832aaf,Shetland,3,SH,STL,Shetland,v3,38.0,,NATIVE,NI,false
+9b310fd4-b38e-4b5c-b530-b93746933cf7,Angus Plus,3,NP,NP,Angus Plus,v1,38.0,,,US,false
+2218b920-988c-4c22-bf04-f14dce0e56d5,Beulah Speckled Face X,2,BSFXSH,BSFXSH,Beulah Speckled Face X,v1,5.0,Continental,CONTINENTAL,GB,false
+11339088-9e41-4cbd-b066-f8ff93af2d27,Shorthorn Beef,3,BSH,SHB,Shorthorn Beef,v3,38.0,,NATIVE,NI,false
+95ba4b87-0a7f-498c-b6a4-c82274da1a7a,Shorthorn Dairy,3,DS,SHD,Shorthorn Dairy,v3,38.0,,NATIVE,NI,false
+92a463ec-83cc-4d0d-8cd8-7efe25ccad79,Simmental,3,SM,SIM,Simmental,v3,38.0,,CONTINENTAL,NI,false
+e0b22b9c-e8f9-4a9b-bf4c-1694067167a8,Ankina,3,AK,AK,Ankina,v1,38.0,,,US,false
+89303455-ffb6-4340-ab03-d17ea8ab4215,Ankole Watusi,3,AW,AW,Ankole Watusi,v1,38.0,,,US,false
+34180724-9413-4a01-8c09-c1162c3f5fdc,American Breed,3,AE,AE,American Breed,v1,38.0,,,US,false
+506874ec-994b-4103-9843-08afcf0209f7,American Bucking,3,MB,MB,American Bucking,v1,38.0,,,US,false
+77b20de8-5160-4373-a476-c0e46380069b,Pinzgauer,3,PIN,PIN,Pinzgauer,v1,38.0,Continental,CONTINENTAL,GB,false
+ef374d24-1bef-4c5b-82c4-806a1d93f917,South Devon,3,SD,SD,South Devon,v3,38.0,Native,NATIVE,NI,false
+93bf43dd-edce-4b48-8fb5-057bb62e2e5b,Speckle Park,3,SP,SPK,Speckle Park,v3,38.0,,NATIVE,NI,false
+48b0d7b7-ce03-4738-b327-87a6260e4bbc,Stabiliser,3,ST,ST,Stabiliser,v3,38.0,Native,NATIVE,NI,false
+6c66bef5-4fa7-4559-a6c8-971c71c2987f,Sussex,3,SU,SU,Sussex,v3,38.0,Native,NATIVE,NI,false
+adbe965f-6864-46cb-b123-42e628c103aa,Swedish Red,3,SR,SWR,Swedish Red,v3,38.0,,CONTINENTAL,NI,false
+15c2881e-3ff6-4acf-90a4-f87d801d0692,Swiss Brown,3,SB,SBR,Swiss Brown,v3,38.0,,CONTINENTAL,NI,false
+e2e5e24b-ba49-48e3-86e0-9d42e03580d3,Swiss Grey,3,SG,SWG,Swiss Grey,v3,38.0,,CONTINENTAL,NI,false
+816e46ce-449a-4423-aab3-fd564d712896,Tarantaise Tarina,3,TAT,TAT,Tarantaise Tarina,v3,38.0,,CONTINENTAL,NI,false
+3a94987c-39ad-433e-8e78-2c246cb67830,Tyrone Black,3,TB,TYB,Tyrone Black,v3,38.0,,CONTINENTAL,NI,false
+11a4a190-9b30-4433-8659-ae6e369175cf,Unknown,3,CB,UNK,Unknown,v3,38.0,,,NI,false
+7714c807-a616-43b8-89b7-8d27999a1db7,Valsostana Nera,3,VAN,VAN,Valsostana Nera,v3,38.0,,CONTINENTAL,NI,false
+ab80e9bc-1a01-433c-9c58-907c669acbdb,Wagyu,3,WA,WAG,Wagyu,v3,38.0,,CONTINENTAL,NI,false
+1efed045-f7f2-4f69-95f7-3448cdc7ccf0,Beulah Speckled Face X,2,BSFXSH,BSFXSH,Beulah Speckled Face X,v1,5.0,Continental,CONTINENTAL,NI,false
+15e46dcd-9153-469b-83fd-7d3adec42427,Welsh Black,3,WB,WB,Welsh Black,v3,38.0,Native,NATIVE,NI,false
+b3463e6a-5a49-43c8-a44c-a1ae23169401,Welsh White,3,WW,WEW,Welsh White,v3,38.0,,NATIVE,NI,false
+78ed5f03-a293-4bcc-b2df-6c564d5ee860,White Galloway,3,WG,WG,White Galloway,v3,38.0,Native,NATIVE,NI,false
+d442f7d0-99ad-418e-b189-49083c50f03d,White Park,3,WP,WP,White Park,v3,38.0,Native,NATIVE,NI,false
+5d7dc333-2bd7-4cb9-b42b-1c5dd05c69bb,Danish Red Cross,3,DRX,DRX,Danish Red Cross,v2,38.0,B &W,B_&_W,GB,false
+0c31084c-23f6-4d6a-9fb4-3d9d4839ba10,Dairy Shorthorn,3,DS,DS,Dairy Shorthorn,v2,38.0,B &W,B_&_W,GB,false
+7c8f024f-a3f9-45bf-92f8-8e41edaab342,Dairy Shorthorn Cross,3,DSX,DSX,Dairy Shorthorn Cross,v2,38.0,B &W,B_&_W,GB,false
+08ec8eab-1282-46a9-8034-1ad37fa667e6,Black Welsh Mountain X,2,BLWMXSH,BLWMXSH,Black Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+ca920c8e-0bb0-4c48-a1f9-90dbc6782980,Black Welsh Mountain X,2,BLWMXSH,BLWMXSH,Black Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+d8362b5f-96b6-4a1d-8c60-a87f989915bd,Guernsey Cross,3,GUX,GUX,Guernsey Cross,v2,38.0,B & W,B_&_W,GB,false
+d3f2401d-2721-4849-9cb8-bc7f456fe609,Blackface X,2,BFXSH,BFXSH,Blackface X,v1,5.0,Continental,CONTINENTAL,GB,false
+1cd833a9-9b30-4cc4-9c01-d419fd4ecc56,Rotebunde,3,ROT,ROT,Rotebunde,v1,38.0,Continental,CONTINENTAL,GB,false
+af0d2a4a-a39c-48a9-bee4-148f6a7b1359,Blackface X,2,BFXSH,BFXSH,Blackface X,v1,5.0,Continental,CONTINENTAL,NI,false
+31fb8cf3-3063-42ca-b1b5-f6849cca9fac,Bleu du Maine X,2,BDMXSH,BDMXSH,Bleu du Maine X,v1,5.0,Continental,CONTINENTAL,GB,false
+df618085-4d18-443c-9fa4-abb12fbbc3d2,Bleu du Maine X,2,BDMXSH,BDMXSH,Bleu du Maine X,v1,5.0,Continental,CONTINENTAL,NI,false
+2c29611a-8408-43a5-9846-e39dabc59953,Holstein,3,HO,HO,Holstein,v2,38.0,B & W,B_&_W,GB,false
+1ce54a92-5648-4cd2-b516-38cdf1b19d03,Holstein Cross,3,HOX,HOX,Holstein Cross,v2,38.0,B & W,B_&_W,GB,false
+2ad3c7b7-955f-4fc9-834c-9373efb28e04,Holstein Friesian,3,HF,HF,Holstein Friesian,v2,38.0,B & W,B_&_W,GB,false
+608f418d-dee6-4c1a-8e93-370a55b2b7a8,Holstein Friesian Cross,3,HFX,HFX,Holstein Friesian Cross,v2,38.0,B & W,B_&_W,GB,false
+2ecf0fb4-b21c-4cec-8022-7b427725706f,Vaynol,3,VA,VA,Vaynol,v1,38.0,Continental,CONTINENTAL,GB,false
+47ab9502-7add-401d-aebd-048d1b10717e,Water Buffalo,3,BU,BU,Water Buffalo,v1,38.0,Continental,CONTINENTAL,GB,false
+1da6d84f-4665-42df-a712-893bb6d827d4,Blue Texel X,2,BLTXXSH,BLTXXSH,Blue Texel X,v1,5.0,Continental,CONTINENTAL,GB,false
+b7d5e311-b9ba-4ade-ac5f-d352b0b9dd0c,Jersey,3,JE,JE,Jersey,v2,38.0,B & W,B_&_W,GB,false
+e839b0e2-1242-4ddc-8242-325174164287,Jersey Cross,3,JEX,JEX,Jersey Cross,v2,38.0,B & W,B_&_W,GB,false
+2e55b52f-b5c4-41bf-ae39-1090fac83e39,Blue Texel X,2,BLTXXSH,BLTXXSH,Blue Texel X,v1,5.0,Continental,CONTINENTAL,NI,false
+971b2c34-0b86-4a2c-a6db-16a4a0ea9235,White Park,3,WP,WP,White Park,v1,38.0,Continental,CONTINENTAL,GB,false
+fe63ffb5-bbe0-42b8-85fe-1e4bc45f2f35,Heck,3,HK,HK,Heck,v2,38.0,Continental,CONTINENTAL,GB,false
+b8b30e4e-be1b-4421-858f-2dc78918e81a,Groninger Blaarkop,3,GB,GB,Groninger Blaarkop,v2,38.0,Continental,CONTINENTAL,GB,false
+4125f039-2999-4d68-b0d8-14a8acaa603a,Bluefaced Leicester X,2,BFLXSH,BFLXSH,Bluefaced Leicester X,v1,5.0,Continental,CONTINENTAL,GB,false
+242ce228-cbdc-4759-b448-098079019b86,Bluefaced Leicester X,2,BFLXSH,BFLXSH,Bluefaced Leicester X,v1,5.0,Continental,CONTINENTAL,NI,false
+9cd3ca77-3db2-492f-b71a-1249a6078f30,Reggiana Cross,3,REX,REX,Reggiana Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+989ef799-926e-4300-8371-5ba525e16cb8,Border Leicester X,2,BOLEXSH,BOLEXSH,Border Leicester X,v1,5.0,Continental,CONTINENTAL,GB,false
+989a83a4-5605-423f-8713-fe5f1d70256a,Frisona Espagnola,3,FE,FE,Frisona Espagnola,v2,38.0,Continental,CONTINENTAL,GB,false
+73f6ebd8-519d-47eb-bf29-59b7025a0726,Baltata Romaneasca,3,BRO,BRO,Baltata Romaneasca,v2,38.0,Continental,CONTINENTAL,GB,false
+6708765f-a9b5-4b92-9a2f-314511dbff91,Bazadaise Cross,3,BAZX,BAZX,Bazadaise Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+617bfbee-db84-462c-b4cd-86c4693ff5fb,Marchigiana Cross,3,MARX,MARX,Marchigiana Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+44f0464b-a364-4bf3-b85d-581b3c3f7425,Blonde D’Aquitaine Cross,3,BAX,BAX,Blonde D’Aquitaine Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+3817382b-15c9-4d65-b4dc-8faa96141dee,Salers,3,SA,SA,Salers,v2,38.0,Continental,CONTINENTAL,GB,false
+2046c43f-c84c-47af-9d22-67da53999059,Romagnola Cross,3,ROX,ROX,Romagnola Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+6e6fa4b3-6f16-467f-a1cc-5c014f58faa2,Amerifax,3,AM,AM,Amerifax,v1,38.0,,,US,false
+128d8647-2b99-4968-bc24-44bc36e41d72,Barzona,3,BA,BA,Barzona,v1,38.0,,,US,false
+62ecdadd-ca37-43e6-89c3-6042177bcdcf,Beefalo,3,BE,BE,Beefalo,v1,38.0,,,US,false
+dddcaaf3-5f13-4f94-be7b-9773ca3083cd,Beef Friesian,3,BF,BF,Beef Friesian,v1,38.0,,,US,false
+c3ac011b-1e31-4f89-8415-91dd0e90ed16,Ankole,3,AN,ANK,Ankole,v3,38.0,,CONTINENTAL,NI,false
+4d0e6347-6074-40b0-904c-361bece65d11,Beefmaster,3,BM,BM,Beefmaster,v1,38.0,,,US,false
+ad0a4970-129f-4812-95db-cc0978f6d9ef,Armoricaine,3,AM,ARM,Armoricaine,v3,38.0,,CONTINENTAL,NI,false
+a94a118c-da34-4abc-8373-4549fbd11daa,AyrShire,3,AY,AYR,AyrShire,v3,38.0,,NATIVE,NI,false
+ec880dd3-19a0-4e34-9144-e5faeba365f9,Baltata & Baltata Romanesca,3,BRO,BAR,Baltata & Baltata Romanesca,v3,38.0,,CONTINENTAL,NI,false
+52bbc0cc-9769-4fba-9699-b0ad91ca64d3,Baltata Bruna,3,BBR,BBR,Baltata Bruna,v3,38.0,,CONTINENTAL,NI,false
+78363bbf-ccd9-4a68-a494-acf9788e6426,Baltata Negra,3,BAN,BAN,Baltata Negra,v3,38.0,,CONTINENTAL,NI,false
+adb2f237-7787-41c7-a7bd-61a0e72d6367,Beefalo,3,BEL,BEE,Beefalo,v3,38.0,,CONTINENTAL,NI,false
+067e69d9-e386-48ab-a73b-3e405a400cbb,Beefmaster,3,BMS,BMS,Beefmaster,v3,38.0,,CONTINENTAL,NI,false
+f968b7c5-7eb4-41c1-abf8-da2b822983fd,Belted Galloway,3,BG,BGA,Belted Galloway,v3,38.0,,NATIVE,NI,false
+e9656550-4b65-405c-a0ed-02807c517655,Blonde D'Aquataine,3,BA,DAQ,Blonde D'Aquataine,v3,38.0,,CONTINENTAL,NI,false
+6e02b506-8112-4bf8-8711-14384a95b1ba,Brahman,3,BR,BRH,Brahman,v3,38.0,,CONTINENTAL,NI,false
+9070a022-38d3-42d7-809d-0c7f3bb87987,Braunbieh,3,BRA,BRA,Braunbieh,v3,38.0,,CONTINENTAL,NI,false
+35fcf14e-f845-4291-8ba9-b6cd98aeccd5,Bretoone Pie Noire,3,BP,BPN,Bretoone Pie Noire,v3,38.0,,CONTINENTAL,NI,false
+3828c942-e743-4865-a3cb-6f835985fb28,British White,3,BW,BW,British White,v3,38.0,Native,NATIVE,NI,false
+5d532ad5-9b45-4dcf-92e0-d3df1fc3110a,Bruna De Maramures,3,BDM,BDM,Bruna De Maramures,v3,38.0,,CONTINENTAL,NI,false
+c0c9c011-1daa-4640-b398-1ed57727523d,Canadian Black,3,CAN,CAN,Canadian Black,v3,38.0,,CONTINENTAL,NI,false
+15fa91e5-364c-44f5-98cb-50a5014ed8f0,Simmental Cross,3,SMX,SMX,Simmental Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+3a5e4500-cf98-4a42-b959-5bf7f2029c32,Belgian Blue,3,BB,BB,Belgian Blue,v1,38.0,,,US,false
+9bdbf150-fe33-486b-86ac-4a88fc2579ef,Chillingham,3,CHL,CHL,Chillingham,v3,38.0,Native,NATIVE,NI,false
+0d6c4b3b-d543-42b4-af4e-558504e84e97,Danish Red,3,DR,DR,Danish Red,v3,38.0,B &W,CONTINENTAL,NI,false
+b416ea33-2ee8-42ea-8d8b-19d70b4f8715,Devon,3,DEV,DEV,Devon,v3,38.0,Native,NATIVE,NI,false
+892db6fa-bcf9-49dd-b460-2ebbce24f1f7,Meuse Rhine Issel Cross,3,MRIX,MRIX,Meuse Rhine Issel Cross,v2,38.0,B & W,B_&_W,GB,false
+bd34429f-70f7-49b5-9b7b-d69b9ad93be4,Belted Galloway,3,BG,BG,Belted Galloway,v1,38.0,,,US,false
+c8ea9f45-db13-4a54-9e43-4d9a0816d9b2,Black Maximizer,3,BX,BX,Black Maximizer,v1,38.0,,,US,false
+fd7de7ce-4b40-47f2-bd47-68b18ddc7c1a,Blonde d'aquitaine,3,BD,BD,Blonde d'aquitaine,v1,38.0,,,US,false
+2e13330c-351c-4956-9550-59629313fb67,Bonsmara,3,NS,NS,Bonsmara,v1,38.0,,,US,false
+b7a9b5c6-6cfa-4463-85ee-b454a90f548d,Braford,3,BO,BO,Braford,v1,38.0,,,US,false
+3fd384eb-dde9-4148-b1f0-19e89d0d7b70,Brahman,3,BR,BR,Brahman,v1,38.0,,,US,false
+3a2ae524-68ec-404e-8d07-6de31f329ac5,Brahmousin,3,BI,BI,Brahmousin,v1,38.0,,,US,false
+92a11929-e3ab-47f0-8e39-fa32b4637788,Braler,3,BL,BL,Braler,v1,38.0,,,US,false
+5d38ce20-bfa3-4697-bdc0-19d51d395e83,Brangus,3,BN,BN,Brangus,v1,38.0,,,US,false
+ce040432-1ee7-434e-bb1c-e41540a82f11,Braunveih,3,BU,BU,Braunveih,v1,38.0,,,US,false
+6fbef36d-b3ff-457a-aa87-7605ab8b7bc2,British White,3,BW,BW,British White,v1,38.0,,,US,false
+d1f2decd-d904-4a68-b437-ea33856e3c60,Brown Swiss (beef),3,SB,SB,Brown Swiss (beef),v1,38.0,,,US,false
+787ce386-b5da-43f8-b34f-7ed75c57d2d4,Buelingo,3,BQ,BQ,Buelingo,v1,38.0,,,US,false
+383ade3c-c3bc-43fe-8600-133c9160d1af,Canadienne,3,CN,CN,Canadienne,v1,38.0,,,US,false
+70a3e966-580c-422b-a41f-666fa9a27516,Canchim,3,CC,CC,Canchim,v1,38.0,,,US,false
+283b3033-7b84-48dc-9fe0-ff8925ab700e,Caracu,3,CR,CR,Caracu,v1,38.0,,,US,false
+dcf7c56b-e384-48fb-acde-5cc03fbdd46f,Charbray,3,CB,CB,Charbray,v1,38.0,,,US,false
+c0be4d31-bf79-4034-84f8-c0c2b80f8c76,Charolais,3,CH,CH,Charolais,v1,38.0,,,US,false
+11b305c0-90a6-4ef1-af70-45d4f003db08,Chi-angus,3,CG,CG,Chi-angus,v1,38.0,,,US,false
+959323d7-229d-4ea3-a2b9-7629e28f75f9,Chianina,3,CA,CA,Chianina,v1,38.0,,,US,false
+aa96575e-c0dd-4bc2-9854-d6bc8926dcfd,Chi-maine,3,CM,CM,Chi-maine,v1,38.0,,,US,false
+bfff83fb-a693-426e-8c5e-964509217817,Montbeliarde,3,MO,MO,Montbeliarde,v2,38.0,B & W,B_&_W,GB,false
+52247466-55dd-4fe0-b5a1-dd50c259450e,Montbeliarde Cross,3,MOX,MOX,Montbeliarde Cross,v2,38.0,B & W,B_&_W,GB,false
+225f6d0c-fe30-467c-a602-7d453e2b1fac,Border Leicester X,2,BOLEXSH,BOLEXSH,Border Leicester X,v1,5.0,Continental,CONTINENTAL,NI,false
+191e2f23-dd8d-4baf-8139-3cd9d6886409,Normande,3,NO,NO,Normande,v2,38.0,B & W,B_&_W,GB,false
+a649fc9c-0ee8-43f8-bd5e-9fdf933bdadd,Devon,3,DE,DE,Devon,v1,38.0,,,US,false
+e54cff1c-42c4-41f1-91e6-73011c9064c7,Dexter,3,DR,DR,Dexter,v1,38.0,,,US,false
+a54aade4-6e39-4edb-8df4-c8a7c0db5c8c,Dutch Belted,3,DL,DL,Dutch Belted,v1,38.0,,,US,false
+a12e9cae-eaf5-4b77-b1ce-f034d3f46c4a,Eringer,3,ER,ER,Eringer,v1,38.0,,,US,false
+df4d291f-e160-4ab7-af5e-97858323c504,Flamande,3,FA,FA,Flamande,v1,38.0,,,US,false
+b317aa24-9ac9-40a5-a275-54b05368f723,Fleckvieh,3,FL,FL,Fleckvieh,v1,38.0,,,US,false
+e9dddf1c-14f4-42b6-9d3d-e941d911f90d,Florida Cracker,3,FC,FC,Florida Cracker,v1,38.0,,,US,false
+5cbbdcd9-f196-44cd-8c35-f8d61156e5d0,Fribourg,3,FR,FR,Fribourg,v1,38.0,,,US,false
+978440c9-04fc-4cad-8cbd-af8018cbbd3a,Dorset Down,2,DODOSH,DODOSH,Dorset Down,v1,5.0,Continental,CONTINENTAL,NI,false
+39d7ecc0-cac0-4598-aefd-65046a15d287,Galloway,3,GA,GA,Galloway,v1,38.0,,,US,false
+5f6f96b7-2950-490f-9673-25b05767ed71,Gelbray,3,GE,GE,Gelbray,v1,38.0,,,US,false
+11fbdaa9-575c-4e2b-9a25-626fec181bf7,Gelbvieh,3,GV,GV,Gelbvieh,v1,38.0,,,US,false
+4e91bfff-36cf-4ce4-b21b-ca559a186940,Lakenvelder,3,LV,LAK,Lakenvelder,v3,38.0,,CONTINENTAL,NI,false
+0d3aba60-51c7-44de-ac21-d30fdd85dd5b,Maine Anjou Cross,3,MAX,MAX,Maine Anjou Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+d4290277-66a1-4323-8eca-c719d0d2ecf7,Lincoln Red,3,LR,LNR,Lincoln Red,v3,38.0,,NATIVE,NI,false
+9410bafa-ae8b-405d-b660-a206d14565cb,Grauvieh,3,GI,GI,Grauvieh,v1,38.0,,,US,false
+aad4f1d6-3d45-491b-856f-b6ccf9eed5c1,Gronningen,3,GR,GR,Gronningen,v1,38.0,,,US,false
+63057517-d909-4a9e-84fb-cfa5f01ce171,Guzerat,3,GZ,GZ,Guzerat,v1,38.0,,,US,false
+83a5e0c4-e04c-4406-b55f-399051b6e25a,Gyr (or Gir),3,GY,GY,Gyr (or Gir),v1,38.0,,,US,false
+b31319be-8390-4b82-80d0-f87f7087ab27,Hays Converter,3,HC,HC,Hays Converter,v1,38.0,,,US,false
+6f1b0003-df6f-4630-97ae-b1039585b4d3,Hereford (black),3,HB,HB,Hereford (black),v1,38.0,,,US,false
+5f8a302c-46f4-46d4-9e8b-cf250d8047ca,Hereford (horned),3,HH,HH,Hereford (horned),v1,38.0,,,US,false
+c185056c-9e48-4b78-9065-06a6ff9e7af4,Hereford (polled),3,HP,HP,Hereford (polled),v1,38.0,,,US,false
+644302a5-876f-40fb-9671-ef7d6dbfbdc1,Highland (scotch),3,SH,SH,Highland (scotch),v1,38.0,,,US,false
+31e49cc2-4a2c-4cf7-9abd-5eec61b1907d,Hybrid (alberta),3,HY,HY,Hybrid (alberta),v1,38.0,,,US,false
+0d17fa8f-746b-404c-abff-f77c52fa1d49,Indu Brazil,3,IB,IB,Indu Brazil,v1,38.0,,,US,false
+24b07467-d70e-4735-9fbe-c74630369991,Irish Black,3,IK,IK,Irish Black,v1,38.0,,,US,false
+82d11795-350c-46ab-9dfa-2547e2b558a0,Kobe (wagyu),3,KB,KB,Kobe (wagyu),v1,38.0,,,US,false
+92b26025-9ec8-48de-a0ce-6cbfd4ff82c5,Lowline,3,LO,LO,Lowline,v1,38.0,,,US,false
+373fa4d1-bb5e-4105-8db1-587b7d67cae2,Limousin,3,LM,LM,Limousin,v1,38.0,,,US,false
+7e25ebfc-be6b-4bad-8e89-8bbd3b941201,Lincoln Red,3,LR,LR,Lincoln Red,v1,38.0,,,US,false
+33c8c5d1-28aa-4a29-a598-c973443c5954,Luing,3,LU,LU,Luing,v1,38.0,,,US,false
+3590c0d8-f3ec-46e4-8e30-a9b747849cb9,Maine-anjou,3,MA,MA,Maine-anjou,v1,38.0,,,US,false
+404e82f3-74c0-4a98-9d4c-210c07f0b53f,Mandalong Special,3,ML,ML,Mandalong Special,v1,38.0,,,US,false
+00826b6f-7c6d-4a33-9e2f-2ea79db7a5c6,Marchigiana,3,MR,MR,Marchigiana,v1,38.0,,,US,false
+741651b9-a20e-45d4-a09d-d51f34db3148,Maremmana,3,ME,ME,Maremmana,v1,38.0,,,US,false
+c71ec2b6-509c-4097-8eb2-042c9852447b,Mashona,3,MH,MH,Mashona,v1,38.0,,,US,false
+74587879-b078-4709-af10-469c7cf8955f,Mexican Corriente,3,MC,MC,Mexican Corriente,v1,38.0,,,US,false
+3a5fa19c-6cff-4f56-9819-072ca38ab453,Miniature Zebu,3,MZ,MZ,Miniature Zebu,v1,38.0,,,US,false
+ec8637f7-8ecd-4665-853c-6e710116079d,Montbeliarde,3,MO,MO,Montbeliarde,v1,38.0,,,US,false
+3284876c-b37d-4c5d-aa7f-9e8fa5d3cbd3,Muese-rhine-issel,3,MI,MI,Muese-rhine-issel,v1,38.0,,,US,false
+bae5b12a-d05b-4062-b40d-594d1d2a5cd8,Murrah,3,MU,MU,Murrah,v1,38.0,,,US,false
+a11ad484-df21-49d1-8557-65fe9c4890b1,Murray Grey,3,MG,MG,Murray Grey,v1,38.0,,,US,false
+7e8a8f40-f8c4-4ffa-bea5-71c0f2bcfdcc,Nellore,3,NE,NE,Nellore,v1,38.0,,,US,false
+e89a5a69-8b7b-45f0-8240-5e0e3e171ea1,Normande,3,NO,NO,Normande,v1,38.0,,,US,false
+13317027-57f2-4232-9888-6cabd14e02e8,Parthenaise,3,PA,PA,Parthenaise,v1,38.0,,,US,false
+8c06aef1-8c74-48be-a0a1-6e739a629dd6,Piedmontese,3,PI,PI,Piedmontese,v1,38.0,,,US,false
+6d4944cc-7b35-4df9-abae-97755abd374d,Pinzgauer,3,PZ,PZ,Pinzgauer,v1,38.0,,,US,false
+a07ead0e-4381-4e67-9374-4d91d218440d,Ranger,3,RA,RA,Ranger,v1,38.0,,,US,false
+0e71f91e-ecf2-4ee2-a4ad-750c2ddb4cff,Red Angus,3,AR,AR,Red Angus,v1,38.0,,,US,false
+dbe787bf-adf8-4d18-9e26-8856024ba410,Red Brahman,3,RR,RR,Red Brahman,v1,38.0,,,US,false
+ad346d2d-f0e5-46b2-907e-9ca237e03975,Red Brangus,3,RB,RB,Red Brangus,v1,38.0,,,US,false
+aa78865f-17a9-4f0f-ac85-3e643899cb8a,Red Dane,3,RD,RD,Red Dane,v1,38.0,,,US,false
+84d0d0f5-1cc0-4666-9701-71367956577a,Red Poll,3,RP,RP,Red Poll,v1,38.0,,,US,false
+c7037854-c1c6-4b99-9fd2-14d6d31b52d6,Romagnola,3,RN,RN,Romagnola,v1,38.0,,,US,false
+a4c3f26e-692a-4aeb-9e58-78c67b8ba23c,Romosinuano,3,RS,RS,Romosinuano,v1,38.0,,,US,false
+71be48b7-10a9-4adb-9a52-3f7a734f64e2,Rotbunte,3,RO,RO,Rotbunte,v1,38.0,,,US,false
+d2242a85-c932-495e-bca8-fa81f311e853,Sahiwal,3,SW,SW,Sahiwal,v1,38.0,,,US,false
+6a3b6925-b6fa-4ca6-8fa5-04e9aad77dd7,Salers,3,SA,SA,Salers,v1,38.0,,,US,false
+b8d5a4d6-b20d-44ee-ab17-d530cdba04ab,Santa Gertrudis,3,SG,SG,Santa Gertrudis,v1,38.0,,,US,false
+42301ba8-9bb2-4bf7-8923-7e2e6411b6fb,Senepol,3,SE,SE,Senepol,v1,38.0,,,US,false
+1178ddb5-e8c8-4335-9a35-cd34c0fdcb28,Shorthorn (beef Scotch),3,SS,SS,Shorthorn (beef Scotch),v1,38.0,,,US,false
+674e6862-10ab-4169-92ce-98a5eba3e8bb,Shorthorn (polled),3,SP,SP,Shorthorn (polled),v1,38.0,,,US,false
+bda6d968-bf73-485b-8657-24cd0fd7678a,Shorthorn (illwara),3,IS,IS,Shorthorn (illwara),v1,38.0,,,US,false
+03f0aa6f-2c44-4714-8f19-028e443bc834,Simbrah,3,SI,SI,Simbrah,v1,38.0,,,US,false
+5b797acb-62a5-448d-bcbc-33ceb87b7bba,Simmental,3,SM,SM,Simmental,v1,38.0,,,US,false
+9d276bda-c059-41cf-b1d9-fb50a259532b,South Devon,3,DS,DS,South Devon,v1,38.0,,,US,false
+7403daa0-600e-44ac-9c88-9432704597f8,South Poll,3,OP,OP,South Poll,v1,38.0,,,US,false
+86ef67ee-64e1-415e-9867-f3478407d48f,Speckle Park,3,SK,SK,Speckle Park,v1,38.0,,,US,false
+1e113c78-fe71-4195-a292-eb4150d3383e,Sussex,3,SX,SX,Sussex,v1,38.0,,,US,false
+7fa6cd4c-e655-450a-872e-8d4bb5444086,Tabapua,3,TB,TB,Tabapua,v1,38.0,,,US,false
+6dc0858d-2f03-40d8-b731-00554b3ba80f,Tarentaise,3,TA,TA,Tarentaise,v1,38.0,,,US,false
+6137d50e-a4bf-4b80-bc9d-ea9dd6733599,Taurindicus,3,TN,TN,Taurindicus,v1,38.0,,,US,false
+d7d31576-4982-4bdb-b0d5-260ce458f545,Texas Longhorn,3,TL,TL,Texas Longhorn,v1,38.0,,,US,false
+6077112d-4f0b-406c-a13d-92686de5046b,Tuli,3,TI,TI,Tuli,v1,38.0,,,US,false
+38cf1b35-ab40-4b7c-954f-1eaa46f23978,Welsh Black,3,WB,WB,Welsh Black,v1,38.0,,,US,false
+985b7a80-c61c-4439-9284-dc65d8d57a2f,West Flemish Red,3,WF,WF,West Flemish Red,v1,38.0,,,US,false
+37dcde2b-21c9-4291-8370-243db18eebf9,White Angus (ona),3,WA,WA,White Angus (ona),v1,38.0,,,US,false
+88eca4a6-d4bd-4511-924c-194a688a5aab,White Dexter,3,WD,WD,White Dexter,v1,38.0,,,US,false
+51720886-7146-41e2-9f54-056c940f0880,White Park,3,WP,WP,White Park,v1,38.0,,,US,false
+957dc2dc-5169-4160-9d3e-b93a786a5450,Blue Albion,3,BAL,BAL,Blue Albion,v3,38.0,Native,NATIVE,NI,false
+02bb3ee8-ef27-457e-8cc8-6b4c932f530c,Crossbreeds (twinner),3,XT,XT,Crossbreeds (twinner),v1,38.0,,,US,false
+155dfbef-3c76-46d4-b9f4-4fd18bb80770,Beef Crossbreeds,3,XB,XB,Beef Crossbreeds,v1,38.0,,,US,false
+58c1d12f-0955-4c1b-888d-8fc37bbfc9d0,Normande Cross,3,NOX,NOX,Normande Cross,v2,38.0,B & W,B_&_W,GB,false
+0fce4812-8388-4808-8c3a-7af37cb735ed,Northern Dairy Shorthorn,3,NDS,NDS,Northern Dairy Shorthorn,v2,38.0,B & W,B_&_W,GB,false
+898f3b6f-117d-4f29-a230-853b144f1d49,Angler Rotvieh,3,AR,AR,Angler Rotvieh,v3,38.0,Continental,CONTINENTAL,NI,false
+6f8719a1-4e4b-4eba-a2c5-e15f25f6669c,Aubrac,3,AU,AU,Aubrac,v3,38.0,Continental,CONTINENTAL,NI,false
+4310c5f4-f442-4bb2-ae1f-0295cf4cf057,Norwegian Red Cross,3,NRX,NRX,Norwegian Red Cross,v2,38.0,B & W,B_&_W,GB,false
+94249a99-68b3-4d5a-8977-cdd850a5cbf1,Other Dairy,3,OD,OD,Other Dairy,v2,38.0,B & W,B_&_W,GB,false
+f23c8935-06e5-419b-85ff-3d1b89a581b2,Limousin Cross,3,LIMX,LIMX,Limousin Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+bd980d03-45db-459f-8f47-a5c693cb5f7e,Piemontese Cross,3,PIX,PIX,Piemontese Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+124f82e8-8d83-4cde-9202-bac0b7ce7f46,British Blue,3,BRB,BRB,British Blue,v3,38.0,Continental,CONTINENTAL,NI,false
+b69acd38-a939-48cf-953f-8adeac1a470f,Gelbvieh Cross,3,GEX,GEX,Gelbvieh Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+02d49a05-1c86-40ac-8678-4b6483bfffc9,Gasconne,3,GAS,GAS,Gasconne,v3,38.0,Continental,CONTINENTAL,NI,false
+9c61a7f3-86c9-4cc0-a5df-2a991ea642f4,Swiss Orig Braunvieh,3,SOB,SOB,Swiss Orig Braunvieh,v2,38.0,Continental,CONTINENTAL,GB,false
+94ec9c8b-d749-4ebd-b081-f060e9c74657,Pinzgauer Cross,3,PINX,PINX,Pinzgauer Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+92bbcacf-b5af-432b-9818-7f3bd3855fa1,Piemontese,3,PI,PI,Piemontese,v2,38.0,Continental,CONTINENTAL,GB,false
+655c51d5-b154-43c4-9f08-6232f7491223,Brown Swiss,3,BS,BS,Brown Swiss,v2,38.0,Continental,CONTINENTAL,GB,false
+4f936885-0f7a-4194-91d3-42c24f10d219,Swiss Braunvieh Cross,3,SBX,SBX,Swiss Braunvieh Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+4334539f-1622-494e-b766-d0ffc09f7de3,Dwarf Zebu,3,DZE,DZE,Dwarf Zebu,v2,38.0,Continental,CONTINENTAL,GB,false
+40004b24-bbcf-474e-bf51-984c1162172b,Parthenais,3,PA,PA,Parthenais,v2,38.0,Continental,CONTINENTAL,GB,false
+3748a325-e1e9-47e8-9e42-1a6626d7ecf3,Hungarian Steppe Cross,3,HSX,HSX,Hungarian Steppe Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+28d2ae76-3a90-438a-831e-05cb0453b6c4,Abondance,3,AB,AB,Abondance,v2,38.0,Continental,CONTINENTAL,GB,false
+1f0bfcdc-5f18-4262-82a4-3935ec7a053c,Beefalo,3,BEL,BEL,Beefalo,v2,38.0,Continental,CONTINENTAL,GB,false
+0806d0c7-1b59-48fb-881d-3d16214ab964,Parthenais Cross,3,PAX,PAX,Parthenais Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+fd425037-7745-4e76-b6ca-20de8f1f5d20,Chianina Cross,3,CHIX,CHIX,Chianina Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+e99353ff-fe88-41d2-90f6-f25c5f4f9694,Blonde D’Aquitaine,3,BA,BA,Blonde D’Aquitaine,v2,38.0,Continental,CONTINENTAL,GB,false
+cbe97b36-b0cb-46ac-b595-600335319803,Lakenvelder Cross,3,LVX,LVX,Lakenvelder Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+cb13f46b-d81e-4c02-a764-abb98ff66f89,Charolais Cross,3,CHX,CHX,Charolais Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+a52d65d4-dcb1-44a9-9a81-09b5e7ae5e19,British Blue Cross,3,BRBX,BRBX,British Blue Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+9de97036-0140-4b28-93f7-21070e554f59,Black Welsh Mountain,2,BWMSH,BWMSH,Black Welsh Mountain,v1,5.0,Continental,CONTINENTAL,GB,false
+d0454498-8e0c-47e2-9ee8-08fc65bb96cb,Bleu Du Maine,2,BDMSH,BDMSH,Bleu Du Maine,v1,5.0,Continental,CONTINENTAL,GB,false
+0497811a-edb3-44ed-91bb-215fae374a45,Blue Texel,2,BLTXSH,BLTXSH,Blue Texel,v1,5.0,Continental,CONTINENTAL,GB,false
+a1409dce-cd96-4833-996d-db712bcb7486,Bluefaced Leicester,2,BFLSH,BFLSH,Bluefaced Leicester,v1,5.0,Continental,CONTINENTAL,GB,false
+f1eaeaaf-d75d-4889-b403-c26e9a32f17b,Border Leicester,2,BOLESH,BOLESH,Border Leicester,v1,5.0,Continental,CONTINENTAL,GB,false
+23f074e7-463d-464c-83e5-69df2b1f3efd,Boreray,2,BORYSH,BORYSH,Boreray,v1,5.0,Continental,CONTINENTAL,GB,false
+6f7af615-3009-42aa-ae8b-7ff6f446cb95,Brecknock Hill Cheviot,2,BHCSH,BHCSH,Brecknock Hill Cheviot,v1,5.0,Continental,CONTINENTAL,GB,false
+e03133f0-c4d4-4ceb-807c-fc2ff48b0e50,British Milksheep,2,BMSSH,BMSSH,British Milksheep,v1,5.0,Continental,CONTINENTAL,GB,false
+f59ce237-3201-42ff-af66-db2f382566d2,Castlemilk Moorit,2,CAMSH,CAMSH,Castlemilk Moorit,v1,5.0,Continental,CONTINENTAL,GB,false
+6e974eae-8b4d-46df-9072-2eab3415454d,NZ Romney,2,NZROM,NZROM,NZROM,v1,38.0,Continental,CONTINENTAL,GB,false
+37141ac1-6f7e-4ca9-a6dc-f7ef865cdd44,Charollais (or British Charollais),2,CHARSH,CHARSH,Charollais (or British Charollais),v1,5.0,Continental,CONTINENTAL,GB,false
+82d9f8c8-6167-4673-ade1-a87a06c1d43b,Red Poll,3,RP,RP,Red Poll,v2,38.0,Native,NATIVE,GB,false
+1d78e681-7129-4713-87d1-8f566c3fd1d5,Brecknock Hill Cheviot X,2,BHCXSH,BHCXSH,Brecknock Hill Cheviot X,v1,5.0,Continental,CONTINENTAL,GB,false
+46751a00-850e-402d-a1cb-17be5d56563b,Brecknock Hill Cheviot X,2,BHCXSH,BHCXSH,Brecknock Hill Cheviot X,v1,5.0,Continental,CONTINENTAL,NI,false
+debdb292-1ce0-40ee-a171-d557332b7593,British Bleu De Maine,2,BBDMSH,BBDMSH,British Bleu De Maine,v1,5.0,Continental,CONTINENTAL,GB,false
+7f7c673a-a382-4ad9-8c17-fe0f316166da,British Bleu De Maine,2,BBDMSH,BBDMSH,British Bleu De Maine,v1,5.0,Continental,CONTINENTAL,NI,false
+cfa23da9-9a42-435d-8de4-c921c753bced,British Bleu De Maine X,2,BBDMXSH,BBDMXSH,British Bleu De Maine X,v1,5.0,Continental,CONTINENTAL,GB,false
+21e4a92a-070d-4acc-9ebc-bf7baba0b2c2,British Bleu De Maine X,2,BBDMXSH,BBDMXSH,British Bleu De Maine X,v1,5.0,Continental,CONTINENTAL,NI,false
+cf551c4c-5d5c-49ea-a7c5-18aba13d929d,British Charollais,2,BCSH,BCSH,British Charollais,v1,5.0,Continental,CONTINENTAL,GB,false
+78116bd8-ebef-4c12-b4fa-959da7632032,British Charollais,2,BCSH,BCSH,British Charollais,v1,5.0,Continental,CONTINENTAL,NI,false
+fa0802c4-ada8-4d50-ad51-335017292358,British Charollais X,2,BCXSH,BCXSH,British Charollais X,v1,5.0,Continental,CONTINENTAL,GB,false
+fa298186-46b4-4807-8223-9008ac48074f,British Charollais X,2,BCXSH,BCXSH,British Charollais X,v1,5.0,Continental,CONTINENTAL,NI,false
+c9155073-e069-4d45-883c-21ebfebf348a,British Gotland,2,BGSH,BGSH,British Gotland,v1,5.0,Continental,CONTINENTAL,GB,false
+085befef-dae2-4392-9e95-30053895c1fc,British Gotland,2,BGSH,BGSH,British Gotland,v1,5.0,Continental,CONTINENTAL,NI,false
+b9cfe609-91d6-4736-9444-e342d249dff8,British Gotland X,2,BGXSH,BGXSH,British Gotland X,v1,5.0,Continental,CONTINENTAL,GB,false
+50bd2fc8-bb77-4618-bf2a-89ad85bc0bb2,British Gotland X,2,BGXSH,BGXSH,British Gotland X,v1,5.0,Continental,CONTINENTAL,NI,false
+1c81e63d-3838-4388-be90-904d0aae721b,British Icelandic,2,BISH,BISH,British Icelandic,v1,5.0,Continental,CONTINENTAL,GB,false
+ec15410a-1e07-475f-bb61-8a46b822f6ef,British Icelandic,2,BISH,BISH,British Icelandic,v1,5.0,Continental,CONTINENTAL,NI,false
+cd87e9dd-20f9-4f2b-be81-8d627c3ee0b7,British Icelandic X,2,BIXSH,BIXSH,British Icelandic X,v1,5.0,Continental,CONTINENTAL,GB,false
+2489bb99-62f2-4708-815e-07dcc749ba26,British Icelandic X,2,BIXSH,BIXSH,British Icelandic X,v1,5.0,Continental,CONTINENTAL,NI,false
+3fd4d5cd-f7a3-45f6-b635-4cc3c65062ee,British Inra 401,2,BI401SH,BI401SH,British Inra 401,v1,5.0,Continental,CONTINENTAL,GB,false
+e57ca50a-383b-41c2-840b-f24f4ee7006d,British Inra 401,2,BI401SH,BI401SH,British Inra 401,v1,5.0,Continental,CONTINENTAL,NI,false
+f527a885-d5e0-4008-8f48-391520a501fb,British Inra 401 X,2,BI401XSH,BI401XSH,British Inra 401 X,v1,5.0,Continental,CONTINENTAL,GB,false
+31101ad5-ebb6-4fc2-8810-f916015eac81,British Inra 401 X,2,BI401XSH,BI401XSH,British Inra 401 X,v1,5.0,Continental,CONTINENTAL,NI,false
+1f33a08f-51ba-411b-abba-c619f29f11b6,INRA95 Cross,3,INRAX,INRAX,INRA Cross,v1,38.0,Continental,CONTINENTAL,GB,false
+9f8c9eb4-4f31-4944-901a-4f495dc0eaa3,Vosgienne-Vosges,3,VOS,VOS,Vosgienne-Vosges,v3,38.0,,CONTINENTAL,NI,false
+6ad19061-0717-49eb-aa0a-2cc0722b652f,Pinzgauer - PIN,3,PIN,PIN,Pinzgauer - PIN,v3,38.0,Continental,CONTINENTAL,NI,false
+1cd6b92b-00ce-43f4-9245-d19245fd534b,Vaynol,3,VA,VA,Vaynol,v3,38.0,Continental,CONTINENTAL,NI,false
+de2962bd-b84e-4b81-8f34-a6274c978865,Heck Cross,3,HKX,HKX,Heck Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+b0f9d869-3697-4633-a40e-32b7358b438a,Salers Cross,3,SAX,SAX,Salers Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+9b0dd409-83f4-4778-96a3-040a1232d6ae,Bretonne Pie-Noire Cross,3,BPX,BPX,Bretonne Pie-Noire Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+802d02fe-e1d9-4f28-8030-f67c8a05e6f0,Swiss Orig Braunvieh Cross,3,SOBX,SOBX,Swiss Orig Braunvieh Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+5d348693-15e6-4d42-84aa-b470add3bef1,Brahman Cross,3,BRX,BRX,Brahman Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+4f611a34-90d3-46e5-a279-7cf53bc75f1d,Frisona Espagnola Cross,3,FEX,FEX,Frisona Espagnola Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+41a5c90f-13c6-41bc-9c9f-336eae7fdb15,Vaynol Cross,3,VAX,VAX,Vaynol Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+372d5812-f014-42af-bbfa-1fe1eb0e7948,Swiss Grey,3,SG,SG,Swiss Grey,v2,38.0,Continental,CONTINENTAL,GB,false
+25f458d9-e24e-4d86-8d1e-0f59b6aed912,Brahman,3,BR,BR,Brahman,v2,38.0,Continental,CONTINENTAL,GB,false
+1e4b5f75-e3bb-4878-8e83-c117b15081c6,Lakenvelder,3,LV,LV,Lakenvelder,v2,38.0,Continental,CONTINENTAL,GB,false
+117ab8f7-75cc-494b-9d31-fae1fcf572eb,Gasconne Cross,3,GASX,GASX,Gasconne Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+90bccd0c-221a-47eb-aa57-bad6269ed6be,Swaledale,2,SWDLSH,SWDLSH,Swaledale,v1,5.0,Continental,CONTINENTAL,GB,false
+d6080f9f-022c-4ee0-8206-9787dd65dcd5,Talybont Welsh,2,TAWESH,TAWESH,Talybont Welsh,v1,5.0,Continental,CONTINENTAL,GB,false
+ef4f3e70-98a8-4270-a416-0a45dd781ca5,Cheviot,2,CVTSH,CVTSH,Cheviot,v1,5.0,Continental,CONTINENTAL,GB,false
+a7e6a086-1eee-4d7f-b969-2c3413345bcb,Millennium Bleu,2,BDM,BDM,,v1,38.0,Contiental,CONTINENTAL,GB,false
+3f35ed86-0c47-41ec-9181-6fd233c79837,Clun Forest,2,CLFSH,CLFSH,Clun Forest,v1,5.0,Continental,CONTINENTAL,GB,false
+63bce4e1-33fa-4a10-9208-1a6b409ad659,Coloured Ryeland,2,CORSH,CORSH,Coloured Ryeland,v1,5.0,Continental,CONTINENTAL,GB,false
+2dad1d93-b168-49b3-b3e8-6a19c30b16b2,Cotswold,2,COTSSH,COTSSH,Cotswold,v1,5.0,Continental,CONTINENTAL,GB,false
+d11d82d7-0f73-4d41-b7b3-f601ed5e6800,Dalesbred,2,DALESH,DALESH,Dalesbred,v1,5.0,Continental,CONTINENTAL,GB,false
+c3c79eeb-1e96-4d5b-9826-47f355821a89,Northern Dairy Shorthorn Cross,3,NDSX,NDSX,Northern Dairy Shorthorn Cross,v1,38.0,Native,NATIVE,GB,false
+985e0ff2-5393-4079-938c-172873dd98dd,Dartmoor,2,DARTSH,DARTSH,Dartmoor,v1,5.0,Continental,CONTINENTAL,GB,false
+44453bc3-29d4-4e9d-b8e4-56234d7a3b77,Derbyshire Gritstone,2,DEGRSH,DEGRSH,Derbyshire Gritstone,v1,5.0,Continental,CONTINENTAL,GB,false
+1c01719e-f68b-4992-8f4c-b0497d622158,Devon and Cornwall Longwool,2,DACLSH,DACLSH,Devon and Cornwall Longwool,v1,5.0,Continental,CONTINENTAL,GB,false
+9db0ac56-bc86-4c59-864d-987ada56d327,Devon Closewool,2,DECLSH,DECLSH,Devon Closewool,v1,5.0,Continental,CONTINENTAL,GB,false
+484b503a-7f56-4f53-9bf8-49ae6147b039,Dorper (and White Dorper),2,DORPSH,DORPSH,Dorper (and White Dorper),v1,5.0,Continental,CONTINENTAL,GB,false
+9fc41a92-997c-4fd1-9e4a-a72c96654e16,Dorset Down,2,DODOSH,DODOSH,Dorset Down,v1,5.0,Continental,CONTINENTAL,GB,false
+b314af32-5466-456d-a0bc-e88ee45b606d,Dorset Horn & Poll Dorset,2,DHPDSH,DHPDSH,Dorset Horn & Poll Dorset,v1,5.0,Continental,CONTINENTAL,GB,false
+bd97a9e8-0f9f-4ddc-be13-775aa76bd1e6,Dutch Spotted Sheep,2,DSSSH,DSSSH,Dutch Spotted Sheep,v1,5.0,Continental,CONTINENTAL,GB,false
+1717be1d-4f43-4006-9caa-64689e228117,Easy Care,2,EACASH,EACASH,Easy Care,v1,5.0,Continental,CONTINENTAL,GB,false
+1c48a791-06ad-4d43-80b4-f4374bc32377,Epynt Hardy Speckled Face,2,EHSFSH,EHSFSH,Epynt Hardy Speckled Face,v1,5.0,Continental,CONTINENTAL,GB,false
+852d9ea4-284d-49ac-a375-b769deba8dfe,Exlana,2,EXLSH,EXLSH,Exlana,v1,5.0,Continental,CONTINENTAL,GB,false
+ff0340f3-56c8-4aa8-9cf6-3566272280b3,Pie Rouge Cross,3,PRX,PRX,Pie Rouge Cross,v1,38.0,Continental,CONTINENTAL,GB,false
+dfae4564-1170-4534-911c-c0ada867d28b,Maraichine,3,MAC,MAC,Maraichine,v1,38.0,Continental,CONTINENTAL,GB,false
+ab7f036f-3440-49b3-9228-5c739f43b8e2,Swedish Black and White,3,SBW,SBW,Swedish Black and White,v1,38.0,Continental,CONTINENTAL,GB,false
+a94ae1b7-fcdf-452a-a0bc-d3b947f0871e,Swedish Black and White Cross,3,SBWX,SBWX,Swedish Black and White Cross,v1,38.0,Continental,CONTINENTAL,GB,false
+90c5b11d-5af8-4dae-afb1-df63c2cd8d24,Rouge Flamande Cross,3,RFX,RFX,Rouge Flamande Cross,v1,38.0,Continental,CONTINENTAL,GB,false
+861182c6-91f4-4b22-9720-7cf98c16277d,Rouge Flamande,3,RF,RF,Rouge Flamande,v1,38.0,Continental,CONTINENTAL,GB,false
+7c97532e-355a-4e02-8944-ccbffdab5472,Maraichine Cross,3,MACX,MACX,Maraichine Cross,v1,38.0,Continental,CONTINENTAL,GB,false
+196d27cc-dca6-468f-85d7-b31f0f2fe23c,Pie Rouge,3,PR,PR,Pie Rouge,v1,38.0,Continental,CONTINENTAL,GB,false
+7890c843-3253-431f-86e7-a4a9af7b0e66,Yak,3,YK,YAK,Yak,v3,38.0,,CONTINENTAL,NI,false
+0189f407-014a-4026-9973-0bf6dbe540a6,Zebu,3,ZE,ZEB,Zebu,v3,38.0,,CONTINENTAL,NI,false
+d05954cf-71cd-4e37-9d1d-41e4abd98a15,Maine Anjou,3,MA,MA,Maine Anjou,v2,38.0,Continental,CONTINENTAL,GB,false
+c955234c-2aaf-46cc-ab00-3972940bbcf0,Romagnola,3,RO,RO,Romagnola,v2,38.0,Continental,CONTINENTAL,GB,false
+b46ba747-d77b-4920-be04-961001746b73,British Milksheep X,2,BMSXSH,BMSXSH,British Milksheep X,v1,5.0,Continental,CONTINENTAL,GB,false
+72843450-b509-424f-bc24-6f9ce7caf00c,Exmoor Horn,2,EXHOSH,EXHOSH,Exmoor Horn,v1,5.0,Continental,CONTINENTAL,GB,false
+f668c542-242f-4f03-875c-6d105813c4df,Friesland (or British Friesland),2,FRIESH,FRIESH,Friesland (or British Friesland),v1,5.0,Continental,CONTINENTAL,GB,false
+a99b0573-8b1c-42c1-be3b-0270c520c857,Gotland (or British Gotland),2,GOTLSH,GOTLSH,Gotland (or British Gotland),v1,5.0,Continental,CONTINENTAL,GB,false
+e483da49-b64a-4bf8-b5b7-a0c72260b557,Hampshire Down,2,HMDOSH,HMDOSH,Hampshire Down,v1,5.0,Continental,CONTINENTAL,GB,false
+9a30868c-ba24-4611-b502-b3920450fc6f,Hebridean,2,HEBRSH,HEBRSH,Hebridean,v1,5.0,Continental,CONTINENTAL,GB,false
+fb544994-0824-46fc-9724-fc1c6460f8bf,British Milksheep X,2,BMSXSH,BMSXSH,British Milksheep X,v1,5.0,Continental,CONTINENTAL,NI,false
+5fb9c1c1-9b15-4e4c-9434-6ca3515c3350,Herdwick,2,HERDSH,HERDSH,Herdwick,v1,5.0,Continental,CONTINENTAL,GB,false
+c8d2d2a8-31e2-49c5-a69a-7cd7a089d3ee,Hill Radnor,2,HIRASH,HIRASH,Hill Radnor,v1,5.0,Continental,CONTINENTAL,GB,false
+5edb006a-4ca8-4d9b-832d-c8b5e9d515c4,British Rouge De L'Ouest,2,BRLOSH,BRLOSH,British Rouge De L'Ouest,v1,5.0,Continental,CONTINENTAL,GB,false
+55ef5361-b457-42fe-9637-66b47fb17bec,British Rouge De L'Ouest,2,BRLOSH,BRLOSH,British Rouge De L'Ouest,v1,5.0,Continental,CONTINENTAL,NI,false
+a5c494de-2235-4311-805b-9132e3c4154d,British Rouge De L'Ouest X,2,BRLOXSH,BRLOXSH,British Rouge De L'Ouest X,v1,5.0,Continental,CONTINENTAL,GB,false
+66330eb4-69b6-4070-a114-70cd35b4bac2,British Rouge De L'Ouest X,2,BRLOXSH,BRLOXSH,British Rouge De L'Ouest X,v1,5.0,Continental,CONTINENTAL,NI,false
+9adc6693-563f-44ca-85b8-e47d03c02b74,Swedish Red,3,SR,SR,Swedish Red,v2,38.0,B & W,B_&_W,GB,false
+1c57e76d-a12a-4ed7-bb1f-1874223987c2,Swedish Red Cross,3,SRX,SRX,Swedish Red Cross,v2,38.0,B & W,B_&_W,GB,false
+cfea8f46-d40e-4224-9f4c-75106f202fbf,Swedish Red Polled,3,SRP,SRP,Swedish Red Polled,v2,38.0,B & W,B_&_W,GB,false
+eaf8e9e4-41a0-48b3-bfce-b9a7919ae7b3,Swedish Red and White,3,SRW,SRW,Swedish Red and White,v2,38.0,B & W,B_&_W,GB,false
+d8398d10-74cf-4d93-a28a-4302b8005f2b,Swedish Red and White Cross,3,SRWX,SRWX,Swedish Red and White Cross,v2,38.0,B & W,B_&_W,GB,false
+88a9027e-64b6-4cdf-8cb8-b58bf2dff407,Estonian Red,3,ER,ER,Estonian Red,v2,38.0,B &W,B_&_W,GB,false
+db033a7a-8921-4b65-ae7a-19b5fd1c6795,Estonian Red Cross,3,ERX,ERX,Estonian Red Cross,v2,38.0,B &W,B_&_W,GB,false
+3c50bdaa-6df4-4e49-8da9-a634e3c91fab,Flekvieh Cross,3,FKVX,FKVX,Flekvieh Cross,v2,38.0,B &W,B_&_W,GB,false
+06a3a1b7-a6f4-4fb4-947f-10a586558112,Jacob,2,JACSH,JACSH,Jacob,v1,5.0,Continental,CONTINENTAL,GB,false
+9d84dc7d-e348-496e-a4ca-aa2cd79ed3f9,Kerry Hill,2,KEHISH,KEHISH,Kerry Hill,v1,5.0,Continental,CONTINENTAL,GB,false
+e6db8b36-4f5f-4f38-b1af-5a8aeccfb78b,British Saanen,2,BSSH,BSSH,British Saanen,v1,5.0,Continental,CONTINENTAL,GB,false
+3191ebd1-7e5f-49ca-a859-0824a6817dc3,British Saanen,2,BSSH,BSSH,British Saanen,v1,5.0,Continental,CONTINENTAL,NI,false
+bfed8615-8ada-4473-bf80-d857d0abbf3c,Llandovery Whiteface,2,LLWFSH,LLWFSH,Llandovery Whiteface,v1,5.0,Continental,CONTINENTAL,GB,false
+b3dc0ea2-283b-47bf-be91-5019e0217678,British Saanen X,2,BSXSH,BSXSH,British Saanen X,v1,5.0,Continental,CONTINENTAL,GB,false
+9457b607-dddd-402f-97d5-8279615b1074,British Saanen X,2,BSXSH,BSXSH,British Saanen X,v1,5.0,Continental,CONTINENTAL,NI,false
+4439f5f2-2ad1-48fe-afe1-67ae46e8f407,Llanwenog,2,LLANSH,LLANSH,Llanwenog,v1,5.0,Continental,CONTINENTAL,GB,false
+af2ad44c-4422-42f4-9cd8-1dedf21b89f9,Lleyn,2,LLEYSH,LLEYSH,Lleyn,v1,5.0,Continental,CONTINENTAL,GB,false
+e2c06785-2ba3-4681-8031-9219f5923eb8,British Texel,2,BTXLSH,BTXLSH,British Texel,v1,5.0,Continental,CONTINENTAL,GB,false
+bed72bde-2222-4acc-9a8b-e46d1aaf6c84,Lonk,2,LONKSH,LONKSH,Lonk,v1,5.0,Continental,CONTINENTAL,GB,false
+3ca083cb-f9e7-4e15-85bc-faf79948768b,Manx Loaghton,2,MXLOSH,MXLOSH,Manx Loaghton,v1,5.0,Continental,CONTINENTAL,GB,false
+3aca8f5a-db05-4852-8c90-d2c15eb2a1a1,Masham,2,MASHSH,MASHSH,Masham,v1,5.0,Continental,CONTINENTAL,GB,false
+51bb0574-d606-421f-a1e6-1bc086dbcacd,Meatlinc,2,MTLCSH,MTLCSH,Meatlinc,v1,5.0,Continental,CONTINENTAL,GB,false
+778f123f-712a-40be-b4c7-5f2c8866a59d,Nelson South Wales Mountain,2,NSWMSH,NSWMSH,Nelson South Wales Mountain,v1,5.0,Continental,CONTINENTAL,GB,false
+bf90a5b0-02e0-41f4-bef3-d76153da09c7,Norfolk Horn,2,NOHOSH,NOHOSH,Norfolk Horn,v1,5.0,Continental,CONTINENTAL,GB,false
+7203d49c-c11d-4f77-8e46-3568b13904e7,British Texel,2,BTXLSH,BTXLSH,British Texel,v1,5.0,Continental,CONTINENTAL,NI,false
+457013dc-bd83-4cb9-9b81-6995b6047ead,British Texel X,2,BTXLXSH,BTXLXSH,British Texel X,v1,5.0,Continental,CONTINENTAL,GB,false
+ebc4aa75-8a50-4bf6-bfcd-060005ebe820,North Country Cheviot,2,NCCSH,NCCSH,North Country Cheviot,v1,5.0,Continental,CONTINENTAL,GB,false
+1db5ade2-d388-40a0-9671-e99ec35d4eab,North of England Mule,2,NOEMSH,NOEMSH,North of England Mule,v1,5.0,Continental,CONTINENTAL,GB,false
+6122496a-4aca-4a81-a672-919f606e68d3,Oxford Down,2,OXDOSH,OXDOSH,Oxford Down,v1,5.0,Continental,CONTINENTAL,GB,false
+c248f01b-383a-4bdc-968e-475162ac26ac,Romney,2,ROMSH,ROMSH,Romney,v1,5.0,Continental,CONTINENTAL,GB,false
+c08aa624-40ea-4e6e-8d4c-c158dbe05281,Red Poll Cross,3,RPX,RPX,Red Poll Cross,v2,38.0,Native,NATIVE,GB,false
+5656e721-a321-41e0-b526-920e0b7074c5,Riggit Galloway,3,RG,RG,Riggit Galloway,v2,38.0,Native,NATIVE,GB,false
+7fe3e6ff-461c-4d8e-8202-52463a7f86e8,British Texel X,2,BTXLXSH,BTXLXSH,British Texel X,v1,5.0,Continental,CONTINENTAL,NI,false
+ca553ca8-5388-4bb1-be0a-f70779c0cb9d,British Vendeen,2,BVSH,BVSH,British Vendeen,v1,5.0,Continental,CONTINENTAL,GB,false
+510c40e8-e349-4d30-a886-58822790851a,British Vendeen,2,BVSH,BVSH,British Vendeen,v1,5.0,Continental,CONTINENTAL,NI,false
+539cf822-864c-4764-acee-31915f6c16da,INRA95,3,INRA,INRA,INRA,v1,38.0,Continental,CONTINENTAL,GB,false
+4084c513-c9a2-4fbb-81d2-9a6355d88819,Lacaune,2,LAC,LAC,Lacaune,v1,5.0,Continental,CONTINENTAL,EU,false
+83e10ca0-58cf-4143-b111-15845cac2459,Bretonne Pie-Noire,3,BP,BP,Bretonne Pie-Noire,v2,38.0,Continental,CONTINENTAL,GB,false
+efdde42c-2322-446b-8560-fe2e91483153,Cross Breed Beef,3,CB,CB,Cross Breed Beef,v2,38.0,Continental,CONTINENTAL,GB,false
+fc5465b2-8d12-4b3e-a592-1473f88501bd,Tyrone Black Cross,3,TBX,TBX,Tyrone Black Cross,v2,38.0,Native,NATIVE,GB,false
+b2ca2527-a811-418a-9d2c-20d6232a8ad4,Wagyu,3,WA,WA,Wagyu,v2,38.0,Native,NATIVE,GB,false
+fb3df690-4625-4241-8411-f34d3f93178c,Wagyu Cross,3,WAX,WAX,Wagyu Cross,v2,38.0,Native,NATIVE,GB,false
+a4510054-1fdb-4503-98b7-64fa2c03a2da,Blue Grey Cross,3,BLGX,BLGX,Blue Grey Cross,v2,38.0,Native,NATIVE,GB,false
+0b0234c5-82da-40d1-a4c2-9befddf9cbbb,British White Cross,3,BWX,BWX,British White Cross,v2,38.0,Native,NATIVE,GB,false
+b38cd59d-8220-475b-ae07-0da469de9f2c,Bison,3,BI,BI,Bison,v3,38.0,Continental,CONTINENTAL,NI,false
+5186fe9f-9119-457e-83db-756191da493c,Coloured Welsh,3,CW,CW,Coloured Welsh,v2,38.0,Native,NATIVE,GB,false
+19d65d41-1abb-4e8a-bab0-33b1a1aa3625,Coloured Welsh Cross,3,CWX,CWX,Coloured Welsh Cross,v2,38.0,Native,NATIVE,GB,false
+089175ef-c61f-4fe9-b513-09d7cf215bbf,Blue Albion Cross,3,BALX,BALX,Blue Albion Cross,v2,38.0,Native,NATIVE,GB,false
+ac6d42ee-78e6-4855-b39e-cb63b84cb84c,Chillingham Cross,3,CHLX,CHLX,Chillingham Cross,v2,38.0,Native,NATIVE,GB,false
+5c7f368f-b754-47d3-8cb4-b56c9cb4a909,Beef Shorthorn,3,BSH,BSH,Beef Shorthorn,v2,38.0,Native,NATIVE,GB,false
+f65d1558-11ca-4c94-b026-4a7a54caacc6,Beef Shorthorn Cross,3,BSHX,BSHX,Beef Shorthorn Cross,v2,38.0,Native,NATIVE,GB,false
+53876f30-7839-4cb8-8f7d-09584c0934b7,Belted Galloway,3,BG,BG,Belted Galloway,v2,38.0,Native,NATIVE,GB,false
+106ce7b5-8c34-4f6e-8b19-82d06a434d7d,Belted Galloway Cross,3,BGX,BGX,Belted Galloway Cross,v2,38.0,Native,NATIVE,GB,false
+6582cd9a-be87-4cb2-9e2e-a77c1394d200,Belted Welsh Black,3,BWB,BWB,Belted Welsh Black,v2,38.0,Native,NATIVE,GB,false
+0eb2565b-ef2f-479a-ad21-c62083e3ae4a,British Friesian,3,BF,BF,British Friesian,v2,38.0,B & W,B_&_W,GB,false
+cb4ce904-b550-4015-8ac7-746877210ed5,British Friesian Cross,3,BFX,BFX,British Friesian Cross,v2,38.0,B & W,B_&_W,GB,false
+332dcef6-007b-4613-8434-9b013eeeb88c,Belted Welsh Black Cross,3,BWBX,BWBX,Belted Welsh Black Cross,v2,38.0,Native,NATIVE,GB,false
+53b068b9-99b0-4ef6-a9c1-e256071f1968,Brown Swiss Cross,3,BSX,BSX,Brown Swiss Cross,v2,38.0,B & W ,B_&_W,GB,false
+a21dce87-4cb8-41d7-9f6c-311f80c20288,Australian Lowline Cross,3,ALLX,ALLX,Australian Lowline Cross,v2,38.0,Native,NATIVE,GB,false
+8b4d520a-49da-4ae7-ae4c-5f1f4d5280b8,Aberdeen Angus Cross,3,AAX,AAX,Aberdeen Angus Cross,v2,38.0,Native,NATIVE,GB,false
+581f2d9a-4577-4d29-ba69-e1fc02b0bce9,British Vendeen X,2,BVXSH,BVXSH,British Vendeen X,v1,5.0,Continental,CONTINENTAL,GB,false
+aa138c2b-fba6-469f-ae27-ffe63a24b3e0,Cross Breed Dairy,3,CD,CD,Cross Breed Dairy,v2,38.0,B & W,B_&_W,GB,false
+8e066d68-a63d-4de4-a400-ac0f95bbfcd3,Ayrshire Cross,3,AYX,AYX,Ayrshire Cross,v2,38.0,B & W,B_&_W,GB,false
+be7bc778-3f65-4c40-969d-7e2d5d392f12,British Vendeen X,2,BVXSH,BVXSH,British Vendeen X,v1,5.0,Continental,CONTINENTAL,NI,false
+bf0f0027-1e2b-4295-9de6-e1a3234f7aae,Cambridge X,2,CMBXSH,CMBXSH,Cambridge X,v1,5.0,Continental,CONTINENTAL,GB,false
+4460a5e9-c877-4578-bee7-871a72d23e40,Cambridge X,2,CMBXSH,CMBXSH,Cambridge X,v1,5.0,Continental,CONTINENTAL,NI,false
+e3e16ee6-8103-42fe-873c-8d7295f8727a,Castlemilk Moorit X,2,CAMXSH,CAMXSH,Castlemilk Moorit X,v1,5.0,Continental,CONTINENTAL,GB,false
+5dc8cd56-8257-4d23-b863-33fe45ffc9e0,Castlemilk Moorit X,2,CAMXSH,CAMXSH,Castlemilk Moorit X,v1,5.0,Continental,CONTINENTAL,NI,false
+6e496194-902e-4024-8883-d8ee0359a50f,Charmoise,2,CHMSH,CHMSH,Charmoise,v1,5.0,Continental,CONTINENTAL,GB,false
+2c69489c-cd2e-4e00-8d1f-f2371527397a,Charmoise,2,CHMSH,CHMSH,Charmoise,v1,5.0,Continental,CONTINENTAL,NI,false
+709eb929-25e0-478e-af14-578e63ffff49,Charmoise X,2,CHMXSH,CHMXSH,Charmoise X,v1,5.0,Continental,CONTINENTAL,GB,false
+18fe5fb4-a787-4c80-a48e-156a703e09e5,Charmoise X,2,CHMXSH,CHMXSH,Charmoise X,v1,5.0,Continental,CONTINENTAL,NI,false
+0ddf17dc-7163-4307-b356-64dd6f2ec98f,Charollais X,2,CHARXSH,CHARXSH,Charollais X,v1,5.0,Continental,CONTINENTAL,GB,false
+e49ff167-b88d-4eb2-ac17-96ea2eeb2894,Charollais X,2,CHARXSH,CHARXSH,Charollais X,v1,5.0,Continental,CONTINENTAL,NI,false
+dccad213-deaa-4ea1-be7d-af76c5ace7cb,Cheviot X,2,CVTXSH,CVTXSH,Cheviot X,v1,5.0,Continental,CONTINENTAL,GB,false
+0cbfa201-b88c-4e68-a3b1-256cac1f7fe5,Cheviot X,2,CVTXSH,CVTXSH,Cheviot X,v1,5.0,Continental,CONTINENTAL,NI,false
+e22735e4-5517-4932-a065-209048059831,Clun Forest X,2,CLFXSH,CLFXSH,Clun Forest X,v1,5.0,Continental,CONTINENTAL,GB,false
+73b63157-4f97-4e46-9ffc-9ab72687f7c6,Clun Forest X,2,CLFXSH,CLFXSH,Clun Forest X,v1,5.0,Continental,CONTINENTAL,NI,false
+7897ba0e-375c-4db5-9be8-c3e99c6093b6,Colbred,2,COLSH,COLSH,Colbred,v1,5.0,Continental,CONTINENTAL,GB,false
+b842e441-9ddb-4514-a88b-9e7e058b6ac7,Colbred,2,COLSH,COLSH,Colbred,v1,5.0,Continental,CONTINENTAL,NI,false
+9657b88c-d683-4387-87f7-d0e45c49752d,Colbred X,2,COLXSH,COLXSH,Colbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+607bb74f-6c14-46e6-afa1-c8e63ada95ff,Colbred X,2,COLXSH,COLXSH,Colbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+5a72962b-1952-4227-a18f-f51fc68498e3,Corriedale,2,CRDSH,CRDSH,Corriedale,v1,5.0,Continental,CONTINENTAL,GB,false
+ab9f9f51-48b1-40e9-bb1b-65cb65021624,Corriedale,2,CRDSH,CRDSH,Corriedale,v1,5.0,Continental,CONTINENTAL,NI,false
+ea8087ff-2c78-41bb-bb6a-ae9cf46ee61d,Corriedale X,2,CRDXSH,CRDXSH,Corriedale X,v1,5.0,Continental,CONTINENTAL,GB,false
+0ed459de-21a8-490e-80ca-201b69afab66,Corriedale X,2,CRDXSH,CRDXSH,Corriedale X,v1,5.0,Continental,CONTINENTAL,NI,false
+2302e400-8e76-4a1f-9ba9-e7859690eda2,Cotentin,2,COTSH,COTSH,Cotentin,v1,5.0,Continental,CONTINENTAL,GB,false
+db1b4970-0ffe-4c9d-9e11-9a3abde8bf24,Cotentin,2,COTSH,COTSH,Cotentin,v1,5.0,Continental,CONTINENTAL,NI,false
+e767ef4f-ca42-45b7-950c-586f0b713a68,Cotentin X,2,COTXSH,COTXSH,Cotentin X,v1,5.0,Continental,CONTINENTAL,GB,false
+c1a703de-d73f-4e85-b49a-3685491c83a5,Cotentin X,2,COTXSH,COTXSH,Cotentin X,v1,5.0,Continental,CONTINENTAL,NI,false
+25f385a2-d558-4682-aae6-bff93e493ecc,Cotswold X,2,COTSXSH,COTSXSH,Cotswold X,v1,5.0,Continental,CONTINENTAL,GB,false
+383d88e2-110e-42e8-b475-9808d395eee1,Cotswold X,2,COTSXSH,COTSXSH,Cotswold X,v1,5.0,Continental,CONTINENTAL,NI,false
+237eb0ab-0fa7-4f6e-9dd5-764cba9bfc7c,Dalesbred X,2,DALEXSH,DALEXSH,Dalesbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+c93b4f69-a0e1-44db-9b33-14624f398310,Hungarian Steppe,3,HS,HS,Hungarian Steppe,v2,38.0,Continental,CONTINENTAL,GB,false
+9f0df7f2-2fba-4bec-a6cf-2bc69a9141e3,Groninger Blaarkop Cross,3,GBX,GBX,Groninger Blaarkop Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+8755af45-82c2-4f59-9796-1919389ee31c,Yak Cross,3,YKX,YKX,Yak Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+8259d733-8533-4df5-85d6-f34c74778a3e,Yak,3,YK,YK,Yak,v2,38.0,Continental,CONTINENTAL,GB,false
+782f1419-9b7f-494a-a2ca-a0ab1db34452,Aubrac Cross,3,AUX,AUX,Aubrac Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+77205367-855d-48d2-a5ad-05cbb9a819ff,Simmental,3,SM,SM,Simmental,v2,38.0,Continental,CONTINENTAL,GB,false
+71bcc980-ac83-497d-8abb-d704299a4bff,Angler Rotvieh Cross,3,ARX,ARX,Angler Rotvieh Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+69cfa106-791f-4bdd-91a0-6b279b7636a8,Reggiana,3,RE,RE,Reggiana,v2,38.0,Continental,CONTINENTAL,GB,false
+692f3e95-b68b-43f0-9403-0d4b3737f1be,Ankole,3,AN,AN,Ankole,v2,38.0,Continental,CONTINENTAL,GB,false
+4856b884-08b7-4ed2-91b9-f23be35779c8,Ayrshire,3,AY,AY,Ayrshire,v2,38.0,B & W,B_&_W,GB,false
+98ce8e89-ae56-4723-a4be-dffe8bcf7778,Water Buffalo,3,BU,BU,Water Buffalo,v3,38.0,Continental,CONTINENTAL,NI,false
+3894ced1-786c-485e-b716-ca80ff0040a6,Rotbunt,3,ROT,ROT,Rotbunt,v3,38.0,Continental,CONTINENTAL,NI,false
+2ff29912-f5c1-4a36-b2c1-8b38334f4d38,Chianina,3,CHI,CHI,Chianina,v3,38.0,Continental,CONTINENTAL,NI,false
+22745e19-c0d7-4ed1-86a5-23c85e52f46d,Charolais,3,CH,CH,Charolais,v3,38.0,Continental,CONTINENTAL,NI,false
+1777514b-2f33-4481-82c4-7e359c7c99b6,Marchigiana,3,MAR,MAR,Marchigiana,v3,38.0,Continental,CONTINENTAL,NI,false
+5c71c256-e910-4cec-b61c-8d74f17cc5fe,Armoricaine,3,AM,AM,Armoricaine,v2,38.0,Continental,CONTINENTAL,GB,false
+59ebdd9f-db4e-45c6-a121-c7d6352eb29f,Rotebunde Cross,3,ROTX,ROTX,Rotebunde Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+4e2e1f6e-a8f4-4798-b3fb-93edd4e5143f,Swiss Braunvieh,3,SB,SB,Swiss Braunvieh,v2,38.0,Continental,CONTINENTAL,GB,false
+47a871f7-f5ed-4f74-8eb1-b4a6090e678b,Armoricaine Cross,3,AMX,AMX,Armoricaine Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+464208f8-b000-4a6c-8c2d-dfadefc8928b,Abondance Cross,3,ABX,ABX,Abondance Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+3ac734b7-ac65-4dcf-badc-6ff7661b805d,Zebu,3,ZE,ZE,Zebu,v2,38.0,Continental,CONTINENTAL,GB,false
+0f04901a-6394-41da-bcef-c90df95cfdde,Swiss Grey Cross,3,SGX,SGX,Swiss Grey Cross,v2,38.0,Continental,CONTINENTAL,GB,false
+6086b392-f6d4-43f8-b2dc-102782bfb383,Badger Face Welsh Mountain,2,BFWMSH,BFWMSH,Badger Face Welsh Mountain,v1,5.0,Continental,CONTINENTAL,GB,false
+ae616fbe-bcea-442d-a24a-a3f2b2213959,Beltex,2,BTXSH,BTXSH,Beltex,v1,5.0,Continental,CONTINENTAL,GB,false
+bdb100b0-5a2c-44cc-86e8-aa46b35c6a93,Berrichon du Cher (or British Berrichon),2,BDCSH,BDCSH,Berrichon du Cher (or British Berrichon),v1,5.0,Continental,CONTINENTAL,GB,false
+1185bfd0-70fa-4150-b6e8-ebfdddb6ee1c,Roussin (or British Roussin),2,ROUSSH,ROUSSH,Roussin (or British Roussin),v1,5.0,Continental,CONTINENTAL,GB,false
+9d56879e-0adc-4605-8b71-bbb07d9dd413,Ryeland,2,RYESH,RYESH,Ryeland,v1,5.0,Continental,CONTINENTAL,GB,false
+1a4f626d-664f-4124-84ab-3c03c00b8464,Scotch Mule,2,SCMLSH,SCMLSH,Scotch Mule,v1,5.0,Continental,CONTINENTAL,GB,false
+a221a2d8-f596-4e0a-86a3-190abc1d6884,Shetland,2,SHETSH,SHETSH,Shetland,v1,5.0,Continental,CONTINENTAL,GB,false
+d605bef7-e3d2-4004-95e8-1d820d39dc82,Welsh Black Cross,3,WBX,WBX,Welsh Black Cross,v2,38.0,Native,NATIVE,GB,false
+10516968-9281-4938-a22e-a8746f255243,Welsh White,3,WW,WW,Welsh White,v2,38.0,Native,NATIVE,GB,false
+e7e5ef49-0d87-4c76-98a5-c403f2f42106,Welsh White Cross,3,WWX,WWX,Welsh White Cross,v2,38.0,Native,NATIVE,GB,false
+41a913a1-0865-4c04-8937-204e18b5add6,White Galloway Cross,3,WGX,WGX,White Galloway Cross,v2,38.0,Native,NATIVE,GB,false
+f19fb412-bd57-4420-b751-3ebe5eac5aba,Whitebred Shorthorn,3,WS,WS,Whitebred Shorthorn,v2,38.0,Native,NATIVE,GB,false
+f06930af-e013-44a3-b165-c46be49b34c7,Whitebred Shorthorn Cross,3,WSX,WSX,Whitebred Shorthorn Cross,v2,38.0,Native,NATIVE,GB,false
+30a60eb2-926f-4dc2-8cf1-5d487ff8cc7a,White Park Cross,3,WPX,WPX,White Park Cross,v2,38.0,Native,NATIVE,GB,false
+ba7d8fc8-2764-4515-a47e-78b23f5de215,Dalesbred X,2,DALEXSH,DALEXSH,Dalesbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+57f015e5-b367-432b-ae3a-e671b85269d4,Dartmoor (Greyfaced) X,2,DARTXSH,DARTXSH,Dartmoor (Greyfaced) X,v1,5.0,Continental,CONTINENTAL,GB,false
+adb75140-bb66-4437-b0e8-4b20f897c8e8,Dartmoor (Greyfaced) X,2,DARTXSH,DARTXSH,Dartmoor (Greyfaced) X,v1,5.0,Continental,CONTINENTAL,NI,false
+4e1dcc86-65cf-4154-bb06-fd00877df456,Derbyshire Gritstone X,2,DEGRXSH,DEGRXSH,Derbyshire Gritstone X,v1,5.0,Continental,CONTINENTAL,GB,false
+b2589c57-faa0-4e07-99c5-db23444c9378,Derbyshire Gritstone X,2,DEGRXSH,DEGRXSH,Derbyshire Gritstone X,v1,5.0,Continental,CONTINENTAL,NI,false
+9fa50ae4-a960-463d-b540-2cdadc7b6a43,Devon & Cornwall Longwool X,2,DACLXSH,DACLXSH,Devon & Cornwall Longwool X,v1,5.0,Continental,CONTINENTAL,GB,false
+5cce153d-1bad-4d0e-93a2-54b28be9a85b,Devon & Cornwall Longwool X,2,DACLXSH,DACLXSH,Devon & Cornwall Longwool X,v1,5.0,Continental,CONTINENTAL,NI,false
+b177b6f9-0160-454a-8c8e-ccf514700595,Devon Closewool X,2,DECLXSH,DECLXSH,Devon Closewool X,v1,5.0,Continental,CONTINENTAL,GB,false
+d1971ba8-8519-4b88-be4e-84a10874a08d,Devon Closewool X,2,DECLXSH,DECLXSH,Devon Closewool X,v1,5.0,Continental,CONTINENTAL,NI,false
+7e69b4b6-580a-4697-a63f-88146630338a,Dorper X,2,DORPXSH,DORPXSH,Dorper X,v1,5.0,Continental,CONTINENTAL,GB,false
+9adcebf3-0337-40b1-92dc-bc2e4afbf93f,Dorper X,2,DORPXSH,DORPXSH,Dorper X,v1,5.0,Continental,CONTINENTAL,NI,false
+fb1adc14-b05d-48f1-b031-6ebaa32d0e6b,Dorset Down X,2,DODOXSH,DODOXSH,Dorset Down X,v1,5.0,Continental,CONTINENTAL,GB,false
+09e5198f-a37f-4582-83bb-4f06b4ff10d8,Dorset Down X,2,DODOXSH,DODOXSH,Dorset Down X,v1,5.0,Continental,CONTINENTAL,NI,false
+ba484edc-e1fd-4be7-a8a1-7bff74b25ee7,Dorset Horn & Poll Dorset X,2,DHPDXSH,DHPDXSH,Dorset Horn & Poll Dorset X,v1,5.0,Continental,CONTINENTAL,GB,false
+5e70598a-59f6-4b68-96f1-94ae41db12a0,Dorset Horn & Poll Dorset X,2,DHPDXSH,DHPDXSH,Dorset Horn & Poll Dorset X,v1,5.0,Continental,CONTINENTAL,NI,false
+179bbd4a-874a-423f-a99c-6045ea512f77,Dutch Spotted X,2,DSSXSH,DSSXSH,Dutch Spotted X,v1,5.0,Continental,CONTINENTAL,GB,false
+c0a680b0-a857-4bd2-a478-765ef6c80294,Dutch Spotted X,2,DSSXSH,DSSXSH,Dutch Spotted X,v1,5.0,Continental,CONTINENTAL,NI,false
+31e1cdda-6c60-4671-8e0c-923fc88ddabd,Easy Care X,2,EACAXSH,EACAXSH,Easy Care X,v1,5.0,Continental,CONTINENTAL,GB,false
+cf481714-cf61-4463-a1d7-d22808604f4f,Easy Care X,2,EACAXSH,EACAXSH,Easy Care X,v1,5.0,Continental,CONTINENTAL,NI,false
+a9f5c46c-3500-4145-885e-163a0905ecdb,Blackface,2,BFSH,BFSH,Blackface,v1,5.0,Continental,CONTINENTAL,GB,false
+ef0635b8-546c-44a7-9101-ef51b32c5a85,Shropshire,2,SHRPSH,SHRPSH,Shropshire,v1,5.0,Continental,CONTINENTAL,GB,false
+4f33c9c8-359d-4dfb-a399-d7e822390945,Soay,2,SOAYSH,SOAYSH,Soay,v1,5.0,Continental,CONTINENTAL,GB,false
+e24894ed-e2e4-4605-a4da-827b98221b66,Southdown,2,SDSH,SDSH,Southdown,v1,5.0,Continental,CONTINENTAL,GB,false
+e526cd29-c432-4de3-a186-8b3deae3cdda,Suffolk,2,SUFFSH,SUFFSH,Suffolk,v1,5.0,Continental,CONTINENTAL,GB,false
+0d90aca7-376b-434a-a94f-fd82e3016fb1,Teeswater,2,TEESSH,TEESSH,Teeswater,v1,5.0,Continental,CONTINENTAL,GB,false
+a1b3f447-4e81-403b-8d56-09d7ac833c3a,Texel,2,TEXLSH,TEXLSH,Texel,v1,5.0,Continental,CONTINENTAL,GB,false
+50460335-919f-4fcf-9815-cba10c381622,Valais Blacknose,2,VABLSH,VABLSH,Valais Blacknose,v1,5.0,Continental,CONTINENTAL,GB,false
+0cce5e1c-a086-410c-917c-890b5b0063c9,Vendeen (or British Vendeen),2,VENSH,VENSH,Vendeen (or British Vendeen),v1,5.0,Continental,CONTINENTAL,GB,false
+ccd2258e-ca51-4901-8aa4-d0c8e74a305d,Welsh Halfbred,2,WEHBSH,WEHBSH,Welsh Halfbred,v1,5.0,Continental,CONTINENTAL,GB,false
+7e37bea2-496a-4d21-b9f3-c73ea24b4c39,Welsh Hill Speckled Face,2,WHSFSH,WHSFSH,Welsh Hill Speckled Face,v1,5.0,Continental,CONTINENTAL,GB,false
+3f134929-6aeb-4ba6-84e9-7b21a4a5d024,Welsh Mule,2,WEMUSH,WEMUSH,Welsh Mule,v1,5.0,Continental,CONTINENTAL,GB,false
+ad4ed194-8342-4923-b0b4-b513bc97755a,Wensleydale,2,WNDLSH,WNDLSH,Wensleydale,v1,5.0,Continental,CONTINENTAL,GB,false
+693c465b-293d-4813-9689-250846904513,Whiteface Woodland,2,WHWOSH,WHWOSH,Whiteface Woodland,v1,5.0,Continental,CONTINENTAL,GB,false
+7894106d-cd46-4ab4-8f2e-40c529c64d96,Wiltshire Horn,2,WIHOSH,WIHOSH,Wiltshire Horn,v1,5.0,Continental,CONTINENTAL,GB,false
+b6c01b30-12a5-4dbc-b730-1ac0b2750877,Zwartbles,2,ZWASH,ZWASH,Zwartbles,v1,5.0,Continental,CONTINENTAL,GB,false
+cf2efe8e-195c-4256-bda4-f96bd2deba1c,Epynt Hardy Speckled Face X,2,EHSFXSH,EHSFXSH,Epynt Hardy Speckled Face X,v1,5.0,Continental,CONTINENTAL,GB,false
+915da96a-6764-42ee-bd91-aa505a50fedc,Epynt Hardy Speckled Face X,2,EHSFXSH,EHSFXSH,Epynt Hardy Speckled Face X,v1,5.0,Continental,CONTINENTAL,NI,false
+6831f2de-72ed-4577-91d1-f51b9be14b6e,Est A Laine Merino,2,EALMSH,EALMSH,Est A Laine Merino,v1,5.0,Continental,CONTINENTAL,GB,false
+f543dd23-793d-42a1-8066-337a6dfbed77,Est A Laine Merino,2,EALMSH,EALMSH,Est A Laine Merino,v1,5.0,Continental,CONTINENTAL,NI,false
+f4e3040a-4d0d-4f9b-8a9e-af2920089cf0,Est A Laine Merino X,2,EALMXSH,EALMXSH,Est A Laine Merino X,v1,5.0,Continental,CONTINENTAL,GB,false
+d8de9d36-7673-4cc4-9d08-625e5927afa1,Est A Laine Merino X,2,EALMXSH,EALMXSH,Est A Laine Merino X,v1,5.0,Continental,CONTINENTAL,NI,false
+b2009f6e-af89-419f-ac9b-17fa00e06813,Exmoor Horn X,2,EXHOXSH,EXHOXSH,Exmoor Horn X,v1,5.0,Continental,CONTINENTAL,GB,false
+01cb6b62-dfcc-4a7e-ae7b-b94f24de9168,Exmoor Horn X,2,EXHOXSH,EXHOXSH,Exmoor Horn X,v1,5.0,Continental,CONTINENTAL,NI,false
+c14cfb66-0b61-453c-8d96-4d7fa9fae39a,Gotland X,2,GOTLXSH,GOTLXSH,Gotland X,v1,5.0,Continental,CONTINENTAL,GB,false
+5ae51412-2cb5-49bc-934c-e159ec040864,Gotland X,2,GOTLXSH,GOTLXSH,Gotland X,v1,5.0,Continental,CONTINENTAL,NI,false
+084a215e-2a2c-4b39-ac51-f3cec1753f16,Hampshire Down X,2,HMDOXSH,HMDOXSH,Hampshire Down X,v1,5.0,Continental,CONTINENTAL,GB,false
+50f3d258-b3f6-4c51-ad0b-1b1c6cd9786e,Hampshire Down X,2,HMDOXSH,HMDOXSH,Hampshire Down X,v1,5.0,Continental,CONTINENTAL,NI,false
+98efd91e-5bef-4a5c-aef9-cbc99d77b39e,Hebridean X,2,HEBRXSH,HEBRXSH,Hebridean X,v1,5.0,Continental,CONTINENTAL,GB,false
+2ebafeaf-fbb6-4918-b958-234e42f55845,Hebridean X,2,HEBRXSH,HEBRXSH,Hebridean X,v1,5.0,Continental,CONTINENTAL,NI,false
+7774b91d-c4ff-4581-950d-10e84f6ac3eb,Herdwick X,2,HERDXSH,HERDXSH,Herdwick X,v1,5.0,Continental,CONTINENTAL,GB,false
+2979a5e5-154b-4926-bf96-e294f3b24275,Herdwick X,2,HERDXSH,HERDXSH,Herdwick X,v1,5.0,Continental,CONTINENTAL,NI,false
+4394eb7f-bc7d-4a32-b523-dd80cd199462,Highlander,2,HIGHSH,HIGHSH,Highlander,v1,5.0,Continental,CONTINENTAL,GB,false
+7eb13fb5-c3c4-41ac-a79d-53ea3de45679,Highlander,2,HIGHSH,HIGHSH,Highlander,v1,5.0,Continental,CONTINENTAL,NI,false
+a3702db5-ad43-4490-a7e1-049fcc5eef38,Highlander X,2,HIGHXSH,HIGHXSH,Highlander X,v1,5.0,Continental,CONTINENTAL,GB,false
+1c77cfbb-3a3b-4a98-8fec-d1175518f3ca,Highlander X,2,HIGHXSH,HIGHXSH,Highlander X,v1,5.0,Continental,CONTINENTAL,NI,false
+b382a4ad-7388-47c3-936d-0653f1ae433a,Hill Radnor X,2,HIRAXSH,HIRAXSH,Hill Radnor X,v1,5.0,Continental,CONTINENTAL,GB,false
+95e1a050-4bab-4103-81a9-eb9c96dd958d,Hill Radnor X,2,HIRAXSH,HIRAXSH,Hill Radnor X,v1,5.0,Continental,CONTINENTAL,NI,false
+2314e5cd-b66f-432f-92ed-be75ead9d690,Ile de France X,2,IDFXSH,IDFXSH,Ile de France X,v1,5.0,Continental,CONTINENTAL,GB,false
+d7ecd38d-d7a6-4b04-aacb-8a3281797480,Ile de France X,2,IDFXSH,IDFXSH,Ile de France X,v1,5.0,Continental,CONTINENTAL,NI,false
+a13d3174-8742-4b92-83a9-b5f95db98a99,Ile de France,2,IDFSH,IDFSH,Ile de France,v1,5.0,Continental,CONTINENTAL,GB,false
+682debd7-482d-4277-86bf-3b28dd9cbb32,Jacob X,2,JACXSH,JACXSH,Jacob X,v1,5.0,Continental,CONTINENTAL,GB,false
+761e1a9b-d3dc-426d-b053-9fee2578d94c,Jacob X,2,JACXSH,JACXSH,Jacob X,v1,5.0,Continental,CONTINENTAL,NI,false
+73ffb460-4a85-4793-9efe-7ac442bfbc10,Kent Halfbred,2,KEHASH,KEHASH,Kent Halfbred,v1,5.0,Continental,CONTINENTAL,GB,false
+3cb86e4b-ac2f-4b7b-99d7-12205f5702cd,Kent Halfbred,2,KEHASH,KEHASH,Kent Halfbred,v1,5.0,Continental,CONTINENTAL,NI,false
+9d8dc153-35b6-4c4d-bd8b-6d6cae52c31f,Kent Halfbred X,2,KEHAXSH,KEHAXSH,Kent Halfbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+6739db89-a191-4a54-9ef1-7a736682d836,Kent Halfbred X,2,KEHAXSH,KEHAXSH,Kent Halfbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+28db8769-0f50-4fab-9f4a-bd17b73828b7,Kerry Hill X,2,KEHIXSH,KEHIXSH,Kerry Hill X,v1,5.0,Continental,CONTINENTAL,GB,false
+9ca60c29-3094-4c12-bd41-e434c74c66f5,Kerry Hill X,2,KEHIXSH,KEHIXSH,Kerry Hill X,v1,5.0,Continental,CONTINENTAL,NI,false
+67013450-12d5-4922-8ab3-5862bd843e4e,Leicester Longwool,2,LELOSH,LELOSH,Leicester Longwool,v1,5.0,Continental,CONTINENTAL,GB,false
+21da5c2f-7160-46fb-9e75-9742ecc758d7,Leicester Longwool,2,LELOSH,LELOSH,Leicester Longwool,v1,5.0,Continental,CONTINENTAL,NI,false
+a26a4154-b748-49fc-81bb-d3ab7c018768,Leicester Longwool X,2,LELOXSH,LELOXSH,Leicester Longwool X,v1,5.0,Continental,CONTINENTAL,GB,false
+f00fcadd-f3c4-402e-90b5-c724372957cf,LVX Somerset Project,3,LVSP,,,v1,38.0,Native,NATIVE,,false
+b9f9bc64-4197-4aea-82b6-5686b16abe88,Rouge de L'ouest (or British Rouge),2,RDLSH,RDLSH,Rouge de L'ouest (or British Rouge),v1,5.0,Continental,CONTINENTAL,GB,false
+94295b77-d230-4a14-9f87-b293f70657c5,Rough Fell,2,ROFLSH,ROFLSH,Rough Fell,v1,5.0,Continental,CONTINENTAL,GB,false
+06c7f243-0571-49c9-b77c-383e931f71b7,Leicester Longwool X,2,LELOXSH,LELOXSH,Leicester Longwool X,v1,5.0,Continental,CONTINENTAL,NI,false
+f6db6a06-e8c9-4300-be74-862c17684a06,Lincoln Longwool,2,LILOSH,LILOSH,Lincoln Longwool,v1,5.0,Continental,CONTINENTAL,GB,false
+fa126a24-f974-4013-a330-fc585d81bb00,Lincoln Longwool,2,LILOSH,LILOSH,Lincoln Longwool,v1,5.0,Continental,CONTINENTAL,NI,false
+5edb98ca-0c9a-4200-9339-e6fcea1898b6,Lincoln Longwool X,2,LILOXSH,LILOXSH,Lincoln Longwool X,v1,5.0,Continental,CONTINENTAL,GB,false
+8c79a9db-d85c-4c57-b787-e828ec6b2bae,Lincoln Longwool X,2,LILOXSH,LILOXSH,Lincoln Longwool X,v1,5.0,Continental,CONTINENTAL,NI,false
+3f8d379b-8e54-4167-8aa1-eb12b1ab6d9e,Llanwenog X,2,LLANXSH,LLANXSH,Llanwenog X,v1,5.0,Continental,CONTINENTAL,GB,false
+3bfab96a-c91e-4e5a-9073-1c60ec3f27df,Llanwenog X,2,LLANXSH,LLANXSH,Llanwenog X,v1,5.0,Continental,CONTINENTAL,NI,false
+be63afdc-aa34-4319-8a0b-5b4c8999daea,Lleyn X,2,LLEYXSH,LLEYXSH,Lleyn X,v1,5.0,Continental,CONTINENTAL,GB,false
+c3c44c53-f99b-4e1e-bd64-19e6f988def3,Lleyn X,2,LLEYXSH,LLEYXSH,Lleyn X,v1,5.0,Continental,CONTINENTAL,NI,false
+e80a570c-9737-4176-b90c-7fc5c4194803,Lomond Halfbred,2,LOHASH,LOHASH,Lomond Halfbred,v1,5.0,Continental,CONTINENTAL,GB,false
+3173f650-355c-4eea-a8fb-e298c81df6c1,Lomond Halfbred,2,LOHASH,LOHASH,Lomond Halfbred,v1,5.0,Continental,CONTINENTAL,NI,false
+3c9aaa1f-6d7d-43e4-8a05-80ddead5c156,Lomond Halfbred X,2,LOHAXSH,LOHAXSH,Lomond Halfbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+edd106d2-3f1f-49e3-9820-1cda3e9c56b3,Lomond Halfbred X,2,LOHAXSH,LOHAXSH,Lomond Halfbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+1e4756e1-d948-4a37-a70c-ba9e5b942b14,Lonk X,2,LONKXSH,LONKXSH,Lonk X,v1,5.0,Continental,CONTINENTAL,GB,false
+5562d6cd-cd3c-40e4-b78f-7d269f00f7b0,Lonk X,2,LONKXSH,LONKXSH,Lonk X,v1,5.0,Continental,CONTINENTAL,NI,false
+e1d9dd9e-9c4d-4256-8c7e-c2b926d7dc8b,Manx Loaghtan,2,MALOSH,MALOSH,Manx Loaghtan,v1,5.0,Continental,CONTINENTAL,GB,false
+72054a99-eb80-4387-b9b8-3f6eb42212a4,Manx Loaghtan,2,MALOSH,MALOSH,Manx Loaghtan,v1,5.0,Continental,CONTINENTAL,NI,false
+576bff03-9a7a-4d63-9783-6adacb2961c2,Manx Loaghtan X,2,MALOXSH,MALOXSH,Manx Loaghtan X,v1,5.0,Continental,CONTINENTAL,GB,false
+b94fa195-52f5-402f-95bd-1a937a29a76b,Manx Loaghtan X,2,MALOXSH,MALOXSH,Manx Loaghtan X,v1,5.0,Continental,CONTINENTAL,NI,false
+775e7b37-d18c-4ddd-b7f1-9d41442b72ef,Masham X,2,MASHXSH,MASHXSH,Masham X,v1,5.0,Continental,CONTINENTAL,GB,false
+f960aecc-a1d1-44fb-8db3-795a4a029b96,Masham X,2,MASHXSH,MASHXSH,Masham X,v1,5.0,Continental,CONTINENTAL,NI,false
+2f0575bb-328b-48c5-a121-5bab0b2175c2,Meatlinc X,2,MTLCXSH,MTLCXSH,Meatlinc X,v1,5.0,Continental,CONTINENTAL,GB,false
+47d5b457-b558-46be-8659-46d3840ecd99,Meatlinc X,2,MTLCXSH,MTLCXSH,Meatlinc X,v1,5.0,Continental,CONTINENTAL,NI,false
+ee979907-af54-432e-8757-3a2114f08fba,Nelson South Wales Mountain X,2,NSWMXSH,NSWMXSH,Nelson South Wales Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+4211763f-2e12-4be7-aed9-2c93ed38d34a,Nelson South Wales Mountain X,2,NSWMXSH,NSWMXSH,Nelson South Wales Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+20c51fb9-3056-459a-bc3f-2f9987b98c3a,Norfolk Horn X,2,NOHOXSH,NOHOXSH,Norfolk Horn X,v1,5.0,Continental,CONTINENTAL,GB,false
+0bf6f457-57e0-4226-8b4f-fd8a400ffbda,Norfolk Horn X,2,NOHOXSH,NOHOXSH,Norfolk Horn X,v1,5.0,Continental,CONTINENTAL,NI,false
+b1671d02-99d2-481f-8a80-afd41ed652cf,North Country Cheviot X,2,NCCXSH,NCCXSH,North Country Cheviot X,v1,5.0,Continental,CONTINENTAL,GB,false
+7b42bc67-a12a-4618-a428-557fe897e090,North Country Cheviot X,2,NCCXSH,NCCXSH,North Country Cheviot X,v1,5.0,Continental,CONTINENTAL,NI,false
+552976d7-6224-4fec-ba39-03d0acf10d51,North of England Mule X,2,NOEMXSH,NOEMXSH,North of England Mule X,v1,5.0,Continental,CONTINENTAL,GB,false
+20062891-584a-44ff-adb9-f6d0f6330585,North of England Mule X,2,NOEMXSH,NOEMXSH,North of England Mule X,v1,5.0,Continental,CONTINENTAL,NI,false
+358e0e2d-94df-4e40-b4e8-9ce64c3d6806,Other,2,OTHRSH,OTHRSH,Other,v1,5.0,Continental,CONTINENTAL,GB,false
+9f2b340f-579d-4702-a716-c1cb825e5ed8,Other,2,OTHRSH,OTHRSH,Other,v1,5.0,Continental,CONTINENTAL,NI,false
+3cfb2dda-cdc8-4ae4-bf61-c5632646b457,Ouessant,2,OUSH,OUSH,Ouessant,v1,5.0,Continental,CONTINENTAL,GB,false
+43f19e6f-bfd5-4404-b1fb-6e5cb243cd1c,Ouessant,2,OUSH,OUSH,Ouessant,v1,5.0,Continental,CONTINENTAL,NI,false
+65841ca6-d80a-431c-9b4a-15ee25da56df,Ouessant X,2,OUXSH,OUXSH,Ouessant X,v1,5.0,Continental,CONTINENTAL,GB,false
+689b5a34-2157-4a07-898e-ac5d42f676ef,Ouessant X,2,OUXSH,OUXSH,Ouessant X,v1,5.0,Continental,CONTINENTAL,NI,false
+aa79f9c5-ba24-4548-8386-b5a3f27b62f3,Oxford Down X,2,OXDOXSH,OXDOXSH,Oxford Down X,v1,5.0,Continental,CONTINENTAL,GB,false
+303d787a-26cd-4f79-a7d7-a2a6d6b9720f,Oxford Down X,2,OXDOXSH,OXDOXSH,Oxford Down X,v1,5.0,Continental,CONTINENTAL,NI,false
+e33cf6c0-2b4a-4f94-877a-1e60bb3a0942,Polwarth,2,POLSH,POLSH,Polwarth,v1,5.0,Continental,CONTINENTAL,GB,false
+8ba0a9a0-c759-4236-ac7d-697b8f4b6f10,Polwarth,2,POLSH,POLSH,Polwarth,v1,5.0,Continental,CONTINENTAL,NI,false
+fc6c9d52-4d22-4f44-926a-6dde85893337,Polwarth X,2,POLXSH,POLXSH,Polwarth X,v1,5.0,Continental,CONTINENTAL,GB,false
+9a8bada9-5d2b-4162-aa45-d1d1b6b0ac65,Polwarth X,2,POLXSH,POLXSH,Polwarth X,v1,5.0,Continental,CONTINENTAL,NI,false
+5022e7cf-d4a1-45f2-b792-7375c7ca97b4,Portland,2,PORTSH,PORTSH,Portland,v1,5.0,Continental,CONTINENTAL,GB,false
+a9ea60a8-7bd4-466a-b1cd-58d1dc60265c,Portland,2,PORTSH,PORTSH,Portland,v1,5.0,Continental,CONTINENTAL,NI,false
+1b828908-f788-4653-bdec-45c1b7bbf25f,Portland X,2,PORTXSH,PORTXSH,Portland X,v1,5.0,Continental,CONTINENTAL,GB,false
+ad888c8f-b4a0-4acb-8c3e-98508dd4204d,Portland X,2,PORTXSH,PORTXSH,Portland X,v1,5.0,Continental,CONTINENTAL,NI,false
+ef30425e-7bae-4da8-8090-607bee1b3f0d,Primera,2,PRIMSH,PRIMSH,Primera,v1,5.0,Continental,CONTINENTAL,GB,false
+205aac6a-0f19-4a1d-bce7-d6a258ded9c7,Primera,2,PRIMSH,PRIMSH,Primera,v1,5.0,Continental,CONTINENTAL,NI,false
+ebc00acc-c819-40f1-a265-fb4d1f9950b2,Primera X,2,PRIMXSH,PRIMXSH,Primera X,v1,5.0,Continental,CONTINENTAL,GB,false
+352f37ac-34b2-4711-b170-47b9facc3560,Primera X,2,PRIMXSH,PRIMXSH,Primera X,v1,5.0,Continental,CONTINENTAL,NI,false
+3a229fb4-dc44-482f-ab5a-3b40f91cbf45,Romney X,2,ROMXSH,ROMXSH,Romney X,v1,5.0,Continental,CONTINENTAL,GB,false
+28825d34-42dc-45ad-a48e-1c8815107a26,Romney X,2,ROMXSH,ROMXSH,Romney X,v1,5.0,Continental,CONTINENTAL,NI,false
+84301b82-d97c-420c-b767-aca2ec635db4,Wagyu Cross,3,WAX,WAX,,v1,38.0,Native,NATIVE,NI,false
+f42eb49e-cd4b-4d18-8e8c-7b60971ed6ce,Beulah Speckled Face (or Eppynt Hill & Beulah Speckled Face),2,BSFSH,BSFSH,Beulah Speckled Face (or Eppynt Hill & Beulah Speckled Face),v1,5.0,Continental,CONTINENTAL,GB,false
+5ee22428-b51e-4d24-b963-9d1a4d3b7521,Ronaldsay,2,RONSH,RONSH,Ronaldsay,v1,5.0,Continental,CONTINENTAL,GB,false
+889c3e12-53ac-411d-ab32-2fa6650fb032,Ronaldsay,2,RONSH,RONSH,Ronaldsay,v1,5.0,Continental,CONTINENTAL,NI,false
+741172fe-93dd-4254-a375-daea1671c9a2,Ronaldsay X,2,RONXSH,RONXSH,Ronaldsay X,v1,5.0,Continental,CONTINENTAL,GB,false
+e70a7e11-5a1f-4513-b057-689a6ce069ce,Ronaldsay X,2,RONXSH,RONXSH,Ronaldsay X,v1,5.0,Continental,CONTINENTAL,NI,false
+f0384ebf-e377-4acd-bc12-25274a2037dc,Rouge de L'Ouest X,2,RDLXSH,RDLXSH,Rouge de L'Ouest X,v1,5.0,Continental,CONTINENTAL,GB,false
+2e8546eb-bdce-4700-afa9-f7b966dee5c2,Rouge de L'Ouest X,2,RDLXSH,RDLXSH,Rouge de L'Ouest X,v1,5.0,Continental,CONTINENTAL,NI,false
+1eef4e46-bd04-46a7-ba6e-73847d86ec39,Rough Fell X,2,ROFLXSH,ROFLXSH,Rough Fell X,v1,5.0,Continental,CONTINENTAL,GB,false
+62b6cefd-790a-4566-a2ec-7006191c8811,Rough Fell X,2,ROFLXSH,ROFLXSH,Rough Fell X,v1,5.0,Continental,CONTINENTAL,NI,false
+fd67faff-dad3-4653-a991-62df3835f727,Roussin X,2,ROUSXSH,ROUSXSH,Roussin X,v1,5.0,Continental,CONTINENTAL,GB,false
+c29e72ec-6f40-4dc0-89c1-8f00b8119484,Roussin X,2,ROUSXSH,ROUSXSH,Roussin X,v1,5.0,Continental,CONTINENTAL,NI,false
+b4fd0640-9926-4552-aa62-f0fff42b4197,Ryeland X,2,RYEXSH,RYEXSH,Ryeland X,v1,5.0,Continental,CONTINENTAL,GB,false
+da3c4b42-4297-4db5-bc9c-9f0f247773f6,Ryeland X,2,RYEXSH,RYEXSH,Ryeland X,v1,5.0,Continental,CONTINENTAL,NI,false
+daf28b7c-98a9-4c68-9b0a-9572c3728d71,Scotch Halfbred X,2,SCHBXSH,SCHBXSH,Scotch Halfbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+8bce8ffb-d995-4a74-bb27-f7be68f59bbf,Scotch Halfbred X,2,SCHBXSH,SCHBXSH,Scotch Halfbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+c4ae9402-bbe4-400e-9b16-86315fbb4cd9,Scotch Mule X,2,SCMLXSH,SCMLXSH,Scotch Mule X,v1,5.0,Continental,CONTINENTAL,GB,false
+948b12cf-ad2f-4090-b049-4bdb5325ac0c,Scotch Mule X,2,SCMLXSH,SCMLXSH,Scotch Mule X,v1,5.0,Continental,CONTINENTAL,NI,false
+48ce5ec9-0d13-4c19-b998-105f1a97c37f,Scottish Blackface,2,SCBFSH,SCBFSH,Scottish Blackface,v1,5.0,Continental,CONTINENTAL,GB,false
+616044fe-ba7d-49e5-b2c0-bac7d9e72ab8,Scottish Blackface,2,SCBFSH,SCBFSH,Scottish Blackface,v1,5.0,Continental,CONTINENTAL,NI,false
+333d02cd-fd7b-475d-8ad6-44d58d1a36e6,Scottish Blackface X,2,SCBFXSH,SCBFXSH,Scottish Blackface X,v1,5.0,Continental,CONTINENTAL,GB,false
+e21b2a9a-cfb2-42db-8c8f-b19f61828c54,Scottish Blackface X,2,SCBFXSH,SCBFXSH,Scottish Blackface X,v1,5.0,Continental,CONTINENTAL,NI,false
+b33c0643-819e-4793-a8f6-7174e05840ff,Scottish Greyface,2,SCGFSH,SCGFSH,Scottish Greyface,v1,5.0,Continental,CONTINENTAL,GB,false
+4ff9fbc4-24d5-4ff6-acf5-bd7c52131f17,Scottish Greyface,2,SCGFSH,SCGFSH,Scottish Greyface,v1,5.0,Continental,CONTINENTAL,NI,false
+a5a09edc-c5f4-4e93-82fb-24cf942f241c,Scottish Greyface X,2,SCGFXSH,SCGFXSH,Scottish Greyface X,v1,5.0,Continental,CONTINENTAL,GB,false
+fd85ae27-be56-47da-bb9a-c14837e427ab,Scottish Greyface X,2,SCGFXSH,SCGFXSH,Scottish Greyface X,v1,5.0,Continental,CONTINENTAL,NI,false
+bc8b72ef-e49d-4010-af64-f7201bb21e4e,Shetland X,2,SHETXSH,SHETXSH,Shetland X,v1,5.0,Continental,CONTINENTAL,GB,false
+72d31131-cdee-4bce-9de2-d8a655af28a2,Shetland X,2,SHETXSH,SHETXSH,Shetland X,v1,5.0,Continental,CONTINENTAL,NI,false
+07480f6f-7a47-4874-b284-76e26557ff3b,Shropshire X,2,SHRPXSH,SHRPXSH,Shropshire X,v1,5.0,Continental,CONTINENTAL,GB,false
+4635d361-6b30-42a7-859a-719d298ab162,Shropshire X,2,SHRPXSH,SHRPXSH,Shropshire X,v1,5.0,Continental,CONTINENTAL,NI,false
+7867af5b-35f8-4d75-9374-afc9dc66560f,Soay & Boreray X,2,SOAYXSH,SOAYXSH,Soay & Boreray X,v1,5.0,Continental,CONTINENTAL,GB,false
+45830e0a-1905-459a-8cc0-2b9bc46e3a33,Soay & Boreray X,2,SOAYXSH,SOAYXSH,Soay & Boreray X,v1,5.0,Continental,CONTINENTAL,NI,false
+17d31941-3213-4c30-848c-abb20e2cfd8b,South Country Cheviot,2,SCCSH,SCCSH,South Country Cheviot,v1,5.0,Continental,CONTINENTAL,GB,false
+c3c4a99a-ded5-470c-8dea-c1ad6414f322,South Country Cheviot,2,SCCSH,SCCSH,South Country Cheviot,v1,5.0,Continental,CONTINENTAL,NI,false
+c7161599-cfeb-4071-85c0-773f3f8f5599,South Country Cheviot X,2,SCCXSH,SCCXSH,South Country Cheviot X,v1,5.0,Continental,CONTINENTAL,GB,false
+13f13c73-c58d-4cbb-af70-523ff30c7b49,South Country Cheviot X,2,SCCXSH,SCCXSH,South Country Cheviot X,v1,5.0,Continental,CONTINENTAL,NI,false
+92983d47-b3bf-4c42-b4ac-393cb8a4c6bf,South Wales Mountain,2,SWMSH,SWMSH,South Wales Mountain,v1,5.0,Continental,CONTINENTAL,GB,false
+79884803-63e0-46e5-b580-f59ee04eb3db,South Wales Mountain,2,SWMSH,SWMSH,South Wales Mountain,v1,5.0,Continental,CONTINENTAL,NI,false
+192816e6-5fbb-419d-b0e0-0540215e453e,South Wales Mountain X,2,SWMXSH,SWMXSH,South Wales Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+d989d3da-a9eb-4292-a80b-4f9c465b6069,South Wales Mountain X,2,SWMXSH,SWMXSH,South Wales Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+3ad8447d-6c76-4cd8-8985-22699ef1d1e4,Southdown X,2,SDXSH,SDXSH,Southdown X,v1,5.0,Continental,CONTINENTAL,GB,false
+8dc0a541-9d21-41f3-9a90-75da6d71f004,Southdown X,2,SDXSH,SDXSH,Southdown X,v1,5.0,Continental,CONTINENTAL,NI,false
+6b2ebd43-1d13-4981-b0f5-f2f322efa38e,Suffolk X,2,SUFFXSH,SUFFXSH,Suffolk X,v1,5.0,Continental,CONTINENTAL,GB,false
+434257a5-94de-41a7-8a26-07c2af7af2f4,Suffolk X,2,SUFFXSH,SUFFXSH,Suffolk X,v1,5.0,Continental,CONTINENTAL,NI,false
+258f605a-6a51-46cd-8b0c-fe62483d9fd7,Swaledale X,2,SWDLXSH,SWDLXSH,Swaledale X,v1,5.0,Continental,CONTINENTAL,GB,false
+dbfa0661-b773-490b-9421-f6c3ac26aee9,Swaledale X,2,SWDLXSH,SWDLXSH,Swaledale X,v1,5.0,Continental,CONTINENTAL,NI,false
+1baf2833-2442-4720-98b8-70768adda950,Talybont Welsh X,2,TAWEXSH,TAWEXSH,Talybont Welsh X,v1,5.0,Continental,CONTINENTAL,GB,false
+66b93c82-f5a2-4f26-922e-83ed4a289bdc,Talybont Welsh X,2,TAWEXSH,TAWEXSH,Talybont Welsh X,v1,5.0,Continental,CONTINENTAL,NI,false
+4aafce79-a8c5-47b7-8116-499bd7e2abf2,Teeswater X,2,TEESXSH,TEESXSH,Teeswater X,v1,5.0,Continental,CONTINENTAL,GB,false
+d04cd8b6-9606-4f9c-bfdc-f7d232366cba,Teeswater X,2,TEESXSH,TEESXSH,Teeswater X,v1,5.0,Continental,CONTINENTAL,NI,false
+ac027b36-fec4-43c7-b5ec-44eaac71d22a,Texel X,2,TEXLXSH,TEXLXSH,Texel X,v1,5.0,Continental,CONTINENTAL,GB,false
+2c295fdb-b076-4679-be35-e297156a7d51,Texel X,2,TEXLXSH,TEXLXSH,Texel X,v1,5.0,Continental,CONTINENTAL,NI,false
+f4cf2d76-3e19-4040-a948-5c37c2e06c96,Valais Blacknose X,2,VABLXSH,VABLXSH,Valais Blacknose X,v1,5.0,Continental,CONTINENTAL,GB,false
+3b6827cf-d1a0-4534-91e6-ae83896b7848,Valais Blacknose X,2,VABLXSH,VABLXSH,Valais Blacknose X,v1,5.0,Continental,CONTINENTAL,NI,false
+49410ff1-a199-46c6-8fb1-293ceefdc9de,Corriedale,2,CRDL,CRDL,Corriedale,v1,38.0,Native Sheep Breed,NATIVE,US,false
+728a2704-3e70-434e-8404-56bc29237978,Vendeen X,2,VENXSH,VENXSH,Vendeen X,v1,5.0,Continental,CONTINENTAL,GB,false
+825237f7-94c7-409e-89a8-16fb392bdcf5,Vendeen X,2,VENXSH,VENXSH,Vendeen X,v1,5.0,Continental,CONTINENTAL,NI,false
+2173c25f-36b5-499d-8b9e-63c3014d6e83,Welsh Halfbred X,2,WEHBXSH,WEHBXSH,Welsh Halfbred X,v1,5.0,Continental,CONTINENTAL,GB,false
+11cb44e9-18e8-46da-8039-a4ea2c98a58b,Welsh Halfbred X,2,WEHBXSH,WEHBXSH,Welsh Halfbred X,v1,5.0,Continental,CONTINENTAL,NI,false
+776c9352-ecdd-4feb-959e-49478699ee5a,Welsh Hill Speckled X,2,WHSFXSH,WHSFXSH,Welsh Hill Speckled X,v1,5.0,Continental,CONTINENTAL,GB,false
+4a813182-7396-4949-9936-bb6e8e952055,Welsh Hill Speckled X,2,WHSFXSH,WHSFXSH,Welsh Hill Speckled X,v1,5.0,Continental,CONTINENTAL,NI,false
+d8d9f12e-979b-4980-9536-a4ea5837b378,Welsh Mountain,2,WEMOSH,WEMOSH,Welsh Mountain,v1,5.0,Continental,CONTINENTAL,GB,false
+bd95d20c-2c2c-4881-ae04-4dc8ffba019e,Welsh Mountain,2,WEMOSH,WEMOSH,Welsh Mountain,v1,5.0,Continental,CONTINENTAL,NI,false
+8f0b15ac-7ad1-4231-aa44-e257e2f485b5,Welsh Mountain X,2,WEMOXSH,WEMOXSH,Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,GB,false
+53d8bc43-e9b4-49dd-9730-678be10a8352,Welsh Mountain X,2,WEMOXSH,WEMOXSH,Welsh Mountain X,v1,5.0,Continental,CONTINENTAL,NI,false
+4e82dcda-4844-492d-84cf-fcdada6f4c7e,Welsh Mule X,2,WEMUXSH,WEMUXSH,Welsh Mule X,v1,5.0,Continental,CONTINENTAL,GB,false
+546d2515-c52a-4474-bdbc-a813d5ebfb7b,Welsh Mule X,2,WEMUXSH,WEMUXSH,Welsh Mule X,v1,5.0,Continental,CONTINENTAL,NI,false
+23aa526d-c076-48a0-a6b3-e8fa4cf678e6,Wensleydale X,2,WNDLXSH,WNDLXSH,Wensleydale X,v1,5.0,Continental,CONTINENTAL,GB,false
+c7a4c922-895a-42a2-8340-5ef27384dc37,Wensleydale X,2,WNDLXSH,WNDLXSH,Wensleydale X,v1,5.0,Continental,CONTINENTAL,NI,false
+75b76536-8e6e-48d0-aeaa-c2f26e990bbb,White Face Dartmoor,2,WFDMSH,WFDMSH,White Face Dartmoor,v1,5.0,Continental,CONTINENTAL,GB,false
+f52d3314-71de-4ce3-a525-82888dc6a2c5,White Face Dartmoor,2,WFDMSH,WFDMSH,White Face Dartmoor,v1,5.0,Continental,CONTINENTAL,NI,false
+60b87bb0-7f2b-4e08-9ef2-c541fcc4d752,White Face Dartmoor X,2,WFDMXSH,WFDMXSH,White Face Dartmoor X,v1,5.0,Continental,CONTINENTAL,GB,false
+b0dc627b-9884-4cbe-91a8-7a6948e43cc4,White Face Dartmoor X,2,WFDMXSH,WFDMXSH,White Face Dartmoor X,v1,5.0,Continental,CONTINENTAL,NI,false
+874a7544-7350-4343-b78d-ef33e877d3a2,Whitefaced Woodland X,2,WHWOXSH,WHWOXSH,Whitefaced Woodland X,v1,5.0,Continental,CONTINENTAL,GB,false
+41efcbf1-f4fe-4ed0-b636-5889f3af96db,Whitefaced Woodland X,2,WHWOXSH,WHWOXSH,Whitefaced Woodland X,v1,5.0,Continental,CONTINENTAL,NI,false
+39cb37cd-979d-4e5a-9e6d-f28cc8e9ce54,Wiltshire Horn X,2,WIHOXSH,WIHOXSH,Wiltshire Horn X,v1,5.0,Continental,CONTINENTAL,GB,false
+16cc9325-f87d-4079-9cb4-034bbcbd5b0e,Wiltshire Horn X,2,WIHOXSH,WIHOXSH,Wiltshire Horn X,v1,5.0,Continental,CONTINENTAL,NI,false
+910fc751-e360-4046-8068-7e83ad5185c8,Zwartbles X,2,ZWAXSH,ZWAXSH,Zwartbles X,v1,5.0,Continental,CONTINENTAL,GB,false
+ad1f83ff-2ea2-4f25-ad69-7b358971bbc8,Zwartbles X,2,ZWAXSH,ZWAXSH,Zwartbles X,v1,5.0,Continental,CONTINENTAL,NI,false
+5729fe92-35d4-4078-91c6-7315e0a436a2,Cambridge,2,CMBSH,CMBSH,Cambridge,v1,5.0,Continental,CONTINENTAL,GB,false
+f63c1095-e88c-4ce1-8c58-d8618b08fd91,Cambridge,2,CMBSH,CMBSH,Cambridge,v1,5.0,Continental,CONTINENTAL,NI,false
+170cf15a-7c6f-4334-8bbd-b78303afbce6,"Merinos d'Arles (Merinos de la Crau, Metis)",2,MDA,MDA,"Merinos d'Arles (Merinos de la Crau, Metis)",v1,5.0,Continental,CONTINENTAL,EU,false
+615851e5-5ede-4a25-922c-ca4876f28a9c,Merinos de Rambouillet,2,MDR,MDR,Merinos de Rambouillet,v1,5.0,Continental,CONTINENTAL,EU,false
+242fdcce-0c59-44a6-b6ba-6cc9b3699a21,Merinos Precoce,2,MPR,MPR,Merinos Precoce,v1,5.0,Continental,CONTINENTAL,EU,false
+6353fc14-be78-4a64-91b2-6be26b5ba468,Montagne Noire,2,MON,MON,Montagne Noire,v1,5.0,Continental,CONTINENTAL,EU,false
+bd0e8469-7ea5-4446-b052-57b51ddbff59,"Mourerous (Peone, Guillaume)",2,MOU,MOU,"Mourerous (Peone, Guillaume)",v1,5.0,Continental,CONTINENTAL,EU,false
+33cd7b7c-0522-4684-b4c2-e2ed9e99a4b8,Mouton Charollaise,2,MOC,MOC,Mouton Charollaise,v1,5.0,Continental,CONTINENTAL,EU,false
+1af5d9c1-b655-43c1-a8e3-92d0748c8bc2,Noir du Velay,2,NDV,NDV,Noir du Velay,v1,5.0,Continental,CONTINENTAL,EU,false
+c4243e2e-7d69-44d1-8a5b-16c969aa930c,Ouessant,2,OUE,OUE,Ouessant,v1,5.0,Continental,CONTINENTAL,EU,false
+dc06fb99-3795-4061-8b5f-e3e47d7a3de3,Prealpes du Sud,2,PDS,PDS,Prealpes du Sud,v1,5.0,Continental,CONTINENTAL,EU,false
+af342166-a08f-4069-8a13-2d70a4feadd6,Raiole (Rayole),2,RAI,RAI,Raiole (Rayole),v1,5.0,Continental,CONTINENTAL,EU,false
+290c8bea-b86a-4b88-8c93-610e81e60c28,Rava,2,RAV,RAV,Rava,v1,5.0,Continental,CONTINENTAL,EU,false
+22728724-2fef-466a-a4a3-c7598ed45d39,Romanov,2,ROM,ROM,Romanov,v1,5.0,Continental,CONTINENTAL,EU,false
+a8b27452-74a0-44de-b908-eba21f247535,Rouge de I'Ouest,2,RDL,RDL,Rouge de I'Ouest,v1,5.0,Continental,CONTINENTAL,EU,false
+a1da48a1-a059-4905-af3b-c7379621d074,Rouge du Roussillon,2,RDR,RDR,Rouge de Roussillon,v1,5.0,Continental,CONTINENTAL,EU,false
+2542f4d8-0726-4a91-9e5a-eafe3c43de3b,Roussin de la Hague (Roussin),2,RDH,RDH,Roussin de la Hague (Roussin),v1,5.0,Continental,CONTINENTAL,EU,false
+141ba699-1597-4498-8534-3b1a63850680,Sasi Ardi,2,SAA,SAA,Sasi Ardi,v1,5.0,Continental,CONTINENTAL,EU,false
+2c1248d1-f742-41e0-9ebf-b23fda9492d6,Solognote,2,SOL,SOL,Solognote,v1,5.0,Continental,CONTINENTAL,EU,false
+71de1957-1a9c-4baa-baf3-35718141059c,Southdown (Francais),2,SOU,SOU,Southdown (Francais),v1,5.0,Continental,CONTINENTAL,EU,false
+5dfa26de-4d6b-44dd-9728-c745c8d48911,Suffolk,2,SUF,SUF,Suffolk,v1,5.0,Continental,CONTINENTAL,EU,false
+3826b1f8-83ee-4810-8c6a-f54455f7f8d8,Tarasconnaise,2,TAR,TAR,Tarasconnaise,v1,5.0,Continental,CONTINENTAL,EU,false
+6d87d47b-72ae-49f0-aaf0-746f42cb9c94,Texel,2,TEX,TEX,Texel,v1,5.0,Continental,CONTINENTAL,EU,false
+34a97998-03c5-464e-8756-e3093e0b4e12,Thones et Marthod,2,TEM,TEM,Thones et Marthod,v1,5.0,Continental,CONTINENTAL,EU,false
+a8e20ff6-1bb7-44b2-8773-38fab56da303,Unknown,2,UNKSH,UNKSH,Unknown,v1,5.0,Continental,CONTINENTAL,NI,false
+d075eb5b-09af-43eb-bee4-b48256471beb,Lakenvelder Somerset Project,3,LVSP,LVSP,Lakenvelder Somerset Project,v1,38.0,Continental,CONTINENTAL,GB,false
+e88c96cd-71f5-4228-94ff-ae61b9bdd0c7,Badger Face Welsh Mountain,2,BFWMSH,BFWMSH,Badger Face Welsh Mountain,v1,5.0,Continental,CONTINENTAL,NI,false
+c082dc96-4f77-4136-b48c-01307e635943,Beltex,2,BTXSH,BTXSH,Beltex,v1,5.0,Continental,CONTINENTAL,NI,false
+068c0e82-3161-42ba-af77-638d4e8f891d,Berrichon du Cher (or British Berrichon),2,BDCSH,BDCSH,Berrichon du Cher (or British Berrichon),v1,5.0,Continental,CONTINENTAL,NI,false
+e42a689f-8a95-43ac-a83d-bf333bc7602d,Beulah Speckled Face (or Eppynt Hill & Beulah Speckled Face),2,BSFSH,BSFSH,Beulah Speckled Face (or Eppynt Hill & Beulah Speckled Face),v1,5.0,Continental,CONTINENTAL,NI,false
+fb527ac5-0fbc-4e14-b3bc-4ce6ee5197a0,Black Welsh Mountain,2,BWMSH,BWMSH,Black Welsh Mountain,v1,5.0,Continental,CONTINENTAL,NI,false
+e441810e-f54b-4ba3-a757-dcba2ea784ce,Blackface,2,BFSH,BFSH,Blackface,v1,5.0,Continental,CONTINENTAL,NI,false
+7236209a-2f32-44fe-be47-cbafa774e0a5,Bleu Du Maine,2,BDMSH,BDMSH,Bleu Du Maine,v1,5.0,Continental,CONTINENTAL,NI,false
+1bc5a82c-8701-415b-a6fa-dd5674433ddb,Blue Texel,2,BLTXSH,BLTXSH,Blue Texel,v1,5.0,Continental,CONTINENTAL,NI,false
+758912fa-6a46-4c4c-81f2-2354a92b9fb3,Bluefaced Leicester,2,BFLSH,BFLSH,Bluefaced Leicester,v1,5.0,Continental,CONTINENTAL,NI,false
+cc83b3db-e226-4cc1-937b-40472a624df8,Border Leicester,2,BOLESH,BOLESH,Border Leicester,v1,5.0,Continental,CONTINENTAL,NI,false
+24ce44ff-a4ae-418a-976f-547125667189,Boreray,2,BORYSH,BORYSH,Boreray,v1,5.0,Continental,CONTINENTAL,NI,false
+d56d5efd-a3a8-4d59-9026-1dbe5b6c4420,Brecknock Hill Cheviot,2,BHCSH,BHCSH,Brecknock Hill Cheviot,v1,5.0,Continental,CONTINENTAL,NI,false
+dba2a74c-a027-4fdf-a920-3b71730febd8,British Milksheep,2,BMSSH,BMSSH,British Milksheep,v1,5.0,Continental,CONTINENTAL,NI,false
+1023e6b6-932f-4c80-8e3d-5ea7999cf2e0,Castlemilk Moorit,2,CAMSH,CAMSH,Castlemilk Moorit,v1,5.0,Continental,CONTINENTAL,NI,false
+ce96f754-d67d-49de-9de8-a595efc37917,Charollais (or British Charollais),2,CHARSH,CHARSH,Charollais (or British Charollais),v1,5.0,Continental,CONTINENTAL,NI,false
+defd3d6f-4f2c-4934-bbff-fafdc145d12c,Cheviot,2,CVTSH,CVTSH,Cheviot,v1,5.0,Continental,CONTINENTAL,NI,false
+e471d368-b557-451f-bc20-5a6b11e00859,Clun Forest,2,CLFSH,CLFSH,Clun Forest,v1,5.0,Continental,CONTINENTAL,NI,false
+7bf81c45-6fdb-4d8b-a154-8d0d73e3976b,Coloured Ryeland,2,CORSH,CORSH,Coloured Ryeland,v1,5.0,Continental,CONTINENTAL,NI,false
+f4a69d14-4260-4673-9cac-cb9994eeb0ab,Cotswold,2,COTSSH,COTSSH,Cotswold,v1,5.0,Continental,CONTINENTAL,NI,false
+b6418dcd-ceff-4e43-9802-589c9dac2ea8,Dalesbred,2,DALESH,DALESH,Dalesbred,v1,5.0,Continental,CONTINENTAL,NI,false
+012c5127-de53-4aab-b250-3714b183f382,Dartmoor,2,DARTSH,DARTSH,Dartmoor,v1,5.0,Continental,CONTINENTAL,NI,false
+825810b4-dba2-488c-8112-5c301032235b,Derbyshire Gritstone,2,DEGRSH,DEGRSH,Derbyshire Gritstone,v1,5.0,Continental,CONTINENTAL,NI,false
+068717de-067f-4768-8f95-d26f6f47d25d,Devon and Cornwall Longwool,2,DACLSH,DACLSH,Devon and Cornwall Longwool,v1,5.0,Continental,CONTINENTAL,NI,false
+73e83ceb-ca1f-4632-97bc-f0ed7912da1e,Devon Closewool,2,DECLSH,DECLSH,Devon Closewool,v1,5.0,Continental,CONTINENTAL,NI,false
+83ab01b2-125e-4354-9b53-ae20cd800d5a,Dorper (and White Dorper),2,DORPSH,DORPSH,Dorper (and White Dorper),v1,5.0,Continental,CONTINENTAL,NI,false
+6992cd4e-a359-482a-8376-f296ce5eb004,Dorset Horn & Poll Dorset,2,DHPDSH,DHPDSH,Dorset Horn & Poll Dorset,v1,5.0,Continental,CONTINENTAL,NI,false
+2236a677-0377-4e9c-bc1c-b46f8cc16f07,Dutch Spotted Sheep,2,DSSSH,DSSSH,Dutch Spotted Sheep,v1,5.0,Continental,CONTINENTAL,NI,false
+eb7d3ad6-2e4e-442f-98ed-59b9f85968f6,Easy Care,2,EACASH,EACASH,Easy Care,v1,5.0,Continental,CONTINENTAL,NI,false
+77cbe175-ba3b-43ad-97d1-93795e3bfb78,Epynt Hardy Speckled Face,2,EHSFSH,EHSFSH,Epynt Hardy Speckled Face,v1,5.0,Continental,CONTINENTAL,NI,false
+98b7f3f5-6802-4e85-a481-5d16cba6f71e,Exlana,2,EXLSH,EXLSH,Exlana,v1,5.0,Continental,CONTINENTAL,NI,false
+9476c2b9-2689-4253-9d13-a1f34c51cb8e,Exmoor Horn,2,EXHOSH,EXHOSH,Exmoor Horn,v1,5.0,Continental,CONTINENTAL,NI,false
+87cc3a05-d7a8-4a6c-9527-16fdd282143d,Friesland (or British Friesland),2,FRIESH,FRIESH,Friesland (or British Friesland),v1,5.0,Continental,CONTINENTAL,NI,false
+c85a47e5-b41a-464f-80bd-40cc1b2207ec,Gotland (or British Gotland),2,GOTLSH,GOTLSH,Gotland (or British Gotland),v1,5.0,Continental,CONTINENTAL,NI,false
+06d50fe1-adbf-4f2c-bfcb-0e77dd8f1082,Hampshire Down,2,HMDOSH,HMDOSH,Hampshire Down,v1,5.0,Continental,CONTINENTAL,NI,false
+f2168266-8527-4f45-9da9-94c8cbb21224,Hebridean,2,HEBRSH,HEBRSH,Hebridean,v1,5.0,Continental,CONTINENTAL,NI,false
+0bb693a9-f93d-4af2-935f-3d94adac7eb8,Herdwick,2,HERDSH,HERDSH,Herdwick,v1,5.0,Continental,CONTINENTAL,NI,false
+96691cc4-529e-45cf-b1ec-ce4b38ba5b64,Hill Radnor,2,HIRASH,HIRASH,Hill Radnor,v1,5.0,Continental,CONTINENTAL,NI,false
+67042e24-900f-4df5-ae33-79ffd6292029,Jacob,2,JACSH,JACSH,Jacob,v1,5.0,Continental,CONTINENTAL,NI,false
+140e880e-a3df-4b75-b553-2a8f543ae0ed,Kerry Hill,2,KEHISH,KEHISH,Kerry Hill,v1,5.0,Continental,CONTINENTAL,NI,false
+cb8fc502-06bf-4ed9-89ca-f94bbeb56578,Llandovery Whiteface,2,LLWFSH,LLWFSH,Llandovery Whiteface,v1,5.0,Continental,CONTINENTAL,NI,false
+1ab71afb-0f28-4789-84b4-dd46709f51b4,Llanwenog,2,LLANSH,LLANSH,Llanwenog,v1,5.0,Continental,CONTINENTAL,NI,false
+1fe9ce61-bf29-4740-99fd-bdac77230055,Lleyn,2,LLEYSH,LLEYSH,Lleyn,v1,5.0,Continental,CONTINENTAL,NI,false
+20447681-9faf-46ee-9859-2a75f873c82f,Lonk,2,LONKSH,LONKSH,Lonk,v1,5.0,Continental,CONTINENTAL,NI,false
+423839cf-2f0d-487b-a5bd-815e217af593,Manx Loaghton,2,MXLOSH,MXLOSH,Manx Loaghton,v1,5.0,Continental,CONTINENTAL,NI,false
+6fb65f3b-5db1-4c2b-bf0c-7324dba950c7,Masham,2,MASHSH,MASHSH,Masham,v1,5.0,Continental,CONTINENTAL,NI,false
+bf48bb56-8f9c-4df3-878c-e81ccf29bc07,Meatlinc,2,MTLCSH,MTLCSH,Meatlinc,v1,5.0,Continental,CONTINENTAL,NI,false
+51622225-ea07-4c2d-a35b-7495c6de93e5,Nelson South Wales Mountain,2,NSWMSH,NSWMSH,Nelson South Wales Mountain,v1,5.0,Continental,CONTINENTAL,NI,false
+2ecd4b29-0651-4137-bdc0-f98ce8edac45,Norfolk Horn,2,NOHOSH,NOHOSH,Norfolk Horn,v1,5.0,Continental,CONTINENTAL,NI,false
+4dfcc0a7-1927-4de7-b52c-e7b46ce308fc,Ile de France,2,IDFSH,IDFSH,Ile de France,v1,5.0,Continental,CONTINENTAL,NI,false
+89188012-5f8b-47eb-b2b7-6b96ae1fd661,Aberdeen Angus,3,AA,AA,Aberdeen Angus,v1,38.0,Native,NATIVE,AU,false
+0494e2b2-87b2-486c-ba27-fc702916d054,Composite,2,,,,v1,1.5,Sheep,NATIVE,AU,false
+626ca36b-246b-4e65-b8a4-8c22350b96b8,Belle Ile (race de Deux),2,BIL,BIL,Belle Ile (race de Deux),v1,5.0,Continental,CONTINENTAL,EU,false
+6d6bbbd7-c2e7-4368-a4b8-5d4afac26b4d,Berrichon du Cher (B.C.F.),2,BDC,BDC,Berrichon du Cher (B.C.F.),v1,5.0,Continental,CONTINENTAL,EU,false
+78ee7f62-91a6-45a8-8ac5-b64554844d30,North Country Cheviot,2,NCCSH,NCCSH,North Country Cheviot,v1,5.0,Continental,CONTINENTAL,NI,false
+cea13c82-f534-4029-bf03-d1cdfcc6b2b6,North of England Mule,2,NOEMSH,NOEMSH,North of England Mule,v1,5.0,Continental,CONTINENTAL,NI,false
+4fc06576-ffca-4c5e-85e4-0fefe2c1caec,Oxford Down,2,OXDOSH,OXDOSH,Oxford Down,v1,5.0,Continental,CONTINENTAL,NI,false
+c65bdf6f-c1b2-4619-8d93-2acc93534aba,Romney,2,ROMSH,ROMSH,Romney,v1,5.0,Continental,CONTINENTAL,NI,false
+d3a24f74-4aeb-4b0f-9103-7f2ef1862644,Rouge de L'ouest (or British Rouge),2,RDLSH,RDLSH,Rouge de L'ouest (or British Rouge),v1,5.0,Continental,CONTINENTAL,NI,false
+655657e4-bb82-4f2d-bab1-725017993595,Rough Fell,2,ROFLSH,ROFLSH,Rough Fell,v1,5.0,Continental,CONTINENTAL,NI,false
+9de0fd55-cbd1-4576-a5c8-ad5b12dda3c2,Roussin (or British Roussin),2,ROUSSH,ROUSSH,Roussin (or British Roussin),v1,5.0,Continental,CONTINENTAL,NI,false
+f33d1153-b055-440a-8c62-f955d65be650,Ryeland,2,RYESH,RYESH,Ryeland,v1,5.0,Continental,CONTINENTAL,NI,false
+0f9dc1f3-c369-4a21-8229-11ddbbad3c36,Scotch Mule,2,SCMLSH,SCMLSH,Scotch Mule,v1,5.0,Continental,CONTINENTAL,NI,false
+fcbb4cf8-e3ea-4b0d-9884-855d54b67103,Shetland,2,SHETSH,SHETSH,Shetland,v1,5.0,Continental,CONTINENTAL,NI,false
+ae7e5562-a167-49db-9119-995473dea72f,Shropshire,2,SHRPSH,SHRPSH,Shropshire,v1,5.0,Continental,CONTINENTAL,NI,false
+d2601dba-1d40-4125-b3fe-0ac0a22b9dc3,Soay,2,SOAYSH,SOAYSH,Soay,v1,5.0,Continental,CONTINENTAL,NI,false
+beb91001-b2c1-4abb-971d-7c663e7ee38b,Southdown,2,SDSH,SDSH,Southdown,v1,5.0,Continental,CONTINENTAL,NI,false
+77ae8a2d-81b2-4c8a-8cde-7a8f44007245,Suffolk,2,SUFFSH,SUFFSH,Suffolk,v1,5.0,Continental,CONTINENTAL,NI,false
+b1412bae-3dab-499a-b597-1015f13c38d3,Swaledale,2,SWDLSH,SWDLSH,Swaledale,v1,5.0,Continental,CONTINENTAL,NI,false
+6d146756-68fe-4de2-9185-57bd8ef17e3d,Talybont Welsh,2,TAWESH,TAWESH,Talybont Welsh,v1,5.0,Continental,CONTINENTAL,NI,false
+34d31b3b-3b78-422b-85f3-4cd66dc82d87,Teeswater,2,TEESSH,TEESSH,Teeswater,v1,5.0,Continental,CONTINENTAL,NI,false
+ffdd7367-c450-4a9a-a101-3b99d8567477,Texel,2,TEXLSH,TEXLSH,Texel,v1,5.0,Continental,CONTINENTAL,NI,false
+b9430f6d-42b8-4831-995c-cd115ab95f9f,Valais Blacknose,2,VABLSH,VABLSH,Valais Blacknose,v1,5.0,Continental,CONTINENTAL,NI,false
+bdba242a-8dc9-4a69-8144-d151bc3efa49,Vendeen (or British Vendeen),2,VENSH,VENSH,Vendeen (or British Vendeen),v1,5.0,Continental,CONTINENTAL,NI,false
+81d9021a-8f65-4d13-9bb7-7d7a68202861,Welsh Halfbred,2,WEHBSH,WEHBSH,Welsh Halfbred,v1,5.0,Continental,CONTINENTAL,NI,false
+d9e91e37-23ec-4f96-be05-9519714b977e,Welsh Hill Speckled Face,2,WHSFSH,WHSFSH,Welsh Hill Speckled Face,v1,5.0,Continental,CONTINENTAL,NI,false
+07a8b15c-e209-47a5-b2a0-5728b27a7ce0,Welsh Mule,2,WEMUSH,WEMUSH,Welsh Mule,v1,5.0,Continental,CONTINENTAL,NI,false
+8661964a-01c5-44a8-a0e6-73d547b6a829,Wensleydale,2,WNDLSH,WNDLSH,Wensleydale,v1,5.0,Continental,CONTINENTAL,NI,false
+4202fb5e-b3e2-49c5-93a1-13019dd1b223,Whiteface Woodland,2,WHWOSH,WHWOSH,Whiteface Woodland,v1,5.0,Continental,CONTINENTAL,NI,false
+4da4d813-0c39-4f90-8500-b57b5d9bd21d,Wiltshire Horn,2,WIHOSH,WIHOSH,Wiltshire Horn,v1,5.0,Continental,CONTINENTAL,NI,false
+1651394b-4920-4023-a856-dca0f342aadf,Zwartbles,2,ZWASH,ZWASH,Zwartbles,v1,5.0,Continental,CONTINENTAL,NI,false
+01e3851b-96de-4d4d-9bf7-7e5ac3e7384c,Lacaune Viande,2,LAV,LAV,Lacaune Viande,v1,5.0,Continental,CONTINENTAL,EU,false
+b0a3e323-afd9-483a-a389-8ce1d18fdf5f,Landaise (Landes de Gascogne),2,LDG,LDG,Landaise (Landes de Gascogne),v1,5.0,Continental,CONTINENTAL,EU,false
+5b84acc4-09a2-4363-a2c7-330738e63552,Berkshire,1,BERK,,,v1,1.46,Black,NATIVE,AU,false
+a15a7c91-e4fd-4189-a081-0478d33bedd6,Berrichon du I'Indre,2,BDI,BDI,Berrichon du I'Inde,v1,5.0,Continental,CONTINENTAL,EU,false
+bf06fc3e-242b-4d0c-b8ed-e70d2ab1f115,Bizet,2,BIZ,BIZ,Bizet,v1,5.0,Continental,CONTINENTAL,EU,false
+9c12e698-607f-4146-85a5-e868dd96e513,Blanc du Massif Central,2,BMC,BMC,Blanc du Massif Central,v1,5.0,Continental,CONTINENTAL,EU,false
+044f57aa-8a57-4820-a166-679783c3829d,Bleu du Maine,2,BDM,BDM,Bleu du Maine,v1,5.0,Continental,CONTINENTAL,EU,false
+a8fe27c5-57ff-4a47-b8ab-5618db481c71,Boulonnaise,2,BOU,BOU,Boulonnaise,v1,5.0,Continental,CONTINENTAL,EU,false
+9a415ec2-1b2e-4de1-91f1-40f8d2240fe4,Brigasque (Brigasca),2,BRI,BRI,Brigasque (Brigasca),v1,5.0,Continental,CONTINENTAL,EU,false
+4cef600e-c865-427c-a23b-3cb60ad4bbe2,Castillonnaise,2,CAS,CAS,Castillonnaise,v1,5.0,Continental,CONTINENTAL,EU,false
+263bf68b-e3f6-4f5d-a423-24a0c3c94d97,Caussenarde des Garrigues,2,CDG,CDG,Caussenarde des Garrigues,v1,5.0,Continental,CONTINENTAL,EU,false
+d6b5aa79-84f2-4592-b397-54c5215d0f6e,Causses du Lot,2,CDL,CDL,Causses du Lot,v1,5.0,Continental,CONTINENTAL,EU,false
+0999349f-5793-49f2-8974-e29d1e628abe,Charmoise,2,CHA,CHA,Charmoise,v1,5.0,Continental,CONTINENTAL,EU,false
+6c9d488f-4d51-4d37-9ebb-8902438071d9,Clun Forest,2,CLF,CLF,Clun Forest,v1,5.0,Continental,CONTINENTAL,EU,false
+78d108c5-dd8f-4c6b-a334-0391490ca3fd,Corse (race ovine Corse),2,COR,COR,Corse (race ovine Corse),v1,5.0,Continental,CONTINENTAL,EU,false
+7e0acb94-1ec3-4310-a842-b34f8336546c,Cotentin,2,COT,COT,Cotentin,v1,5.0,Continental,CONTINENTAL,EU,false
+7dbc7e43-f9b6-4115-8f42-dd875c1ff849,Dorset Down,2,DOD,DOD,Dorset Down,v1,5.0,Continental,CONTINENTAL,EU,false
+6cc0410d-acfc-4d07-8792-485da644f805,Est a laine Merinos,2,ELM,ELM,Est a laine Merinos,v1,5.0,Continental,CONTINENTAL,EU,false
+7539c553-a06c-446d-8bad-0e85dffd9a3b,Finnoise,2,FIN,FIN,Finnoise,v1,5.0,Continental,CONTINENTAL,EU,false
+7cc2e1bc-7386-44ac-a993-aef1e687632e,Grivette,2,GRI,GRI,Grivette,v1,5.0,Continental,CONTINENTAL,EU,false
+d18b1210-3de2-4e46-9273-32e6a7f2dd36,Hampshire,2,HAM,HAM,Hampshire,v1,5.0,Continental,CONTINENTAL,EU,false
+92cbbf9c-fdee-46b6-8f24-667d6bf352f4,Inra 401 (Romane),2,INR,INR,Inra 401 (Romane),v1,5.0,Continental,CONTINENTAL,EU,false
+72a29156-923d-4f95-9a40-f08d2054c35a,Landes de Bretagne (Landes de I'Ouest),2,LDB,LDB,Landes de Bretagne (Landes de I'Ouest),v1,5.0,Continental,CONTINENTAL,EU,false
+a901a7b1-6ea6-404d-b13e-043ef513a896,Limousine,2,LIM,LIM,Limousine,v1,5.0,Continental,CONTINENTAL,EU,false
+c5acff6d-2dfc-4e55-9034-f38bd93172e2,Lourdaise,2,LOU,LOU,Lourdaise,v1,5.0,Continental,CONTINENTAL,EU,false
+69730936-9e29-4509-94b4-f81c67e6ad88,Manech Noire (Manech Tete Noire),2,MAN,MAN,Manech Noire (Manech Tete Noire),v1,5.0,Continental,CONTINENTAL,EU,false
+29919b54-3081-438f-8b7d-1b24db84e5b5,Manech Rousse (Manech Test Rousse),2,MAR,MAR,Manech Rousse (Manech Tete Rousse),v1,5.0,Continental,CONTINENTAL,EU,false
+50ca209f-5896-4df8-9424-07e7dbbef23e,Martinik (OMK),2,MIK,MIK,Martinik (OMK),v1,5.0,Continental,CONTINENTAL,EU,false

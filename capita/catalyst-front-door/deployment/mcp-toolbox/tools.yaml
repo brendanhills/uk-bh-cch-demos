@@ -1,0 +1,207 @@
+sources:
+  postgresql: # GCP -  CLOUD SQL
+    kind: cloud-sql-postgres
+    project: uk-bh-experiments-argolis
+    region: us-central1
+    instance: software-assistant
+    database: ideasdb
+    user: ${DB_USER}
+    password: ${DB_PASS}
+  #postgresql: # LOCAL
+      #kind: postgres
+      #host: 127.0.0.1
+      #port: 5432
+      #database: ideasdb
+      #user: postgres
+      #password: eER*zRz4zp4ZtgzPUDru
+
+tools:
+  search-ideas:
+    kind: postgres-sql
+    source: postgresql
+    description: Search for ideas based on a the contents of the title, description, and summary.
+    parameters:
+      - name: title
+        type: string
+        description: The title of the idea to search for.
+      - name: description
+        type: string
+        description: (Optional) A description of the idea to search for.
+      - name: summary
+        type: string
+        description: (Optional) A summary of the idea to search for.
+    statement: |
+      SELECT *
+      FROM "ideas"
+      ORDER BY "embedding_vector" <-> embedding('text-embedding-005', $1 || ' ' || COALESCE($2, '') || ' ' || COALESCE($3, ''))::vector NULLS LAST
+      LIMIT 10
+
+
+  get-idea-by-id:
+    kind: postgres-sql
+    source: postgresql
+    description: Retrieve a idea's details using its unique ID.
+    parameters:
+      - name: id
+        type: integer
+        description: The unique ID of the idea.
+    statement: SELECT * FROM ideas WHERE id = $1;
+
+  create-new-idea:
+    kind: postgres-sql
+    source: postgresql
+    description: Create a new software idea with only title, submitter, and description.
+    parameters:
+      - name: title
+        type: string
+        description: The title of the new idea.
+      - name: submitter
+        type: string
+        description: The email of the person who submitted the idea.
+      - name: description
+        type: string
+        description: (Optional) A detailed description of the idea.
+    statement: |
+      INSERT INTO ideas (title, submitter, description)
+      VALUES ($1, $2, $3)
+      RETURNING id;
+  
+  link-ideas:
+    kind: postgres-sql
+    source: postgresql
+    description: "Creates a directional link between two ideas, specifying the nature of their relationship."
+    parameters:
+      - name: "idea_id_from"
+        type: "integer"
+        description: "The ID of the idea that the link originates from."
+      - name: "idea_id_to"
+        type: "integer"
+        description: "The ID of the idea that the link points to."
+      - name: "relationship"
+        type: "string"
+        description: "The type of relationship. Must be one of: 'extends', 'duplicate', 'supersedes'."
+    statement: "INSERT INTO linked_ideas (idea_id_from, idea_id_to, relationship) VALUES ($1, $2, $3::relationship_type);"
+  
+
+  update-idea-pr-faq-json:
+    kind: postgres-sql
+    source: postgresql
+    description: Update the pr_faq_doc of an idea based on its ID.
+    parameters:
+      - name: pr_faq_doc
+        type: string
+        description: The new pr_faq_doc for the idea (as a JSON string).
+      - name: id
+        type: integer
+        description: The ID of the idea.
+    statement: UPDATE ideas SET pr_faq_doc = $1::jsonb WHERE id = $2;
+
+  update-idea:
+    kind: postgres-sql
+    source: postgresql
+    description: Update one or more fields of an idea based on its ID. Only provided fields will be updated.
+    parameters:
+      - name: id
+        type: integer
+        description: The ID of the idea to update.
+      - name: title
+        type: string
+        description: (Optional) The new title for the idea.
+      - name: description
+        type: string
+        description: (Optional) The new description for the idea.
+      - name: urgency
+        type: integer
+        description: (Optional) The urgency of the idea. An integer from 1 to 5.
+      - name: stage
+        type: string
+        description: (Optional) The new stage of the idea (e.g., 'New', 'In Progress', 'Closed', 'Resolved').
+      - name: request_type
+        type: string
+        description: (Optional) The new request_type for the idea.
+      - name: business_owner
+        type: string
+        description: (Optional) The new business_owner for the idea.
+      - name: roi
+        type: string
+        description: (Optional) The new return on investment (ROI) for the idea.
+      - name: strategic_impact
+        type: string
+        description: (Optional) The new strategic_impact for the idea.
+      - name: summary
+        type: string
+        description: (Optional) The new summary for the idea.
+      - name: business_unit
+        type: string
+        description: (Optional) The new business_unit for the idea.
+      - name: proposition_area
+        type: string
+        description: (Optional) The new proposition_area for the idea.
+    statement: |
+      UPDATE ideas
+      SET
+        title = COALESCE($2, title),
+        description = COALESCE($3, description),
+        urgency = COALESCE($4, urgency),
+        stage = COALESCE($5, stage),
+        request_type = COALESCE($6, request_type),
+        business_owner = COALESCE($7, business_owner),
+        roi = COALESCE($8, roi),
+        strategic_impact = COALESCE($9, strategic_impact),
+        summary = COALESCE($10, summary),
+        business_unit = COALESCE($11, business_unit),
+        proposition_area = COALESCE($12, proposition_area) 
+      WHERE id = $1;
+
+  get-linked-ideas:
+     kind: postgres-sql
+     source: postgresql
+     description: Retrieve all ideas linked to a given idea ID, including the relationship type.
+     parameters:
+       - name: idea_id
+         type: integer
+         description: The ID of the idea for which to find linked ideas.
+     statement: |
+       SELECT idea_id_from, idea_id_to, relationship
+       FROM linked_ideas;
+ 
+  get-ideas:
+     kind: postgres-sql
+     source: postgresql
+     description: Retrieve ideas from the database, with optional filters. If no filters are provided, all ideas are returned.
+     parameters:
+       - name: submitter
+         type: string
+         description: (Optional) The email of the submitter to search for (case-insensitive).
+       - name: stage
+         type: string
+         description: (Optional) The stage of the ideas to retrieve (e.g., 'New', 'In Progress', 'Closed', 'Resolved').
+       - name: urgency
+         type: integer
+         description: (Optional) The urgency of the ideas to retrieve (an integer from 1 to 5).
+       - name: start_date
+         type: string
+         description: (Optional) The start date for a creation date range (e.g., 'YYYY-MM-DD').
+       - name: end_date
+         type: string
+         description: (Optional) The end date for a creation date range (e.g., 'YYYY-MM-DD').
+     statement: |
+       SELECT * FROM ideas
+       WHERE ($1 IS NULL OR submitter ILIKE '%' || $1 || '%')
+       AND ($2 IS NULL OR stage ILIKE '%' || $2 || '%')
+       AND ($3 IS NULL OR urgency = $3)
+       AND ($4 IS NULL OR submission_date >= $4::timestamp)
+       AND ($5 IS NULL OR submission_date <= $5::timestamp)
+       ORDER BY id ASC;
+
+
+toolsets:
+  ideas-toolset:
+    - search-ideas
+    - get-idea-by-id
+    - get-ideas
+    - get-linked-ideas
+    - create-new-idea
+    - link-ideas
+    - update-idea
+    - update-idea-pr-faq-json

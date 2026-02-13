@@ -1,0 +1,23 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "software-assistant",
+            "database": "ideasdb",
+            "username": "postgres"
+        }
+    ],
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests/integration",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
+}
