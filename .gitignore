@@ -56,6 +56,3 @@ ge_handson/dummy.txt
 ge_handson/project_iam_policy.json
 capita/transcribe/output.json
 capita/transcribe/transcribe_project.zip
-
-capita/catalyst-front-door/node_modules/
-recruiting_agent/
