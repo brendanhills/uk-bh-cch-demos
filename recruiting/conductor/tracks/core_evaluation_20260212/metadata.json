@@ -1,0 +1,8 @@
+{
+  "track_id": "core_evaluation_20260212",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-12T12:00:00Z",
+  "updated_at": "2026-02-12T12:00:00Z",
+  "description": "Implement the core logic for parsing interview notes and rubrics to generate a structured evaluation report."
+}
