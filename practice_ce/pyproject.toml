@@ -1,0 +1,14 @@
+[project]
+name = "practice-ce"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.129.0",
+    "lxml>=6.0.2",
+    "pandas>=2.3.3",
+    "streamlit>=1.54.0",
+    "uvicorn>=0.40.0",
+    "zeep>=4.3.2",
+]
