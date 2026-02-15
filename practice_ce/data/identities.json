@@ -1,0 +1,42 @@
+{
+    "system.admin": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "Admin"
+    },
+    "brendan": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "Admin"
+    },
+    "system": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "System"
+    },
+    "Compliance": {
+        "google_id": "cathy.compliance@brendanhills.altostrat.com",
+        "role": "Compliance"
+    },
+    "Trader": {
+        "google_id": "tim.trader@brendanhills.altostrat.com",
+        "role": "Trader"
+    },
+    "Auditor": {
+        "google_id": "annie.auditor@brendanhills.altostrat.com",
+        "role": "Auditor"
+    },
+    "Manager": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "Manager"
+    },
+    "Executive": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "Executive"
+    },
+    "HR": {
+        "google_id": "brendan@brendanhills.altostrat.com",
+        "role": "HR"
+    },
+    "InvestmentBanking": {
+        "google_id": "ian.ibanker@brendanhills.altostrat.com",
+        "role": "InvestmentBanking"
+    }
+}

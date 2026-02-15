@@ -3,35 +3,32 @@ from google.protobuf.json_format import ParseDict
 import connector_app.config as config
 import logging
 
-# Identity Mapping Configuration
+import json
+import os
+
+# Load Identities
+config_path = os.path.join(os.path.dirname(__file__), "../data/identities.json")
+try:
+    with open(config_path, "r") as f:
+        USER_MAPPING = json.load(f)
+except FileNotFoundError:
+    logging.warning(f"Identity mapping file not found at {config_path}. Using empty mapping.")
+    USER_MAPPING = {}
+
 DOMAIN = "brendanhills.altostrat.com"
-# Map specific legacy users to full emails if they don't follow the pattern
-USER_MAPPING = {
-    "system.admin": f"brendan@{DOMAIN}", 
-    "brendan": f"brendan@{DOMAIN}",
-    "system": f"brendan@{DOMAIN}", # Map system events to admin
-    # Demo Mappings
-    "Compliance": f"cathy.compliance@{DOMAIN}",
-    "Trader": f"tim.trader@{DOMAIN}",
-    "Auditor": f"annie.auditor@{DOMAIN}",
-    "Manager": f"brendan@{DOMAIN}", # Map manager to admin for visibility
-    "Executive": f"brendan@{DOMAIN}", # Map executive to admin for visibility
-    "HR": f"brendan@{DOMAIN}", # Map HR to admin for visibility
-    "InvestmentBanking": f"ian.ibanker@{DOMAIN}",
-}
 
 def map_identity(legacy_user):
     """Maps a legacy username (or role) to a Google Cloud Identity."""
+    # Check direct mapping
     if legacy_user in USER_MAPPING:
-        return USER_MAPPING[legacy_user]
+        return USER_MAPPING[legacy_user]["google_id"]
     
+    # Fallback to domain construction if it looks like a user
     if "." in legacy_user:
         return f"{legacy_user}@{DOMAIN}"
-    else:
-        # Default to a group if no dot (e.g. 'Compliance' role -> group)
-        # Note: You likely need to stick to USER emails for this demo unless you have groups set up.
-        # For simplicity, let's map roles to specific users for now or leave as is.
-        return f"group:{legacy_user}@{DOMAIN}"
+    
+    # Fallback to group
+    return f"group:{legacy_user}@{DOMAIN}"
 
 class Indexer:
     def __init__(self, project_id=None, location=None):

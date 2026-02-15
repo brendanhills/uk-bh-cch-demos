@@ -1,0 +1,224 @@
+Practice Customer Engineer, AI (GE)
+Google Interview Presentation Prompt
+We’re excited you’ve reached the Presentation stage of the Practice Customer Engineering interview process.
+The content below provides background information, instructions, assessment details and best practices for
+your presentation. For questions regarding your interview schedule, please contact your Recruiter.
+
+Background
+The Practice Customer Engineer serves as a domain expert responsible for accelerating technical wins and
+adoption of complex, specialized workloads. You will leverage your deep expertise in our most strategic product
+areas to be hands-on developing prototypes, proofs-of-concept, and demos to sell new, highly specialized
+solutions to customers. You will solve practice-specific customer challenges and provide a critical feedback loop
+to influence customers and product development.
+In this 45-minute, 1:1 interview, you’ll be assessed on your domain-specific technical acumen, consultative skills,
+and your ability to deliver a targeted presentation of your choosing. You will spend 30 minutes presenting and
+10-15 minutes of Q&A regarding your presentation content.
+
+Assessment
+The purpose of this part of the interview process is to assess your ability in the following areas:
+●​
+●​
+●​
+●​
+●​
+●​
+
+Domain-specific technical acumen
+Hands-on keyboard skills
+Identifying customer solutions
+Engaging with your audience
+Conveying measurable business value
+Effectively handling questions
+
+The Prompt
+A multinational bank with 80,000 employees across 40 countries is struggling with knowledge fragmentation.
+Institutional knowledge is scattered across dozens of systems, and finding information is a significant
+productivity drain.
+The 'new employee problem': A new hire takes 6+ months to become fully productive because they can't find
+information. Common frustrations:
+
+careers.google.com
+
+●​ Where is the policy on client gift limits?' (Answer: Buried in a 200-page compliance PDF in SharePoint)
+●​ Who approved the exception for the Smith account?' (Answer: In a ServiceNow ticket from 2 years ago)
+●​ What's the process for requesting trading system access?' (Answer: In Workday, but under a
+non-intuitive category)
+Current systems and their challenges:
+
+System
+
+Data Type
+
+ServiceNow
+
+IT tickets, change
+requests,
+knowledge base
+
+80,000
+
+Okta SSO
+
+REST API with
+OAuth
+
+HR policies, org
+charts, PTO,
+payroll
+
+80,000
+
+Okta SSO
+
+SOAP/REST with
+OAuth
+
+Trading rules,
+regulatory filings,
+audit logs
+
+5,000 (trading
+floor)
+
+LDAP + 2FA
+
+Legacy SOAP, no
+modern auth
+
+SharePoint
+(legacy)
+
+Department
+documents,
+policies,
+procedures
+
+60,000
+
+Azure AD
+(federated to
+Okta)
+
+Microsoft Graph
+
+Confluence
+
+Technical
+documentation,
+runbooks
+
+15,000 (IT/Ops)
+
+Okta SSO
+
+REST API
+
+Workday
+
+Compliance
+System
+(proprietary)
+
+Users
+
+Authentication
+
+API
+
+The security complexity: This is a bank—access control is not optional, it's legally mandated:
+●​ Chinese wall: Investment banking employees cannot see trading floor communications about certain
+clients
+●​ HR confidentiality: Only HR and direct managers can see performance reviews
+●​ Regulatory: Compliance documents have specific access lists; audit logs must show who accessed
+what
+●​ Geographic: EU employees' data must comply with GDPR; some data cannot be processed in US
+datacenters
+Specific access control scenarios to handle:
+1.​ A trader searches 'client gift policy'—they should see the trading-specific policy, not the investment
+banking version
+
+careers.google.com
+
+2.​ An HR manager searches 'termination process for John Smith'—they should see relevant HR docs only
+for their direct reports
+3.​ A compliance officer searches 'trading violations'—they should see audit logs, but not HR files about the
+traders involved
+4.​ An IT support tech searches 'password reset'—they should see ServiceNow knowledge articles, not
+Workday admin procedures
+The customer wants Gemini Enterprise / Agentspace that:
+1.​ Provides unified natural language search across all 5 systems
+2.​ Respects existing access controls—users see only what they're authorized to see in source systems
+3.​ Uses existing Okta SSO—no separate login or credential management
+4.​ Maintains complete audit trail of all searches and document access
+5.​ Keeps data in the bank's environment—no data sent to public APIs
+Technical challenges you must address:
+1.​ Authentication flow: User authenticates via Okta → How does that identity propagate to ServiceNow,
+Workday, and the legacy compliance system?
+2.​ ACL synchronization: Source systems have their own permission models—how do you translate these
+for search?
+3.​ Connector architecture: No first-party connectors exist—you must build custom connectors for each
+system
+4.​ Token management: How do you handle token exchange across different identity providers without
+storing long-lived credentials?
+5.​ Legacy system: The compliance system uses LDAP+2FA with no OAuth—how do you integrate it
+securely?
+Questions to address:
+●​ Walk me through the complete authentication flow when a user performs a search
+●​ How do you implement Workload Identity Federation to avoid storing credentials?
+●​ How do you handle the Okta → Azure AD → ServiceNow token delegation chain?
+●​ What happens if a document's permissions change after it's been indexed?
+●​ How do you design audit logging that satisfies regulators?
+Design the connector architecture and authentication flow. This is primarily a security and identity
+federation challenge—the search quality is secondary to getting access control right.
+
+Your Audience
+You, the domain specialist, have been engaged to build that architecture and present it to the customer’s domain
+expert. You are presenting the validated proof-of-concept and final technical design to the customer’s domain
+expert (Technical Stakeholder) and their VP of Strategy (Business Stakeholder). Your interviewer will ask
+questions to represent both perspectives.
+
+Your Presentation
+We recommend your presentation to follow the layout and flow below. You are welcome to create a slide
+presentation, screen share, or use another format to showcase your solution. Your presentation is intended to be
+
+careers.google.com
+
+covered in 30 minutes with 10-15 minutes of Q&A regarding your presentation content. The mock customer
+meeting should not exceed 45 minutes, including interactions and questions from the “customer”.
+●​ Title & context: Introductions and setting the stage for the specific practice scenario.
+●​ The specialized challenge: Clearly define the "unblocker." Why was an off-the-shelf solution
+impossible?
+●​ Technical deep-dive / live demonstration: Show the custom code, scripts, or novel architecture used
+to resolve the challenge. Demonstrate your "hands-on" proficiency.
+●​ Architectural decisions & trade-offs: Defend your design to the technical expert. Why this custom
+approach over others?
+●​ Business & strategic value: Translate the technical win into ROI or competitive advantage for the VP of
+Strategy.
+●​ Implementation & next steps: High-level roadmap for moving the prototype to production ramp.
+
+Presentation Logistics
+●​ Important: Be sure not to include confidential information in your presentation; including the name of
+the customer example being used. Avoid using logos, screenshots or imagery that could breach
+confidentiality. Please make the best decision based on your current workplace agreements.
+●​ While our goal is to evaluate your ability to step into a Google Cloud CE role, this interview is not meant
+to be an exhaustive demonstration of your mastery of Google's product features or naming conventions.
+Please feel free to leverage your experience with other public cloud providers and products in the
+market as part of your presentation.
+●​ You’re welcome to use any presentation software (including but not limited to: Google Slides, PPT,
+Adobe, Prezi, Keynote). Please note that certain software may take over your entire presentation
+window. Be sure to practice presenting via Google Meet before your interview.
+●​ Practice your presentation without your notes. You may use notes during your presentation, but know
+that if you share your screen, the interviewers may be able to see them.
+
+Best Practices
+●​ Build your presentation with simplicity and intention. The panel will assess verbal communication and
+presentation content and structure.
+●​ We want this to be fun, not burdensome! The presentation should take no more than approximately four
+hours to prepare.
+●​ Anticipate and prepare for questions you might be asked during and after you finish.
+●​ Practice! Your delivery should be conversational but professional. Let your Recruiter know if you have any
+questions about your presentation format.
+
+careers.google.com
+
+

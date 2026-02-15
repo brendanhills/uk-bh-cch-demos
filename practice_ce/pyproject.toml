@@ -3,7 +3,7 @@ name = "practice-ce"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = "==3.13.*"
 dependencies = [
     "fastapi>=0.129.0",
     "google-cloud>=0.34.0",
@@ -13,4 +13,5 @@ dependencies = [
     "uvicorn>=0.40.0",
     "zeep>=4.3.2",
     "google-cloud-discoveryengine",
+    "reportlab",
 ]
