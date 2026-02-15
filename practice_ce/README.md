@@ -67,7 +67,10 @@ For your connector demonstration, you can authenticate using one of these test p
 You can manually verify that the authentication and endpoint logic works using the provided client script:
 
 ```bash
-uv run python test_client.py
+uv run python connector_app/soap_client.py
 ```
-This script acts as an example of how a client needs to connect using HTTP Basic Auth to satisfy the legacy requirement before making SOAP RPC calls.
+*(Note: You may need to adjust `connector_app/soap_client.py` to run as a standalone script if you want to test it in isolation, or use `test_pbac.py` for logic verification)*
 NOTE: Always run 'uv sync' or 'uv run' manually when starting work.
+
+## Demo Script
+For detailed step-by-step instructions on running the demo, see [DEMO_SCRIPT.md](DEMO_SCRIPT.md).

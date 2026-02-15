@@ -87,3 +87,41 @@ This script guides you through demonstrating **Policy-Based Access Control (PBAC
 ## 📝 Key Takeaways
 1. **Single Source of Truth**: The `acls.json` policy drives both the App and the Search Index.
 2. **Zero-Trust AI**: Even if a user tries to "trick" the LLM (Injection), the underlying retrieval system (Vertex AI Search) refuses to hand over the document. The LLM never even sees the sensitive data.
+
+---
+
+## Part 4: Combined Search Scenario (App + Drive)
+*Show that the search unifies results from the Compliance App (Structured) and Google Drive (Unstructured), respecting permissions for both.*
+
+### Setup
+1. **Google Drive**:
+   - Create a folder named **"Shared docs"**.
+   - **Share** this folder with `tim.trader` (or "Everyone").
+   - **Move** the following files INT0 this folder:
+     - `Social_Media_Policy.pdf`
+     - `IT_Guide_VPN_Setup.md`
+   - **Keep** `Compliance_Whistleblower_Policy.pdf` OUTSIDE (or restrict access to `cathy.compliance` only).
+
+### 👤 Scene A: Tim Trader
+*Impersonate `tim.trader@...`*
+
+**Prompt:**
+> What are the policies on social media and whistleblowing?
+
+- **Expected**:
+  - ✅ Citations from `Social_Media_Policy.pdf` (Drive).
+  - ❌ **NO** citations from `Compliance_Whistleblower_Policy.pdf` (Drive).
+  - ✅ Citations from `TR-001` (App - Internal).
+  - ❌ **NO** citations from `TR-004` (App - Restricted).
+
+### 👤 Scene B: Cathy Compliance
+*Impersonate `cathy.compliance@...`*
+
+**Prompt:**
+> What are the policies on social media and whistleblowing?
+
+- **Expected**:
+  - ✅ Citations from `Social_Media_Policy.pdf`.
+  - ✅ Citations from `Compliance_Whistleblower_Policy.pdf`.
+  - ✅ Citations from `TR-001`.
+  - ✅ Citations from `TR-004`.
