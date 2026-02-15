@@ -970,5 +970,41 @@
         "details": "Viewed Regulatory Filing: RF-10K-2023 - SEC Form 10-K Annual Report (2023)",
         "category": "AuditLog",
         "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1109",
+        "timestamp": "2026-02-15T11:54:37.325713",
+        "userId": "tim.trader",
+        "action": "ACCESS_DENIED",
+        "details": "Attempted to access Trading Rule: TR-004",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1110",
+        "timestamp": "2026-02-15T12:00:16.083463",
+        "userId": "brendan@brendanhills.altostrat.com",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed (Deep Link) Regulatory Filing: RF-10K-2023",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1111",
+        "timestamp": "2026-02-15T12:04:07.463803",
+        "userId": "brendan@brendanhills.altostrat.com",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed (Deep Link) Regulatory Filing: RF-2023-Q4",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1112",
+        "timestamp": "2026-02-15T12:21:39.313826",
+        "userId": "tim.trader",
+        "action": "ACCESS_DENIED",
+        "details": "Attempted to access Trading Rule: TR-004",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
     }
 ]

@@ -1,4 +1,4 @@
-from google.cloud import discoveryengine_v1 as discoveryengine
+from google.cloud import discoveryengine_v1alpha as discoveryengine
 from google.protobuf.json_format import ParseDict
 import connector_app.config as config
 import logging
@@ -91,11 +91,22 @@ class Indexer:
         clean_item["uri"] = f"http://localhost:8501/?id={doc_id}"
         
         # 3. Create Document Object
-        # Use simple dict for dry run output readability if needed, but object for push
+        # Extract content for the main 'content' field if available
+        # This satisfies CONTENT_REQUIRED and improves search relevance
+        # Fallback to 'details' for Audit Logs
+        page_content = clean_item.get("content") or clean_item.get("summary") or clean_item.get("details") or ""
+        
+        # If schema is strict about struct_data not having 'content' if it's in top-level, we might remove it
+        # But usually duplication is fine or preferred for retention in structured result.
+        
         document = discoveryengine.Document(
             id=doc_id,
             struct_data=clean_item,
-            acl_info=acl_info, 
+            acl_info=acl_info,
+            content=discoveryengine.Document.Content(
+                mime_type="text/plain",
+                raw_bytes=page_content.encode("utf-8")
+            ) if page_content else None
         )
         
         if dry_run:

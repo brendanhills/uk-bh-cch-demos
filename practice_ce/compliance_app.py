@@ -271,6 +271,9 @@ elif page == "Compliance Data Registry":
                 # Check Authorization
                 is_authorized = db.is_authorized(target_doc, current_username, current_user_role)
                 
+                # DEBUG: Trace permissions
+                st.caption(f"[DEBUG] User: {current_username} | Role: {current_user_role} | Doc Sensitivity: {target_doc.get('sensitivity')} | Authorized: {is_authorized}")
+                
                 if is_authorized:
                     st.success(f"✅ Access Granted: {doc_type}")
                     st.markdown(f"**Title**: {target_doc['title']}")

@@ -161,13 +161,9 @@ def handle_get_audit_logs(query, user_info):
         log_elem = etree.SubElement(logs_array, f"{{{TNS}}}AuditLog")
         
         if user_info["role"] == "Connector":
-             # For Audit Logs, owner also has access.
+             # For Audit Logs, strictly follow role-based policy.
+             # Removed "Owner Access" as per user request to restrict to admins/compliance.
              effective_acl = get_effective_acl(l)
-             # Add the specific user owner if not already covered (though roles covers groups)
-             # The connector usually maps external groups. 
-             # If mapping userId -> userId, we can add it.
-             if l.get("userId") and l.get("userId") not in effective_acl:
-                 effective_acl.append(l.get("userId"))
                  
              acl_elem = etree.SubElement(log_elem, f"{{{TNS}}}acl")
              for item in effective_acl:

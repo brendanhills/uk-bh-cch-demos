@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+.env
+
+# Local Data & Artefacts
+search_results.json
+gcs_content/

@@ -4,7 +4,7 @@ LOCATION = "us"  # Explicitly requested by user
 
 # Data Store Configuration
 # The ID you want to assign to your new Data Store
-DATA_STORE_ID = "cebank-compliance-store-v4"
+DATA_STORE_ID = "cebank-compliance-store-v6"
 
 # Human-readable name for the Data Store
 DATA_STORE_DISPLAY_NAME = "CEBank Compliance Data"
