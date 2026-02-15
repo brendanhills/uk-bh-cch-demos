@@ -163,6 +163,50 @@ def list_engines():
     except Exception as e:
         print(f"Error listing engines: {e}")
 
+def search_engine(query):
+    project_id = config.PROJECT_ID
+    location = config.LOCATION
+    engine_id = config.ENGINE_ID
+    
+    client = discoveryengine.SearchServiceClient(
+        client_options=(
+            ClientOptions(api_endpoint=f"{location}-discoveryengine.googleapis.com")
+            if location != "global"
+            else None
+        )
+    )
+    
+    # Manually construct path to avoid client library version mismatches
+    serving_config = f"projects/{project_id}/locations/{location}/collections/default_collection/engines/{engine_id}/servingConfigs/default_config"
+    
+    print(f"Searching Engine '{engine_id}' for '{query}'...")
+    try:
+        request = discoveryengine.SearchRequest(
+            serving_config=serving_config,
+            query=query,
+            page_size=5,
+        )
+        response = client.search(request)
+        
+        print(f"Found {response.total_size} results.")
+        for result in response.results:
+            doc = result.document
+            print(f"ID: {doc.id}")
+            
+            # Unstructured docs might use derived_struct_data or just have content
+            data = getattr(doc, "struct_data", {}) or {}
+            derived = getattr(doc, "derived_struct_data", {}) or {}
+            
+            title = data.get('title') or derived.get('title') or doc.id
+            link = data.get('uri') or derived.get('link') or 'N/A'
+            
+            print(f"Title: {title}")
+            print(f"Link: {link}")
+            print("-" * 20)
+            
+    except Exception as e:
+        print(f"Search failed: {e}")
+
 def run_sync():
     logging.info("Running Connector Sync...")
     try:
@@ -179,6 +223,8 @@ def main():
     subparsers.add_parser("link", help="Link Data Store to Engine")
     subparsers.add_parser("list", help="List available Engines")
     subparsers.add_parser("sync", help="Run Connector Sync (Push Documents)")
+    search_parser = subparsers.add_parser("search", help="Search the Engine")
+    search_parser.add_argument("query", help="Query string")
     
     args = parser.parse_args()
     
@@ -192,6 +238,8 @@ def main():
         list_engines()
     elif args.command == "sync":
         run_sync()
+    elif args.command == "search":
+        search_engine(args.query)
 
 if __name__ == "__main__":
     main()
