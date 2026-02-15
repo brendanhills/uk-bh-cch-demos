@@ -1,0 +1,974 @@
+[
+    {
+        "id": "AUD-1067",
+        "timestamp": "2026-01-16T23:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1091",
+        "timestamp": "2026-01-17T05:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1030",
+        "timestamp": "2026-01-17T13:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1009",
+        "timestamp": "2026-01-17T23:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1095",
+        "timestamp": "2026-01-18T15:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1007",
+        "timestamp": "2026-01-18T21:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1011",
+        "timestamp": "2026-01-18T23:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1059",
+        "timestamp": "2026-01-18T23:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1075",
+        "timestamp": "2026-01-19T07:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1086",
+        "timestamp": "2026-01-19T11:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1085",
+        "timestamp": "2026-01-19T22:57:32.028831",
+        "userId": "system",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1042",
+        "timestamp": "2026-01-19T23:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1003",
+        "timestamp": "2026-01-20T06:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1066",
+        "timestamp": "2026-01-20T11:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1051",
+        "timestamp": "2026-01-20T14:57:32.028831",
+        "userId": "tina.trader",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1057",
+        "timestamp": "2026-01-20T14:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1063",
+        "timestamp": "2026-01-21T09:57:32.028831",
+        "userId": "tina.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1001",
+        "timestamp": "2026-01-22T06:57:32.028831",
+        "userId": "tina.trader",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1065",
+        "timestamp": "2026-01-22T08:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1043",
+        "timestamp": "2026-01-22T19:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1008",
+        "timestamp": "2026-01-23T00:57:32.028831",
+        "userId": "tina.trader",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1033",
+        "timestamp": "2026-01-23T14:57:32.028831",
+        "userId": "tim.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1020",
+        "timestamp": "2026-01-23T17:57:32.028831",
+        "userId": "tina.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1093",
+        "timestamp": "2026-01-23T18:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1049",
+        "timestamp": "2026-01-23T21:57:32.028831",
+        "userId": "tim.trader",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1022",
+        "timestamp": "2026-01-23T23:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1064",
+        "timestamp": "2026-01-24T10:57:32.028831",
+        "userId": "tina.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1088",
+        "timestamp": "2026-01-24T16:57:32.028831",
+        "userId": "system",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1050",
+        "timestamp": "2026-01-24T17:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1061",
+        "timestamp": "2026-01-24T22:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1046",
+        "timestamp": "2026-01-25T03:57:32.028831",
+        "userId": "tina.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1010",
+        "timestamp": "2026-01-25T05:57:32.028831",
+        "userId": "helen.hr",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1080",
+        "timestamp": "2026-01-25T08:57:32.028831",
+        "userId": "tim.trader",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1068",
+        "timestamp": "2026-01-25T19:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1025",
+        "timestamp": "2026-01-26T00:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1039",
+        "timestamp": "2026-01-26T07:57:32.028831",
+        "userId": "tim.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1000",
+        "timestamp": "2026-01-26T09:57:32.028831",
+        "userId": "tina.trader",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1079",
+        "timestamp": "2026-01-26T21:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1048",
+        "timestamp": "2026-01-27T07:57:32.028831",
+        "userId": "tina.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1089",
+        "timestamp": "2026-01-27T08:57:32.028831",
+        "userId": "tim.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1034",
+        "timestamp": "2026-01-27T14:57:32.028831",
+        "userId": "helen.hr",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1047",
+        "timestamp": "2026-01-27T17:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1092",
+        "timestamp": "2026-01-27T19:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1026",
+        "timestamp": "2026-01-27T21:57:32.028831",
+        "userId": "system",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1031",
+        "timestamp": "2026-01-28T13:57:32.028831",
+        "userId": "helen.hr",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1016",
+        "timestamp": "2026-01-28T16:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1040",
+        "timestamp": "2026-01-29T09:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1006",
+        "timestamp": "2026-01-29T15:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1076",
+        "timestamp": "2026-01-29T16:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1082",
+        "timestamp": "2026-01-29T17:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1096",
+        "timestamp": "2026-01-30T01:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1071",
+        "timestamp": "2026-01-30T17:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1013",
+        "timestamp": "2026-01-31T10:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-9901",
+        "timestamp": "2026-01-31T10:57:32.028831",
+        "userId": "tim.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "WhatsApp usage detected matching restricted keyword 'guaranteed return'. Trading violation.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-9902",
+        "timestamp": "2026-01-31T11:57:32.028831",
+        "userId": "system",
+        "action": "ACCOUNT_LOCKED",
+        "details": "Account tim.trader locked pending trading violation investigation.",
+        "category": "AuditLog",
+        "sensitivity": "Restricted"
+    },
+    {
+        "id": "AUD-1015",
+        "timestamp": "2026-01-31T13:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1084",
+        "timestamp": "2026-02-01T05:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-9903",
+        "timestamp": "2026-02-01T10:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Accessed TR-003 during trading violation investigation.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1038",
+        "timestamp": "2026-02-01T15:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1045",
+        "timestamp": "2026-02-02T09:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1081",
+        "timestamp": "2026-02-02T13:57:32.028831",
+        "userId": "system",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1098",
+        "timestamp": "2026-02-02T13:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1097",
+        "timestamp": "2026-02-02T16:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1004",
+        "timestamp": "2026-02-02T20:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1041",
+        "timestamp": "2026-02-03T00:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1018",
+        "timestamp": "2026-02-03T02:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1054",
+        "timestamp": "2026-02-03T02:57:32.028831",
+        "userId": "tim.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1078",
+        "timestamp": "2026-02-03T02:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1053",
+        "timestamp": "2026-02-03T17:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1072",
+        "timestamp": "2026-02-04T02:57:32.028831",
+        "userId": "system",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1024",
+        "timestamp": "2026-02-05T11:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1062",
+        "timestamp": "2026-02-05T11:57:32.028831",
+        "userId": "helen.hr",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1070",
+        "timestamp": "2026-02-05T11:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1029",
+        "timestamp": "2026-02-05T12:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1019",
+        "timestamp": "2026-02-05T16:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1023",
+        "timestamp": "2026-02-05T17:57:32.028831",
+        "userId": "system",
+        "action": "TRADE_PRECLEARANCE_SUBMITTED",
+        "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1090",
+        "timestamp": "2026-02-06T09:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1087",
+        "timestamp": "2026-02-07T01:57:32.028831",
+        "userId": "system",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1028",
+        "timestamp": "2026-02-07T02:57:32.028831",
+        "userId": "tina.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1074",
+        "timestamp": "2026-02-07T03:57:32.028831",
+        "userId": "tina.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1069",
+        "timestamp": "2026-02-07T07:57:32.028831",
+        "userId": "tina.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1005",
+        "timestamp": "2026-02-07T11:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1055",
+        "timestamp": "2026-02-07T11:57:32.028831",
+        "userId": "helen.hr",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1094",
+        "timestamp": "2026-02-07T14:57:32.028831",
+        "userId": "helen.hr",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1027",
+        "timestamp": "2026-02-08T00:57:32.028831",
+        "userId": "tina.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1017",
+        "timestamp": "2026-02-08T07:57:32.028831",
+        "userId": "tim.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Action DOCUMENT_READ performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1036",
+        "timestamp": "2026-02-09T05:57:32.028831",
+        "userId": "helen.hr",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1002",
+        "timestamp": "2026-02-09T17:57:32.028831",
+        "userId": "tina.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1060",
+        "timestamp": "2026-02-09T23:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1012",
+        "timestamp": "2026-02-10T00:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1014",
+        "timestamp": "2026-02-10T00:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1058",
+        "timestamp": "2026-02-10T02:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1077",
+        "timestamp": "2026-02-10T03:57:32.028831",
+        "userId": "tim.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1083",
+        "timestamp": "2026-02-10T03:57:32.028831",
+        "userId": "tim.trader",
+        "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+        "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1035",
+        "timestamp": "2026-02-10T04:57:32.028831",
+        "userId": "tim.trader",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1056",
+        "timestamp": "2026-02-10T17:57:32.028831",
+        "userId": "tina.trader",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1021",
+        "timestamp": "2026-02-12T01:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1032",
+        "timestamp": "2026-02-12T06:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1037",
+        "timestamp": "2026-02-12T15:57:32.028831",
+        "userId": "helen.hr",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1073",
+        "timestamp": "2026-02-13T01:57:32.028831",
+        "userId": "tina.trader",
+        "action": "LOGIN_FAILED",
+        "details": "Action LOGIN_FAILED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1099",
+        "timestamp": "2026-02-13T02:57:32.028831",
+        "userId": "cathy.compliance",
+        "action": "TRADE_PRECLEARANCE_APPROVED",
+        "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1052",
+        "timestamp": "2026-02-13T03:57:32.028831",
+        "userId": "system",
+        "action": "LOGIN_SUCCESS",
+        "details": "Action LOGIN_SUCCESS performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1044",
+        "timestamp": "2026-02-14T08:57:32.028831",
+        "userId": "system",
+        "action": "COMMUNICATION_FLAGGED",
+        "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1104",
+        "timestamp": "2026-02-15T11:11:19.668333",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed Regulatory Filing: RF-2023-Q4 - Q4 2023 AML Compliance Report",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1105",
+        "timestamp": "2026-02-15T11:18:35.673494",
+        "userId": "tim.trader",
+        "action": "ACCESS_DENIED",
+        "details": "Attempted to access Trading Rule: TR-004",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1106",
+        "timestamp": "2026-02-15T11:20:31.610365",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed Regulatory Filing: RF-10K-2023 - SEC Form 10-K Annual Report (2023)",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1107",
+        "timestamp": "2026-02-15T11:28:50.096663",
+        "userId": "cathy.compliance",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed Regulatory Filing: RF-SAR-994 - Suspicious Activity Report (SAR) - Client Alpha",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    },
+    {
+        "id": "AUD-1108",
+        "timestamp": "2026-02-15T11:31:00.199045",
+        "userId": "tim.trader",
+        "action": "DOCUMENT_READ",
+        "details": "Viewed Regulatory Filing: RF-10K-2023 - SEC Form 10-K Annual Report (2023)",
+        "category": "AuditLog",
+        "sensitivity": "Confidential"
+    }
+]

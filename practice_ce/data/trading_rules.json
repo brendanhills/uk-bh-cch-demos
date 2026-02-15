@@ -1,0 +1,58 @@
+[
+    {
+        "id": "TR-001",
+        "title": "Insider Trading Policy",
+        "content": "Employees are strictly prohibited from trading on material non-public information. This policy applies to all employees, consultants, and contractors of CEBank International. Material non-public information (MNPI) is defined as any information that has not been disclosed to the general public and could affect the market price of a security. Examples include impending mergers, earnings reports, and significant legal changes.\n\nViolations of this policy may result in severe disciplinary action, including termination of employment and referral to regulatory authorities. All employees must certify their compliance with this policy annually. Personal trading accounts must be disclosed and are subject to monitoring to detect potential overlaps with the bank's restricted lists.",
+        "effectiveDate": "2020-01-01",
+        "category": "TradingRule",
+        "sensitivity": "Internal"
+    },
+    {
+        "id": "TR-002",
+        "title": "Personal Account Dealing",
+        "content": "All trades in personal accounts must be pre-cleared by the compliance department. This ensures that personal trading activities do not conflict with the interests of CEBank's clients or the bank itself. Employees must submit a pre-clearance request via the internal compliance portal at least 24 hours prior to execution.\n\nApprovals are valid for 24 hours from the time of issuance. Certain securities, such as those on the Restricted List or Watch List, will be automatically denied. Failure to obtain pre-clearance or trading after an approval has expired is a violation of the bank's Code of Conduct and may lead to disgorgements of improved profits or disciplinary action.",
+        "effectiveDate": "2021-06-15",
+        "category": "TradingRule",
+        "sensitivity": "Internal"
+    },
+    {
+        "id": "TR-003",
+        "title": "Communications Policy",
+        "content": "Use of unauthorized messaging apps (e.g., WhatsApp, Signal, Telegram) for business purposes is strictly forbidden. All business communications must be conducted through approved channels that are captured and archived by the bank's surveillance systems. This includes email, Bloomberg Chat, and authorized internal messaging platforms.\n\nThe use of personal devices for business communication is famously known as 'off-channel communications' and has led to significant fines for financial institutions. If a client initiates contact via an unapproved channel, employees must immediately redirect the conversation to an approved channel and report the interaction to Compliance to ensure a complete audit trail.",
+        "effectiveDate": "2022-09-01",
+        "category": "TradingRule",
+        "sensitivity": "Internal"
+    },
+    {
+        "id": "TR-004",
+        "title": "Volcker Rule Constraints - Proprietary Trading",
+        "content": "In accordance with the Dodd-Frank Act, CEBank International is strictly prohibited from engaging in proprietary trading or using own capital for short-term market speculation. The Volcker Rule aims to protect bank customers by preventing banks from making certain types of speculative investments that contributed to the 2008 financial crisis.\n\nThis policy outlines the specific exemptions allowed under the rule, such as market making, underwriting, and risk-mitigating hedging. Each desk must maintain a comprehensive inventory of its positions and demonstrate that they are within the limits set for market-making activities. Independent testing will be conducted annually to ensure ongoing compliance with these strict regulations.",
+        "effectiveDate": "2015-07-21",
+        "category": "TradingRule",
+        "sensitivity": "Restricted"
+    },
+    {
+        "id": "TR-005",
+        "title": "MiFID II - Best Execution Policy",
+        "content": "All execution desks must take all sufficient steps to obtain the best possible result for clients, factoring in price, costs, speed, and likelihood of execution and settlement. This 'Best Execution' obligation applies to all asset classes and requires the bank to have a written execution policy that is reviewed at least annually.\n\nTraders must evaluate execution venues based on quantitative and qualitative factors. In the event of a material change in market conditions allowing for better execution on a new venue, the policy must be updated accordingly. Reports on the top five execution venues (RTS 28) must be published annually to demonstrate transparency to clients.",
+        "effectiveDate": "2018-01-03",
+        "category": "TradingRule",
+        "sensitivity": "Internal"
+    },
+    {
+        "id": "TR-006",
+        "title": "Information Barriers (Chinese Walls)",
+        "content": "Strict physical and digital barriers must be maintained between the Private Side (M&A, Advisory) and the Public Side (Sales, Trading, Research) to prevent the leakage of Material Non-Public Information (MNPI). These 'Chinese Walls' are essential for managing conflicts of interest and ensuring fair markets.\n\nEmployees on the Private Side are 'over the wall' and possess confidential information. They must not communicate this information to Public Side employees unless a specific 'wall-crossing' procedure is followed, which requires Compliance approval and logging. Physical access to Private Side floors is restricted to authorized personnel only, and digital access controls prevent unauthorized data sharing.",
+        "effectiveDate": "2010-11-01",
+        "category": "TradingRule",
+        "sensitivity": "Restricted"
+    },
+    {
+        "id": "TR-007",
+        "title": "Prohibition of Market Manipulation",
+        "content": "Engagement in any practice that artificially distorts market prices or volumes is forbidden. This includes Spoofing (placing intent-to-cancel orders), Layering (creating a false impression of liquidity), and Wash Trading (buying and selling the same instrument to create volume).\n\nAlgorithmic trading strategies must be tested to ensure they do not contribute to disorderly market conditions. Traders are responsible for monitoring their orders and must report any suspicious activity observed in the market. The bank utilizes automated surveillance tools to detect potential manipulative patterns and will investigate all triggered alerts.",
+        "effectiveDate": "2019-04-15",
+        "category": "TradingRule",
+        "sensitivity": "Internal"
+    }
+]

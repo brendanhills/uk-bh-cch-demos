@@ -17,7 +17,7 @@ def start_streamlit_app():
     print("Starting Streamlit Dashboard...")
     # Give the SOAP service a moment to start so the logs look orderly
     time.sleep(2)
-    subprocess.run([sys.executable, "-m", "streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"])
+    subprocess.run([sys.executable, "-m", "streamlit", "run", "compliance_app.py", "--server.port=8501", "--server.address=0.0.0.0"])
 
 if __name__ == "__main__":
     print(f"--- CEBank International Compliance System ---")

@@ -3,7 +3,7 @@
         {
             "id": "TR-001",
             "title": "Insider Trading Policy",
-            "content": "Employees are strictly prohibited from trading on material non-public information.",
+            "content": "Employees are strictly prohibited from trading on material non-public information. This policy applies to all employees, consultants, and contractors of CEBank International. Material non-public information (MNPI) is defined as any information that has not been disclosed to the general public and could affect the market price of a security. Examples include impending mergers, earnings reports, and significant legal changes.\n\nViolations of this policy may result in severe disciplinary action, including termination of employment and referral to regulatory authorities. All employees must certify their compliance with this policy annually. Personal trading accounts must be disclosed and are subject to monitoring to detect potential overlaps with the bank's restricted lists.",
             "effectiveDate": "2020-01-01",
             "acl": [
                 "Trader",
@@ -15,7 +15,7 @@
         {
             "id": "TR-002",
             "title": "Personal Account Dealing",
-            "content": "All trades in personal accounts must be pre-cleared by the compliance department.",
+            "content": "All trades in personal accounts must be pre-cleared by the compliance department. This ensures that personal trading activities do not conflict with the interests of CEBank's clients or the bank itself. Employees must submit a pre-clearance request via the internal compliance portal at least 24 hours prior to execution.\n\nApprovals are valid for 24 hours from the time of issuance. Certain securities, such as those on the Restricted List or Watch List, will be automatically denied. Failure to obtain pre-clearance or trading after an approval has expired is a violation of the bank's Code of Conduct and may lead to disgorgements of improved profits or disciplinary action.",
             "effectiveDate": "2021-06-15",
             "acl": [
                 "Trader",
@@ -26,7 +26,7 @@
         {
             "id": "TR-003",
             "title": "Communications Policy",
-            "content": "Use of unauthorized messaging apps (e.g. WhatsApp) for business purposes is strictly forbidden.",
+            "content": "Use of unauthorized messaging apps (e.g., WhatsApp, Signal, Telegram) for business purposes is strictly forbidden. All business communications must be conducted through approved channels that are captured and archived by the bank's surveillance systems. This includes email, Bloomberg Chat, and authorized internal messaging platforms.\n\nThe use of personal devices for business communication is famously known as 'off-channel communications' and has led to significant fines for financial institutions. If a client initiates contact via an unapproved channel, employees must immediately redirect the conversation to an approved channel and report the interaction to Compliance to ensure a complete audit trail.",
             "effectiveDate": "2022-09-01",
             "acl": [
                 "Trader",
@@ -38,7 +38,7 @@
         {
             "id": "TR-004",
             "title": "Volcker Rule Constraints - Proprietary Trading",
-            "content": "In accordance with the Dodd-Frank Act, CEBank International is strictly prohibited from engaging in proprietary trading or using own capital for short-term market speculation.",
+            "content": "In accordance with the Dodd-Frank Act, CEBank International is strictly prohibited from engaging in proprietary trading or using own capital for short-term market speculation. The Volcker Rule aims to protect bank customers by preventing banks from making certain types of speculative investments that contributed to the 2008 financial crisis.\n\nThis policy outlines the specific exemptions allowed under the rule, such as market making, underwriting, and risk-mitigating hedging. Each desk must maintain a comprehensive inventory of its positions and demonstrate that they are within the limits set for market-making activities. Independent testing will be conducted annually to ensure ongoing compliance with these strict regulations.",
             "effectiveDate": "2015-07-21",
             "acl": [
                 "Trader",
@@ -50,7 +50,7 @@
         {
             "id": "TR-005",
             "title": "MiFID II - Best Execution Policy",
-            "content": "All execution desks must take all sufficient steps to obtain the best possible result for clients, factoring in price, costs, speed, and likelihood of execution and settlement.",
+            "content": "All execution desks must take all sufficient steps to obtain the best possible result for clients, factoring in price, costs, speed, and likelihood of execution and settlement. This 'Best Execution' obligation applies to all asset classes and requires the bank to have a written execution policy that is reviewed at least annually.\n\nTraders must evaluate execution venues based on quantitative and qualitative factors. In the event of a material change in market conditions allowing for better execution on a new venue, the policy must be updated accordingly. Reports on the top five execution venues (RTS 28) must be published annually to demonstrate transparency to clients.",
             "effectiveDate": "2018-01-03",
             "acl": [
                 "Trader",
@@ -61,7 +61,7 @@
         {
             "id": "TR-006",
             "title": "Information Barriers (Chinese Walls)",
-            "content": "Strict physical and digital barriers must be maintained between the Private Side (M&A, Advisory) and the Public Side (Sales, Trading, Research) to prevent the leakage of Material Non-Public Information (MNPI).",
+            "content": "Strict physical and digital barriers must be maintained between the Private Side (M&A, Advisory) and the Public Side (Sales, Trading, Research) to prevent the leakage of Material Non-Public Information (MNPI). These 'Chinese Walls' are essential for managing conflicts of interest and ensuring fair markets.\n\nEmployees on the Private Side are 'over the wall' and possess confidential information. They must not communicate this information to Public Side employees unless a specific 'wall-crossing' procedure is followed, which requires Compliance approval and logging. Physical access to Private Side floors is restricted to authorized personnel only, and digital access controls prevent unauthorized data sharing.",
             "effectiveDate": "2010-11-01",
             "acl": [
                 "Trader",
@@ -74,7 +74,7 @@
         {
             "id": "TR-007",
             "title": "Prohibition of Market Manipulation",
-            "content": "Engagement in any practice that artificially distorts market prices or volumes is forbidden. This includes Spoofing (placing intent-to-cancel orders), Layering, and Wash Trading.",
+            "content": "Engagement in any practice that artificially distorts market prices or volumes is forbidden. This includes Spoofing (placing intent-to-cancel orders), Layering (creating a false impression of liquidity), and Wash Trading (buying and selling the same instrument to create volume).\n\nAlgorithmic trading strategies must be tested to ensure they do not contribute to disorderly market conditions. Traders are responsible for monitoring their orders and must report any suspicious activity observed in the market. The bank utilizes automated surveillance tools to detect potential manipulative patterns and will investigate all triggered alerts.",
             "effectiveDate": "2019-04-15",
             "acl": [
                 "Trader",
@@ -90,7 +90,7 @@
             "filingDate": "2024-01-15",
             "regulator": "FCA",
             "status": "Submitted",
-            "summary": "Quarterly report detailing Anti-Money Laundering monitoring activities.",
+            "summary": "Quarterly report detailing Anti-Money Laundering monitoring activities. This report summarizes the alerts generated by the transaction monitoring system, the number of Suspicious Activity Reports (SARs) filed, and the outcome of enhanced due diligence (EDD) reviews.\n\nIt also highlights key risks identified during the quarter, such as increased activity in high-risk jurisdictions or emergence of new typologies. The report includes metrics on the timeliness of alert disposition and the quality of investigations conducted by the AML team.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -103,7 +103,7 @@
             "filingDate": "2024-02-10",
             "regulator": "FinCEN",
             "status": "Review",
-            "summary": "Investigation into unusual trading patterns by desk alpha.",
+            "summary": "Investigation into unusual trading patterns by desk alpha. This Suspicious Activity Report (SAR) documents a series of trades executed on February 10, 2024, involving a large position in XYZ Corp just before a positive earnings announcement.\n\nThe trader in question, 'Trader A', had no prior history of trading this specific equity. The timing and size of the trade suggest potential knowledge of MNPI. The account has been placed under heightened supervision, and this report is filed with FinCEN in accordance with the Bank Secrecy Act.",
             "acl": [
                 "Compliance",
                 "Executive"
@@ -115,7 +115,7 @@
             "filingDate": "2024-02-12",
             "regulator": "Internal",
             "status": "Closed",
-            "summary": "HR disciplinary record regarding unauthorized communications.",
+            "summary": "HR disciplinary record regarding unauthorized communications. Employee 'Trader X' was found to be using WhatsApp to communicate with three hedge fund clients regarding market color and pricing. This is a direct violation of the Communications Policy (TR-003).\n\nThe employee has been issued a formal written warning and their bonus for the current year is subject to clawback provisions. Mandatory training on communication compliance has been assigned and must be completed within 30 days. Further violations will result in termination.",
             "acl": [
                 "HR",
                 "Executive"
@@ -127,7 +127,7 @@
             "filingDate": "2024-04-30",
             "regulator": "FCA / PRA",
             "status": "Submitted",
-            "summary": "Standardized reporting detailing Tier 1 capital ratios, risk-weighted assets, and leverage ratios under the Capital Requirements Regulation (CRR).",
+            "summary": "Standardized reporting detailing Tier 1 capital ratios, risk-weighted assets, and leverage ratios under the Capital Requirements Regulation (CRR). This dataset is critical for the regulator to assess the bank's solvency and resilience to stress.\n\nThe report covers credit risk, market risk, and operational risk components. Significant changes from the previous quarter include an increase in RWA due to a new model validation adjustment for the equity trading desk. The current CET1 ratio stands at 14.5%, well above the regulatory minimum.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -140,7 +140,7 @@
             "filingDate": "2024-03-01",
             "regulator": "SEC",
             "status": "Published",
-            "summary": "Comprehensive annual financial performance report, including Regulation S-K Item 1400 disclosures on Net Interest Margin and Loan Portfolio Composition.",
+            "summary": "Comprehensive annual financial performance report, including Regulation S-K Item 1400 disclosures on Net Interest Margin and Loan Portfolio Composition. This document provides a detailed overview of CEBank International's financial health, business strategy, and risk factors.\n\nKey sections include Management's Discussion and Analysis (MD&A), audited financial statements, and notes to the accounts. It also discloses legal proceedings, executive compensation, and market risk disclosures. This public filing is available to all investors and stakeholders.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -155,7 +155,7 @@
             "filingDate": "2024-04-15",
             "regulator": "FDIC",
             "status": "Submitted",
-            "summary": "Quarterly report assessing the bank's health based on the CAMELS rating system (Capital, Assets, Management, Earnings, Liquidity, Sensitivity).",
+            "summary": "Quarterly report assessing the bank's health based on the CAMELS rating system (Capital, Assets, Management, Earnings, Liquidity, Sensitivity). This consolidated report aggregates data from all domestic and foreign offices of CEBank.\n\nIt provides granular data on loan performance, allowance for credit losses (ACL), and deposit insurance assessments. The data is used by the FDIC to calculate deposit insurance premiums and monitor systemic risk.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -168,7 +168,7 @@
             "filingDate": "2024-02-28",
             "regulator": "FinCEN",
             "status": "Submitted",
-            "summary": "Confidential report detailing structured cash deposits indicative of potential money laundering by retail client.",
+            "summary": "Confidential report detailing structured cash deposits indicative of potential money laundering by retail client. The client, 'Client Alpha', made 14 cash deposits of $9,500 over a two-week period at different branch locations.\n\nThis pattern, known as 'structuring' or 'smurfing', is designed to evade the $10,000 Currency Transaction Report (CTR) filing threshold. The source of funds could not be verified, and the client's stated occupation does not support this volume of cash. We recommend account closure.",
             "acl": [
                 "Compliance",
                 "Executive"
@@ -177,227 +177,143 @@
     ],
     "audit_logs": [
         {
-            "id": "AUD-1081",
-            "timestamp": "2026-01-14T08:42:33.886222",
-            "userId": "tim.trader",
+            "id": "AUD-1014",
+            "timestamp": "2026-01-15T22:28:14.139302",
+            "userId": "system",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1078",
+            "timestamp": "2026-01-15T22:28:14.139302",
+            "userId": "cathy.compliance",
             "action": "TRADE_PRECLEARANCE_APPROVED",
             "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1011",
+            "timestamp": "2026-01-16T01:28:14.139302",
+            "userId": "system",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1001",
+            "timestamp": "2026-01-16T15:28:14.139302",
+            "userId": "tim.trader",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
                 "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1031",
+            "timestamp": "2026-01-17T02:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1067",
+            "timestamp": "2026-01-17T06:28:14.139302",
+            "userId": "system",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1075",
+            "timestamp": "2026-01-17T09:28:14.139302",
+            "userId": "system",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1042",
+            "timestamp": "2026-01-17T12:28:14.139302",
+            "userId": "helen.hr",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1074",
+            "timestamp": "2026-01-17T15:28:14.139302",
+            "userId": "system",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
             ]
         },
         {
             "id": "AUD-1066",
-            "timestamp": "2026-01-14T10:42:33.886222",
-            "userId": "tina.trader",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1098",
-            "timestamp": "2026-01-14T13:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1005",
-            "timestamp": "2026-01-14T16:42:33.886222",
-            "userId": "tim.trader",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1020",
-            "timestamp": "2026-01-14T17:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1077",
-            "timestamp": "2026-01-14T17:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1007",
-            "timestamp": "2026-01-14T19:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1092",
-            "timestamp": "2026-01-15T16:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1015",
-            "timestamp": "2026-01-16T17:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1063",
-            "timestamp": "2026-01-16T22:42:33.886222",
-            "userId": "helen.hr",
+            "timestamp": "2026-01-18T04:28:14.139302",
+            "userId": "system",
             "action": "TRADE_PRECLEARANCE_SUBMITTED",
             "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "helen.hr"
+                "system"
             ]
         },
         {
-            "id": "AUD-1040",
-            "timestamp": "2026-01-17T01:42:33.886222",
-            "userId": "tim.trader",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1027",
-            "timestamp": "2026-01-17T02:42:33.886222",
+            "id": "AUD-1088",
+            "timestamp": "2026-01-19T05:28:14.139302",
             "userId": "helen.hr",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
                 "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1062",
-            "timestamp": "2026-01-17T06:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1096",
-            "timestamp": "2026-01-17T10:42:33.886222",
-            "userId": "tina.trader",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1059",
-            "timestamp": "2026-01-18T02:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1043",
-            "timestamp": "2026-01-18T03:42:33.886222",
-            "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
             ]
         },
         {
             "id": "AUD-1069",
-            "timestamp": "2026-01-18T17:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1095",
-            "timestamp": "2026-01-18T17:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1089",
-            "timestamp": "2026-01-18T19:42:33.886222",
+            "timestamp": "2026-01-20T01:28:14.139302",
             "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -405,8 +321,20 @@
             ]
         },
         {
-            "id": "AUD-1097",
-            "timestamp": "2026-01-19T00:42:33.886222",
+            "id": "AUD-1025",
+            "timestamp": "2026-01-20T20:28:14.139302",
+            "userId": "system",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1093",
+            "timestamp": "2026-01-20T22:28:14.139302",
             "userId": "cathy.compliance",
             "action": "TRADE_PRECLEARANCE_SUBMITTED",
             "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
@@ -417,11 +345,11 @@
             ]
         },
         {
-            "id": "AUD-1000",
-            "timestamp": "2026-01-19T07:42:33.886222",
+            "id": "AUD-1039",
+            "timestamp": "2026-01-21T07:28:14.139302",
             "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -429,20 +357,20 @@
             ]
         },
         {
-            "id": "AUD-1021",
-            "timestamp": "2026-01-19T11:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "id": "AUD-1018",
+            "timestamp": "2026-01-22T06:28:14.139302",
+            "userId": "tina.trader",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "helen.hr"
+                "tina.trader"
             ]
         },
         {
-            "id": "AUD-1084",
-            "timestamp": "2026-01-19T13:42:33.886222",
+            "id": "AUD-1029",
+            "timestamp": "2026-01-22T08:28:14.139302",
             "userId": "cathy.compliance",
             "action": "DOCUMENT_READ",
             "details": "Action DOCUMENT_READ performed successfully.",
@@ -453,20 +381,68 @@
             ]
         },
         {
-            "id": "AUD-1076",
-            "timestamp": "2026-01-20T17:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "id": "AUD-1085",
+            "timestamp": "2026-01-22T21:28:14.139302",
+            "userId": "system",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "tim.trader"
+                "system"
             ]
         },
         {
-            "id": "AUD-1091",
-            "timestamp": "2026-01-20T17:42:33.886222",
+            "id": "AUD-1037",
+            "timestamp": "2026-01-23T03:28:14.139302",
+            "userId": "tina.trader",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1099",
+            "timestamp": "2026-01-23T09:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1092",
+            "timestamp": "2026-01-23T13:28:14.139302",
+            "userId": "helen.hr",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1006",
+            "timestamp": "2026-01-23T14:28:14.139302",
+            "userId": "helen.hr",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1071",
+            "timestamp": "2026-01-23T21:28:14.139302",
             "userId": "tim.trader",
             "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
             "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
@@ -477,47 +453,11 @@
             ]
         },
         {
-            "id": "AUD-1050",
-            "timestamp": "2026-01-21T02:42:33.886222",
-            "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1090",
-            "timestamp": "2026-01-21T02:42:33.886222",
-            "userId": "system",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1052",
-            "timestamp": "2026-01-21T07:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1086",
-            "timestamp": "2026-01-21T15:42:33.886222",
+            "id": "AUD-1005",
+            "timestamp": "2026-01-24T00:28:14.139302",
             "userId": "cathy.compliance",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -525,8 +465,176 @@
             ]
         },
         {
-            "id": "AUD-1032",
-            "timestamp": "2026-01-21T21:42:33.886222",
+            "id": "AUD-1056",
+            "timestamp": "2026-01-24T01:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1000",
+            "timestamp": "2026-01-24T02:28:14.139302",
+            "userId": "helen.hr",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1049",
+            "timestamp": "2026-01-24T18:28:14.139302",
+            "userId": "tina.trader",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1016",
+            "timestamp": "2026-01-25T07:28:14.139302",
+            "userId": "tina.trader",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1045",
+            "timestamp": "2026-01-25T11:28:14.139302",
+            "userId": "helen.hr",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1043",
+            "timestamp": "2026-01-25T12:28:14.139302",
+            "userId": "tim.trader",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1052",
+            "timestamp": "2026-01-25T14:28:14.139302",
+            "userId": "tim.trader",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1027",
+            "timestamp": "2026-01-25T15:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1096",
+            "timestamp": "2026-01-25T18:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1046",
+            "timestamp": "2026-01-25T19:28:14.139302",
+            "userId": "helen.hr",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1053",
+            "timestamp": "2026-01-26T15:28:14.139302",
+            "userId": "tina.trader",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1097",
+            "timestamp": "2026-01-26T16:28:14.139302",
+            "userId": "helen.hr",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1095",
+            "timestamp": "2026-01-26T17:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1089",
+            "timestamp": "2026-01-27T00:28:14.139302",
+            "userId": "tina.trader",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1073",
+            "timestamp": "2026-01-27T07:28:14.139302",
             "userId": "tina.trader",
             "action": "LOGIN_FAILED",
             "details": "Action LOGIN_FAILED performed successfully.",
@@ -537,23 +645,23 @@
             ]
         },
         {
-            "id": "AUD-1041",
-            "timestamp": "2026-01-21T23:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "id": "AUD-1032",
+            "timestamp": "2026-01-27T10:28:14.139302",
+            "userId": "tina.trader",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "helen.hr"
+                "tina.trader"
             ]
         },
         {
-            "id": "AUD-1067",
-            "timestamp": "2026-01-22T05:42:33.886222",
+            "id": "AUD-1051",
+            "timestamp": "2026-01-27T11:28:14.139302",
             "userId": "cathy.compliance",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -561,8 +669,56 @@
             ]
         },
         {
-            "id": "AUD-1068",
-            "timestamp": "2026-01-22T07:42:33.886222",
+            "id": "AUD-1030",
+            "timestamp": "2026-01-27T17:28:14.139302",
+            "userId": "tina.trader",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1094",
+            "timestamp": "2026-01-27T17:28:14.139302",
+            "userId": "tim.trader",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1070",
+            "timestamp": "2026-01-28T01:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1013",
+            "timestamp": "2026-01-28T06:28:14.139302",
+            "userId": "system",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1036",
+            "timestamp": "2026-01-28T07:28:14.139302",
             "userId": "system",
             "action": "LOGIN_SUCCESS",
             "details": "Action LOGIN_SUCCESS performed successfully.",
@@ -573,8 +729,138 @@
             ]
         },
         {
-            "id": "AUD-1036",
-            "timestamp": "2026-01-22T10:42:33.886222",
+            "id": "AUD-1038",
+            "timestamp": "2026-01-28T09:28:14.139302",
+            "userId": "system",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1062",
+            "timestamp": "2026-01-28T18:28:14.139302",
+            "userId": "tim.trader",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1063",
+            "timestamp": "2026-01-28T21:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1083",
+            "timestamp": "2026-01-29T11:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1048",
+            "timestamp": "2026-01-29T21:28:14.139302",
+            "userId": "system",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1035",
+            "timestamp": "2026-01-29T23:28:14.139302",
+            "userId": "system",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-9901",
+            "timestamp": "2026-01-30T20:28:14.139302",
+            "userId": "tim.trader",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "WhatsApp usage detected matching restricted keyword 'guaranteed return'. Trading violation.",
+            "acl": [
+                "Compliance",
+                "Auditor"
+            ]
+        },
+        {
+            "id": "AUD-9902",
+            "timestamp": "2026-01-30T21:28:14.139302",
+            "userId": "system",
+            "action": "ACCOUNT_LOCKED",
+            "details": "Account tim.trader locked pending trading violation investigation.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "HR"
+            ]
+        },
+        {
+            "id": "AUD-1065",
+            "timestamp": "2026-01-31T00:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1044",
+            "timestamp": "2026-01-31T08:28:14.139302",
+            "userId": "tim.trader",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-9903",
+            "timestamp": "2026-01-31T20:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "DOCUMENT_READ",
+            "details": "Accessed TR-003 during trading violation investigation.",
+            "acl": [
+                "Compliance",
+                "Auditor"
+            ]
+        },
+        {
+            "id": "AUD-1084",
+            "timestamp": "2026-01-31T21:28:14.139302",
             "userId": "tim.trader",
             "action": "LOGIN_FAILED",
             "details": "Action LOGIN_FAILED performed successfully.",
@@ -585,8 +871,8 @@
             ]
         },
         {
-            "id": "AUD-1008",
-            "timestamp": "2026-01-22T11:42:33.886222",
+            "id": "AUD-1058",
+            "timestamp": "2026-02-01T03:28:14.139302",
             "userId": "tina.trader",
             "action": "TRADE_PRECLEARANCE_SUBMITTED",
             "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
@@ -597,8 +883,224 @@
             ]
         },
         {
-            "id": "AUD-1057",
-            "timestamp": "2026-01-23T05:42:33.886222",
+            "id": "AUD-1087",
+            "timestamp": "2026-02-02T12:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1059",
+            "timestamp": "2026-02-02T13:28:14.139302",
+            "userId": "system",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1064",
+            "timestamp": "2026-02-02T21:28:14.139302",
+            "userId": "system",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1015",
+            "timestamp": "2026-02-02T22:28:14.139302",
+            "userId": "helen.hr",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1009",
+            "timestamp": "2026-02-02T23:28:14.139302",
+            "userId": "tim.trader",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1034",
+            "timestamp": "2026-02-03T19:28:14.139302",
+            "userId": "tim.trader",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1077",
+            "timestamp": "2026-02-03T21:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1020",
+            "timestamp": "2026-02-04T09:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1091",
+            "timestamp": "2026-02-04T09:28:14.139302",
+            "userId": "tim.trader",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1055",
+            "timestamp": "2026-02-04T11:28:14.139302",
+            "userId": "system",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1017",
+            "timestamp": "2026-02-04T17:28:14.139302",
+            "userId": "tina.trader",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1076",
+            "timestamp": "2026-02-04T18:28:14.139302",
+            "userId": "tim.trader",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1019",
+            "timestamp": "2026-02-05T10:28:14.139302",
+            "userId": "system",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1040",
+            "timestamp": "2026-02-05T11:28:14.139302",
+            "userId": "helen.hr",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1082",
+            "timestamp": "2026-02-05T12:28:14.139302",
+            "userId": "tina.trader",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1061",
+            "timestamp": "2026-02-05T14:28:14.139302",
+            "userId": "system",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "system"
+            ]
+        },
+        {
+            "id": "AUD-1098",
+            "timestamp": "2026-02-05T16:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1022",
+            "timestamp": "2026-02-05T19:28:14.139302",
+            "userId": "tim.trader",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1060",
+            "timestamp": "2026-02-06T15:28:14.139302",
             "userId": "helen.hr",
             "action": "DOCUMENT_READ",
             "details": "Action DOCUMENT_READ performed successfully.",
@@ -610,22 +1112,70 @@
         },
         {
             "id": "AUD-1003",
-            "timestamp": "2026-01-23T07:42:33.886222",
-            "userId": "helen.hr",
+            "timestamp": "2026-02-06T17:28:14.139302",
+            "userId": "cathy.compliance",
             "action": "TRADE_PRECLEARANCE_APPROVED",
             "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "helen.hr"
+                "cathy.compliance"
             ]
         },
         {
-            "id": "AUD-1037",
-            "timestamp": "2026-01-24T00:42:33.886222",
+            "id": "AUD-1054",
+            "timestamp": "2026-02-06T18:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1081",
+            "timestamp": "2026-02-06T19:28:14.139302",
+            "userId": "tim.trader",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1026",
+            "timestamp": "2026-02-07T10:28:14.139302",
+            "userId": "tim.trader",
+            "action": "LOGIN_SUCCESS",
+            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1079",
+            "timestamp": "2026-02-07T10:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "cathy.compliance"
+            ]
+        },
+        {
+            "id": "AUD-1008",
+            "timestamp": "2026-02-07T20:28:14.139302",
             "userId": "system",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -633,116 +1183,32 @@
             ]
         },
         {
-            "id": "AUD-1030",
-            "timestamp": "2026-01-24T09:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
+            "id": "AUD-1086",
+            "timestamp": "2026-02-07T20:28:14.139302",
+            "userId": "tina.trader",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "cathy.compliance"
+                "tina.trader"
             ]
         },
         {
-            "id": "AUD-1004",
-            "timestamp": "2026-01-24T13:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1088",
-            "timestamp": "2026-01-25T13:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1049",
-            "timestamp": "2026-01-25T17:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1009",
-            "timestamp": "2026-01-25T20:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1025",
-            "timestamp": "2026-01-25T20:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1044",
-            "timestamp": "2026-01-25T20:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1013",
-            "timestamp": "2026-01-25T23:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1064",
-            "timestamp": "2026-01-26T05:42:33.886222",
-            "userId": "cathy.compliance",
+            "id": "AUD-1090",
+            "timestamp": "2026-02-07T20:28:14.139302",
+            "userId": "tina.trader",
             "action": "LOGIN_FAILED",
             "details": "Action LOGIN_FAILED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "cathy.compliance"
+                "tina.trader"
             ]
         },
         {
-            "id": "AUD-1011",
-            "timestamp": "2026-01-26T13:42:33.886222",
+            "id": "AUD-1080",
+            "timestamp": "2026-02-08T06:28:14.139302",
             "userId": "tim.trader",
             "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
             "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
@@ -754,10 +1220,10 @@
         },
         {
             "id": "AUD-1024",
-            "timestamp": "2026-01-27T09:42:33.886222",
+            "timestamp": "2026-02-08T17:28:14.139302",
             "userId": "system",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
+            "action": "DOCUMENT_READ",
+            "details": "Action DOCUMENT_READ performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -765,20 +1231,20 @@
             ]
         },
         {
-            "id": "AUD-1031",
-            "timestamp": "2026-01-27T21:42:33.886222",
-            "userId": "tina.trader",
+            "id": "AUD-1033",
+            "timestamp": "2026-02-08T22:28:14.139302",
+            "userId": "helen.hr",
             "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
             "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "tina.trader"
+                "helen.hr"
             ]
         },
         {
-            "id": "AUD-1018",
-            "timestamp": "2026-01-28T01:42:33.886222",
+            "id": "AUD-1007",
+            "timestamp": "2026-02-09T04:28:14.139302",
             "userId": "tim.trader",
             "action": "DOCUMENT_READ",
             "details": "Action DOCUMENT_READ performed successfully.",
@@ -789,20 +1255,8 @@
             ]
         },
         {
-            "id": "AUD-1093",
-            "timestamp": "2026-01-28T05:42:33.886222",
-            "userId": "system",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1039",
-            "timestamp": "2026-01-28T23:42:33.886222",
+            "id": "AUD-1010",
+            "timestamp": "2026-02-09T04:28:14.139302",
             "userId": "system",
             "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
             "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
@@ -813,237 +1267,23 @@
             ]
         },
         {
-            "id": "AUD-9901",
-            "timestamp": "2026-01-29T08:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "WhatsApp usage detected matching restricted keyword 'guaranteed return'. Trading violation.",
-            "acl": [
-                "Compliance",
-                "Auditor"
-            ]
-        },
-        {
-            "id": "AUD-1094",
-            "timestamp": "2026-01-29T09:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-9902",
-            "timestamp": "2026-01-29T09:42:33.886222",
-            "userId": "system",
-            "action": "ACCOUNT_LOCKED",
-            "details": "Account tim.trader locked pending trading violation investigation.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "HR"
-            ]
-        },
-        {
-            "id": "AUD-1053",
-            "timestamp": "2026-01-29T11:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1045",
-            "timestamp": "2026-01-29T14:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1082",
-            "timestamp": "2026-01-29T22:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1022",
-            "timestamp": "2026-01-30T01:42:33.886222",
-            "userId": "helen.hr",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1019",
-            "timestamp": "2026-01-30T06:42:33.886222",
+            "id": "AUD-1021",
+            "timestamp": "2026-02-09T07:28:14.139302",
             "userId": "tina.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1047",
-            "timestamp": "2026-01-30T07:42:33.886222",
-            "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1048",
-            "timestamp": "2026-01-30T07:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-9903",
-            "timestamp": "2026-01-30T08:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "DOCUMENT_READ",
-            "details": "Accessed TR-003 during trading violation investigation.",
-            "acl": [
-                "Compliance",
-                "Auditor"
-            ]
-        },
-        {
-            "id": "AUD-1083",
-            "timestamp": "2026-01-30T09:42:33.886222",
-            "userId": "tina.trader",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1006",
-            "timestamp": "2026-01-30T12:42:33.886222",
-            "userId": "system",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1087",
-            "timestamp": "2026-01-30T20:42:33.886222",
-            "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1071",
-            "timestamp": "2026-01-31T07:42:33.886222",
-            "userId": "tim.trader",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1023",
-            "timestamp": "2026-01-31T17:42:33.886222",
-            "userId": "system",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1055",
-            "timestamp": "2026-01-31T20:42:33.886222",
-            "userId": "system",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1046",
-            "timestamp": "2026-02-01T11:42:33.886222",
-            "userId": "tim.trader",
             "action": "LOGIN_SUCCESS",
             "details": "Action LOGIN_SUCCESS performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "tim.trader"
+                "tina.trader"
             ]
         },
         {
-            "id": "AUD-1038",
-            "timestamp": "2026-02-01T18:42:33.886222",
+            "id": "AUD-1002",
+            "timestamp": "2026-02-09T21:28:14.139302",
             "userId": "helen.hr",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1026",
-            "timestamp": "2026-02-01T21:42:33.886222",
-            "userId": "helen.hr",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "action": "COMMUNICATION_FLAGGED",
+            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
@@ -1052,307 +1292,19 @@
         },
         {
             "id": "AUD-1012",
-            "timestamp": "2026-02-02T02:42:33.886222",
-            "userId": "tim.trader",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1029",
-            "timestamp": "2026-02-02T04:42:33.886222",
+            "timestamp": "2026-02-10T09:28:14.139302",
             "userId": "cathy.compliance",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1070",
-            "timestamp": "2026-02-02T13:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1033",
-            "timestamp": "2026-02-02T14:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1060",
-            "timestamp": "2026-02-02T16:42:33.886222",
-            "userId": "system",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1079",
-            "timestamp": "2026-02-04T15:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1010",
-            "timestamp": "2026-02-04T16:42:33.886222",
-            "userId": "tim.trader",
             "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
             "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1056",
-            "timestamp": "2026-02-04T21:42:33.886222",
-            "userId": "tina.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1042",
-            "timestamp": "2026-02-05T07:42:33.886222",
-            "userId": "tina.trader",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1035",
-            "timestamp": "2026-02-05T15:42:33.886222",
-            "userId": "helen.hr",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1085",
-            "timestamp": "2026-02-05T19:42:33.886222",
-            "userId": "helen.hr",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1014",
-            "timestamp": "2026-02-05T20:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_SUBMITTED",
-            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1075",
-            "timestamp": "2026-02-05T21:42:33.886222",
-            "userId": "tina.trader",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tina.trader"
-            ]
-        },
-        {
-            "id": "AUD-1001",
-            "timestamp": "2026-02-06T17:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1017",
-            "timestamp": "2026-02-07T18:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
                 "cathy.compliance"
             ]
         },
         {
-            "id": "AUD-1065",
-            "timestamp": "2026-02-08T05:42:33.886222",
-            "userId": "tim.trader",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1058",
-            "timestamp": "2026-02-08T08:42:33.886222",
-            "userId": "tim.trader",
-            "action": "TRADE_PRECLEARANCE_APPROVED",
-            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1080",
-            "timestamp": "2026-02-08T09:42:33.886222",
-            "userId": "system",
-            "action": "LOGIN_SUCCESS",
-            "details": "Action LOGIN_SUCCESS performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1002",
-            "timestamp": "2026-02-08T18:42:33.886222",
-            "userId": "helen.hr",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1051",
-            "timestamp": "2026-02-09T02:42:33.886222",
-            "userId": "helen.hr",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "helen.hr"
-            ]
-        },
-        {
-            "id": "AUD-1078",
-            "timestamp": "2026-02-09T06:42:33.886222",
-            "userId": "tim.trader",
-            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
-            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1074",
-            "timestamp": "2026-02-09T08:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1099",
-            "timestamp": "2026-02-09T16:42:33.886222",
-            "userId": "tim.trader",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "tim.trader"
-            ]
-        },
-        {
-            "id": "AUD-1016",
-            "timestamp": "2026-02-10T03:42:33.886222",
-            "userId": "cathy.compliance",
-            "action": "LOGIN_FAILED",
-            "details": "Action LOGIN_FAILED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "cathy.compliance"
-            ]
-        },
-        {
-            "id": "AUD-1054",
-            "timestamp": "2026-02-10T15:42:33.886222",
-            "userId": "system",
-            "action": "COMMUNICATION_FLAGGED",
-            "details": "Action COMMUNICATION_FLAGGED performed successfully.",
-            "acl": [
-                "Compliance",
-                "Auditor",
-                "system"
-            ]
-        },
-        {
-            "id": "AUD-1061",
-            "timestamp": "2026-02-10T16:42:33.886222",
+            "id": "AUD-1023",
+            "timestamp": "2026-02-10T09:28:14.139302",
             "userId": "cathy.compliance",
             "action": "LOGIN_SUCCESS",
             "details": "Action LOGIN_SUCCESS performed successfully.",
@@ -1363,8 +1315,8 @@
             ]
         },
         {
-            "id": "AUD-1072",
-            "timestamp": "2026-02-10T18:42:33.886222",
+            "id": "AUD-1047",
+            "timestamp": "2026-02-10T21:28:14.139302",
             "userId": "cathy.compliance",
             "action": "COMMUNICATION_FLAGGED",
             "details": "Action COMMUNICATION_FLAGGED performed successfully.",
@@ -1376,19 +1328,43 @@
         },
         {
             "id": "AUD-1028",
-            "timestamp": "2026-02-11T02:42:33.886222",
-            "userId": "tim.trader",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
+            "timestamp": "2026-02-11T18:28:14.139302",
+            "userId": "cathy.compliance",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "tim.trader"
+                "cathy.compliance"
             ]
         },
         {
-            "id": "AUD-1034",
-            "timestamp": "2026-02-11T06:42:33.886222",
+            "id": "AUD-1050",
+            "timestamp": "2026-02-11T20:28:14.139302",
+            "userId": "helen.hr",
+            "action": "LOGIN_FAILED",
+            "details": "Action LOGIN_FAILED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1041",
+            "timestamp": "2026-02-12T13:28:14.139302",
+            "userId": "tina.trader",
+            "action": "TRADE_PRECLEARANCE_APPROVED",
+            "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tina.trader"
+            ]
+        },
+        {
+            "id": "AUD-1004",
+            "timestamp": "2026-02-12T19:28:14.139302",
             "userId": "tim.trader",
             "action": "TRADE_PRECLEARANCE_APPROVED",
             "details": "Action TRADE_PRECLEARANCE_APPROVED performed successfully.",
@@ -1399,15 +1375,50 @@
             ]
         },
         {
-            "id": "AUD-1073",
-            "timestamp": "2026-02-11T15:42:33.886222",
-            "userId": "system",
-            "action": "DOCUMENT_READ",
-            "details": "Action DOCUMENT_READ performed successfully.",
+            "id": "AUD-1068",
+            "timestamp": "2026-02-13T02:28:14.139302",
+            "userId": "helen.hr",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
             "acl": [
                 "Compliance",
                 "Auditor",
-                "system"
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1072",
+            "timestamp": "2026-02-13T13:28:14.139302",
+            "userId": "tim.trader",
+            "action": "UNAUTHORIZED_ACCESS_ATTEMPT",
+            "details": "Action UNAUTHORIZED_ACCESS_ATTEMPT performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "tim.trader"
+            ]
+        },
+        {
+            "id": "AUD-1057",
+            "timestamp": "2026-02-13T15:28:14.139302",
+            "userId": "helen.hr",
+            "action": "TRADE_PRECLEARANCE_SUBMITTED",
+            "details": "Action TRADE_PRECLEARANCE_SUBMITTED performed successfully.",
+            "acl": [
+                "Compliance",
+                "Auditor",
+                "helen.hr"
+            ]
+        },
+        {
+            "id": "AUD-1104",
+            "timestamp": "2026-02-14T20:58:06.346199",
+            "userId": "tim.trader",
+            "action": "DOCUMENT_READ",
+            "details": "Viewed Trading Rule: TR-004 - Volcker Rule Constraints - Proprietary Trading",
+            "acl": [
+                "Compliance",
+                "Auditor"
             ]
         }
     ],
@@ -1481,6 +1492,11 @@
             "username": "catherine.ceo",
             "password": "password123",
             "role": "Executive"
+        },
+        {
+            "username": "gemini.connector",
+            "password": "password123",
+            "role": "Connector"
         }
     ]
 }

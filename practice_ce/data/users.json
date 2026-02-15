@@ -1,0 +1,77 @@
+[
+    {
+        "username": "tim.trader",
+        "password": "password123",
+        "role": "Trader"
+    },
+    {
+        "username": "tina.trader",
+        "password": "password123",
+        "role": "Trader"
+    },
+    {
+        "username": "tom.trader",
+        "password": "password123",
+        "role": "Trader"
+    },
+    {
+        "username": "cathy.compliance",
+        "password": "password123",
+        "role": "Compliance"
+    },
+    {
+        "username": "caleb.compliance",
+        "password": "password123",
+        "role": "Compliance"
+    },
+    {
+        "username": "chloe.compmgr",
+        "password": "password123",
+        "role": "Compliance"
+    },
+    {
+        "username": "helen.hr",
+        "password": "password123",
+        "role": "HR"
+    },
+    {
+        "username": "harry.hr",
+        "password": "password123",
+        "role": "HR"
+    },
+    {
+        "username": "ian.ibanker",
+        "password": "password123",
+        "role": "InvestmentBanking"
+    },
+    {
+        "username": "iona.ibanker",
+        "password": "password123",
+        "role": "InvestmentBanking"
+    },
+    {
+        "username": "annie.auditor",
+        "password": "password123",
+        "role": "Auditor"
+    },
+    {
+        "username": "arthur.auditorext",
+        "password": "password123",
+        "role": "Auditor"
+    },
+    {
+        "username": "edward.exec",
+        "password": "password123",
+        "role": "Executive"
+    },
+    {
+        "username": "catherine.ceo",
+        "password": "password123",
+        "role": "Executive"
+    },
+    {
+        "username": "gemini.connector",
+        "password": "password123",
+        "role": "Connector"
+    }
+]

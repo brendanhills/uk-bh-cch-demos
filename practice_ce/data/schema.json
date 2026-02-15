@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "retrievable": true,
+      "indexable": true,
+      "searchable": true
+    },
+    "summary": {
+      "type": "string",
+      "dynamicFacetable": true,
+      "indexable": true,
+      "searchable": true,
+      "retrievable": true
+    },
+    "content": {
+      "type": "string",
+      "dynamicFacetable": true,
+      "retrievable": true,
+      "searchable": true,
+      "indexable": true
+    },
+    "uri": {
+      "type": "string",
+      "keyPropertyMapping": "uri",
+      "retrievable": true
+    },
+    "category": {
+      "type": "string",
+      "dynamicFacetable": true,
+      "retrievable": true,
+      "indexable": true,
+      "searchable": true
+    },
+    "sensitivity": {
+      "type": "string",
+      "searchable": true,
+      "indexable": true,
+      "dynamicFacetable": true,
+      "retrievable": true
+    },
+    "id": {
+      "type": "string",
+      "retrievable": true,
+      "searchable": true,
+      "indexable": true,
+      "dynamicFacetable": true
+    },
+    "regulator": {
+      "type": "string",
+      "retrievable": true,
+      "dynamicFacetable": true,
+      "indexable": true,
+      "searchable": true
+    },
+    "status": {
+      "type": "string",
+      "retrievable": true,
+      "dynamicFacetable": true,
+      "searchable": true,
+      "indexable": true
+    },
+    "filingDate": {
+      "type": "datetime",
+      "indexable": true,
+      "retrievable": true
+    },
+    "effectiveDate": {
+      "type": "datetime",
+      "retrievable": true,
+      "indexable": true
+    },
+    "userId": {
+      "type": "string",
+      "indexable": true,
+      "searchable": true,
+      "retrievable": true,
+      "dynamicFacetable": true
+    },
+    "action": {
+      "type": "string",
+      "searchable": true,
+      "indexable": true,
+      "retrievable": true,
+      "dynamicFacetable": true
+    },
+    "timestamp": {
+      "type": "datetime",
+      "retrievable": true,
+      "indexable": true
+    },
+    "type": {
+      "type": "string",
+      "searchable": true,
+      "dynamicFacetable": true,
+      "indexable": true,
+      "retrievable": true
+    },
+    "details": {
+      "type": "string",
+      "retrievable": true,
+      "indexable": true,
+      "searchable": true,
+      "dynamicFacetable": true
+    }
+  }
+}

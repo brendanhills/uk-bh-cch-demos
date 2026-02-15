@@ -35,20 +35,23 @@ The system enforces Access Control Lists (ACLs) to simulate real-world document 
    ```
    This will create a `data/mock_db.json` file.
 
-## Running the Service
-
 You can start both the SOAP Endpoint and the Streamlit Admin dashboard simultaneously by running:
 
 ```bash
-uv run python app.py
+uv run python launcher.py
+```
+
+Alternatively, you can run just the Streamlit app and manage the SOAP service from the "System Administration" page:
+```bash
+uv run streamlit run compliance_app.py
 ```
 
 - **SOAP API WSDL:** `http://0.0.0.0:8000/?wsdl`
-- **Streamlit Data Viewer UI:** `http://0.0.0.0:8501`
+- **Streamlit App:** `http://0.0.0.0:8501`
 
 ### Authentication Credentials
 
-For your connector demonstration, you can authenticate using one of these test profiles:
+For your connector demonstration, you can authenticate using one of these test profiles. The app also supports a "Simulated User" context switcher in the sidebar.
 
 | Role | Username | Password | Notes |
 | :--- | :--- | :--- | :--- |
@@ -67,3 +70,4 @@ You can manually verify that the authentication and endpoint logic works using t
 uv run python test_client.py
 ```
 This script acts as an example of how a client needs to connect using HTTP Basic Auth to satisfy the legacy requirement before making SOAP RPC calls.
+NOTE: Always run 'uv sync' or 'uv run' manually when starting work.

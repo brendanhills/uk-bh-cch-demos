@@ -75,6 +75,27 @@ async def soap_endpoint(request: Request, user_info: dict = Depends(verify_crede
         faultstring.text = str(e)
         return build_soap_response(fault_elem)
 
+def get_effective_acl(document):
+    """
+    Computes which roles can see a document based on its category and sensitivity.
+    Used by the Connector to populate the 'acl' field for the search index.
+    """
+    allowed_roles = []
+    # We need to iterate over all roles defined in the policy
+    # Since we don't have a direct 'get_all_roles' method exposed, we can read from the internal data
+    # or just iterate a known list of standard roles.
+    # A cleaner way is to use the DataStore to check authorization for each role.
+    
+    # We can fetch roles from the loaded ACLs if available, or hardcode the standard set
+    # Using hardcoded set for safety and simplicity in this mock context, but ideally would be dynamic.
+    all_roles = ["Trader", "Compliance", "HR", "Executive", "Auditor", "InvestmentBanking"]
+    
+    for role in all_roles:
+         if db.is_authorized(document, "system_check", role):
+             allowed_roles.append(role)
+             
+    return allowed_roles
+
 def handle_get_trading_rules(query, user_info):
     rules = db.get_trading_rules(user_info["username"], user_info["role"])
     if query:
@@ -85,8 +106,18 @@ def handle_get_trading_rules(query, user_info):
     
     for r in rules:
         rule_elem = etree.SubElement(rules_array, f"{{{TNS}}}TradingRule")
+        
+        # If Connector, we must COMPUTE and INJECT the effective ACL
+        if user_info["role"] == "Connector":
+             effective_acl = get_effective_acl(r)
+             acl_elem = etree.SubElement(rule_elem, f"{{{TNS}}}acl")
+             for item in effective_acl:
+                 entry = etree.SubElement(acl_elem, f"{{{TNS}}}entry")
+                 entry.text = item
+        
         for k, v in r.items():
-            if k == "acl": continue
+            if k == "acl": continue # Should not exist anymore, but just in case
+            
             elem = etree.SubElement(rule_elem, f"{{{TNS}}}{k}")
             elem.text = str(v)
             
@@ -102,8 +133,17 @@ def handle_get_regulatory_filings(query, user_info):
     
     for f in filings:
         filing_elem = etree.SubElement(filings_array, f"{{{TNS}}}RegulatoryFiling")
+        
+        if user_info["role"] == "Connector":
+             effective_acl = get_effective_acl(f)
+             acl_elem = etree.SubElement(filing_elem, f"{{{TNS}}}acl")
+             for item in effective_acl:
+                 entry = etree.SubElement(acl_elem, f"{{{TNS}}}entry")
+                 entry.text = item
+
         for k, v in f.items():
-             if k == "acl": continue
+             if k == "acl": continue 
+
              elem = etree.SubElement(filing_elem, f"{{{TNS}}}{k}")
              elem.text = str(v)
             
@@ -119,8 +159,24 @@ def handle_get_audit_logs(query, user_info):
     
     for l in logs:
         log_elem = etree.SubElement(logs_array, f"{{{TNS}}}AuditLog")
+        
+        if user_info["role"] == "Connector":
+             # For Audit Logs, owner also has access.
+             effective_acl = get_effective_acl(l)
+             # Add the specific user owner if not already covered (though roles covers groups)
+             # The connector usually maps external groups. 
+             # If mapping userId -> userId, we can add it.
+             if l.get("userId") and l.get("userId") not in effective_acl:
+                 effective_acl.append(l.get("userId"))
+                 
+             acl_elem = etree.SubElement(log_elem, f"{{{TNS}}}acl")
+             for item in effective_acl:
+                 entry = etree.SubElement(acl_elem, f"{{{TNS}}}entry")
+                 entry.text = item
+
         for k, v in l.items():
              if k == "acl": continue
+
              elem = etree.SubElement(log_elem, f"{{{TNS}}}{k}")
              elem.text = str(v)
             

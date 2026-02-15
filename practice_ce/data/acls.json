@@ -1,0 +1,106 @@
+{
+    "roles": {
+        "Trader": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Internal"
+                },
+                {
+                    "category": "RegulatoryFiling",
+                    "max_sensitivity": "Public"
+                },
+                {
+                    "category": "HRRecord",
+                    "max_sensitivity": "Public"
+                }
+            ]
+        },
+        "Compliance": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "RegulatoryFiling",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "AuditLog",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "HRRecord",
+                    "max_sensitivity": "Internal"
+                }
+            ]
+        },
+        "HR": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Internal"
+                },
+                {
+                    "category": "HRRecord",
+                    "max_sensitivity": "Confidential"
+                }
+            ]
+        },
+        "Executive": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "RegulatoryFiling",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "AuditLog",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "HRRecord",
+                    "max_sensitivity": "Restricted"
+                }
+            ]
+        },
+        "Auditor": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Internal"
+                },
+                {
+                    "category": "RegulatoryFiling",
+                    "max_sensitivity": "Confidential"
+                },
+                {
+                    "category": "AuditLog",
+                    "max_sensitivity": "Confidential"
+                }
+            ]
+        },
+        "InvestmentBanking": {
+            "permissions": [
+                {
+                    "category": "TradingRule",
+                    "max_sensitivity": "Restricted"
+                },
+                {
+                    "category": "RegulatoryFiling",
+                    "max_sensitivity": "Internal"
+                }
+            ]
+        }
+    },
+    "sensitivity_levels": {
+        "Public": 0,
+        "Internal": 1,
+        "Confidential": 2,
+        "Restricted": 3
+    }
+}
