@@ -1,0 +1,72 @@
+[
+  {
+    "scenario_id": "1",
+    "name": "Sarah: Debt Consolidation",
+    "applicant_id": "12345",
+    "loan_amount": 10000,
+    "loan_term": 36,
+    "loan_type": "personal",
+    "purpose": "debt consolidation",
+    "description": "Sarah wants to consolidate her credit card debt. This lowers her monthly payments and utilization. Strong approval case."
+  },
+  {
+    "scenario_id": "1b",
+    "name": "Sarah: Home Improvement",
+    "applicant_id": "12345",
+    "loan_amount": 50000,
+    "loan_term": 60,
+    "loan_type": "personal",
+    "purpose": "home improvement",
+    "description": "Sarah wants a large loan for renovations. This creates a new $1000+ monthly obligation which pushes her DTI too high given her moderate income."
+  },
+  {
+    "scenario_id": "2",
+    "name": "David: Yacht Purchase",
+    "applicant_id": "12346",
+    "loan_amount": 100000,
+    "loan_term": 120,
+    "loan_type": "personal",
+    "purpose": "buy a yacht",
+    "description": "David has high income ($175k). Even with a $100k loan, his DTI remains acceptable. High Earner Exception applies if close to limits."
+  },
+  {
+    "scenario_id": "2b",
+    "name": "David: Investment Property",
+    "applicant_id": "12346",
+    "loan_amount": 1000000,
+    "loan_term": 360,
+    "loan_type": "mortgage",
+    "purpose": "investment property",
+    "description": "David tries to leverage too much. The $1M loan adds huge debt service, pushing DTI well above 50%. Too risky."
+  },
+  {
+    "scenario_id": "3",
+    "name": "Maria: Business Expansion",
+    "applicant_id": "12347",
+    "loan_amount": 20000,
+    "loan_term": 48,
+    "loan_type": "business",
+    "purpose": "equipment purchase",
+    "description": "Maria has a thin file (650 score). The loan is for business growth. This requires manual underwriting to verify business cash flow."
+  },
+  {
+    "scenario_id": "4",
+    "name": "Gary: Borderline Credit (Escalation)",
+    "applicant_id": "12348",
+    "loan_amount": 15000,
+    "loan_term": 36,
+    "loan_type": "personal",
+    "purpose": "debt consolidation",
+    "description": "Gary has a 620 score, high DTI (65%), and a recent late payment. This is too risky for auto-approval but not a hard decline. Requires senior review."
+  },
+  {
+    "scenario_id": "5",
+    "name": "Jane: Missing Info (Q&A)",
+    "applicant_id": "12349",
+    "loan_amount": 5000,
+    "loan_term": 12,
+    "loan_type": "personal",
+    "purpose": "personal",
+    "description": "Jane's application is incomplete (No Stated Income). The agent should NOT decline, but instead ASK the user for the missing info."
+  }
+]

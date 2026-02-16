@@ -1,0 +1,62 @@
+[
+  {
+    "applicant_id": "12345",
+    "name": "Sarah Jenkins",
+    "stated_income": 59758,
+    "employment_status": "Employed",
+    "employer": "City Hospital",
+    "employment_type": "Full-time",
+    "role": "Nurse",
+    "tenure": "5 years",
+    "personal_circumstances": "Single parent, two children, caring for elderly mother",
+    "persona": "Sarah is a diligent nurse and single mother. She manages her finances carefully but has limited disposable income due to family care costs. She has never missed a payment."
+  },
+  {
+    "applicant_id": "12346",
+    "name": "David Smith",
+    "stated_income": 175000,
+    "employment_status": "Employed",
+    "employer": "Tech Giant Corp",
+    "employment_type": "Full-time",
+    "role": "Senior Software Engineer",
+    "tenure": "2 years",
+    "personal_circumstances": "High earner with expensive lifestyle. Recently bought a luxury car.",
+    "persona": "David earns a high salary but spends heavily. He is looking to leverage his income for more assets but is close to being over-leveraged."
+  },
+  {
+    "applicant_id": "12347",
+    "name": "Maria Rodriguez",
+    "stated_income": 85000,
+    "employment_status": "Self-Employed",
+    "employer": "Maria's Designs",
+    "employment_type": "Owner",
+    "role": "Graphic Designer",
+    "tenure": "1.5 years",
+    "personal_circumstances": "Variable income, growing business. Needs capital for expansion.",
+    "persona": "Maria is an ambitious entrepreneur. Her income fluctuates, and her credit history is short as she recently moved to the country."
+  },
+  {
+    "applicant_id": "12348",
+    "name": "Gary Gray",
+    "stated_income": 60000,
+    "employment_status": "Employed",
+    "employer": "Medianville Manufacturing",
+    "employment_type": "Full-time",
+    "role": "Shift Manager",
+    "tenure": "8 years",
+    "personal_circumstances": "Stable job but high debt load from divorce settlement. Trying to consolidate scattered debts.",
+    "persona": "Gary is a reliable worker with a long tenure, but life events have left him with high DTI. He is motivated to pay down debt but looks risky on paper due to utilization."
+  },
+  {
+    "applicant_id": "12349",
+    "name": "Jane Doe",
+    "stated_income": 0,
+    "employment_status": "",
+    "employer": "",
+    "employment_type": "",
+    "role": "",
+    "tenure": "",
+    "personal_circumstances": "New applicant, rushed application form.",
+    "persona": "Jane submitted the form in a hurry and missed key fields. She is reachable but needs a nudge to provide valid data."
+  }
+]
