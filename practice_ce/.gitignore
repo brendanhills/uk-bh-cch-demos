@@ -9,3 +9,4 @@ __pycache__/
 # Local Data & Artefacts
 search_results.json
 gcs_content/
+drive_content/
