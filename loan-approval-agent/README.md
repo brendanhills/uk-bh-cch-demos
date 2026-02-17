@@ -28,6 +28,7 @@ graph TD
 ## Features
 
 -   **Multi-Agent Collaboration**: distinct personas with specialized tools.
+-   **Real ID Architecture**: Uses realistic Government IDs (e.g., SSN) for strict data lookups and validation.
 -   **Document Upload**: Support for parsing and analyzing uploaded Payslips and Bank Statements (Simulated).
 -   **Policy RAG**: "Consult Policy" tool that reads from real PDF policy documents (`Master_Lending_Policy_v2024.pdf`).
 -   **Audit Logging**: Detailed JSON audit logs for every decision and agent action.
@@ -77,18 +78,27 @@ Launch the interactive demo dashboard:
 ```bash
 uv run streamlit run demo_app.py
 ```
+**[📜 View the Full Demo Script (DEMO.md)](docs/DEMO.md)**
+
 -   **Sidebar**: Configure Applicant ID (Mock), Loan Amount, and Latency Mode.
 -   **Uploads**: Upload sample PDF documents (Payslips/Bank Statements) to test document analysis.
 -   **Trace**: Watch the agent conversation and "Thought Process" in real-time.
+
+## Project Documentation
+
+-   [**Demo Script**](docs/DEMO.md): Step-by-step guide for presenting the agent.
+-   [**Implementation Plan**](docs/IMPLEMENTATION_PLAN.md): Technical details of the resilience and "Real ID" architecture.
+-   [**Interview Task**](docs/interview_task.txt): Original requirements and problem statement.
 
 ## Mock Data & Scenarios
 
 The system uses local mock data to ensure reliability and repeatability.
 
--   **Applicants**: Pre-defined profiles in `loan_approval_agent/data/mock_db/applicants.json`.
-    -   `12345`: "John Doe" - Perfect Candidate (Auto-Approve).
-    -   `12348`: "Jordan Lee" - Borderline Credit (Escalation Test).
-    -   `9813ee1d`: "Alice Smith" - High Risk (Auto-Decline).
+-   **Applicants**: Pre-defined profiles in `loan_approval_agent/data/demo_data/applicants.json`.
+    -   `900-00-1234`: "Sarah Jenkins" - Perfect Candidate (Auto-Approve) or High DTI (Decline).
+    -   `900-00-3456`: "Gary Gray" - Borderline Credit (Escalation Test).
+    -   `900-00-9999`: "Jane Doe" - Data Inconsistency (Fraud Detection).
+    -   `000-00-0000`: "Ghost User" - Invalid ID (Resilience Test).
 -   **Documents**: Mock generated PDFs in `artifacts/uploads/`.
 
 ## Running Tests
@@ -99,6 +109,17 @@ Run the test suite to verify functionality:
 uv run pytest
 ```
 *Note: Some tests may be skipped due to runtime mocking complexities.*
+
+## Troubleshooting
+
+### SyntaxWarnings
+If you see `SyntaxWarning: invalid escape sequence '\$'`, it means Python is interpreting the backslash in an f-string incorrectly.
+**Fix**: Use double backslashes `\\$` to escape the dollar sign in f-strings.
+
+### Streamlit Hangs
+If the agent traces stop appearing:
+- The session might be stale. Click the "Rerun" or "Reload" button in the top right.
+- Check the console for `Agent Error` or stack traces.
 
 ## Deployment
 

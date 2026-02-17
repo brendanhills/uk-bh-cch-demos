@@ -2,7 +2,7 @@
   {
     "scenario_id": "1",
     "name": "Sarah: Debt Consolidation",
-    "applicant_id": "12345",
+    "applicant_id": "900-00-1234",
     "loan_amount": 10000,
     "loan_term": 36,
     "loan_type": "personal",
@@ -12,7 +12,7 @@
   {
     "scenario_id": "1b",
     "name": "Sarah: Home Improvement",
-    "applicant_id": "12345",
+    "applicant_id": "900-00-1234",
     "loan_amount": 50000,
     "loan_term": 60,
     "loan_type": "personal",
@@ -22,7 +22,7 @@
   {
     "scenario_id": "2",
     "name": "David: Yacht Purchase",
-    "applicant_id": "12346",
+    "applicant_id": "900-00-5678",
     "loan_amount": 100000,
     "loan_term": 120,
     "loan_type": "personal",
@@ -32,7 +32,7 @@
   {
     "scenario_id": "2b",
     "name": "David: Investment Property",
-    "applicant_id": "12346",
+    "applicant_id": "900-00-5678",
     "loan_amount": 1000000,
     "loan_term": 360,
     "loan_type": "mortgage",
@@ -42,7 +42,7 @@
   {
     "scenario_id": "3",
     "name": "Maria: Business Expansion",
-    "applicant_id": "12347",
+    "applicant_id": "900-00-9012",
     "loan_amount": 20000,
     "loan_term": 48,
     "loan_type": "business",
@@ -52,7 +52,7 @@
   {
     "scenario_id": "4",
     "name": "Gary: Borderline Credit (Escalation)",
-    "applicant_id": "12348",
+    "applicant_id": "900-00-3456",
     "loan_amount": 15000,
     "loan_term": 36,
     "loan_type": "personal",
@@ -62,7 +62,7 @@
   {
     "scenario_id": "5",
     "name": "Jane: Missing Info (Q&A)",
-    "applicant_id": "12349",
+    "applicant_id": "900-00-9999",
     "loan_amount": 5000,
     "loan_term": 12,
     "loan_type": "personal",

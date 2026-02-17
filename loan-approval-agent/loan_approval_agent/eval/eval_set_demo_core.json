@@ -1,0 +1,93 @@
+{
+  "eval_set_id": "loan_approval_demo_core",
+  "name": "Loan Approval - Core Demo Scenarios",
+  "description": "Core scenarios for Sarah Jenkins (Approve/Deny).",
+  "eval_cases": [
+    {
+      "eval_id": "sarah_debt_consolidation",
+      "conversation": [
+        {
+          "invocation_id": "uuid-sarah-1",
+          "user_content": { 
+            "parts": [
+              {
+                "text": "process a new loan application for name: Sarah Jenkins, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 20000, purpose: Debt Consolidation"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { 
+            "parts": [
+              {
+                "text": "APPROVE"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ 
+              {
+                "args": {
+                  "applicant_id": "900-00-1234"
+                },
+                "name": "credit_bureau_get_credit_report"
+              },
+               {
+                "args": {
+                  "applicant_id": "900-00-1234"
+                },
+                "name": "employment_service_verify_employment"
+              }
+            ],
+            "intermediate_responses": [] 
+          }
+        }
+      ],
+      "session_input": { 
+        "app_name": "loan_approval_agent",
+        "user_id": "test_user_sarah",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "sarah_home_improvement",
+      "conversation": [
+        {
+          "invocation_id": "uuid-sarah-2",
+          "user_content": { 
+            "parts": [
+              {
+                "text": "process a new loan application for name: Sarah Jenkins, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 50000, purpose: Home Improvement"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { 
+            "parts": [
+              {
+                "text": "DENY"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ 
+              {
+                "args": {
+                  "applicant_id": "900-00-1234"
+                },
+                "name": "credit_bureau_get_credit_report"
+              }
+            ],
+            "intermediate_responses": [] 
+          }
+        }
+      ],
+      "session_input": { 
+        "app_name": "loan_approval_agent",
+        "user_id": "test_user_sarah_2",
+        "state": {}
+      }
+    }
+  ]
+}

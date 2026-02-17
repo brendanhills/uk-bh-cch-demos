@@ -20,9 +20,10 @@ from loan_approval_agent.agent import loan_manager
 async def test_escalation_borderline_credit():
     """Test that the agent escalates a borderline credit application."""
     
-    # Applicant 12348 has Credit Score 620, which is in the Borderline range (600-640)
+    # Applicant 900-00-3456 (Gary Gray) has Credit Score 620, which is in the Borderline range
+    borderline_id = "900-00-3456"
     user_input = (
-        "Begin review for applicant_id: 12348. "
+        f"Begin review for applicant_id: {borderline_id}. "
         "Requested Loan Amount: $50,000. "
         "Loan Purpose: Business."
     )
@@ -51,7 +52,7 @@ async def test_escalation_borderline_credit():
     assert "ESCALATE" in final_response.upper() or "ESCALATION" in final_response.upper()
     
     # Check Audit Log for escalation event
-    log_file = "loan_approval_agent/data/audit_logs/audit_12348.json"
+    log_file = f"loan_approval_agent/data/audit_logs/audit_{borderline_id}.json"
     assert os.path.exists(log_file)
     
     import json

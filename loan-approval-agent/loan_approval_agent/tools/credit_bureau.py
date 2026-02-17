@@ -1,0 +1,41 @@
+import json
+import os
+import time
+import random
+from typing import Dict, Any
+
+from loan_approval_agent.tools.audit_logger import log_event
+
+DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/credit_score.json")
+
+def get_credit_report(applicant_id: str, simulate_failure: bool = False) -> Dict[str, Any]:
+    """
+    Retrieves the credit report for an applicant.
+    Simulates a 2-second API latency.
+    """
+    log_event(applicant_id, "CREDIT_CHECK_INIT", {"simulate_failure": simulate_failure}, "CreditBureau")
+    
+    # Simulate API Latency (NFR: 2-3 seconds)
+    time.sleep(2)
+    
+    # Simulate Random Failure (Resilience Test)
+    if simulate_failure and random.random() < 0.3:
+        log_event(applicant_id, "CREDIT_CHECK_FAILED", {"reason": "simulated_downtime"}, "CreditBureau")
+        raise ConnectionError("Credit Bureau API is currently unavailable (Simulated).")
+
+    try:
+        with open(DATA_FILE, "r") as f:
+            data = json.load(f)
+            
+        report = data.get(applicant_id)
+        
+        if not report:
+            log_event(applicant_id, "CREDIT_CHECK_NOT_FOUND", {}, "CreditBureau")
+            return {"error": "Applicant not found"}
+            
+        log_event(applicant_id, "CREDIT_CHECK_SUCCESS", {"score": report["score"]["value"]}, "CreditBureau")
+        return report
+
+    except FileNotFoundError:
+        log_event(applicant_id, "CREDIT_Check_ERROR", {"error": "Database missing"}, "CreditBureau")
+        return {"error": "System Error: Credit Database not found"}

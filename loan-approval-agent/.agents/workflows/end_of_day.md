@@ -22,3 +22,9 @@ description: cleanup, test, and commit workflow
      - `git add .`
      - `git commit -m "message"`
      - (Optional) `git push` if remote is configured.
+
+5. Update Documentation
+   - Check if any changes affect the user experience or system behavior.
+   - Update `README.md` or relevant documentation if necessary.
+   - Ensure `IMPLEMENTATION_PLAN.md` is up to date if a major feature was added.
+   - If there are obvious next steps when we resume, create a `resume_tasks.md` with the next steps.

@@ -3,6 +3,7 @@ import json
 import asyncio
 import sys
 import os
+import shutil
 from google.adk.runners import InMemoryRunner
 from google.genai.types import Part, UserContent
 
@@ -12,35 +13,71 @@ sys.path.append(os.getcwd())
 # Import config to load environment variables
 from loan_approval_agent import config
 from loan_approval_agent.agent import loan_manager
+from loan_approval_agent.tools.security import check_injection
+from loan_approval_agent.tools.audit_logger import log_event
 
 st.set_page_config(page_title="Fintech Loan Agent", layout="wide")
+
+
 
 st.title("🤖 Fintech Loan Approval Agent")
 st.markdown("### AI-Powered Underwriting Demo")
 
 # Mock Data for Demo
-applicants = {
-    "12345": {"name": "John Doe", "stated_income": 50000, "employer": "Tech Corp", "credit_score": 720},
-    "12346": {"name": "Alice Smith", "stated_income": 80000, "employer": "Consulting Inc", "credit_score": 580},
-    "12347": {"name": "Bob Johnson", "stated_income": 120000, "employer": "Finance LLP", "credit_score": 800},
-    "12348": {"name": "Gary Gray", "stated_income": 60000, "employer": "Medianville Manufacturing", "credit_score": 620},
-    "12349": {"name": "Jane Doe", "stated_income": 0, "employer": "", "credit_score": 700},
-}
+# Load Demo Data
+# Load Demo Data
+# Resolve path robustly relative to THIS file
+DEMO_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "loan_approval_agent/data/demo_data")
 
-scenarios = [
-    {"name": "Happy Path (Approval)", "applicant_id": "12345", "loan_amount": 10000, "purpose": "Home Improvement"},
-    {"name": "High Debt (Denial)", "applicant_id": "12346", "loan_amount": 50000, "purpose": "Business"},
-    {"name": "Complex Case (Manual Review)", "applicant_id": "12347", "loan_amount": 200000, "purpose": "Education"},
-    {"name": "Borderline Credit (Escalation)", "applicant_id": "12348", "loan_amount": 15000, "purpose": "Debt Consolidation"},
-    {"name": "Missing Info (Q&A)", "applicant_id": "12349", "loan_amount": 5000, "purpose": "Personal"},
-]
+def load_json_data(filename):
+    path = os.path.join(DEMO_DATA_DIR, filename)
+    if os.path.exists(path):
+        try:
+            with open(path, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            st.error(f"Error loading {filename}: {e}")
+            return []
+    else:
+        st.error(f"File not found: {path}")
+        return []
+
+# Load applicants
+raw_applicants = load_json_data("applicants.json")
+applicants = {}
+if isinstance(raw_applicants, list):
+    for a in raw_applicants:
+        if "applicant_id" in a:
+            applicants[a["applicant_id"]] = a
+elif isinstance(raw_applicants, dict):
+    applicants = raw_applicants
+
+scenarios = load_json_data("scenarios.json")
 
 # Sidebar: Demo Controller
 with st.sidebar:
     st.header("🎮 Demo Controller")
-    st.info("Select a scenario below to see details for the demo.")
     
-    # Scenario Selector
+    if st.button("🔄 Start New Application", use_container_width=True):
+        # Clear all state
+        for key in ["form_data", "submitted", "trace_events", "trace_index", "messages", "intake_step", "analysis_session_id", "agent_session_id", "security_checked", "agent_started"]:
+            if key in st.session_state:
+                del st.session_state[key]
+        
+        # Truncate Audit Log for fresh demo
+        # Use absolute path to ensure we match the logger
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        log_file = os.path.join(base_dir, "loan_approval_agent/data/audit_logs/events.jsonl")
+        if os.path.exists(log_file):
+            with open(log_file, "w") as f:
+                pass # clear file
+                
+        st.rerun()
+    
+    st.divider()
+
+    # 1. Scenario Selector
+    st.subheader("1. Scenarios")
     scenario_options = {s["name"]: s for s in scenarios}
     selected_scenario_name = st.selectbox(
         "Select Scenario",
@@ -51,352 +88,417 @@ with st.sidebar:
         s = scenario_options[selected_scenario_name]
         a = applicants.get(s["applicant_id"])
         
-        st.markdown("### 📋 Reference Data")
-        st.markdown("Copy these values into the form:")
+        st.info(f"Loaded: {s['name']}")
         
-        st.text_input("Applicant ID", value=s["applicant_id"], key="ref_id", disabled=False)
-        st.text_input("Name", value=a["name"], key="ref_name", disabled=False)
-        st.text_input("Income", value=str(a["stated_income"]), key="ref_income", disabled=False)
-        st.text_input("Employer", value=a["employer"], key="ref_employer", disabled=False)
-        st.text_input("Loan Amount", value=str(s["loan_amount"]), key="ref_amount", disabled=False)
-        st.text_input("Purpose", value=s["purpose"], key="ref_purpose", disabled=False)
-        
-        st.divider()
-        if st.button("⚡ Quick Fill (Skip Wizard)"):
-            st.session_state["form_data"] = {
-                "applicant_id": s["applicant_id"],
-                "name": a["name"],
-                "income": a["stated_income"],
-                "employer": a["employer"],
-                "amount": s["loan_amount"],
-                "purpose": s["purpose"]
-            }
-            st.session_state["wizard_step"] = 4
-            st.rerun()
+        if st.button("⚡ Quick Fill Form"):
+            if a:
+                # 1. Clear existing session for a fresh start (like Start New App)
+                for key in ["form_data", "submitted", "trace_events", "trace_index", "messages", "intake_step", "agent_started"]:
+                    if key in st.session_state:
+                        del st.session_state[key]
+                
+                # 2. Inject the message
+                quick_msg = (
+                    f"Hi, I am {a['name']}. "
+                    f"My Government ID is {s['applicant_id']}. "
+                    f"I earn {a['stated_income']} USD working at {a['employer']}. "
+                    f"I would like to borrow {s['loan_amount']} USD to {s['purpose']}."
+                )
+                st.session_state["auto_input"] = quick_msg
+                st.rerun()
+            else:
+                st.error("Applicant data not found!")
 
-    st.divider()
-    # Latency Toggle
+        # Manual Entry Details
+        if a:
+            with st.expander("️ Scenario Details (Admin View)", expanded=True):
+                st.info(f"Roleplay as: **{a['name']}**")
+                
+                # Hidden ID
+                st.caption("Government ID (SSN):")
+                st.code(s["applicant_id"], language="text")
+                
+                st.text_input("Name", value=a["name"], disabled=True)
+                st.text_input("Income", value=str(a["stated_income"]), disabled=True)
+                st.text_input("Employer", value=a["employer"], disabled=True)
+                st.text_input("Amount", value=str(s["loan_amount"]), disabled=True)
+                st.text_input("Purpose", value=s["purpose"], disabled=True)
+        else:
+            st.warning("Applicant details missing for this scenario.")
+
+
+
+    # 2. Controls
+    st.subheader("2. Controls")
+    step_through = st.checkbox("Step-Through Mode", value=False, help="Pause after each agent step.")
+    
     latency_mode = st.radio(
-        "Latency Mode",
+        "Latency Simulation",
         ["REALISTIC", "TESTING"],
-        help="REALISTIC: Simulates API delays (e.g. 30s).\nTESTING: Instant responses."
+        index=1,
+        help="REALISTIC adds delays to tools."
     )
     config.LATENCY_MODE = latency_mode
-    
-# Main Content Area
-        
-        # UI Layout
+
+    st.divider()
+
+    # 3. Policy Hot-Swap (X-Factor)
+    st.subheader("3. Agility (X-Factor)")
+    policy_mode = st.radio("Active Policy", ["Standard (Conservative)", "Growth (Aggressive)"])
+    if policy_mode == "Growth (Aggressive)":
+        st.caption("✅ Growth Policy Active: Allows thinner files and higher DTI.")
+        # In a real app, this would swap the PDF file in data/policy_docs
+        # For demo, we can set a session flag or env var
+        os.environ["POLICY_MODE"] = "GROWTH"
+    else:
+        os.environ["POLICY_MODE"] = "STANDARD"
+
+    with st.expander("🔍 Debug State"):
+        st.json(st.session_state)
+
 # Initialize Session State
-if "wizard_step" not in st.session_state:
-    st.session_state["wizard_step"] = 1
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [{"role": "assistant", "content": "Hello! I am the Loan Manager. Please enter your **full name** to begin the verification process."}]
+if "intake_step" not in st.session_state:
+    st.session_state["intake_step"] = 0
 if "form_data" not in st.session_state:
     st.session_state["form_data"] = {}
 
-# Wizard Flow
-st.markdown("### 📝 New Loan Application")
-
-# Progress Bar
-progress = (st.session_state["wizard_step"] - 1) / 3
-st.progress(progress)
-
-# Step 1: Personal Info
-if st.session_state["wizard_step"] == 1:
-    st.subheader("Step 1: Personal Information")
+# Tools for Agent-Driven Intake
+def submit_application(name: str, income: int, employer: str, amount: int, purpose: str, gov_id: str):
+    """
+    Submits the completed loan application for review.
+    Args:
+        name: Full name of the applicant.
+        income: Annual stated income (numeric).
+        employer: Name of the employer.
+        amount: Requested loan amount (numeric).
+        purpose: Purpose of the loan.
+        gov_id: Government ID (e.g., SSN) of the applicant.
+    """
+    # 1. Use provided Gov ID
+    aid = gov_id.strip()
+            
+    st.session_state["form_data"] = {
+        "applicant_id": aid,
+        "name": name,
+        "income": income,
+        "employer": employer,
+        "amount": amount,
+        "purpose": purpose
+    }
+    st.session_state["submitted"] = True
     
-    col1, col2 = st.columns(2)
-    with col1:
-        # We default to values if they exist in form_data (from Quick Fill)
-        def_id = st.session_state["form_data"].get("applicant_id", "")
-        applicant_id = st.text_input("Applicant ID", value=def_id, help="Unique ID linked to credit bureau.")
+    # Log the submission
+    # Log the submission
+    log_event(aid, "Application_Submitted", {
+        "name": name,
+        "amount": amount,
+        "purpose": purpose
+    })
+    
+    return f"Application submitted successfully. Processing ID: {aid}."
+
+# Initialize Loan Manager & Tools
+# We need to ensure we don't add the tool repeatedly on rerun
+# Initialize Loan Manager & Tools
+# Ensure we use the CURRENT 'submit_application' function (fresh closure over st.session_state)
+# Remove any existing instance of the tool (from previous runs/reloads)
+loan_manager.tools = [t for t in loan_manager.tools if getattr(t, "__name__", str(t)) != "submit_application"]
+# Add the fresh tool instance
+loan_manager.tools.append(submit_application)
+st.session_state["intake_agent_setup"] = True
+
+# Helper to get runner
+@st.cache_resource
+def get_runner():
+    return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+
+runner = get_runner()
+
+# --- LAYOUT SETUP ---
+c_main, c_audit = st.columns([0.65, 0.35], gap="large")
+
+# --- AUDIT LOG (Always Visible) ---
+with c_audit:
+    st.subheader("📜 Live Audit Log")
+    log_container = st.container(height=700)
+
+def render_audit_log(container):
+    container.empty()
+    with container:
+            # Use absolute path to ensure we match the logger
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        log_file = os.path.join(base_dir, "loan_approval_agent/data/audit_logs/events.jsonl")
         
-    with col2:
-        def_name = st.session_state["form_data"].get("name", "")
-        name = st.text_input("Full Name", value=def_name)
-        
-    if st.button("Next ➡️"):
-        if not applicant_id or not name:
-            st.error("Please fill in all fields.")
+        if os.path.exists(log_file):
+            with open(log_file, "r") as f:
+                lines = f.readlines()
+                # Show last 20 events, newest on top
+                for line in reversed(lines[-20:]):
+                    try:
+                        event = json.loads(line)
+                        # Format nice log entry
+                        st.caption(f"{event.get('timestamp', '')[11:19]} - **{event.get('event_type')}**")
+                        # Compact details
+                        st.json(event.get("details"), expanded=False)
+                        st.divider()
+                    except:
+                        st.text(line)
         else:
-            st.session_state["form_data"]["applicant_id"] = applicant_id
-            st.session_state["form_data"]["name"] = name
-            st.session_state["wizard_step"] = 2
-            st.rerun()
+            st.info("No audit logs found yet.")
 
-# Step 2: Financials
-elif st.session_state["wizard_step"] == 2:
-    st.subheader("Step 2: Financial Details")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        def_income = st.session_state["form_data"].get("income", 50000)
-        income = st.number_input("Annual Stated Income ($)", value=def_income, step=1000)
-        
-    with col2:
-        def_employer = st.session_state["form_data"].get("employer", "")
-        employer = st.text_input("Current Employer", value=def_employer)
-        
-    st.markdown("#### 📂 Supporting Documents")
-    uploaded_files = st.file_uploader(
-        "Upload Payslips or Bank Statements (PDF)", 
-        type=["pdf"], 
-        accept_multiple_files=True
-    )
-        
-    col_nav1, col_nav2 = st.columns([1, 1])
-    if col_nav1.button("⬅️ Back"):
-        st.session_state["wizard_step"] = 1
-        st.rerun()
-    if col_nav2.button("Next ➡️"):
-        st.session_state["form_data"]["income"] = income
-        st.session_state["form_data"]["employer"] = employer
-        
-        # Save files
-        if uploaded_files:
-            file_paths = []
-            upload_dir = "artifacts/uploads"
-            os.makedirs(upload_dir, exist_ok=True)
-            for uploaded_file in uploaded_files:
-                file_path = os.path.join(upload_dir, uploaded_file.name)
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                file_paths.append(file_path)
-            st.session_state["form_data"]["document_paths"] = file_paths
-            
-        st.session_state["wizard_step"] = 3
-        st.rerun()
+# Initial Render of Log
+render_audit_log(log_container)
 
-# Step 3: Loan Details
-elif st.session_state["wizard_step"] == 3:
-    st.subheader("Step 3: Loan Request")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        def_amount = st.session_state["form_data"].get("amount", 10000)
-        amount = st.number_input("Requested Amount ($)", value=def_amount, step=1000)
-        
-    with col2:
-        def_purpose = st.session_state["form_data"].get("purpose", "Debt Consolidation")
-        purpose = st.selectbox("Loan Purpose", 
-                             ["Debt Consolidation", "Home Improvement", "Business", "Education", "Other"],
-                             index=["Debt Consolidation", "Home Improvement", "Business", "Education", "Other"].index(def_purpose) if def_purpose in ["Debt Consolidation", "Home Improvement", "Business", "Education", "Other"] else 0)
-        
-    col_nav1, col_nav2 = st.columns([1, 1])
-    if col_nav1.button("⬅️ Back"):
-        st.session_state["wizard_step"] = 2
-        st.rerun()
-    if col_nav2.button("Next ➡️"):
-        st.session_state["form_data"]["amount"] = amount
-        st.session_state["form_data"]["purpose"] = purpose
-        st.session_state["wizard_step"] = 4
-        st.rerun()
+# --- MAIN INTERFACE ---
+with c_main:
+    # Chat Interface (Intake)
+    if not st.session_state.get("submitted"):
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [
+                {"role": "assistant", "content": "Welcome to the Loan Portal! I can help you submit a new application. To begin, please tell me your full name."}
+            ]
 
-# Step 4: Review & Submit
-elif st.session_state["wizard_step"] == 4:
-    st.subheader("Step 4: Review Application")
-    
-    data = st.session_state["form_data"]
-    
-    st.info("Please review the details below before submitting.")
-    
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Applicant", data.get("name"))
-    c1.caption(f"ID: {data.get('applicant_id')}")
-    
-    c2.metric("Income", f"${data.get('income'):,}")
-    c2.caption(f"Employer: {data.get('employer')}")
-    
-    c3.metric("Loan Amount", f"${data.get('amount'):,}")
-    c3.caption(f"Purpose: {data.get('purpose')}")
-    
-    st.divider()
-    
-    col_nav1, col_nav2 = st.columns([1, 1])
-    if col_nav1.button("⬅️ Back"):
-        st.session_state["wizard_step"] = 3
-        st.rerun()
+        # 1. Container for Chat History (ensures messages appear above input)
+        chat_container = st.container()
         
-    if col_nav2.button("🚀 Submit Application", type="primary"):
-        # Trigger Agent Logic
-        st.session_state["submitted"] = True
-        
+        # 2. Input Handling (at bottom of column)
+        if "auto_input" in st.session_state:
+            prompt = st.session_state.pop("auto_input")
+        else:
+            prompt = st.chat_input("Answer the agent...")
+
+        # 3. Render Content inside Container
+        with chat_container:
+            # Display History
+            for msg in st.session_state["messages"]:
+                if msg.get("role") == "tool_call":
+                   with st.status(msg["content"], state="complete"):
+                       pass
+                else: 
+                   with st.chat_message(msg["role"]):
+                       st.write(msg["content"])
+
+            # Handle New Input
+            if prompt:
+                # 1. User Message
+                with st.chat_message("user"):
+                    st.write(prompt)
+                st.session_state["messages"].append({"role": "user", "content": prompt})
+
+                # 2. Log Start of Processing
+                # 2. Log Start of Processing
+                # "Guest" until we have an ID
+                log_event("Guest", "Intake_Processing_Start", {"input_length": len(prompt)})
+                render_audit_log(log_container)
+
+                # 3. Agent Response
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        # Ensure Session
+                        if "agent_session_id" not in st.session_state:
+                             session = asyncio.run(runner.session_service.create_session(user_id="demo_user", app_name="loan_agent"))
+                             st.session_state["agent_session_id"] = session.id
+                        else:
+                            session = asyncio.run(runner.session_service.get_session(session_id=st.session_state["agent_session_id"], user_id="demo_user", app_name="loan_agent"))
     
-    if st.session_state.get("submitted"):
-        st.divider()
-        col_res1, col_res2 = st.columns([3, 2])
-        
-        with col_res1:
-            st.subheader("🕵️ Agent Reasoning Trace")
-
-    if st.session_state.get("submitted"):
-        st.divider()
-        col_res1, col_res2 = st.columns([3, 2])
-        
-        with col_res1:
-            st.subheader("🕵️ Agent Reasoning Trace")
-            
-            # Retrieve cached Runner instance
-            @st.cache_resource
-            def get_global_runner():
-                return InMemoryRunner(agent=loan_manager, app_name="agents")
-
-            if "agent_runner" not in st.session_state:
-                st.session_state["agent_runner"] = get_global_runner()
-                st.session_state["agent_session_id"] = None
-
-            # Helper to run agent (initial or follow-up)
-            async def run_agent_gen(user_msg: str = None):
-                runner = st.session_state["agent_runner"]
-                
-                # Create session if not exists
-                if not st.session_state["agent_session_id"]:
-                    session = await runner.session_service.create_session(
-                        app_name=runner.app_name, user_id="demo_user"
-                    )
-                    st.session_state["agent_session_id"] = session.id
-                    
-                    # Initial prompt
-                    initial_input = (
-                        f"Begin review for applicant_id: {data['applicant_id']}. "
-                        f"Requested Loan Amount: ${data['amount']:,}. "
-                        f"Loan Purpose: {data['purpose']}."
-                    )
-                    
-                    if "document_paths" in data and data["document_paths"]:
-                        initial_input += f"\nThe applicant has provided supporting documents: {', '.join(data['document_paths'])}. Please analyze these to verify income and employment."
-
-                    content = UserContent(parts=[Part(text=initial_input)])
+                        placeholder = st.empty()
+                        response_container = {"text": ""}
                         
-                    yield ("system", f"📥 **System**: Received Application for {data['name']}")
-                else:
-                    # Follow-up
-                    content = UserContent(parts=[Part(text=user_msg)])
-                    yield ("user", f"👤 **User**: {user_msg}")
+                        async def run_chat():
+                            async for event in runner.run_async(
+                                session_id=session.id,
+                                user_id="demo_user",
+                                new_message=UserContent(parts=[Part(text=prompt)])
+                            ):
+                                if hasattr(event, "content") and event.content:
+                                    parts = [p.text for p in event.content.parts if p.text]
+                                    if parts:
+                                        text = "".join(parts)
+                                        response_container["text"] += text
+                                        placeholder.markdown(response_container["text"] + "▌")
+                                        
+                                if hasattr(event, "tool_calls") and event.tool_calls:
+                                     for tc in event.tool_calls:
+                                         for fc in tc.function_calls:
+                                             msg_content = f"🛠️ Executing {fc.name}..."
+                                             st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
+                                             with st.status(msg_content, state="running"):
+                                                 render_audit_log(log_container)
+                                                 pass
+                                                 
+                        asyncio.run(run_chat())
+                        full_response = response_container["text"]
+                        placeholder.markdown(full_response)
+                        st.session_state["messages"].append({"role": "assistant", "content": full_response})
+                        
+                        if st.session_state.get("submitted"):
+                            st.rerun()
 
-                async for event in runner.run_async(
-                    user_id="demo_user",
-                    session_id=st.session_state["agent_session_id"],
-                    new_message=content,
-                ):
-                    if event.content and event.content.parts:
-                        for part in event.content.parts:
-                            if part.text:
-                                yield ("agent", part.text)
-                                
-                    elif hasattr(event, 'tool_calls') and event.tool_calls:
-                        for tool_call in event.tool_calls:
-                            fn_name = tool_call.function_calls[0].name
-                            if "agent" in fn_name:
-                                 yield ("handoff", f"🔄 **Handoff**: Delegating to `{fn_name}`")
-                            else:
-                                 yield ("tool", f"🛠️ **Tool Call**: `{fn_name}`")
-                
-                # We don't yield complete here because it might continue
-
-            # Initialize Trace Events if new
-            if "trace_events" not in st.session_state:
-                 st.session_state["trace_events"] = []
-                 # Run initial automatically
-                 async def run_initial():
-                     events = []
-                     async for e in run_agent_gen():
-                         events.append(e)
-                     return events
-                 
-                 with st.spinner("Processing Application..."):
-                     new_events = asyncio.run(run_initial())
-                     st.session_state["trace_events"].extend(new_events)
-                     if step_through:
-                         st.session_state["trace_index"] = 0
-                     else:
-                         st.session_state["trace_index"] = len(st.session_state["trace_events"]) - 1
-
-            # Render Events (Step-Through or Full)
-            events = st.session_state["trace_events"]
-            limit = st.session_state["trace_index"] + 1 if step_through else len(events)
+    # Analysis Phase (Dashboard)
+    if st.session_state.get("submitted"):
+        data = st.session_state["form_data"]
+        
+        c1, c2 = st.columns(2)
+        app_id = data.get("applicant_id", "Unknown")
+        
+        with c1:
+            st.markdown(f"**Applicant**: {data.get('name')}")
+            st.markdown(f"**ID**: `{app_id}`")
+            st.markdown(f"**Employer**: {data.get('employer')}")
             
-            with st.status("Execution Trace", expanded=True) as status:
-                final_decision_found = False
-                question_found = None
-                
-                for i in range(limit):
-                    if i < len(events):
-                        tipo, text = events[i]
-                        if tipo == "agent":
-                            status.write(f"🤖 **Agent**: {text}")
-                            if "Question:" in text:
-                                question_found = text
-                            if "Final Decision:" in text or "ESCALATED" in text:
-                                final_decision_found = True
-                        elif tipo == "user":
-                            status.write(text)
-                        elif tipo == "handoff":
-                            status.write(text)
-                        elif tipo == "tool":
-                             status.write(text)
-                        elif tipo == "system":
-                            status.write(text)
-                
-                if step_through and limit < len(events):
-                    status.update(label=f"Paused at Step {limit}/{len(events)}", state="running")
-                elif final_decision_found:
-                    status.update(label="✅ Analysis Complete", state="complete")
-                elif question_found:
-                    status.update(label="❓ Additional Info Required", state="running")
+        with c2:
+            st.markdown(f"**Income**: ${data.get('income', 0):,}")
+            st.markdown(f"**Loan Amount**: ${data.get('amount', 0):,}")
+            st.markdown(f"**Purpose**: {data.get('purpose')}")
+        
+        st.divider()
+        
+        if not app_id or app_id == "Unknown":
+            st.error("❌ Applicant ID is missing. Please restart the application.")
+        else:
+            # 1. SECURITY CHECK (X-Factor) - Moved here to be part of the initial submission flow
+            if "security_checked" not in st.session_state:
+                with st.spinner("🛡️ Running Security Scan..."):
+                    user_input = f"{data.get('purpose', '')} {data.get('name', '')}"
+                    if check_injection(user_input):
+                        st.error("🚨 SECURITY ALERT: Prompt Injection Detected!")
+                        st.error("The 'Guardian' layer blocked this request.")
+                        st.stop()
+                    else:
+                        st.success("✅ Security Check Passed")
+                        st.session_state["security_checked"] = True
+                        st.rerun() # Rerun to proceed after security check
 
-            # Step-Through Controls
-            if step_through and limit < len(events):
-                if st.button("Next Step ➡️", key=f"next_{limit}"):
-                    st.session_state["trace_index"] += 1
+            if st.session_state.get("security_checked"):
+                st.divider()
+                st.subheader("🕵️ Agent Reasoning Trace")
+                
+                # Initialize Runner
+                @st.cache_resource
+                def get_runner_analysis():
+                    return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+                    
+                runner_analysis = get_runner_analysis()
+                
+                # Helper to execute agent run step
+                async def run_step(prompt_text):
+                    # Get or Create Session - FORCE NEW SESSION for Analysis to avoid Intake noise
+                    if "analysis_session_id" not in st.session_state:
+                        session = await runner_analysis.session_service.create_session(user_id="demo_user", app_name="loan_agent")
+                        st.session_state["analysis_session_id"] = session.id
+                    else:
+                        session = await runner_analysis.session_service.get_session(st.session_state["analysis_session_id"])
+                    
+                    print(f"DEBUG: Running agent with prompt: {prompt_text[:50]}...")
+                    async for event in runner_analysis.run_async(
+                        session_id=session.id,
+                        user_id="demo_user",
+                        new_message=UserContent(parts=[Part(text=prompt_text)])
+                    ):
+                        yield event
+
+                # Initialize events list
+                if "trace_events" not in st.session_state:
+                    st.session_state["trace_events"] = []
+
+                async def execute_run(status_container, input_text):
+                    try:
+                        async for event in run_step(input_text):
+                            msg = None
+                            # Handle Agent Message
+                            if hasattr(event, "content") and event.content:
+                                if hasattr(event.content, "parts"):
+                                    text_parts = []
+                                    for p in event.content.parts:
+                                        if hasattr(p, "text") and p.text:
+                                            text_parts.append(p.text)
+                                    if text_parts:
+                                        full_text = "".join(text_parts)
+                                        msg = ("agent", full_text)
+                                        status_container.markdown(f"🤖 **Agent**: {full_text}")
+                                        # Append to Chat History too!
+                                        st.session_state["messages"].append({"role": "assistant", "content": full_text})
+                                        
+                            # Handle Tool Calls
+                            elif hasattr(event, "tool_calls") and event.tool_calls:
+                                for tc in event.tool_calls:
+                                    if hasattr(tc, "function_calls"):
+                                        for fc in tc.function_calls:
+                                            msg = ("tool", f"🛠️ Calling Tool: `{fc.name}`")
+                                            st.session_state["trace_events"].append(msg)
+                                            status_container.write(msg[1])
+                                            status_container.update(label=f"Executing {fc.name}...", state="running")
+                                            render_audit_log(log_container)
+                                            msg = None # Handled
+
+                            if msg:
+                                st.session_state["trace_events"].append(msg)
+                                
+                        status_container.update(label="✅ Update Complete. Agent is waiting.", state="complete", expanded=True)
+                        
+                    except Exception as e:
+                        st.error(f"Agent Error: {e}")
+                        status_container.update(label="❌ Error detected", state="error")
+                        import traceback
+                        traceback.print_exc()
+
+                # 1. Initial Run (with Spinner/Status)
+                if "agent_started" not in st.session_state:
+                    initial_prompt = (
+                        f"Review Loan Application for {data['name']} (ID: {data['applicant_id']}). "
+                        f"Req: ${data['amount']:,} for {data['purpose']}. "
+                        f"Stated Income: ${data['income']:,}, Employer: {data['employer']}."
+                    )
+                    with st.status("🤖 Agent is starting analysis...", expanded=True) as status:
+                        asyncio.run(execute_run(status, initial_prompt))
+                    st.session_state["agent_started"] = True
                     st.rerun()
 
-            # Q&A / Final Decision UI
-            # Only show if we are at the end of current events
-            if not step_through or limit == len(events):
-                # Check for Question
-                last_agent_msg = next((e[1] for e in reversed(events) if e[0] == "agent"), "")
-                
-                if "Question:" in last_agent_msg and "Final Decision:" not in last_agent_msg:
-                    st.divider()
-                    st.info("The agent has a question for you.")
-                    q_text = last_agent_msg.split("Question:")[-1].strip()
-                    st.markdown(f"**❓ Question**: {q_text}")
+                # Step Logic & Event Access
+                events = st.session_state.get("trace_events", [])
+                if "trace_index" not in st.session_state:
+                    st.session_state["trace_index"] = 0
                     
-                    with st.form("qa_form"):
-                        answer = st.text_input("Your Answer")
-                        if st.form_submit_button("Submit Answer"):
-                            # Run Agent with Answer
-                            async def run_reply():
-                                new_evs = []
-                                async for e in run_agent_gen(answer):
-                                    new_evs.append(e)
-                                return new_evs
-                                
-                            with st.spinner("Submitting Answer..."):
-                                reply_events = asyncio.run(run_reply())
-                                st.session_state["trace_events"].extend(reply_events)
-                                if step_through:
-                                    # Don't auto advance index, let user step? 
-                                    # Or just let it flow until next pause? 
-                                    # Simplest: Just append and let loop handle it.
-                                    pass
-                                else:
-                                    st.session_state["trace_index"] = len(st.session_state["trace_events"]) - 1
-                            st.rerun()
-                            
-                # Check for Final Decision
-                full_text = "".join([e[1] for e in events if e[0] == "agent"])
-                start_marker = "Final Decision:"
-                if start_marker in full_text:
-                    decision_text = full_text.split(start_marker)[-1].strip()
-                    st.markdown("### 📝 Final Decision")
-                    if "ESCALATE" in decision_text.upper():
-                        st.warning(f"⚠️ **Escalated for Human Review**")
-                        st.info(f"Reason: {decision_text}")
-                    elif "APPROVE" in decision_text.upper():
-                        st.success(f"✅ **Approved**")
-                        st.markdown(f"**Details**: {decision_text}")
-                    elif "DENY" in decision_text.upper():
-                        st.error(f"❌ **Denied**")
-                        st.markdown(f"**Reason**: {decision_text}")
-                    else:
-                        st.markdown(f"**{start_marker}** {decision_text}")
+                limit = st.session_state["trace_index"] + 1 if step_through else len(events)
+
+                # 2. HITL: Reply to Agent
+                # Only show input if trace is fully revealed or Step-Through is off
+                if not step_through or limit >= len(events):
+                    if reply := st.chat_input("Reply to agent..."):
+                         with st.chat_message("user"):
+                             st.write(reply)
+                         st.session_state["messages"].append({"role": "user", "content": reply})
+                         
+                         with st.status("🤖 Agent is processing reply...", expanded=True) as status:
+                              asyncio.run(execute_run(status, reply))
+                         st.rerun()
+                else:
+                    # Show disabled input or message? 
+                    # st.chat_input cannot be disabled easily, but we can just NOT render it.
+                    # Instead, show a helper message.
+                    st.info("ℹ️ Reveal all events to enable reply.")
+                     
+                # Step-by-Step Trace Display
+                if step_through:
+                    st.info("ℹ️ Step-Through Mode Active: Click 'Next' to reveal the agent's actions one by one.")
+
+                for i in range(limit):
+                    if i < len(events):
+                        kind, text = events[i]
+                        if kind == "agent":
+                            st.markdown(f"🤖 **Agent**: {text}")
+                            if "Final Decision" in text:
+                                if "APPROVE" in text: st.success("✅ Approved")
+                                elif "DENY" in text: st.error("❌ Denied")
+                                elif "ESCALATE" in text: st.warning("⚠️ Escalated")
+                        elif kind == "tool":
+                            st.caption(text)
+
+                if step_through and limit < len(events):
+                    if st.button("Reveal Next Event ➡️"):
+                        st.session_state["trace_index"] += 1
+                        st.rerun()
+                elif step_through and limit >= len(events) and len(events) > 0:
+                    st.success("🏁 Trace Review Complete")

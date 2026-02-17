@@ -1,38 +1,59 @@
 import pytest
 import os
 import shutil
-from loan_approval_agent.audit_logger import AuditLogger
+import json
+from loan_approval_agent.tools.audit_logger import log_event, LOG_FILE, LOG_DIR
 
 @pytest.fixture
 def clean_audit_dir():
     """Fixture to clean up audit logs before/after tests."""
-    log_dir = "loan_approval_agent/data/audit_logs"
-    if os.path.exists(log_dir):
-        shutil.rmtree(log_dir)
+    if os.path.exists(LOG_DIR):
+        shutil.rmtree(LOG_DIR)
     yield
     # Cleanup after test
-    if os.path.exists(log_dir):
-        shutil.rmtree(log_dir)
+    if os.path.exists(LOG_DIR):
+        shutil.rmtree(LOG_DIR)
 
-def test_audit_logger_sanitization(clean_audit_dir):
-    """Test that AuditLogger sanitizes unsafe applicant IDs."""
+def test_audit_logger_creates_file(clean_audit_dir):
+    """Test that log_event creates the log file and writes to it."""
+    log_event("user123", "TEST_EVENT", {"foo": "bar"})
     
-    # Test case 1: ID with forward slash
-    logger1 = AuditLogger("user/123")
-    assert "user_123" in logger1.log_file or "user123" in logger1.log_file
-    assert "/" not in os.path.basename(logger1.log_file)
+    assert os.path.exists(LOG_FILE)
     
-    # Test case 2: ID with backward slash (less likely on linux but good to test)
-    logger2 = AuditLogger(r"user\456")
-    assert "\\" not in os.path.basename(logger2.log_file)
+    with open(LOG_FILE, "r") as f:
+        lines = f.readlines()
+        assert len(lines) == 1
+        entry = json.loads(lines[0])
+        assert entry["applicant_id"] == "user123"
+        assert entry["event_type"] == "TEST_EVENT"
+        assert entry["details"]["foo"] == "bar"
+
+def test_audit_logger_masks_pii(clean_audit_dir):
+    """Test that PII is masked in the logs."""
+    sensitive_data = {
+        "ssn": "123-45-6789",
+        "nested": {
+            "account_number": "123456789",
+            "safe": "value"
+        },
+        "description": "User has SSN 123-45-6789 in text."
+    }
     
-    # Test case 3: "N/A" (The specific failure case)
-    logger3 = AuditLogger("N/A")
-    assert "audit_NA.json" in logger3.log_file or "audit_N_A.json" in logger3.log_file
+    log_event("user456", "SENSITIVE_EVENT", sensitive_data)
     
-    # Ensure files can be created
-    logger1.log_event("test_agent", "test_action", {})
-    assert os.path.exists(logger1.log_file)
-    
-    logger3.log_event("test_agent", "test_action", {})
-    assert os.path.exists(logger3.log_file)
+    with open(LOG_FILE, "r") as f:
+        line = f.readlines()[0]
+        entry = json.loads(line)
+        details = entry["details"]
+        
+        # Check direct key masking
+        assert details["ssn"] == "***-**-****"
+        
+        # Check nested key masking
+        assert details["nested"]["account_number"] == "*****"
+        assert details["nested"]["safe"] == "value"
+        
+        # Check regex masking in string (if implemented)
+        # The current implementation checks for SSN regex in strings
+        assert "***-**-****" in details["description"]
+        assert "123-45-6789" not in details["description"]

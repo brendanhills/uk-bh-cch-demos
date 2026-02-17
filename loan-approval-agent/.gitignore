@@ -1,0 +1,46 @@
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# ADK & Logs
+.adk/
+*.log
+tmp/
+debug_output.txt
+test_output.txt
+eval_help.txt
+
+# Editors
+*.code-workspace
+.vscode/
+.idea/
+
+# Ephemeral Scripts
+analyze_policy.py
+create_policy_pdf.py
+reproduce_policy_issue.py
+generate_applicants.py
+generate_mock_docs.py
+generate_policy_pdfs.py
+generate_policy_v2.py
+simple_test.py
+test_genai_sdk.py
+test_thinking.py
+verify_model.py
+interview.txt
+
+# Data
+data/audit_logs/
+data/decisions/
+data/external_data/
+artifacts/uploads/*
+!artifacts/uploads/.pag
+loan_approval_agent/data/audit_logs/
+loan_approval_agent/data/decisions/
+
+# Node
+node_modules/
+package-lock.json

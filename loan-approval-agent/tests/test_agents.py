@@ -15,29 +15,36 @@ from loan_approval_agent.sub_agents.policy_expert import tools as pol_tools
 from loan_approval_agent.sub_agents.underwriter import tools as und_tools
 
 def test_investigator_credit_report():
-    # Test with a known ID from mock DB (assuming mock DB mock is loaded or we mock get)
-    # Actually, let's check one of the generated IDs if possible, or just check the structure
-    # of the fallback/error if not found, OR rely on the fact that tools.py loads the JSON on import.
+    # Test with a known valid ID (Sarah Jenkins)
+    valid_id = "900-00-1234"
+    report = inv_tools.get_credit_report(valid_id)
     
-    # We can list keys from the loaded DB if we want to be sure
-    valid_ids = list(inv_tools.APPLICANTS_DB.keys())
-    if valid_ids:
-        report = inv_tools.get_credit_report(valid_ids[0])
-        assert "credit_score" in report or "error" in report
-        assert report["applicant_id"] == valid_ids[0]
+    # Check for expected keys or error structure
+    if "error" in report:
+        # If the file load fails in test env, this might happen, but we expect success
+        pytest.fail(f"Credit report returned error: {report['error']}")
+        
+    assert report["applicant_id"] == valid_id
+    assert "score" in report
 
 def test_investigator_employment():
-    valid_ids = list(inv_tools.APPLICANTS_DB.keys())
-    if valid_ids:
-        emp = inv_tools.verify_employment(valid_ids[0])
-        assert "verified_annual_income" in emp
-        assert "status" in emp
+    valid_id = "900-00-1234"
+    emp = inv_tools.verify_employment(valid_id)
+    
+    if "error" in emp:
+         pytest.fail(f"Employment check returned error: {emp['error']}")
+         
+    assert "verified_annual_income" in emp
+    assert "status" in emp
 
 def test_investigator_fraud():
-    valid_ids = list(inv_tools.APPLICANTS_DB.keys())
-    if valid_ids:
-        fraud = inv_tools.check_fraud_risk(valid_ids[0])
-        assert "fraud_score" in fraud
+    valid_id = "900-00-1234"
+    fraud = inv_tools.check_fraud_risk(valid_id)
+    
+    if "error" in fraud:
+        pytest.fail(f"Fraud check returned error: {fraud['error']}")
+        
+    assert "risk_level" in fraud
 
 def test_policy_expert_pdf_reading():
     # Check if the Master Policy exists and is readable
