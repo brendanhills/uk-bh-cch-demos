@@ -16,7 +16,7 @@ config.LATENCY_MODE = "TESTING"
 from loan_approval_agent.agent import loan_manager
 
 @pytest.mark.asyncio
-@pytest.mark.skip(reason="Requires mocking of ADK runtime model")
+
 async def test_escalation_borderline_credit():
     """Test that the agent escalates a borderline credit application."""
     

@@ -12,7 +12,7 @@ from loan_approval_agent import config
 config.LATENCY_MODE = "TESTING"
 
 @pytest.mark.asyncio
-@pytest.mark.skip(reason="Hangs due to ADK runtime mocking issues")
+
 @patch("loan_approval_agent.sub_agents.investigator.tools.Client")
 async def test_document_upload_analysis(MockClient, capsys):
     """Verifies that the agent analyzes uploaded documents when provided."""
