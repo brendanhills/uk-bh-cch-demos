@@ -47,47 +47,58 @@ uv run streamlit run demo_app.py
 
 **Goal**: Show the "Mind of the Agent" – how it thinks, calls tools, and answers questions.
 
-### 1. Start the ADK Web Server
+### 1. Start the ADK Web Server (Technical View)
 *Open a new terminal tab* and run:
 ```bash
-uv run python -m google.adk.cli web . --port 8503
+uv run adk web . --port 8503
 ```
 *Open `http://127.0.0.1:8503` in your browser.*
 
 ### 2. Select the Agent
 *   In the top-left dropdown, ensure **`loan_manager`** (or `agents`) is selected.
 
-### 3. Interactive Walkthrough
+### 3. Key Features to Demonstrate
+*   **The Orchestrator**: Show how `loan_manager` delegates to sub-agents.
+*   **The Trace**: Expand the "Reasoning Trace" to show the step-by-step logic.
+*   **Tool Calls**: Point out specific tool executions like `investigator_agent` calling `analyze_document`.
 
-**Prompt 1: The Introduction**
-> "Hi, who are you and what can you do?"
+### 4. Interactive Walkthrough Scenarios
 
-*   **Observe**: The agent introduces itself as the Loan Manager and mentions its team (Investigator, Policy Expert, Risk Analyst).
+> [!NOTE]
+> **Data Handling**: The agent uses the `applicant_id` to look up "Basic Info" (Income, Employer) from its internal records (`applicants.json`), simulating a backend lookup of a submitted application. 
+> *   If the data is found, it proceeds (Scenarios 1-4).
+> *   If data is missing, it asks the user (Scenario 5).
+> *   Loan Amount and Purpose must be provided in the prompt (simulating the web form submission).
 
-**Prompt 2: Starting a Case (Manual IDs)**
-> "Assess loan for applicant 9813ee1d"
+Use these prompts to demonstrate different agent behaviors.
 
-*   *(Note: `9813ee1d` is a "High Credit" applicant from our mock DB)*
-*   **Observe**:
-    *   The agent calls `investigator_agent`.
-    *   You see the **Tool Calls** in the UI (e.g., `get_credit_report`, `verify_employment`).
-    *   It passes the data to `policy_expert_agent`.
-    *   It finally calls `risk_analyst_agent` to make the decision.
-    *   **Response**: It should return a structured approval decision.
+**Scenario 1: Happy Path (Sarah)**
+> "Assess loan for applicant 12345. Requesting $10,000 for Debt Consolidation."
+*   **Attributes**: Strong credit, sensible amount.
+*   **Expected Result**: ✅ **APPROVE**.
 
-**Prompt 3: Asking for Reasoning**
-> "Why was this applicant approved?"
+**Scenario 1b: Over-Leveraged (Sarah - High DTI)**
+> "Assess loan for applicant 12345. Requesting $50,000 for Home Improvement."
+*   **Attributes**: Same applicant, but higher amount pushes DTI too high.
+*   **Expected Result**: ❌ **DENY** (Excessive DTI).
 
-*   **Observe**: The agent recalls the context (Credit Score, DTI) and explains the decision based on the Policy Expert's assessment.
+**Scenario 2: High Earner Exception (David)**
+> "Assess loan for applicant 12346. Requesting $100,000 to buy a yacht."
+*   **Attributes**: High Income ($175k). Large loan but within limits.
+*   **Expected Result**: ✅ **APPROVE** (High Earner).
 
-**Prompt 4: Handling Edge Cases (Fraud)**
-> "Assess loan for applicant 874796df"
+**Scenario 4: Borderline Case (Gary - Escalation)**
+> "Assess loan for applicant 12348. Requesting $15,000 for Debt Consolidation."
+*   **Attributes**: 620 Score, High DTI, Recent late payment.
+*   **Expected Result**: ⚠️ **ESCALATE** (Requires Manual Review).
 
-*   *(Note: `874796df` is a "Fraud Risk" applicant)*
-*   **Observe**:
-    *   The `check_fraud_risk` tool returns a high fraud score.
-    *   The agent should immediately **DENY** based on fraud, possibly skipping detailed policy analysis or flagging it as high priority.
+**Scenario 5: Missing Information (Jane)**
+> "Assess loan for applicant 12349. Requesting $5,000 for Personal use."
+*   **Attributes**: No stated income in profile.
+*   **Expected Result**: ❓ **ASK USER** (Agent should ask for income details rather than deny).
 
+**Tip**: You can follow up individual decisions with:
+> "Why did you make that decision?"
 ---
 
 ## 📝 Key Files to Show (Optional)

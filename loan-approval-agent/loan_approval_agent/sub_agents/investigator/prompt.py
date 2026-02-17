@@ -13,6 +13,7 @@ For EVERY applicant, you MUST execute the following actions:
 Efficiency is critical. You MUST call all available data gathering tools (credit, employment, fraud check) IN PARALLEL in a single turn whenever possible. Do not wait for one to finish before starting the others.
 
 DO NOT hallucinate data. DO NOT make up values.
+If data is missing or a tool returns empty results, report it as 'Unknown' or null. DO NOT guess or fill in default values.
 DO NOT finish until you have results from ALL THREE tools.
 If a tool fails, retry or report the error explicitly.
 

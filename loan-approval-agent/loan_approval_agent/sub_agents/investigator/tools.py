@@ -100,8 +100,13 @@ def verify_employment(applicant_id: str) -> Dict[str, Any]:
     random.seed(seed + 1)
     
     # Deterministic salary verification
-    # If persona implies instability or fraud, we simulate it
-    if "variable income" in persona.lower() or "fraud" in persona.lower():
+    # Use employer from DB for everyone. Default to Mock Corp only if not found.
+    employer_name = applicant.get("employer", "Mock Corp Inc.") if applicant else "Mock Corp Inc."
+    
+    if not employer_name:
+        status = "Unknown"
+        verified_income = 0
+    elif "variable income" in persona.lower() or "fraud" in persona.lower():
         verified_income = round(stated_income * 0.8) # 20% variance
         status = "Self-Employed / Variable"
     else:
@@ -111,7 +116,7 @@ def verify_employment(applicant_id: str) -> Dict[str, Any]:
 
     result = {
         "applicant_id": applicant_id,
-        "employer": "Mock Corp Inc.",
+        "employer": employer_name,
         "status": status,
         "tenure": f"{random.randint(1, 10)} years",
         "verified_annual_income": verified_income
@@ -128,6 +133,26 @@ def check_fraud_risk(applicant_id: str) -> Dict[str, Any]:
     # Simulate API latency (1s)
     time.sleep(config.get_latency(1.0, 1.5))
     
+    applicant = APPLICANTS_DB.get(applicant_id)
+    persona = applicant.get("persona", "") if applicant else ""
+
+    seed =  sum(ord(c) for c in applicant_id)
+    random.seed(seed + 2)
+    
+    if "identity thief" in persona.lower() or "fraud" in persona.lower():
+        risk_score = random.randint(85, 99)
+    else:
+        risk_score = random.randint(0, 20)
+    
+    result = {
+        "applicant_id": applicant_id,
+        "fraud_score": risk_score,
+        "identity_verified": risk_score < 50,
+        "suspicious_activity": risk_score > 80
+    }
+    
+    logger.log_event("Investigator", "check_fraud_risk_complete", result)
+    return result    
     applicant = APPLICANTS_DB.get(applicant_id)
     persona = applicant.get("persona", "") if applicant else ""
 
@@ -187,4 +212,10 @@ def analyze_document(file_path: str, query: str) -> Dict[str, Any]:
         error_res = {"error": str(e)}
         logger.log_event("Investigator", "analyze_document_error", error_res)
         return error_res
-        return error_res
+
+
+def get_application_details(applicant_id: str) -> Dict[str, Any]:
+    """Fetches the loan application details (amount, purpose)."""
+    # logger = AuditLogger(applicant_id)
+    # logger.log_event("Investigator", "application_details_fetched", result)
+    return result
