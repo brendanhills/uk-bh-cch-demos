@@ -99,7 +99,10 @@ The system uses local mock data to ensure reliability and repeatability.
     -   `900-00-3456`: "Gary Escalate" - Borderline Credit (Escalation Test).
     -   `900-00-9999`: "Jane Fraud" - Data Inconsistency (Fraud Detection).
     -   `000-00-0000`: "Alex Resilience" - Invalid ID (Resilience Test).
+
 -   **Documents**: Mock generated PDFs in `artifacts/uploads/`.
+    -   **Pay Stubs**: Realistic pay stubs generated using Gemini (e.g., `pay_stub_sarah_speed.pdf`) with consistent addresses and deductions.
+-   **Diagrams**: Updated architecture and flow diagrams in `docs/` now explicitly show the **Human-in-the-Loop (HIL)** handoff process.
 
 ## Running Tests
 
