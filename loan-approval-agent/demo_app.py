@@ -13,13 +13,28 @@ sys.path.append(os.getcwd())
 # Import config to load environment variables
 from loan_approval_agent import config
 from loan_approval_agent.agent import loan_manager
-from loan_approval_agent.tools.intake import submit_application
+from loan_approval_agent.tools.intake import register_application as register_application_base
 from loan_approval_agent.tools import token_vault
 from loan_approval_agent.tools.audit_logger import log_event
+from loan_approval_agent.tools.security import check_injection
 
 st.set_page_config(page_title="Fintech Loan Agent", layout="wide")
 
-
+# Wrapper for register_application to update Streamlit state
+def register_application(name: str, gov_id: str, income: int, employer: str, amount: int, purpose: str):
+    """Local wrapper that updates session state when the agent calls the tool."""
+    result = register_application_base(name, gov_id, income, employer, amount, purpose)
+    if result.get("status") == "success":
+        st.session_state["form_data"] = {
+            "name": name,
+            "applicant_id": result.get("application_id"),
+            "income": income,
+            "employer": employer,
+            "amount": amount,
+            "purpose": purpose
+        }
+        st.session_state["submitted"] = True
+    return result
 
 st.title("🤖 Fintech Loan Approval Agent")
 st.markdown("### AI-Powered Underwriting Demo")
@@ -166,17 +181,17 @@ if "form_data" not in st.session_state:
     st.session_state["form_data"] = {}
 
 # Tools for Agent-Driven Intake
-# The submit_application function is now imported from loan_approval_agent.tools.intake
+# The register_application function is now imported from loan_approval_agent.tools.intake
 # It handles the tokenization internally.
 
 # Initialize Loan Manager & Tools
 # We need to ensure we don't add the tool repeatedly on rerun
 # Initialize Loan Manager & Tools
-# Ensure we use the CURRENT 'submit_application' function (fresh closure over st.session_state)
+# Ensure we use the CURRENT 'register_application' function (fresh closure over st.session_state)
 # Remove any existing instance of the tool (from previous runs/reloads)
-loan_manager.tools = [t for t in loan_manager.tools if getattr(t, "__name__", str(t)) != "submit_application"]
+loan_manager.tools = [t for t in loan_manager.tools if getattr(t, "__name__", str(t)) != "register_application"]
 # Add the fresh tool instance
-loan_manager.tools.append(submit_application)
+loan_manager.tools.append(register_application)
 st.session_state["intake_agent_setup"] = True
 
 # Helper to get runner
@@ -192,19 +207,24 @@ c_main, c_audit = st.columns([0.65, 0.35], gap="large")
 # --- AUDIT LOG (Always Visible) ---
 with c_audit:
     st.subheader("📜 Live Audit Log")
-    log_container = st.container(height=700)
+    # Use a scrolling container but put a placeholder inside that we can reliably clear
+    log_scroll_area = st.container(height=700)
+    with log_scroll_area:
+        log_container = st.empty()
 
-def render_audit_log(container):
-    container.empty()
-    with container:
+def render_audit_log(placeholder):
+    with placeholder.container():
         if os.path.exists(AUDIT_LOG_FILE):
             with open(AUDIT_LOG_FILE, "r") as f:
                 lines = f.readlines()
-                # Show last 20 events, newest on top
-                for line in reversed(lines[-20:]):
+                # Show last 100 events, newest on top
+                for line in reversed(lines[-100:]):
+                    if not line.strip():
+                        continue
                     try:
                         event = json.loads(line)
-                        st.caption(f"{event.get('timestamp', '')[11:19]} - **{event.get('event_type')}**")
+                        agent = event.get('agent', 'System')
+                        st.caption(f"{event.get('timestamp', '')[11:19]} - **{agent}**: {event.get('event_type')} ")
                         st.json(event.get("details"), expanded=False)
                         st.divider()
                     except:
@@ -231,7 +251,7 @@ with c_main:
         if "auto_input" in st.session_state:
             prompt = st.session_state.pop("auto_input")
         else:
-            prompt = st.chat_input("Answer the agent...")
+            prompt = st.chat_input("Response...")
 
         # 3. Render Content inside Container
         with chat_container:
@@ -287,9 +307,11 @@ with c_main:
                                          for fc in tc.function_calls:
                                              msg_content = f"🛠️ Executing {fc.name}..."
                                              st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
-                                             with st.status(msg_content, state="running"):
-                                                 render_audit_log(log_container)
+                                             with st.status(msg_content, state="complete"):
                                                  pass
+                                
+                                # Refresh audit log on EVERY event (call, response, text, etc.)
+                                render_audit_log(log_container)
                                                  
                         asyncio.run(run_chat())
                         full_response = response_container["text"]
@@ -380,7 +402,9 @@ with c_main:
                                     if text_parts:
                                         full_text = "".join(text_parts)
                                         msg = ("agent", full_text)
-                                        status_container.markdown(f"🤖 **Agent**: {full_text}")
+                                        # Only show live if NOT stepping through
+                                        if not step_through:
+                                            status_container.markdown(f"🤖 **Agent**: {full_text}")
                                         # Append to Chat History too!
                                         st.session_state["messages"].append({"role": "assistant", "content": full_text})
                                         
@@ -391,15 +415,19 @@ with c_main:
                                         for fc in tc.function_calls:
                                             msg = ("tool", f"🛠️ Calling Tool: `{fc.name}`")
                                             st.session_state["trace_events"].append(msg)
-                                            status_container.write(msg[1])
-                                            status_container.update(label=f"Executing {fc.name}...", state="running")
-                                            render_audit_log(log_container)
+                                            # Only show live if NOT stepping through
+                                            if not step_through:
+                                                status_container.write(msg[1])
+                                                status_container.update(label=f"Executing {fc.name}...", state="running")
                                             msg = None # Handled
 
                             if msg:
                                 st.session_state["trace_events"].append(msg)
+                            
+                            # Refresh audit log on EVERY event (call, response, text, etc.)
+                            render_audit_log(log_container)
                                 
-                        status_container.update(label="✅ Update Complete. Agent is waiting.", state="complete", expanded=True)
+                        status_container.update(label="✅ Update Complete.", state="complete", expanded=False)
                         
                     except Exception as e:
                         st.error(f"Agent Error: {e}")
@@ -414,7 +442,7 @@ with c_main:
                         f"Req: ${data['amount']:,} for {data['purpose']}. "
                         f"Stated Income: ${data['income']:,}, Employer: {data['employer']}."
                     )
-                    with st.status("🤖 Agent is starting analysis...", expanded=True) as status:
+                    with st.status("🤖 Agent is starting analysis...", expanded=not step_through) as status:
                         asyncio.run(execute_run(status, initial_prompt))
                     st.session_state["agent_started"] = True
                     st.rerun()
@@ -423,7 +451,8 @@ with c_main:
                 events = st.session_state.get("trace_events", [])
                 if "trace_index" not in st.session_state:
                     st.session_state["trace_index"] = 0
-                    
+                
+                # If Step-Through is OFF, always show all events
                 limit = st.session_state["trace_index"] + 1 if step_through else len(events)
 
                 # 2. HITL: Reply to Agent
@@ -434,18 +463,14 @@ with c_main:
                              st.write(reply)
                          st.session_state["messages"].append({"role": "user", "content": reply})
                          
-                         with st.status("🤖 Agent is processing reply...", expanded=True) as status:
+                         with st.status("🤖 Agent is processing reply...", expanded=not step_through) as status:
                               asyncio.run(execute_run(status, reply))
                          st.rerun()
                 else:
-                    # Show disabled input or message? 
-                    # st.chat_input cannot be disabled easily, but we can just NOT render it.
-                    # Instead, show a helper message.
-                    st.info("ℹ️ Reveal all events to enable reply.")
+                    st.info("ℹ️ Reveal all steps to enable reply.")
                      
-                # Step-by-Step Trace Display
                 if step_through:
-                    st.info("ℹ️ Step-Through Mode Active: Click 'Next' to reveal the agent's actions one by one.")
+                    st.info("ℹ️ Step-Through Mode Active: Click 'Next' to step through the agent's actions one by one.")
 
                 for i in range(limit):
                     if i < len(events):
@@ -460,17 +485,19 @@ with c_main:
                             st.caption(text)
 
                 if step_through and limit < len(events):
-                    if st.button("Reveal Next Event ➡️"):
+                    if st.button("Next Step ➡️"):
                         st.session_state["trace_index"] += 1
                         st.rerun()
+
                 # Check for generated Decision PDF
-                if step_through and limit >= len(events) and len(events) > 0:
-                    st.success("🏁 Trace Review Complete")
+                if limit >= len(events) and len(events) > 0:
+                    if step_through:
+                        st.success("🏁 Trace Review Complete")
                     
                     # Look for PDF in data/decisions
                     # Filename format: decision_{applicant_id}_{timestamp}.pdf
                     # We need to find the latest one for this applicant
-                    decisions_dir = os.path.join(BASE_DIR, "loan_approval_agent/data/decisions")
+                    decisions_dir = os.path.join(BASE_DIR, "data/decisions")
                     if os.path.exists(decisions_dir):
                         pdf_files = [f for f in os.listdir(decisions_dir) if f.endswith(".pdf") and (data.get("applicant_id") in f or "decision" in f)]
                         # Sort by modification time (newest first)

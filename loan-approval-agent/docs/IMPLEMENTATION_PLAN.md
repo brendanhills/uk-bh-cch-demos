@@ -34,11 +34,11 @@ Enforce Gov ID collection at the start of the flow.
 
 #### [MODIFY] [demo_app.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/demo_app.py)
 - **Change**: Update `sys_prompt` to explicit instructions: "You MUST collect the applicant's Government ID (SSN) before submitting."
-- **Change**: Update `submit_application` to accept `gov_id` argument.
+- **Change**: Update `register_application` to accept `gov_id` argument.
 - **UI**: Update "Quick Fill" button to populate the Gov ID for the selected scenario.
 
 #### [MODIFY] [intake.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/tools/intake.py)
-- **Change**: Update signature to `submit_application(name, income, ..., gov_id)`.
+- **Change**: Update signature to `register_application(name, income, ..., gov_id)`.
 - **Logic**: Use `gov_id` as the primary key.
 
 ### 3. Service Updates

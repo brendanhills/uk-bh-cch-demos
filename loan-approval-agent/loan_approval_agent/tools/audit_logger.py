@@ -82,8 +82,10 @@ def log_event(applicant_id: str, event_type: str, details: Dict[str, Any], agent
             "dlp_enabled": HAS_DLP
         }
 
-        with open(LOG_FILE, "a") as f:
+        with open(LOG_FILE, "a", buffering=1) as f:
             f.write(json.dumps(entry) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
             
     except Exception as e:
         print(f"CRITICAL: Failed to write audit log: {e}")
