@@ -17,7 +17,7 @@ async def test_qa_missing_info():
         app_name=runner.app_name, user_id="test_qa_user"
     )
 
-    # Input for Jane Doe (12349) with "Unknown" employer
+    # Input for Jane Fraud (12349) with "Unknown" employer
     user_input = (
         "Begin review for applicant_id: 12349. "
         "Requested Loan Amount: $5,000. "

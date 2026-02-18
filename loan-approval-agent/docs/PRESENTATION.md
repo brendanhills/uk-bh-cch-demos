@@ -26,36 +26,49 @@
 ### Process Flow (Swimlanes)
 ![Process Flow Diagram](flow.png)
 
-## 3. Technical Deep-Dive & Live Demo (10-15 mins)
-*   *Transition to Demo Driver*
+## 3. Technical Deep-Dive & Live Demo (12 mins)
+*   *Transition to Demo Driver (Strict Timebox)*
 
-### Demo Segment A: Speed & Orchestration (Streamlit)
-*   **Scenario 1: Sarah Jenkins (The Happy Path)**
-    *   *Action*: Run "Sarah (Debt Consolidation)"
-    *   *Talk Track*: "Watch the 'Orchestrator' delegate tasks in parallel. Credit, Employment, and Fraud checks happen simultaneously. Approval in seconds."
-    *   *Show*: Audit Log in sidebar. "Every step is recorded for compliance."
+#### P0: The Core Value (Must Show) - 5 mins
+*   **1. Auto-Approval Speed** (`sarah_speed`)
+    *   *Why*: Proves the core ROI (Speed/Parallelism).
+    *   *Talk Track*: "Parallelized 3 APIs + Bank Statements. Approved in seconds."
+    *   *Answer to Challenge*: **"Reduce time from 48h to <5m."**
+*   **2. Explainable Decline** (`sarah_decline`)
+    *   *Why*: Proves Compliance/Explainability (Req #2).
+    *   *Talk Track*: "Risk Engine flagged DTI > 43%. Decision is explainable."
+    *   *Answer to Challenge*: **"Provide clear, explainable decisions (no black box)."**
+*   **3. Seamless Handoff** (`gary_escalate`)
+    *   *Why*: Proves Human-in-the-Loop (Req #5).
+    *   *Talk Track*: "Escalated case. Underwriter sees pre-populated case file."
+    *   *Answer to Challenge*: **"Handle borderline cases with human review."**
 
-### Demo Segment B: Business Rules & Explainability
-*   **Scenario 2: Sarah (High DTI)**
-    *   *Action*: Run "Sarah (Home Improvement - $50k)"
-    *   *Talk Track*: "Same applicant, higher risk. The 'Underwriter' applies the DTI rule from the policy. The decline is **explained**, not just a score."
+#### P1: The "X-Factors" (Key Differentiators) - 4 mins
+*   **4. Resilience** (`alex_resilience`)
+    *   *Why*: Proves Robustness/Error Handling.
+    *   *Talk Track*: "API failure/not found. Handled gracefully. Rate limits respected."
+    *   *Answer to Challenge*: **"Graceful failure handling (NFR)."**
+*   **5. Data Consistency** (`jane_fraud`)
+    *   *Why*: Proves LLM Reasoning (Fraud Detection).
+    *   *Talk Track*: "LLM detected 'Stated Income' contradicts 'Tax Record'. Blocked."
+    *   *Answer to Challenge*: **"Detect inconsistencies and fraud."**
 
-### Demo Segment C: Resilience & "Real ID"
-*   **Scenario 3: Integration Errors (Ghost User)**
-    *   *Action*: Run "Ghost User" (Invalid ID)
-    *   *Talk Track*: "Real systems break. If the Credit Bureau is down or the ID is invalid, the agent fails **gracefully**. No hallucinations."
-### Demo Segment D: Security & PII Architecture
-*   **Scenario 4: The Vault**
-    *   *Action*: Open `loan_approval_agent/tools/investigator.py`.
-    *   *Talk Track*: "Notice how the agent tools take an `applicant_id` (Token), not a name. The Personal Data lives in the secure tool environment. The Agent only receives the *insights* ('DTI is 45%'), never the raw data."
-    *   *Show*: The `Security Guardian` prompt in `security.py`.
+#### P2: If Time Permits (Nice to Have) - 3 mins
+*   **6. Policy Agility** (`maria_agility`)
+    *   *Why*: Proves "Policy-as-Code".
+    *   *Talk Track*: "Swapped Policy PDF. Agent adapted instantly."
+    *   *Answer to Challenge*: **"Adapt to changing policy rules quickly."**
+*   **7. Security Deep Dive** (Code View)
+    *   *Why*: Proves PCI-DSS.
+    *   *Talk Track*: "Stateless architecture. Tokens only."
+    *   *Answer to Challenge*: **"Constraints: PCI-DSS, PII compliance."**
 
 ## 4. Architectural Decisions & Trade-offs (4 mins)
 *   **Why Agents?**: vs standard automation.
     *   *Flexibility*: We can swap the "Policy Expert" knowledge base without rewriting code.
     *   *Reasoning*: LLMs can handle unstructured data (e.g., "Analyze this bank statement") that regex can't.
 *   **Trade-off**: Latency vs. Accuracy.
-    *   We added "Human-in-the-Loop" for borderline cases (Gary Gray scenario) to balance risk.
+    *   We added "Human-in-the-Loop" for borderline cases (Gary Escalate scenario) to balance risk.
 
 ## 5. Business & Strategic Value (5 mins)
 *   **ROI (Return on Investment)**:
@@ -85,7 +98,7 @@
 | **5. Human Handoff** | *Scenario 4 (Gary)*: Returns "ESCALATE" with pre-filled case file. |
 | **6. Audit Trail** | *Sidebar*: Live JSON logs for every action (NFR). |
 | **7. Isolation / Stateless** | *Architecture*: Each request uses a fresh session. PII not persisted. |
-| **8. Graceful Failure** | *Scenario 3 (Ghost)*: API failure caught, "Safe Error" returned (NFR). |
+| **8. Graceful Failure** | *Scenario 3 (missing)*: API failure caught, "Safe Error" returned (NFR). |
 
 ### ✨ The "X-Factors" (The "Wow" Moments)
 *Things we added to go above and beyond:*

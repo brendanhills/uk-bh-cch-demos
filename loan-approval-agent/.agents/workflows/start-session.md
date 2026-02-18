@@ -1,7 +1,8 @@
 ---
 description: run at the start of a session
 ---
-- Review the following sources to understand the current project state:
+- ONLY consider the current folder state when creating the plan.
+- Review the following sources to understand the current project folder state:
   - TODO
   - BACKLOG
  

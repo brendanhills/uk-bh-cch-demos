@@ -3,15 +3,15 @@
     "applicant_id": "900-00-1234",
     "consumer": {
       "firstName": "Sarah",
-      "lastName": "Jenkins"
+      "lastName": "Speed"
     },
     "score": {
       "provider": "Equifax",
       "value": 787
     },
     "summary": {
-      "totalDebt": 2450,
-      "totalMonthlyPayment": 100,
+      "totalDebt": 35000,
+      "totalMonthlyPayment": 1200,
       "creditUtilization": 0.14
     },
     "tradelines": [
@@ -20,6 +20,12 @@
         "balance": 2450,
         "monthly_payment": 100,
         "status": "Current"
+      },
+      {
+        "creditor": "AUTO LOAN",
+        "balance": 32550,
+        "monthly_payment": 1100,
+        "status": "Current"
       }
     ]
   },
@@ -27,7 +33,7 @@
     "applicant_id": "900-00-5678",
     "consumer": {
       "firstName": "David",
-      "lastName": "Smith"
+      "lastName": "Leverage"
     },
     "score": {
       "provider": "Experian",
@@ -50,7 +56,7 @@
     "applicant_id": "900-00-9012",
     "consumer": {
       "firstName": "Maria",
-      "lastName": "Rodriguez"
+      "lastName": "Agility"
     },
     "score": {
       "provider": "TransUnion",
@@ -73,7 +79,7 @@
     "applicant_id": "900-00-3456",
     "consumer": {
       "firstName": "Gary",
-      "lastName": "Gray"
+      "lastName": "Escalate"
     },
     "score": {
       "provider": "Equifax",
@@ -97,7 +103,7 @@
     "applicant_id": "900-00-9999",
     "consumer": {
       "firstName": "Jane",
-      "lastName": "Doe"
+      "lastName": "Fraud"
     },
     "score": {
       "provider": "Experian",

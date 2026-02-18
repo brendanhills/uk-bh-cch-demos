@@ -20,7 +20,7 @@ from loan_approval_agent.agent import loan_manager
 async def test_escalation_borderline_credit():
     """Test that the agent escalates a borderline credit application."""
     
-    # Applicant 900-00-3456 (Gary Gray) -> Token: user_04
+    # Applicant 900-00-3456 (Gary Escalate) -> Token: user_04
     # We use the token directly to verify the Agent handles pre-existing tokens correctly
     # and to avoid the "Agent failed to tokenize" failure mode which is covered by other tests.
     borderline_id = "user_04"

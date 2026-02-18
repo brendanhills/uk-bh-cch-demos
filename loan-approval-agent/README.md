@@ -95,10 +95,10 @@ uv run streamlit run demo_app.py
 The system uses local mock data to ensure reliability and repeatability.
 
 -   **Applicants**: Pre-defined profiles in `loan_approval_agent/data/demo_data/applicants.json`.
-    -   `900-00-1234`: "Sarah Jenkins" - Perfect Candidate (Auto-Approve) or High DTI (Decline).
-    -   `900-00-3456`: "Gary Gray" - Borderline Credit (Escalation Test).
-    -   `900-00-9999`: "Jane Doe" - Data Inconsistency (Fraud Detection).
-    -   `000-00-0000`: "Ghost User" - Invalid ID (Resilience Test).
+    -   `900-00-1234`: "Sarah Speed" - Perfect Candidate (Auto-Approve) or High DTI (Decline).
+    -   `900-00-3456`: "Gary Escalate" - Borderline Credit (Escalation Test).
+    -   `900-00-9999`: "Jane Fraud" - Data Inconsistency (Fraud Detection).
+    -   `000-00-0000`: "Alex Resilience" - Invalid ID (Resilience Test).
 -   **Documents**: Mock generated PDFs in `artifacts/uploads/`.
 
 ## Running Tests

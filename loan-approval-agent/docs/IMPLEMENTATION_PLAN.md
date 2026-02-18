@@ -22,9 +22,9 @@ Update all JSON data files to use Gov IDs (SSN format) as primary keys.
 #### [MODIFY] [applicants.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/data/demo_data/applicants.json)
 - **Change**: Replace internal IDs (e.g., "12345") with realistic Gov IDs (e.g., `900-00-1234`).
 - **Map**:
-  - Sarah Jenkins -> `900-00-1234`
-  - David Smith -> `900-00-5678`
-  - Jane Doe -> `900-00-9999` (Invalid/No Record)
+  - Sarah Speed -> `900-00-1234`
+  - David Leverage -> `900-00-5678`
+  - Jane Fraud -> `900-00-9999` (Invalid/No Record)
 
 #### [MODIFY] [credit_score.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/data/external_data/credit_score.json)
 - **Change**: Update keys to match new Gov IDs.
@@ -55,18 +55,18 @@ Align `DEMO.md` with `interview_task.txt`, splitting into Operations (UI) and Te
 
 #### [MODIFY] [DEMO.md](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/DEMO.md)
 - **Part 1: Streamlit (Operations/Speed)**
-  - **Scenario 1 (Sarah Jenkins - Approve)**
+  - **Scenario 1 (Sarah Speed - Approve)**
     - **Req 1 (Parallel Orchestration)**: "The agent checked Credit, Employment, and Risk in parallel."
     - **Req 4 (Auto-Approve < 5 mins)**: "Auto-approved in seconds, not days."
     - **NFR (Audit Trail)**: Show live audit log in sidebar.
   - **Scenario 2 (Sarah - High DTI Decline)**
     - **Req 2 (Business Rules)**: "Risk Engine flagged DTI > 43%."
     - **Req 3 (Reasoning/Explainability)**: "Decline reason is precise."
-  - **Scenario 4 (Gary Gray - Escalate)**
+  - **Scenario 4 (Gary Escalate - Escalate)**
     - **Req 5 (Seamless Handoff)**: "Generates Case File... human starts at 90% done."
 
 - **Part 2: ADK Web (Technical/X-Factors)**
-  - **Scenario 5 (Jane Doe - Fraud)**
+  - **Scenario 5 (Jane Fraud - Fraud)**
     - **X-Factor (Data Consistency)**: "Stated income ($0) contradicts tax record... proactively blocked."
     - **Req 1 (Fraud API)**: Demonstrates integration.
   - **Scenario 6 (Invalid ID - Resilience)**

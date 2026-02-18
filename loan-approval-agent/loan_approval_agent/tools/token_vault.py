@@ -5,12 +5,12 @@ from typing import Optional
 # In production, this would be a secure, encrypted database or DLP Service.
 
 _TOKEN_MAP = {
-    "900-00-1234": "user_01",   # Sarah Jenkins
-    "900-00-5678": "user_02",  # David (Jumbo Loan)
-    "900-00-9012": "user_03",  # Maria (Gift)
-    "900-00-3456": "user_04",  # Gary (Risk)
-    "900-00-9999": "user_05",  # Jane (Fraud?)
-    "000-00-0000": "user_99",  # Ghost (Unknown)
+    "900-00-1234": "user_01",   # Sarah Speed
+    "900-00-5678": "user_02",  # David Leverage (Jumbo Loan)
+    "900-00-9012": "user_03",  # Maria Agility (Gift)
+    "900-00-3456": "user_04",  # Gary Escalate (Risk)
+    "900-00-9999": "user_05",  # Jane Fraud (Fraud?)
+    "000-00-0000": "user_99",  # Alex Random (Unknown)
 }
 
 _REVERSE_MAP = {v: k for k, v in _TOKEN_MAP.items()}

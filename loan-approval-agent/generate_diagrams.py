@@ -16,13 +16,22 @@ def download_mermaid(graph, filename):
 
 arch_diagram = """
 graph TD
-    User([Applicant]) --> UI[Streamlit / Web App]
+    subgraph Participants [Human Actors]
+        direction TB
+        User([Applicant])
+        Human[Human Underwriter]
+    end
+
+    User --> UI[Streamlit / Web App]
     UI --> Guard[Security Guardian]
     Guard --> Manager[Loan Manager]
     
     Manager --> Invest[Investigator Agent]
     Manager --> Policy[Policy Expert Agent]
     Manager --> Risk[Risk Analyst Agent]
+
+    %% HIL Handoff
+    Manager -- "Escalation" --> Human
 
     %% Internal Tools (Secure Boundary)
     Manager -- "Raw ID" --> Vault[Token Vault / DLP Service]
@@ -54,17 +63,20 @@ graph TD
     
     classDef external fill:#fff3e0,stroke:#ff6f00,stroke-width:2px,stroke-dasharray: 5 5;
     class BureauAPI,EmployAPI,FraudAPI external;
+
+    classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    class Human human;
 """
 
 flow_diagram = """
 sequenceDiagram
-    participant User
+    actor User
     participant Manager as Loan Manager
     participant Vault as Token Vault / DLP
     participant Invest as Investigator
     participant IntTool as Internal Tool (e.g. Credit)
     participant Audit as Audit Log
-    participant ExtAPI as External API (Equifax)
+    actor Human as Human Underwriter
 
     User->>Manager: "Apply for Loan (ID: 900-00-1234)"
     Manager->>Audit: Log Intake Event (PII Masked)
@@ -78,16 +90,23 @@ sequenceDiagram
         note right of IntTool: Secure Boundary
         IntTool->>Vault: Detokenize (Secure)
         IntTool->>Audit: Log Access START (User: token_900...)
-        IntTool->>ExtAPI: Fetch Report (Real ID)
-        ExtAPI-->>IntTool: Return Raw Data
+        IntTool->>ExternalAPI: Fetch Report (Real ID)
+        ExternalAPI-->>IntTool: Return Raw Data
         IntTool->>Audit: Log Access SUCCESS
     end
     
     IntTool-->>Invest: Return Risk Signals (No PII)
     Invest-->>Manager: "Profile: 720 Score, Employed"
+
+    alt Auto-Approval
+        Manager->>User: "Approved"
+    else Escalation (HIL)
+        Manager->>Human: "Escalate: Borderline Risk"
+        Human-->>Manager: "Manual Decision"
+        Manager->>User: "Decision after Review"
+    end
     
     Manager->>Audit: Log Final Decision
-    Manager->>User: "Application Approved/Declined"
 """
 
 download_mermaid(arch_diagram, "docs/architecture.png")

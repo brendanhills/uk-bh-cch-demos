@@ -27,11 +27,11 @@ def check_fraud_risk(applicant_id: str) -> Dict[str, Any]:
     flags = []
     
     # Specific mock logic for demo cases
-    if raw_id == "900-00-9999":  # Jane Doe (Fraud)
+    if raw_id == "900-00-9999":  # Jane Fraud (Fraud)
         risk_level = "High"
         score = 95
         flags = ["Identity Mismatch", "Suspicious IP"]
-    elif raw_id == "000-00-0000": # Ghost
+    elif raw_id == "000-00-0000": # missing
         risk_level = "Critical"
         score = 99
         flags = ["Invalid ID Format", "Known Bot"]

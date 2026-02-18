@@ -89,7 +89,7 @@ async def test_loan_manager_tokenization_flow():
                 FunctionCall(
                     name="register_application",
                     args={
-                        "name": "Gary Gray",
+                        "name": "Gary Escalate",
                         "income": 60000,
                         "employer": "Medianville Manufacturing",
                         "amount": 25000,
@@ -121,7 +121,7 @@ async def test_loan_manager_tokenization_flow():
     
     # 4. User Input
     user_input = (
-        "Process a new loan application for name: Gary Gray, "
+        "Process a new loan application for name: Gary Escalate, "
         "gov_id: 900-00-3456, income: 60000, employer: Medianville Manufacturing, "
         "amount: 25000, purpose: Business"
     )

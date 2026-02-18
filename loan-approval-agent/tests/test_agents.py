@@ -17,7 +17,7 @@ from loan_approval_agent.sub_agents.underwriter import tools as und_tools
 from loan_approval_agent.tools import token_vault
 
 def test_investigator_credit_report():
-    # Test with a known valid ID (Sarah Jenkins)
+    # Test with a known valid ID (Sarah Speed)
     raw_id = "900-00-1234"
     # Tokenize first (simulating Intake)
     token_id = token_vault.tokenize(raw_id)

@@ -1,7 +1,7 @@
 {
   "eval_set_id": "loan_approval_regression",
   "name": "Loan Approval - Regression Tests",
-  "description": "Regression scenarios for David Smith (Yacht).",
+  "description": "Regression scenarios for David Leverage (Yacht).",
   "eval_cases": [
      {
       "eval_id": "david_yacht",
@@ -11,7 +11,7 @@
           "user_content": { 
             "parts": [
               {
-                "text": "process a new loan application for name: David Smith, gov_id: 900-00-5678, income: 175000, employer: Tech Giant Corp, amount: 100000, purpose: buy a yacht. My SSN is 900-00-5678."
+                "text": "process a new loan application for name: David Leverage, gov_id: 900-00-5678, income: 175000, employer: Tech Giant Corp, amount: 100000, purpose: buy a yacht. My SSN is 900-00-5678."
               }
             ],
             "role": "user"

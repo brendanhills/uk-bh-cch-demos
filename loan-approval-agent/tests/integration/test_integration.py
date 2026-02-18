@@ -10,7 +10,7 @@ def load_env():
 
 @pytest.mark.asyncio
 async def test_demo_core():
-    """Test core demo scenarios (Sarah Jenkins)."""
+    """Test core demo scenarios (Sarah Speed)."""
     await AgentEvaluator.evaluate(
         agent_module="loan_approval_agent",
         eval_dataset_file_path_or_dir="loan_approval_agent/eval/eval_set_demo_core.json",
@@ -18,7 +18,7 @@ async def test_demo_core():
 
 @pytest.mark.asyncio
 async def test_demo_edge():
-    """Test edge case scenarios (Gary, Jane)."""
+    """Test edge case scenarios (Gary Escalate, Jane Fraud)."""
     await AgentEvaluator.evaluate(
         agent_module="loan_approval_agent",
         eval_dataset_file_path_or_dir="loan_approval_agent/eval/eval_set_demo_edge.json",
@@ -26,7 +26,7 @@ async def test_demo_edge():
 
 @pytest.mark.asyncio
 async def test_regression():
-    """Test regression scenarios (David Yacht)."""
+    """Test regression scenarios (David Leverage)."""
     await AgentEvaluator.evaluate(
         agent_module="loan_approval_agent",
         eval_dataset_file_path_or_dir="loan_approval_agent/eval/eval_set_regression.json",
