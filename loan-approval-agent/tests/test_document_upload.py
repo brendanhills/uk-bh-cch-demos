@@ -88,7 +88,7 @@ async def test_document_upload_analysis(MockClient, capsys):
     with patch("google.adk.models.registry.resolve") as mock_resolve:
         # Define side_effect to return different models based on input name if needed,
         # or simplified for this test since we control the agents.
-        # loan_manager uses ORCHESTRATOR_MODEL (let's assume "gemini-1.5-pro")
+        # loan_manager uses ORCHESTRATOR_MODEL (let's assume "gemini-2.5-pro")
         # investigator_agent uses correct model too.
         
         # We need a MockClass that returns our pre-configured mock_model instance
@@ -96,7 +96,7 @@ async def test_document_upload_analysis(MockClient, capsys):
         MockInvClass = MagicMock(return_value=mock_inv_model)
         
         def resolve_side_effect(model_name):
-            if model_name == getattr(config, "ORCHESTRATOR_MODEL", "gemini-1.5-pro-002"):
+            if model_name == getattr(config, "ORCHESTRATOR_MODEL", "gemini-2.5-pro"):
                  return MockOrchClass
             # For investigator, we might need to check its model name.
             # But simpler: if model_name matches the investigator's model, return MockInvClass.
@@ -110,7 +110,7 @@ async def test_document_upload_analysis(MockClient, capsys):
             
             # If we just mock resolve to return MockOrchClass for everything, output might be confused.
             # Let's check agent names or just assume Orchestrator is first.
-            if "flash" in model_name or "investigator" in model_name or model_name == getattr(config, "MODEL_FLASH", "gemini-2.0-flash-exp"):
+            if "flash" in model_name or "investigator" in model_name or model_name == getattr(config, "MODEL_FLASH", "gemini-2.5-flash-exp"):
                  return MockInvClass
             return MockOrchClass
 

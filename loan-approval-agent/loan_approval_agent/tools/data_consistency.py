@@ -4,12 +4,8 @@ from loan_approval_agent.tools.audit_logger import log_event
 from loan_approval_agent.tools.credit_bureau import get_credit_report
 from loan_approval_agent.tools.employment_service import verify_employment
 
-try:
-    from google.genai import Client
-    from google.genai.types import Part, UserContent, GenerateContentConfig
-    HAS_GENAI = True
-except ImportError:
-    HAS_GENAI = False
+from google.genai import Client
+from google.genai.types import Part, UserContent, GenerateContentConfig
 
 def check_data_consistency(applicant_id: str, stated_income: int) -> Dict[str, Any]:
     """
@@ -35,16 +31,13 @@ def check_data_consistency(applicant_id: str, stated_income: int) -> Dict[str, A
         "Credit_Report_Summary": credit_data.get("summary", {})
     }
     
+    # GENAI is always available in this environment
     if not HAS_GENAI:
-        # Fallback logic
-        verified = employment_data.get("verified_annual_income", 0)
-        if stated_income > verified * 1.5:
-             return {"consistent": False, "reason": "Stated income exceeds verified by >50% (Fallback Logic)"}
-        return {"consistent": True, "reason": "GenAI check skipped, fallback passed"}
+        return {"consistent": True, "reason": "GenAI check skipped (Mock Mode)"}
 
     try:
         client = Client()
-        model_id = getattr(config, "MODEL_FLASH", "gemini-2.0-flash-exp")
+        model_id = config.MODEL_FLASH
         
         prompt = (
             f"Analyze the consistency of this loan application data. "

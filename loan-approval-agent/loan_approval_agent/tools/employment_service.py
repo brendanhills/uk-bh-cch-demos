@@ -5,24 +5,29 @@ import random
 from typing import Dict, Any
 
 from loan_approval_agent.tools.audit_logger import log_event
+from loan_approval_agent.tools import token_vault
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/employment_registry.json")
 
-def verify_employment(applicant_id: str) -> Dict[str, Any]:
+def verify_employment(applicant_id: str, company: str = None) -> Dict[str, Any]:
     """
     Verifies employment status and income.
-    Simulates a 1-second API latency.
+    
+    SECURITY NOTE: Receives Token ID. Internal Tool.
     """
+    # DETOKENIZATION for Legacy DB Lookup
+    raw_id = token_vault.detokenize(applicant_id) or applicant_id
+    
     log_event(applicant_id, "EMPLOYMENT_CHECK_INIT", {}, "EmploymentService")
     
     # Simulate API Latency
     time.sleep(1)
-
+    
     try:
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
             
-        record = data.get(applicant_id)
+        record = data.get(raw_id)
         
         if not record:
             log_event(applicant_id, "EMPLOYMENT_CHECK_NOT_FOUND", {}, "EmploymentService")
@@ -33,7 +38,7 @@ def verify_employment(applicant_id: str) -> Dict[str, Any]:
             "employer": record["employer"]["name"] if record["employer"] else None,
             "status": record["employment"]["status"],
             "title": record["employment"]["title"],
-            "tenure_months": 24, # mocking calculation logic to keep it simple, or derive from startDate if needed
+            "tenure_months": 24, # mocking calculation logic
             "verified_annual_income": record["employment"]["verifiedAnnualIncome"]
         }
         

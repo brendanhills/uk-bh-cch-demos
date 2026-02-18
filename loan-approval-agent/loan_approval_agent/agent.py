@@ -23,6 +23,7 @@ from .sub_agents.policy_expert.agent import policy_expert_agent
 from .sub_agents.underwriter.agent import risk_analyst_agent
 
 
+from .tools.intake import register_application
 from .config import ORCHESTRATOR_MODEL
 
 loan_manager = LlmAgent(
@@ -35,6 +36,7 @@ loan_manager = LlmAgent(
     instruction=prompt.LOAN_MANAGER_PROMPT,
     output_key="final_decision",
     tools=[
+        register_application,
         AgentTool(agent=investigator_agent),
         AgentTool(agent=policy_expert_agent),
         AgentTool(agent=risk_analyst_agent),

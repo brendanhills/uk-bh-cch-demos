@@ -13,7 +13,8 @@ sys.path.append(os.getcwd())
 # Import config to load environment variables
 from loan_approval_agent import config
 from loan_approval_agent.agent import loan_manager
-from loan_approval_agent.tools.security import check_injection
+from loan_approval_agent.tools.intake import submit_application
+from loan_approval_agent.tools import token_vault
 from loan_approval_agent.tools.audit_logger import log_event
 
 st.set_page_config(page_title="Fintech Loan Agent", layout="wide")
@@ -27,19 +28,23 @@ st.markdown("### AI-Powered Underwriting Demo")
 # Load Demo Data
 # Load Demo Data
 # Resolve path robustly relative to THIS file
-DEMO_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "loan_approval_agent/data/demo_data")
+# --- CONFIGURATION & PATHS ---
+# Robustly resolve paths relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DEMO_DATA_DIR = os.path.join(BASE_DIR, "loan_approval_agent/data/demo_data")
+AUDIT_LOG_FILE = os.path.join(BASE_DIR, "loan_approval_agent/data/audit_logs/events.jsonl")
 
 def load_json_data(filename):
+    """Safe JSON loader for demo data."""
     path = os.path.join(DEMO_DATA_DIR, filename)
-    if os.path.exists(path):
-        try:
-            with open(path, "r") as f:
-                return json.load(f)
-        except Exception as e:
-            st.error(f"Error loading {filename}: {e}")
-            return []
-    else:
+    if not os.path.exists(path):
         st.error(f"File not found: {path}")
+        return []
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"Error loading {filename}: {e}")
         return []
 
 # Load applicants
@@ -65,12 +70,8 @@ with st.sidebar:
                 del st.session_state[key]
         
         # Truncate Audit Log for fresh demo
-        # Use absolute path to ensure we match the logger
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        log_file = os.path.join(base_dir, "loan_approval_agent/data/audit_logs/events.jsonl")
-        if os.path.exists(log_file):
-            with open(log_file, "w") as f:
-                pass # clear file
+        if os.path.exists(AUDIT_LOG_FILE):
+             open(AUDIT_LOG_FILE, "w").close()
                 
         st.rerun()
     
@@ -165,39 +166,8 @@ if "form_data" not in st.session_state:
     st.session_state["form_data"] = {}
 
 # Tools for Agent-Driven Intake
-def submit_application(name: str, income: int, employer: str, amount: int, purpose: str, gov_id: str):
-    """
-    Submits the completed loan application for review.
-    Args:
-        name: Full name of the applicant.
-        income: Annual stated income (numeric).
-        employer: Name of the employer.
-        amount: Requested loan amount (numeric).
-        purpose: Purpose of the loan.
-        gov_id: Government ID (e.g., SSN) of the applicant.
-    """
-    # 1. Use provided Gov ID
-    aid = gov_id.strip()
-            
-    st.session_state["form_data"] = {
-        "applicant_id": aid,
-        "name": name,
-        "income": income,
-        "employer": employer,
-        "amount": amount,
-        "purpose": purpose
-    }
-    st.session_state["submitted"] = True
-    
-    # Log the submission
-    # Log the submission
-    log_event(aid, "Application_Submitted", {
-        "name": name,
-        "amount": amount,
-        "purpose": purpose
-    })
-    
-    return f"Application submitted successfully. Processing ID: {aid}."
+# The submit_application function is now imported from loan_approval_agent.tools.intake
+# It handles the tokenization internally.
 
 # Initialize Loan Manager & Tools
 # We need to ensure we don't add the tool repeatedly on rerun
@@ -227,20 +197,14 @@ with c_audit:
 def render_audit_log(container):
     container.empty()
     with container:
-            # Use absolute path to ensure we match the logger
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        log_file = os.path.join(base_dir, "loan_approval_agent/data/audit_logs/events.jsonl")
-        
-        if os.path.exists(log_file):
-            with open(log_file, "r") as f:
+        if os.path.exists(AUDIT_LOG_FILE):
+            with open(AUDIT_LOG_FILE, "r") as f:
                 lines = f.readlines()
                 # Show last 20 events, newest on top
                 for line in reversed(lines[-20:]):
                     try:
                         event = json.loads(line)
-                        # Format nice log entry
                         st.caption(f"{event.get('timestamp', '')[11:19]} - **{event.get('event_type')}**")
-                        # Compact details
                         st.json(event.get("details"), expanded=False)
                         st.divider()
                     except:
@@ -287,7 +251,6 @@ with c_main:
                     st.write(prompt)
                 st.session_state["messages"].append({"role": "user", "content": prompt})
 
-                # 2. Log Start of Processing
                 # 2. Log Start of Processing
                 # "Guest" until we have an ID
                 log_event("Guest", "Intake_Processing_Start", {"input_length": len(prompt)})
@@ -500,5 +463,34 @@ with c_main:
                     if st.button("Reveal Next Event ➡️"):
                         st.session_state["trace_index"] += 1
                         st.rerun()
-                elif step_through and limit >= len(events) and len(events) > 0:
+                # Check for generated Decision PDF
+                if step_through and limit >= len(events) and len(events) > 0:
                     st.success("🏁 Trace Review Complete")
+                    
+                    # Look for PDF in data/decisions
+                    # Filename format: decision_{applicant_id}_{timestamp}.pdf
+                    # We need to find the latest one for this applicant
+                    decisions_dir = os.path.join(BASE_DIR, "loan_approval_agent/data/decisions")
+                    if os.path.exists(decisions_dir):
+                        pdf_files = [f for f in os.listdir(decisions_dir) if f.endswith(".pdf") and (data.get("applicant_id") in f or "decision" in f)]
+                        # Sort by modification time (newest first)
+                        pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(decisions_dir, x)), reverse=True)
+                        
+                        if pdf_files:
+                            latest_pdf = pdf_files[0]
+                            pdf_path = os.path.join(decisions_dir, latest_pdf)
+                            
+                            st.divider()
+                            st.subheader("📄 Decision Record (Compliance)")
+                            st.success(f"Generated: `{latest_pdf}`")
+                            
+                            with open(pdf_path, "rb") as f:
+                                pdf_bytes = f.read()
+                                st.download_button(
+                                    label="📥 Download Decision Record (PDF)",
+                                    data=pdf_bytes,
+                                    file_name=latest_pdf,
+                                    mime="application/pdf"
+                                )
+                        else:
+                            st.warning("No Decision PDF found for this applicant.")

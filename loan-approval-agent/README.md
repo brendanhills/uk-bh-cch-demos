@@ -132,3 +132,20 @@ uv run deployment/deploy.py --create
 ## License
 
 Apache 2.0
+
+## TODO
+
+- [ ] **Fix CLI Mode**: `loan_approval_agent/agent.py` is missing a `__main__` block and cannot be run interactively.
+- [ ] **Resilience**: Verify `employment_service.py` handles missing/invalid IDs gracefully.
+
+## Backlog / Future Improvements
+
+- [ ] **Identity Verification (KYC)**:
+    - Support Photo ID & Selfie upload.
+    - Implement Vision-based matching (Gemini Multimodal).
+- [ ] **Security Hardening**:
+    - Automated Prompt Injection testing.
+    - Cloud Armor integration for API endpoints.
+    - **Data Protection**: Integrate Google Cloud DLP/SDP to automatically redact PII from logs and agent context.
+- [ ] **Interactive Validation**:
+    - Enhance Q&A strategies for ambiguous inputs.

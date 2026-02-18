@@ -28,13 +28,13 @@
             "tool_uses": [ 
               {
                 "args": {
-                  "applicant_id": "900-00-1234"
+                  "applicant_id": "user_01"
                 },
                 "name": "credit_bureau_get_credit_report"
               },
                {
                 "args": {
-                  "applicant_id": "900-00-1234"
+                  "applicant_id": "user_01"
                 },
                 "name": "employment_service_verify_employment"
               }
@@ -74,7 +74,7 @@
             "tool_uses": [ 
               {
                 "args": {
-                  "applicant_id": "900-00-1234"
+                  "applicant_id": "user_01"
                 },
                 "name": "credit_bureau_get_credit_report"
               }

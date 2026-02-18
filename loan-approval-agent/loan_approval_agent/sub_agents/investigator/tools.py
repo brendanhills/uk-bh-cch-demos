@@ -2,6 +2,9 @@
 
 import time
 from typing import Dict, Any
+from loan_approval_agent.tools import token_vault
+from google.genai import Client
+from google.genai.types import Part, UserContent, GenerateContentConfig
 
 # Delegate to core services
 from loan_approval_agent.tools.credit_bureau import get_credit_report as core_get_credit
@@ -12,16 +15,33 @@ from loan_approval_agent import config
 from loan_approval_agent.tools.data_consistency import check_data_consistency as core_check_consistency
 
 def get_credit_report(applicant_id: str) -> Dict[str, Any]:
-    """Fetches full credit report for an applicant."""
-    return core_get_credit(applicant_id)
+    """
+    Fetches full credit report for an applicant.
+    
+    PRIVACY NOTE: This tool runs inside the SECURE BOUNDARY.
+    The agent passes a reference ID. In production, this is a distinct
+    opaque token to prevents PII leakage into the model's context context.
+    The tool returns abstracted risk signals, not raw data.
+    """
+    # 1. Detokenize to get real Gov ID (Secure Lookup)
+    real_id = token_vault.detokenize(applicant_id)
+    if not real_id:
+        return {"error": "Invalid Token: Access Denied"}
+        
+    # 2. Call Core Service with Real ID
+    return core_get_credit(real_id)
 
 def verify_employment(applicant_id: str) -> Dict[str, Any]:
     """Verifies employment status and income."""
-    return core_verify_employment(applicant_id)
+    real_id = token_vault.detokenize(applicant_id)
+    if not real_id: return {"error": "Invalid Token"}
+    return core_verify_employment(real_id)
 
 def check_fraud_risk(applicant_id: str) -> Dict[str, Any]:
     """Checks for fraud signals."""
-    return core_check_fraud(applicant_id)
+    real_id = token_vault.detokenize(applicant_id)
+    if not real_id: return {"error": "Invalid Token"}
+    return core_check_fraud(real_id)
 
 def check_data_consistency(applicant_id: str, stated_income: int) -> Dict[str, Any]:
     """
@@ -30,28 +50,17 @@ def check_data_consistency(applicant_id: str, stated_income: int) -> Dict[str, A
     """
     return core_check_consistency(applicant_id, stated_income)
 
-# Multimodal Document Analysis
-try:
-    from google.genai import Client
-    from google.genai.types import Part, UserContent, GenerateContentConfig
-    HAS_GENAI = True
-except ImportError:
-    HAS_GENAI = False
-
 def analyze_document(file_path: str, query: str) -> Dict[str, Any]:
     """Analyzes a document (PDF/Image) using multimodal capabilities to answer a query."""
     log_event("system", "analyze_document_start", {"file": file_path, "query": query}, "Investigator")
     
-    if not HAS_GENAI:
-        return {"error": "google-genai library not installed."}
-
     try:
         with open(file_path, "rb") as f:
             file_data = f.read()
             
         client = Client()
         # Use configured model from config, fallback to flash
-        model_id = getattr(config, "MODEL_FLASH", "gemini-2.0-flash-exp")
+        model_id = config.MODEL_FLASH
         
         prompt = f"Analyze the attached document and answer this query: {query}. Return the answer in JSON format if possible, or structured text."
         
@@ -75,8 +84,3 @@ def analyze_document(file_path: str, query: str) -> Dict[str, Any]:
         log_event("system", "analyze_document_error", error_res, "Investigator")
         return error_res
 
-def get_application_details(applicant_id: str) -> Dict[str, Any]:
-    """Fetches the loan application details (amount, purpose)."""
-    # In a real app, this might query a different 'Applications DB'
-    # For now, we return a placeholder or need to pass it in context
-    return {"status": "Not implemented in this demo layer"}

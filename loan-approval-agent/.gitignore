@@ -12,6 +12,8 @@ tmp/
 debug_output.txt
 test_output.txt
 eval_help.txt
+test_artifacts/
+docs/preso.tar
 
 # Editors
 *.code-workspace

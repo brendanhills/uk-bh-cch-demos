@@ -10,13 +10,15 @@
       "value": 787
     },
     "summary": {
-      "totalDebt": 19516,
+      "totalDebt": 2450,
+      "totalMonthlyPayment": 100,
       "creditUtilization": 0.14
     },
     "tradelines": [
       {
         "creditor": "CHASE",
         "balance": 2450,
+        "monthly_payment": 100,
         "status": "Current"
       }
     ]
@@ -62,6 +64,7 @@
       {
         "creditor": "CAPITAL ONE",
         "balance": 1200,
+        "monthly_payment": 50,
         "status": "Current"
       }
     ]
@@ -77,13 +80,15 @@
       "value": 620
     },
     "summary": {
-      "totalDebt": 45000,
+      "totalDebt": 15000,
+      "totalMonthlyPayment": 400,
       "creditUtilization": 0.85
     },
     "tradelines": [
       {
         "creditor": "DISCOVER",
         "balance": 15000,
+        "monthly_payment": 400,
         "status": "Past Due 30"
       }
     ]

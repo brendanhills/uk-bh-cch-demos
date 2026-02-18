@@ -19,7 +19,7 @@
           "final_response": { 
             "parts": [
               {
-                "text": "ESCALATE"
+                "text": "The application should be escalated or result in a request for more information due to missing or ambiguous credit/employment data."
               }
             ],
             "role": "model"
@@ -48,7 +48,7 @@
           "final_response": { 
             "parts": [
               {
-                "text": "FLAG"
+                "text": "The application should be FLAGGED for fraud review due to inconsistencies, missing data, or suspicious patterns."
               }
             ],
             "role": "model"
@@ -58,6 +58,35 @@
        "session_input": { 
         "app_name": "loan_approval_agent",
         "user_id": "test_user_jane",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "ghost_user_resilience",
+      "conversation": [
+        {
+          "invocation_id": "uuid-ghost-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "process a new loan application for name: Ghost User, gov_id: 000-00-0000, income: 50000, employer: unknown, amount: 10000, purpose: personal"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "The application should be escalated or return an error indicating that the request could not be processed due to invalid or missing applicant data (Invalid Token)."
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "loan_approval_agent",
+        "user_id": "test_user_ghost",
         "state": {}
       }
     }
