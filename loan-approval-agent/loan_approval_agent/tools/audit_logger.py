@@ -66,7 +66,7 @@ def _mask_pii(data: Any) -> Any:
     else:
         return _mask_pii_regex(data)
 
-def log_event(applicant_id: str, event_type: str, details: Dict[str, Any], agent_name: str = "System"):
+def log_event(applicant_id: str, event_type: str, details: Dict[str, Any], agent_name: str = "System", application_id: str = None):
     """
     Logs an event to the centralized audit trail.
     """
@@ -76,6 +76,7 @@ def log_event(applicant_id: str, event_type: str, details: Dict[str, Any], agent
         entry = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "applicant_id": applicant_id,
+            "application_id": application_id,
             "event_type": event_type,
             "agent": agent_name,
             "details": _mask_pii(details),

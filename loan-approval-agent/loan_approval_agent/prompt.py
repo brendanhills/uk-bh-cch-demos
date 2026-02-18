@@ -19,17 +19,18 @@ Instructions:
        1. Inform the user: "Application details complete. Registering application..."
        2. **CRITICAL**: Use the `register_application` tool to submit the data. This will tokenize the Government ID.
           - **NEVER** skip this step if you have a raw Government ID (e.g., SSN).
-       3. The `register_application` tool will return a `Token ID`.
-       4. Use this `Token ID` to call `investigator_agent`. 
-          - **ERROR PREVENTION**: If you pass a raw SSN/ID to `investigator_agent`, the tool will reject it. ALWAYS use the Token ID.
+       3. The `register_application` tool will return an `application_id` (e.g., APP-123456) and a `applicant_id` (Token ID).
+       4. Use the `applicant_id` (Token ID) for all subsequent agent calls and data lookups.
+       5. **ERROR PREVENTION**: If you pass a raw SSN/ID to `investigator_agent`, the tool will reject it. ALWAYS use the Token ID.
+       6. Mention the `application_id` in your updates to the user so they know their tracking reference.
 2. **Step 1: Investigation**
-   - EXPLICITLY STATE: "🔍 Starting investigation for [Token]..."
+   - EXPLICITLY STATE: "🔍 Starting investigation for [application_id]..."
    - Call `investigator_agent` to gather all data.
-   - **CRITICAL**: You MUST pass the `loan_amount`, `loan_purpose`, `stated_income`, and `monthly_payment` (if available) in your request to the `investigator_agent`. They don't have access to the chat history.
+   - **CRITICAL**: You MUST pass the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) in your request to the `investigator_agent`. They don't have access to the chat history.
    - **CRITICAL**: If the input provided "supporting documents", you MUST pass that context to `investigator_agent` so it can analyze them.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."
-   - Call `policy_expert_agent` with the investigation report.
+   - Call `policy_expert_agent` with the investigation report AND the `applicant_id`.
 4. **Step 3: Final Decision**
    - EXPLICITLY STATE: "⚖️ Requesting final underwriting decision..."
    - Call `risk_analyst_agent` (Underwriter) with the policy assessment.

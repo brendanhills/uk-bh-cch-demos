@@ -9,14 +9,14 @@ from loan_approval_agent.tools import token_vault
 # In a real system, this would be a sophisticated Fraud Detection Model
 # For demo, we just return a score based on ID patterns or random
 
-def check_fraud_risk(applicant_id: str) -> Dict[str, Any]:
+def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
     """
     Checks the applicant against fraud databases and pattern matching.
     """
     # DETOKENIZATION (if needed for pattern matching on Raw ID)
     raw_id = token_vault.detokenize(applicant_id) or applicant_id
     
-    log_event(applicant_id, "FRAUD_CHECK_INIT", {}, "FraudService")
+    log_event(applicant_id, "FRAUD_CHECK_INIT", {}, "FraudService", application_id=application_id)
     
     # Simulate Processing
     time.sleep(0.5)
@@ -42,5 +42,5 @@ def check_fraud_risk(applicant_id: str) -> Dict[str, Any]:
         "flags": flags
     }
     
-    log_event(applicant_id, "FRAUD_CHECK_COMPLETE", result, "FraudService")
+    log_event(applicant_id, "FRAUD_CHECK_COMPLETE", result, "FraudService", application_id=application_id)
     return result

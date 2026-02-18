@@ -9,7 +9,7 @@ from loan_approval_agent.tools import token_vault
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/credit_score.json")
 
-def get_credit_report(applicant_id: str, simulate_failure: bool = False) -> Dict[str, Any]:
+def get_credit_report(applicant_id: str, simulate_failure: bool = False, application_id: str = None) -> Dict[str, Any]:
     """
     Retrieves the credit report for an applicant.
     
@@ -24,14 +24,14 @@ def get_credit_report(applicant_id: str, simulate_failure: bool = False) -> Dict
     # The tool receives a Token, but the legacy database is keyed by Raw ID.
     raw_id = token_vault.detokenize(applicant_id) or applicant_id
     
-    log_event(applicant_id, "CREDIT_CHECK_INIT", {"simulate_failure": simulate_failure}, "CreditBureau")
+    log_event(applicant_id, "CREDIT_CHECK_INIT", {"simulate_failure": simulate_failure}, "CreditBureau", application_id=application_id)
     
     # Simulate API Latency (NFR: 2-3 seconds)
     time.sleep(2)
     
     # Simulate Random Failure (Resilience Test)
     if simulate_failure and random.random() < 0.3:
-        log_event(applicant_id, "CREDIT_CHECK_FAILED", {"reason": "simulated_downtime"}, "CreditBureau")
+        log_event(applicant_id, "CREDIT_CHECK_FAILED", {"reason": "simulated_downtime"}, "CreditBureau", application_id=application_id)
         raise ConnectionError("Credit Bureau API is currently unavailable (Simulated).")
 
     try:
@@ -41,12 +41,12 @@ def get_credit_report(applicant_id: str, simulate_failure: bool = False) -> Dict
         report = data.get(raw_id)
         
         if not report:
-            log_event(applicant_id, "CREDIT_CHECK_NOT_FOUND", {}, "CreditBureau")
+            log_event(applicant_id, "CREDIT_CHECK_NOT_FOUND", {}, "CreditBureau", application_id=application_id)
             return {"error": "Applicant not found"}
             
-        log_event(applicant_id, "CREDIT_CHECK_SUCCESS", {"score": report["score"]["value"]}, "CreditBureau")
+        log_event(applicant_id, "CREDIT_CHECK_SUCCESS", {"score": report["score"]["value"]}, "CreditBureau", application_id=application_id)
         return report
 
     except FileNotFoundError:
-        log_event(applicant_id, "CREDIT_Check_ERROR", {"error": "Database missing"}, "CreditBureau")
+        log_event(applicant_id, "CREDIT_Check_ERROR", {"error": "Database missing"}, "CreditBureau", application_id=application_id)
         return {"error": "System Error: Credit Database not found"}

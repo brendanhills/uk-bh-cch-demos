@@ -7,7 +7,9 @@ from typing import Dict, Any
 
 from loan_approval_agent.tools.audit_logger import log_event
 
-DECISION_DIR = os.path.join(os.path.dirname(__file__), "../../../data/decisions")
+base_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(base_dir, "../../../"))
+DECISION_DIR = os.path.join(project_root, "data/decisions")
 
 def _create_decision_pdf(record: Dict[str, Any]) -> str:
     # Ensure directory exists
@@ -25,6 +27,8 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
     # --- Applicant Info ---
     pdf.set_font("Arial", size=12)
     pdf.cell(0, 10, f"Applicant ID: {record['applicant_id']}", 0, 1)
+    if record.get('application_id'):
+        pdf.cell(0, 10, f"Application ID: {record['application_id']}", 0, 1)
     pdf.cell(0, 10, f"Date: {time.strftime('%Y-%m-%d %H:%M:%S')}", 0, 1)
     pdf.ln(5)
     
@@ -59,9 +63,9 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
     pdf.set_font("Arial", size=8)  # Smaller font for logs
     
     # Path to Audit Log
-    # Resolved relative to this file: ../../../data/audit_logs/events.jsonl
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    log_path = os.path.join(base_dir, "../../../data/audit_logs/events.jsonl")
+    # Correct absolute path construction
+    project_root = os.path.abspath(os.path.join(base_dir, "../../../"))
+    log_path = os.path.join(project_root, "loan_approval_agent/data/audit_logs/events.jsonl")
     
     found_logs = False
     if os.path.exists(log_path):
@@ -76,22 +80,23 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
                 # Actually, strictly filtering by applicant_id is safer for "Audit Trail".
                 
                 app_id = record['applicant_id']
+                from loan_approval_agent.tools import token_vault
+                raw_id = token_vault.detokenize(app_id)
                 
-                # We also want to include relevant context if possible, but strict filtering is best for "Decision Record".
-                # Let's simple filter.
+                # Collection of valid IDs for this application
+                valid_ids = {app_id, "Guest"}
+                if raw_id:
+                    valid_ids.add(raw_id)
                 
                 for line in lines:
                     try:
                         event = json.loads(line)
-                        # Check if event relates to this applicant
-                        # The 'user_id' in log_event might be the applicant_id or 'demo_user'
-                        # The LOG_EVENT function signature is log_event(user_id, event_type, details, agent_name)
-                        # In our code, we largely use applicant_id as user_id for logging.
+                        log_app_id = event.get("applicant_id")
                         
-                        if event.get("user_id") == app_id or event.get("details", {}).get("applicant_id") == app_id:
+                        if log_app_id in valid_ids:
                             found_logs = True
                             timestamp = event.get("timestamp", "")[11:19] # Time part
-                            agent = event.get("agent_name", "System")
+                            agent = event.get("agent", "System")
                             evt_type = event.get("event_type", "Unknown")
                             
                             # Format: [Time] [Agent] Event: Details
@@ -116,23 +121,27 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
         pdf.set_font("Arial", 'I', 10)
         pdf.cell(0, 10, "(No audit logs found for this ID)", 0, 1)
 
-    filename = f"decision_{record['applicant_id']}_{int(time.time())}.pdf"
+    # Filename format: decision_APP-ID_timestamp.pdf or decision_user-ID_timestamp.pdf
+    id_for_file = record.get('application_id') or record['applicant_id']
+    filename = f"decision_{id_for_file}_{int(time.time())}.pdf"
     filepath = os.path.join(DECISION_DIR, filename)
     pdf.output(filepath)
     return filepath
 
-def record_decision(applicant_id: str, decision: str, reason: str, interest_rate: float = 0.0) -> Dict[str, Any]:
+def record_decision(applicant_id: str, decision: str, reason: str, interest_rate: float = 0.0, application_id: str = None) -> Dict[str, Any]:
     """Records the final loan decision."""
     log_event(applicant_id, "record_decision_start", {
         "decision": decision, 
         "reason": reason,
-        "interest_rate": interest_rate
-    }, "Underwriter")
+        "interest_rate": interest_rate,
+        "application_id": application_id
+    }, "Underwriter", application_id=application_id)
 
     time.sleep(config.get_latency(0.5, 1.0))
     
     record = {
         "applicant_id": applicant_id,
+        "application_id": application_id,
         "decision": decision,
         "reason": reason,
         "interest_rate": interest_rate
@@ -147,17 +156,18 @@ def record_decision(applicant_id: str, decision: str, reason: str, interest_rate
     print(f"[UNDERWRITER] Decision PDF generated at: {pdf_path}\n")
     
     result = {"status": "success", "record": record, "pdf_path": pdf_path}
-    log_event(applicant_id, "record_decision_complete", result, "Underwriter")
+    log_event(applicant_id, "record_decision_complete", result, "Underwriter", application_id=application_id)
     return result
 
-def escalate_app(applicant_id: str, reason: str) -> Dict[str, Any]:
+def escalate_app(applicant_id: str, reason: str, application_id: str = None) -> Dict[str, Any]:
     """Escalates the application to a human underwriter."""
-    log_event(applicant_id, "escalation_start", {"reason": reason}, "Underwriter")
+    log_event(applicant_id, "escalation_start", {"reason": reason, "application_id": application_id}, "Underwriter", application_id=application_id)
 
     time.sleep(config.get_latency(0.3, 0.5))
 
     record = {
         "applicant_id": applicant_id,
+        "application_id": application_id,
         "decision": "ESCALATE",
         "reason": reason,
         "interest_rate": 0.0,
@@ -172,5 +182,5 @@ def escalate_app(applicant_id: str, reason: str) -> Dict[str, Any]:
     print(f"\n[UNDERWRITER] ⚠️ ESCALATED: {json.dumps(record, indent=2)}")
     
     result = {"status": "escalated", "record": record, "ticket_id": f"TICKET-{int(time.time())}", "pdf_path": pdf_path}
-    log_event(applicant_id, "escalation_complete", result, "Underwriter")
+    log_event(applicant_id, "escalation_complete", result, "Underwriter", application_id=application_id)
     return result

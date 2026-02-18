@@ -15,14 +15,30 @@ The Loan Approval Agent decomposes the underwriting process into three distinct 
 
 ```mermaid
 graph TD
-    User([Applicant/User]) <--> Orchestrator[Loan Manager]
-    Orchestrator <--> Investigator[Investigator Agent]
-    Orchestrator <--> Policy[Policy Expert Agent]
-    Orchestrator <--> Underwriter[Underwriter Agent]
+    User([Applicant]) --> UI[Streamlit UI]
+    UI --> Manager[Loan Manager]
     
-    Investigator -- "Tools: Credit, Fraud, Docs" --> MockDB[(Mock DB / Files)]
-    Policy -- "RAG: Policy PDFs" --> VectorStore[(Vector Store / PDF Search)]
-    Underwriter -- "Generate Decision PDF" --> Artifacts[Decision Records]
+    Manager --> Invest[Investigator Agent]
+    Manager --> Policy[Policy Expert Agent]
+    Manager --> Risk[Risk Analyst Agent]
+
+    subgraph Tools [Specialized Tools]
+        T1[register_application]
+        T2[get_credit_report]
+        T3[verify_employment]
+        T4[calculate_dti]
+        T5[consult_policy_docs]
+        T6[record_decision]
+    end
+
+    Manager --- T1
+    Invest --- T2 & T3 & T4
+    Policy --- T5
+    Risk --- T6
+    
+    T2 -- "Secure Lookup" --> Bureau[(Credit Bureau)]
+    T5 -- "RAG" --> PolicyDocs[(Policy PDFs)]
+    T6 -- "Export" --> PDF[(Decision PDF)]
 ```
 
 ## Features

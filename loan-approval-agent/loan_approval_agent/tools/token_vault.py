@@ -1,4 +1,3 @@
-
 from typing import Optional
 
 # Mock Token Vault (Simulating Google Cloud DLP / Sensitive Data Protection)
@@ -20,14 +19,14 @@ def tokenize(gov_id: str) -> str:
     Exchanges a PII (Gov ID) for an Opaque Token.
     Simulates: client.projects.locations.content.deidentify(...)
     """
-    # OPTIONAL: Real DLP Implementation
-    # if REAL_DLP_ENABLED:
-    #     parent = f"projects/{PROJECT_ID}/locations/global"
-    #     item = {"value": gov_id}
-    #     response = dlp.deidentify_content(request={"parent": parent, "item": item, "deidentify_config": ...})
-    #     return response.item.value
-    
-    return _TOKEN_MAP.get(gov_id, f"user_{hash(gov_id) % 1000}")
+    if gov_id in _TOKEN_MAP:
+        return _TOKEN_MAP[gov_id]
+        
+    # Dynamic Tokenization for new users in demo
+    token = f"user_{abs(hash(gov_id)) % 1000:03d}"
+    _TOKEN_MAP[gov_id] = token
+    _REVERSE_MAP[token] = gov_id
+    return token
 
 def detokenize(token: str) -> Optional[str]:
     """

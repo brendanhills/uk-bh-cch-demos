@@ -54,7 +54,8 @@ def register_application(
     This tool:
     1. Validates the input data.
     2. Tokenizes the sensitive Government ID (SSN) via the Token Vault.
-    3. Returns a 'Token ID' that must be used for all subsequent steps.
+    3. Generates a unique 'Application ID' for this specific request.
+    4. Returns a 'Token ID' that must be used for all subsequent steps.
     
     Args:
         name: Full name of applicant.
@@ -65,15 +66,19 @@ def register_application(
         purpose: Purpose of the loan.
         
     Returns:
-        Dict containing the 'application_id' (Token) and confirmation status.
+        Dict containing the 'application_id' (e.g. APP-12345), 'applicant_id' (Token) and confirmation status.
     """
     # Simulate Tokenization (DLP)
     # in a real app, this would call Google Cloud DLP or a Token Vault
     token = token_vault.tokenize(gov_id.strip())
     
+    # Generate unique application id for this submission
+    application_id = f"APP-{uuid.uuid4().hex[:6].upper()}"
+    
     application_data = {
         "name": name,
-        "token": token,  # STORED AS TOKEN
+        "applicant_id": token,  # STORED AS TOKEN
+        "application_id": application_id,
         "income": income,
         "employer": employer,
         "amount": amount,
@@ -89,10 +94,11 @@ def register_application(
         "name": name,
         "amount": amount,
         "purpose": purpose
-    })
+    }, application_id=application_id)
     
     return {
         "status": "success",
-        "application_id": token,
-        "message": "Application registered and ID tokenized. Use 'application_id' for further steps."
+        "application_id": application_id,
+        "applicant_id": token,
+        "message": f"Application registered (ID: {application_id}). Token ID created for security."
     }

@@ -16,56 +16,75 @@ def download_mermaid(graph, filename):
 
 arch_diagram = """
 graph TD
-    subgraph Participants [Human Actors]
+    %% Top Level
+    User([Applicant])
+    Human([Human Underwriter])
+
+    User --> UI[Streamlit UI]
+    UI --> Guard[Security Guardian]
+    Guard --> Manager
+
+    subgraph Secure [Secure Internal Environment]
         direction TB
-        User([Applicant])
-        Human[Human Underwriter]
+        
+        subgraph Agents [Expert Agents]
+            direction LR
+            Manager[Loan Manager]
+            Invest[Investigator]
+            Policy[Policy Expert]
+            Risk[Risk Analyst]
+            Underwriter[Underwriter]
+        end
+
+        subgraph Tools [Internal Tools]
+            direction LR
+            T_Reg[Registration]
+            T_DTI[DTI Calc]
+            T_RAG[Policy RAG]
+           
+        end
+
+        Agents ~~~~ Tools
+        Manager --> Underwriter
+        Manager --> Invest & Policy & Risk 
+               
+        Manager --- T_Reg
+        Invest --- T_DTI
+        Policy --- T_RAG
+        Underwriter --- PDF
+        
+        
+        Audit[Audit Logger]
+        PDF[Descision Register]
+        Agents & Tools -.-> Audit
     end
 
-    User --> UI[Streamlit / Web App]
-    UI --> Guard[Security Guardian]
-    Guard --> Manager[Loan Manager]
-    
-    Manager --> Invest[Investigator Agent]
-    Manager --> Policy[Policy Expert Agent]
-    Manager --> Risk[Risk Analyst Agent]
+    %% External Connections
+    Risk -- "Escalate" --> Human
+    %%T_DTI --> External
 
-    %% HIL Handoff
-    Manager -- "Escalation" --> Human
+    subgraph External [External Data Providers]
+        Equifax[Equifax API]
+        Workday[Workday API]
+        FraudNet[Fraud.net API]
+    end
 
-    %% Internal Tools (Secure Boundary)
-    Manager -- "Raw ID" --> Vault[Token Vault / DLP Service]
-    Vault -- "Token" --> Manager
-    
-    Invest -- "Token" --> BureauTool[Credit Tool]
-    Invest -- "Token" --> EmployTool[Employment Tool]
-    Invest -- "Token" --> FraudTool[Fraud Tool]
-    
-    %% External APIs (No Direct Agent Access)
-    BureauTool -- "API Call" --> BureauAPI[Equifax/Experian API]
-    EmployTool -- "API Call" --> EmployAPI[Workday API]
-    FraudTool -- "API Call" --> FraudAPI[Sift/Fraud.net API]
-    
-    Policy -- "RAG" --> VectorDB[(Policy Vector Store)]
-    
-    %% Audit Logging (All Internal Components)
-    Manager -.-> Audit[Audit Logger]
-    Invest -.-> Audit
-    BureauTool -.-> Audit
-    EmployTool -.-> Audit
-    FraudTool -.-> Audit
-    Policy -.-> Audit
-    
-    Audit --> Logs[(Audit Log / JSONL)]
-    
+    %% Link specific investigation tools to APIs
+    %% We use a generic 'Invest' link here to keep it tidy
+    Invest --> Equifax & Workday & FraudNet
+
+    %% FORCE External to be below Secure box
+    Secure ~~~~ External
+
+    %% Styling
     classDef secure fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    class Invest,Policy,Risk,BureauTool,EmployTool,FraudTool,VectorDB,Vault,Audit secure;
+    class Secure,Agents,Underwriter,Tools,Manager,Invest,Policy,Risk,T_Reg,T_DTI,T_RAG,T_Log,Audit secure;
     
     classDef external fill:#fff3e0,stroke:#ff6f00,stroke-width:2px,stroke-dasharray: 5 5;
-    class BureauAPI,EmployAPI,FraudAPI external;
+    class External,Equifax,Workday,FraudNet external;
 
     classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    class Human human;
+    class User,Human human;
 """
 
 flow_diagram = """
@@ -73,41 +92,54 @@ sequenceDiagram
     actor User
     participant Manager as Loan Manager
     participant Vault as Token Vault / DLP
-    participant Invest as Investigator
-    participant IntTool as Internal Tool (e.g. Credit)
+    participant Invest as Investigator Agent
+    participant Tools as Investigation Tools
+    participant Policy as Policy Expert
+    participant RAG as Policy: Confluence
+    participant Under as Underwriter
     participant Audit as Audit Log
-    actor Human as Human Underwriter
-
-    User->>Manager: "Apply for Loan (ID: 900-00-1234)"
-    Manager->>Audit: Log Intake Event (PII Masked)
-    Manager->>Vault: Register Application
-    Vault-->>Manager: Returns Token (token_900...)
+    participant ExtAPI as External APIs (Equifax/Workday/Fraud.net)
     
-    Manager->>Invest: "Get financial profile for token_900..."
-    Invest->>IntTool: get_credit_report(token)
+
+    User->>Manager: "Apply for Loan"
+    Manager->>Audit: Log Intake Event
+    Manager->>Vault: register_application (tokenize)
+    Vault-->>Manager: Returns APP-ID & Token
+    
+    Manager->>Invest: "Investigate Profile"
     
     rect rgb(240, 248, 255)
-        note right of IntTool: Secure Boundary
-        IntTool->>Vault: Detokenize (Secure)
-        IntTool->>Audit: Log Access START (User: token_900...)
-        IntTool->>ExternalAPI: Fetch Report (Real ID)
-        ExternalAPI-->>IntTool: Return Raw Data
-        IntTool->>Audit: Log Access SUCCESS
-    end
-    
-    IntTool-->>Invest: Return Risk Signals (No PII)
-    Invest-->>Manager: "Profile: 720 Score, Employed"
+        note right of Invest: Secure Boundary Exit
+        Invest->>Tools: get_credit_report (Token)
+        Tools->>ExtAPI: get_credit_report (RealID)
+        ExtAPI-->>Tools: Raw Credit Data
+        Tools->>Audit: EXTERNAL_API_RESPONSE (Equifax)
+        Tools->>Invest: credit_report
+                
+        Invest-->>ExtAPI: verify_employment (Real ID)
+        ExtAPI-->>Invest: emploment_verification (Workday)
 
-    alt Auto-Approval
-        Manager->>User: "Approved"
-    else Escalation (HIL)
-        Manager->>Human: "Escalate: Borderline Risk"
-        Human-->>Manager: "Manual Decision"
-        Manager->>User: "Decision after Review"
+        Invest-->>ExtAPI: check_fraud_risk (Real ID)
+        ExtAPI-->>Invest: fraud_report(fraud.net)
     end
+
+    Invest->>Invest: calculate_dti
+    Invest->>Audit: log_investigation_finding
+    Invest-->>Manager: Investigation Report
+
+    Manager->>Policy: "Review Eligibility"
+    Policy->>RAG: consult_policy_docs (query)
+    RAG->>Policy: policy_match (PDF)
+    Policy-->>Manager: Policy Assessment
+
+    Manager->>Under: "Final Decision"
+    Under->>Audit: record_decision_start
+    Under->>Under: record_decision (Generate PDF)
+    Under-->>Manager: APPROVE / DENY / ESCALATE
     
-    Manager->>Audit: Log Final Decision
+    Manager->>User: Display Decision & PDF
 """
 
-download_mermaid(arch_diagram, "docs/architecture.png")
-download_mermaid(flow_diagram, "docs/flow.png")
+if __name__ == "__main__":
+    download_mermaid(arch_diagram, "docs/architecture.png")
+    download_mermaid(flow_diagram, "docs/flow.png")

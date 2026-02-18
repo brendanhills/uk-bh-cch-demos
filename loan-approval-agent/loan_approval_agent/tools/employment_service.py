@@ -9,7 +9,7 @@ from loan_approval_agent.tools import token_vault
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/employment_registry.json")
 
-def verify_employment(applicant_id: str, company: str = None) -> Dict[str, Any]:
+def verify_employment(applicant_id: str, company: str = None, application_id: str = None) -> Dict[str, Any]:
     """
     Verifies employment status and income.
     
@@ -18,7 +18,7 @@ def verify_employment(applicant_id: str, company: str = None) -> Dict[str, Any]:
     # DETOKENIZATION for Legacy DB Lookup
     raw_id = token_vault.detokenize(applicant_id) or applicant_id
     
-    log_event(applicant_id, "EMPLOYMENT_CHECK_INIT", {}, "EmploymentService")
+    log_event(applicant_id, "EMPLOYMENT_CHECK_INIT", {}, "EmploymentService", application_id=application_id)
     
     # Simulate API Latency
     time.sleep(1)
@@ -30,7 +30,7 @@ def verify_employment(applicant_id: str, company: str = None) -> Dict[str, Any]:
         record = data.get(raw_id)
         
         if not record:
-            log_event(applicant_id, "EMPLOYMENT_CHECK_NOT_FOUND", {}, "EmploymentService")
+            log_event(applicant_id, "EMPLOYMENT_CHECK_NOT_FOUND", {}, "EmploymentService", application_id=application_id)
             return {"error": "Employment Record Not Found"}
             
         # Extract key data points for decisioning
@@ -42,9 +42,9 @@ def verify_employment(applicant_id: str, company: str = None) -> Dict[str, Any]:
             "verified_annual_income": record["employment"]["verifiedAnnualIncome"]
         }
         
-        log_event(applicant_id, "EMPLOYMENT_CHECK_SUCCESS", result, "EmploymentService")
+        log_event(applicant_id, "EMPLOYMENT_CHECK_SUCCESS", result, "EmploymentService", application_id=application_id)
         return result
 
     except FileNotFoundError:
-        log_event(applicant_id, "EMPLOYMENT_CHECK_ERROR", {"error": "Database missing"}, "EmploymentService")
+        log_event(applicant_id, "EMPLOYMENT_CHECK_ERROR", {"error": "Database missing"}, "EmploymentService", application_id=application_id)
         return {"error": "System Error: Employment Database not found"}

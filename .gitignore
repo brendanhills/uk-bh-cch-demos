@@ -55,3 +55,4 @@ capita/transcribe/output.json
 capita/transcribe/transcribe_project.zip
 
 capita/catalyst-front-door/node_modules/
+loan-approval-agent/.coverage

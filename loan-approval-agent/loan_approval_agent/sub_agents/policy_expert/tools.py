@@ -8,20 +8,20 @@ from loan_approval_agent.tools.audit_logger import log_event
 # Fix path to be relative to project root or use absolute
 POLICY_DIR = os.path.join(os.path.dirname(__file__), "../../data/policy_docs")
 
-def consult_policy_docs(query: str, applicant_id: str = "unknown") -> str:
+def consult_policy_docs(query: str, applicant_id: str = "unknown", application_id: str = None) -> str:
     """Reads and returns the content of the loan policy documents."""
-    log_event(applicant_id, "consult_policy_docs_start", {"query": query}, "PolicyExpert")
+    log_event(applicant_id, "consult_policy_docs_start", {"query": query}, "PolicyExpert", application_id=application_id)
 
     if not os.path.exists(POLICY_DIR):
         error_msg = f"Error: Policy directory not found at {POLICY_DIR}"
-        log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert")
+        log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert", application_id=application_id)
         return error_msg
 
     files = glob.glob(os.path.join(POLICY_DIR, "*.pdf"))
     
     if not files:
         error_msg = "Error: No policy documents found."
-        log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert")
+        log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert", application_id=application_id)
         return error_msg
 
     # 1. Chunking (Simplified)
@@ -40,7 +40,7 @@ def consult_policy_docs(query: str, applicant_id: str = "unknown") -> str:
                         "text": text
                     })
         except Exception as e:
-            log_event(applicant_id, "read_error", {"file": file_path, "error": str(e)}, "PolicyExpert")
+            log_event(applicant_id, "read_error", {"file": file_path, "error": str(e)}, "PolicyExpert", application_id=application_id)
 
     # 2. Retrieval (Simple Keyword)
     if not query:
@@ -95,6 +95,6 @@ def consult_policy_docs(query: str, applicant_id: str = "unknown") -> str:
         "docs_found": len(files),
         "chunks_returned": len(top_chunks),
         "matches": matches_summary
-    }, "PolicyExpert")
+    }, "PolicyExpert", application_id=application_id)
     
     return policy_content

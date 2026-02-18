@@ -18,6 +18,7 @@ dependencies = [
     "streamlit>=1.35.0",
     "reportlab>=4.4.10",
     "google-cloud-dlp>=3.34.0",
+    "pytest-coverage>=0.0",
 ]
 
 [dependency-groups]

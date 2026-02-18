@@ -25,5 +25,13 @@ investigator_agent = Agent(
     name="investigator_agent",
     instruction=prompt.INVESTIGATOR_PROMPT,
     output_key="investigation_report",
-    tools=[tools.get_credit_report, tools.verify_employment, tools.check_fraud_risk, tools.analyze_document],
+    tools=[
+        tools.get_credit_report, 
+        tools.verify_employment, 
+        tools.check_fraud_risk, 
+        tools.analyze_document,
+        tools.calculate_dti,
+        tools.check_data_consistency,
+        tools.log_investigation_finding
+    ],
 )
