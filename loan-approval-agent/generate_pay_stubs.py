@@ -19,8 +19,8 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Initialize Gemini Client
-client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
-MODEL_ID = os.environ.get("MODEL_FLASH", "gemini-2.5-flash")
+client = genai.Client(vertexai=True)
+MODEL_ID ="gemini-2.5-flash"
 
 def generate_pay_stub_data(applicant):
     """Uses Gemini to generate realistic pay stub data for an applicant."""
@@ -219,10 +219,10 @@ def main():
         applicants = json.load(f)
 
     for app in applicants:
-        if app.get("employment_status") == "Employed":
-            print(f"Generating pay stub for {app.get('name')}...")
-            data = generate_pay_stub_data(app)
-            generate_pay_stub_pdf(app, data)
+        #if app.get("employment_status") == "Employed":
+        print(f"Generating pay stub for {app.get('name')}...")
+        data = generate_pay_stub_data(app)
+        generate_pay_stub_pdf(app, data)
 
 if __name__ == "__main__":
     main()
