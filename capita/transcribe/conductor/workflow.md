@@ -46,7 +46,7 @@ All tasks follow a strict lifecycle:
 
 8. **Commit Code Changes:**
    - Stage all code changes related to the task.
-   - Propose a clear, concise commit message e.g, `feat(ui): Create basic HTML structure for calculator`.
+   - Propose a clear, concise commit message e.g, `feature(ui): Create basic HTML structure for calculator`.
    - Perform the commit.
 
 9. **Attach Task Summary with Git Notes:**
@@ -244,7 +244,7 @@ Before requesting review:
 ```
 
 ### Types
-- `feat`: New feature
+- `feature`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
 - `style`: Formatting, missing semicolons, etc.
@@ -254,7 +254,7 @@ Before requesting review:
 
 ### Examples
 ```bash
-git commit -m "feat(auth): Add remember me functionality"
+git commit -m "feature(auth): Add remember me functionality"
 git commit -m "fix(posts): Correct excerpt generation for short posts"
 git commit -m "test(comments): Add tests for emoji reaction limits"
 git commit -m "style(mobile): Improve button touch targets"
