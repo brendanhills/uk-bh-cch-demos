@@ -5,4 +5,4 @@ This file tracks all major tracks for the project. Each track has its own detail
 ---
 
 - [ ] **Track: Implement a Model Comparison Framework**
-  *Link: [./tracks/model_comparison_20260212/](./tracks/model_comparison_20260212/)*
+  *Link: [./tracks/model_comparison_20260219/](./tracks/model_comparison_20260219/)*
