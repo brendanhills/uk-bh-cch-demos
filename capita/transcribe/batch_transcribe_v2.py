@@ -161,9 +161,11 @@ class BatchTranscriptionService(BaseTranscriptionService):
                 "text": chunk['text']
             })
 
-        with open("batch_output.json", "w") as f:
+        output_path = "output/batch_output.json"
+        os.makedirs("output", exist_ok=True)
+        with open(output_path, "w") as f:
             json.dump(final_output, f, indent=2)
-        logger.info("Batch transcription complete. Results saved to batch_output.json")
+        logger.info(f"Batch transcription complete. Results saved to {output_path}")
 
 async def main():
     parser = argparse.ArgumentParser(description="GCS Batch Transcription (STT V2)")

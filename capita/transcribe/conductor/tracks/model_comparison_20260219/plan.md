@@ -23,12 +23,9 @@ Create the entry point and the side-by-side terminal rendering.
     - [x] Implement CLI argument parsing for multiple recognizers/models. f69a391
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Multi-Model CLI & UI' (Protocol in workflow.md)
 
-## Phase 3: Validation & Refinement
-Ensure robustness and documentation.
+## Phase 3: Validation & Refinement (SUPERSEDED)
+*Note: This phase is superseded by the 'Decoupled Multi-Channel Transcription Architecture' track. Validation and performance metrics will be integrated into the new producer-consumer architecture.*
 
-- [ ] Task: Add performance logging for latency comparison between models.
-    - [ ] Write tests for latency tracking.
-    - [ ] Implement simple timing metrics in the `ComparisonManager`.
-- [ ] Task: Update documentation and README for the new feature.
-    - [ ] Add usage examples to `README.md`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Validation & Refinement' (Protocol in workflow.md)
+- [ ] ~~Task: Add performance logging for latency comparison between models.~~ (Redundant)
+- [ ] ~~Task: Update documentation and README for the new feature.~~ (Redundant)
+- [ ] ~~Task: Conductor - User Manual Verification 'Phase 3: Validation & Refinement'~~ (Redundant)

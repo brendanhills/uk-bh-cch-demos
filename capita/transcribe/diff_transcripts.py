@@ -28,6 +28,10 @@ def analyze_diffs(batch_path, stream_path, timing_threshold=1.0):
     # We use a greedy alignment based on highest similarity within a time window
     alignment = [] # List of (batch_idx, stream_idx)
     used_stream_indices = set()
+    
+    # Speaker Mapping: Detect if Batch Speaker 1 is actually Stream Speaker 2 etc.
+    # We look at the first few aligned turns to build a map.
+    speaker_map = {} # {batch_speaker: stream_speaker}
 
     for b_idx, b_turn in enumerate(batch):
         best_s_idx = -1
@@ -37,16 +41,22 @@ def analyze_diffs(batch_path, stream_path, timing_threshold=1.0):
             if s_idx in used_stream_indices:
                 continue
             
-            # Use a generous window for initial alignment (using 'start_sec' key)
+            # Use a generous window for initial alignment
             if abs(b_turn['start_sec'] - s_turn['start_sec']) < 5.0:
                 sim = difflib.SequenceMatcher(None, b_turn['text'].lower(), s_turn['text'].lower()).ratio()
                 if sim > max_sim:
                     max_sim = sim
                     best_s_idx = s_idx
         
-        if best_s_idx != -1 and max_sim > 0.5: # Align if similarity is reasonable
+        if best_s_idx != -1 and max_sim > 0.4: # Lower threshold for discovery
             alignment.append((b_idx, best_s_idx))
             used_stream_indices.add(best_s_idx)
+            
+            # Auto-discover speaker mapping
+            b_spk = b_turn['speaker']
+            s_spk = stream[best_s_idx]['speaker']
+            if b_spk not in speaker_map:
+                speaker_map[b_spk] = s_spk
         else:
             alignment.append((b_idx, None))
 
@@ -72,14 +82,16 @@ def analyze_diffs(batch_path, stream_path, timing_threshold=1.0):
             continue
             
         s_turn = stream[s_idx]
-        speaker = b_turn['speaker'] # Using 'speaker' key
+        b_speaker = b_turn['speaker']
+        mapped_s_speaker = speaker_map.get(b_speaker, b_speaker)
 
         # --- Check: WORD_DIFF ---
         if b_turn['text'].strip().lower() != s_turn['text'].strip().lower():
             findings["WORD_DIFF"].append({"batch": b_turn, "stream": s_turn})
 
         # --- Check: ATTRIBUTION_DIFF ---
-        if b_turn['speaker'] != s_turn['speaker']:
+        # Compare against mapped speaker
+        if s_turn['speaker'] != mapped_s_speaker:
             findings["ATTRIBUTION_DIFF"].append({"batch": b_turn, "stream": s_turn})
 
         # --- Check: TIMING_DIFF ---
@@ -92,10 +104,10 @@ def analyze_diffs(batch_path, stream_path, timing_threshold=1.0):
         last_s_idx = s_idx
 
         # --- Check: OOO_SAME_SPEAKER ---
-        prev_s_idx_for_speaker = last_s_idx_per_speaker.get(speaker, -1)
+        prev_s_idx_for_speaker = last_s_idx_per_speaker.get(b_speaker, -1)
         if s_idx < prev_s_idx_for_speaker:
-            findings["OOO_SAME_SPEAKER"].append({"batch": b_turn, "stream": s_turn, "speaker": speaker})
-        last_s_idx_per_speaker[speaker] = s_idx
+            findings["OOO_SAME_SPEAKER"].append({"batch": b_turn, "stream": s_turn, "speaker": b_speaker})
+        last_s_idx_per_speaker[b_speaker] = s_idx
 
     # Find 'Extra' in stream
     for s_idx, s_turn in enumerate(stream):

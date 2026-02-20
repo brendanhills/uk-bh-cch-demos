@@ -6,8 +6,8 @@ from core.utils import parse_common_args, setup_pipeline, run_broadcaster, q_gen
 from core.providers import V2Provider
 
 async def main():
-    args = parse_common_args("Two-Channel Monolithic Demo")
-    simulator, engine, terminal, json_log, output_path = await setup_pipeline(args, args.mode)
+    args = parse_common_args("Parallel Producer-Consumer Demo")
+    simulator, engine, terminal, json_log, output_path = await setup_pipeline(args, "parallel")
 
     # 1. Setup API Provider
     from google.api_core.client_options import ClientOptions
@@ -24,25 +24,26 @@ async def main():
     recognizer_name = f"projects/{project}/locations/{location}/recognizers/{recognizer_id}"
     provider = V2Provider(client, recognizer_name, args.model)
 
-    # 2. Worker
-    audio_q = asyncio.Queue()
-
-    async def worker():
-        async for event in provider.stream(q_gen(audio_q), multi_channel=True, chunk_duration_sec=args.chunk_size):
+    # 2. Parallel Workers
+    q1, q2 = asyncio.Queue(), asyncio.Queue()
+    
+    async def worker(audio_gen, channel_id):
+        async for event in provider.stream(audio_gen, channel_id=channel_id, chunk_duration_sec=args.chunk_size):
             if event.event_type == "speech_activity_begin":
-                engine.update_active_status(event.speaker_id, event.start_sec)
+                engine.update_active_status(channel_id, event.start_sec)
             elif event.event_type == "speech_activity_end":
-                engine.update_active_status(event.speaker_id, None)
+                engine.update_active_status(channel_id, None)
             engine.process_raw_event(event)
 
-    print(f"\nREFACTORED TWO-CHANNEL DEMO ({args.mode.upper()}): {os.path.basename(args.gcs_uri)}")
+    print(f"\nREFACTORED PARALLEL DEMO: {os.path.basename(args.gcs_uri)}")
     print(f"Output File: {output_path}")
     print("-" * 100)
 
     try:
         await asyncio.gather(
-            run_broadcaster(simulator, engine, audio_q, args.duration, args.chunk_size),
-            worker()
+            run_broadcaster(simulator, engine, [q1, q2], args.duration, args.chunk_size),
+            worker(q_gen(q1), 1),
+            worker(q_gen(q2), 2)
         )
     finally:
         engine.shutdown()

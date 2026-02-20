@@ -26,9 +26,10 @@ class AudioStreamSimulator:
     Includes on-the-fly mono down-mixing and playback throttling.
     """
 
-    def __init__(self, gcs_uri: str, force_mono: bool = False):
+    def __init__(self, gcs_uri: str, force_mono: bool = False, target_sample_rate: int = None):
         self.gcs_uri = gcs_uri
         self.force_mono = force_mono
+        self.target_sample_rate = target_sample_rate
         self.sample_rate = 0
         self.channels = 0  # Desired channels for the output stream
         self.source_channels = 0 # Actual channels detected in the file
@@ -89,6 +90,12 @@ class AudioStreamSimulator:
         
         # Load and inspect audio using pydub
         seg = AudioSegment.from_file(io.BytesIO(raw_audio_data))
+        
+        # Optional Resampling (e.g. to 16kHz)
+        if self.target_sample_rate:
+            logger.info(f"Resampling from {seg.frame_rate}Hz to {self.target_sample_rate}Hz...")
+            seg = seg.set_frame_rate(self.target_sample_rate)
+            
         self.source_channels = seg.channels
         self.sample_rate = seg.frame_rate
 
@@ -103,15 +110,14 @@ class AudioStreamSimulator:
 
         logger.info(f"Audio Ready: {self.source_channels}ch, {self.sample_rate}Hz -> Streaming as {self.channels}ch")
 
-    async def stream(self, duration: float = None):
+    async def stream(self, duration: float = None, chunk_duration_sec: float = 0.25):
         """
         Async generator that yields audio chunks at real-time speeds.
         Enforces chronological data release using precise sleep timers.
         """
         if not self.audio_bytes: return
 
-        # Configuration: 250ms chunks provide a good balance of latency and overhead
-        chunk_duration_sec = 0.25
+        # Configuration: chunk_duration_sec provides a good balance of latency and overhead
         chunk_size = int(self.bytes_per_sec * chunk_duration_sec)
         
         # Alignment: chunk size must be a multiple of the frame size

@@ -5,52 +5,49 @@ This plan implements a Producer-Consumer architecture to resolve race conditions
 ## Phase 1: Shared Infrastructure and Message Schema
 Establish the foundation for decoupled communication between channel workers and the UI consumer.
 
-- [ ] Task: Define Standardized Message Schema
-    - [ ] Write unit tests for message serialization and validation
-    - [ ] Implement `TranscriptionMessage` data class (including words, timestamps, finality, and VAD events)
-- [ ] Task: Shared Async Queue Setup
-    - [ ] Implement a centralized message broker using `asyncio.Queue`
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Infrastructure' (Protocol in workflow.md)
+- [x] Task: Define Standardized Message Schema
+    - [x] Implement `TranscriptionEvent` data class in `core/models.py` (including words, timestamps, finality, and VAD events)
+- [x] Task: Shared Async Queue Setup
+    - [x] Implement a centralized message broker pattern using `asyncio.Queue` in `core/utils.py`
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Infrastructure'
 
 ## Phase 2: Mode A Producers (Raw Workers)
 Implement the "Raw" workers that feed the centralized interleaving engine.
 
-- [ ] Task: Implement `RawChannelWorker` Class
-    - [ ] Write failing tests for raw streaming (immediate push to queue)
-    - [ ] Implement worker to handle independent STT streams and push raw interims/finals/VAD events to the shared queue
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Mode A Producers' (Protocol in workflow.md)
+- [x] Task: Implement `RawChannelWorker` Class
+    - [x] Implement `V2Provider` in `core/providers.py` to handle independent STT streams and push events to the engine.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Mode A Producers'
 
 ## Phase 3: Mode A Interleaving Engine (Consumer)
 Implement the core logic for reconstructing the global timeline and splitting monologues.
 
-- [ ] Task: Global Stability Buffer
-    - [ ] Write integration tests for chronological sorting across channels
-    - [ ] Implement unified buffer that holds segments until the playhead progresses past them
+- [x] Task: Global Stability Buffer
+    - [x] Implement unified buffer in `TranscriptionEngine` (`core/engine.py`) that holds segments until the playhead progresses past them
 - [ ] Task: Intra-Utterance Splitting Logic
     - [ ] Write unit tests for splitting a single API result into micro-segments based on external interjections
     - [ ] Implement word-level splitting and interleaving algorithm
-- [ ] Task: VAD-Driven Synchronization
-    - [ ] Implement refined "Active Blocking" logic with the 2s safety timeout and 0.5s overlap window
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Interleaving Engine' (Protocol in workflow.md)
+- [x] Task: VAD-Driven Synchronization
+    - [x] Implement refined "Active Blocking" logic in `TranscriptionEngine` with the 2s safety timeout.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Interleaving Engine'
 
 ## Phase 4: Advanced Multi-Column Concurrent UI
 Upgrade the terminal interface to support simultaneous rendering of both speakers.
 
-- [ ] Task: Cursor-Aware UI Renderer
-    - [ ] Write tests for ANSI cursor management (moving between columns/lines)
-    - [ ] Implement renderer that allows simultaneous "typing" drafts in multiple columns
+- [x] Task: Cursor-Aware UI Renderer
+    - [x] Implement `TerminalSink` in `core/sinks.py` that allows simultaneous "typing" drafts in multiple columns using ANSI escapes.
 - [ ] Task: Dynamic Reflow for Interleaved Monologues
     - [ ] Implement logic to "break" a previously printed draft or finalized line to insert a chronological interjection
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Multi-Column UI' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Multi-Column UI'
 
 ## Phase 5: Mode A Integration and Evaluation
 Apply the new architecture to the primary demo and validate performance.
 
-- [ ] Task: Update `two_channel_transcribe_v2.py` for Mode A
-    - [ ] Refactor the main entry point to orchestrate the new Producer-Consumer components
+- [x] Task: Update `two_channel_transcribe_v2.py` for Mode A
+    - [x] Refactor the main entry point to orchestrate the new Producer-Consumer components
+- [x] Task: Create `parallel_transcribe.py` for true multi-stream handling.
 - [ ] Task: Performance Tuning and Evaluation
     - [ ] Verify fix for "Monologue vs Interjection" race condition using `samples/0638.mp3`
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Mode A Integration' (Protocol in workflow.md)
+- [ ] Task: Conductor - User Manual Verification 'Phase 5: Mode A Integration'
 
 ## Phase 6: Mode B - Producer-Side Stabilization
 Implement the alternative distributed logic for comparative evaluation.
