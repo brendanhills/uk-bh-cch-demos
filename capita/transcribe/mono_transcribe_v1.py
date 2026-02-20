@@ -221,6 +221,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Mono Transcription (V1 Diarization) Demo")
     parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
     parser.add_argument('--wait-for-play', action='store_true', help='Pauses for user to start audio.')
+    parser.add_argument("--duration", type=float, default=60, help="Stop transcription after X seconds.")
     args = parser.parse_args()
 
     print(f"\n{'Speaker 1':<60} {'Speaker 2'}")
@@ -229,13 +230,14 @@ async def main():
     # Simulator: Forcing mono down-mix for V1 processing
     simulator = AudioStreamSimulator(args.gcs_uri, force_mono=True)
     await simulator.prepare()
-    simulator.generate_signed_url()
+    if args.gcs_uri.startswith("gs://"):
+        simulator.generate_signed_url()
     
     if args.wait_for_play:
         simulator.wait_for_user_start()
 
     service = MonoTranscriptionServiceV1(simulator.sample_rate, simulator.channels)
-    await service.run(simulator.stream())
+    await service.run(simulator.stream(duration=args.duration))
 
 if __name__ == "__main__":
     try:

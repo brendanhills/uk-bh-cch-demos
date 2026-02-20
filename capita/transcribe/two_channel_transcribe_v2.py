@@ -24,11 +24,14 @@ class UnifiedTwoChannelService(TranscriptionService):
     Implements speaker mapping and mode-based logic tuning.
     """
     def __init__(self, sample_rate: int, channels: int, customer_channel: str, 
-                 mode: str = "low_latency"):
+                 mode: str = "low_latency", enable_diarization: bool = False, model_name: str = None, duration: float = None):
         # Initialize the base V2 service with multi-channel support enabled
-        super().__init__(sample_rate, channels, enable_multi_channel=True)
+        super().__init__(sample_rate, channels, enable_multi_channel=True, enable_diarization=enable_diarization, model_name=model_name, duration=duration)
         self.customer_channel = customer_channel
-        self.recognizer_id = f"{os.getenv('GCP_RECOGNIZER_ID')}-unified"
+        
+        # Ensure the recognizer_id is lowercase to satisfy STT V2 requirements
+        base_id = os.getenv('GCP_RECOGNIZER_ID', 'default').lower()
+        self.recognizer_id = f"{base_id}-unified"
         
         # Configure logic thresholds based on the selected mode
         if mode == "readability":
@@ -44,10 +47,13 @@ class UnifiedTwoChannelService(TranscriptionService):
 
     def _print_in_column(self, text, channel, is_final, ts_only=None):
         """
-        Maps numeric channel tags (1, 2) to human-readable labels (Caller, Agent)
+        Maps numeric tags (1, 2) to human-readable labels (Caller, Agent or Speaker 1/2)
         before passing to the standardized columnar display logic.
         """
-        speaker = "Caller" if (self.customer_channel == f"channel_{channel}") else "Agent"
+        if self.enable_diarization:
+            speaker = f"Speaker {channel}"
+        else:
+            speaker = "Caller" if (self.customer_channel == f"channel_{channel}") else "Agent"
         
         # We only prepend the speaker label to finalized chunks to keep drafts clean
         if is_final:
@@ -63,22 +69,29 @@ async def main():
                         help="Toggles between raw speed ('low_latency') and conversational order ('readability').")
     parser.add_argument("--customer-channel", default=os.environ.get("CUSTOMER_CHANNEL", "channel_1"),
                         help="Defines which audio channel (1 or 2) belongs to the customer.")
+    parser.add_argument("--diarization", action="store_true", help="Enables speaker diarization (separating speakers on a single channel).")
+    parser.add_argument("--model", help="Overrides the default STT model (e.g., telephony, chirp_3).")
     parser.add_argument('--wait-for-play', action='store_true', help='Pauses for user to start audio.')
+    parser.add_argument("--duration", type=float, default=60, help="Stop transcription after X seconds.")
 
     args = parser.parse_args()
 
     print(f"\nMode: {args.mode.upper()}")
 
-    
-    ch1_label = "Channel 1 (Caller)" if args.customer_channel == "channel_1" else "Channel 1 (Agent)"
-    ch2_label = "Channel 2 (Agent)" if args.customer_channel == "channel_1" else "Channel 2 (Caller)"
-    print(f"{ch1_label:<60} {ch2_label}")
+    if args.diarization:
+        print(f"{'Speaker 1':<60} {'Speaker 2'}")
+    else:
+        ch1_label = "Channel 1 (Caller)" if args.customer_channel == "channel_1" else "Channel 1 (Agent)"
+        ch2_label = "Channel 2 (Agent)" if args.customer_channel == "channel_1" else "Channel 2 (Caller)"
+        print(f"{ch1_label:<60} {ch2_label}")
     print("-" * 120)
 
     # 2. Audio Simulation: Initialize the real-time audio streamer
-    simulator = AudioStreamSimulator(args.gcs_uri, force_mono=False)
+    # STT V2 Diarization requires a single channel; force mono if enabled
+    simulator = AudioStreamSimulator(args.gcs_uri, force_mono=args.diarization)
     await simulator.prepare()
-    simulator.generate_signed_url()
+    if args.gcs_uri.startswith("gs://"):
+        simulator.generate_signed_url()
     
     if args.wait_for_play:
         simulator.wait_for_user_start()
@@ -86,10 +99,13 @@ async def main():
 
     # 3. Service Execution: Instantiate and run the unified service
     service = UnifiedTwoChannelService(simulator.sample_rate, simulator.channels, 
-                                       args.customer_channel, mode=args.mode)
+                                       args.customer_channel, mode=args.mode, 
+                                       enable_diarization=args.diarization, 
+                                       model_name=args.model,
+                                       duration=args.duration)
     print(f"Settings: Stability={service.STABILITY_THRESHOLD}s, GapSplit={service.GAP_THRESHOLD}s, ActiveBlocking={service.ACTIVE_BLOCKING}")
     # Pipe the simulated real-time stream into the transcription engine
-    await service.run(simulator.stream())
+    await service.run(simulator.stream(duration=args.duration))
 
 if __name__ == "__main__":
     try:

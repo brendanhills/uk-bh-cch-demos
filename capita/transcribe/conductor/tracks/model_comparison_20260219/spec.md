@@ -12,7 +12,9 @@ The Model Comparison Framework allows developers to run the same audio stream th
 - **Simultaneous Streaming:** Ability to open multiple STT streaming requests for the same audio source.
 - **Synchronized Throttling:** The audio streaming logic in `simulate_audio.py` must push chunks to all active transcription services at the same real-time rate.
 - **Comparison UI:** A columnar terminal UI that displays two models side-by-side or stacked, with distinct colors for each.
-- **Configuration:** Support configuring the models (e.g., `telephony`, `chirp`) via CLI arguments or a configuration file.
+- **Model Support:** Explicit support for `telephony` and `chirp_3` models.
+- **Dynamic Endpoints:** Support for switching between regional (e.g., `us-central1`) and global (e.g., `us`) endpoints based on model requirements (Chirp-3 requires global).
+- **Configuration:** Support configuring the models (e.g., `telephony`, `chirp_3`) via CLI arguments or a configuration file.
 
 ## Architecture
 - **Engine:** Extend `BaseTranscriptionService` to allow for multiple instances or a coordinated manager.

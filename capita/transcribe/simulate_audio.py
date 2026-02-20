@@ -74,13 +74,18 @@ class AudioStreamSimulator:
         Initializes the simulator by downloading the audio and preparing the buffer.
         Normalizes all audio to Linear16 PCM (the expected API format).
         """
-        logger.info(f"Downloading {self.gcs_uri}...")
-        storage = StorageClient()
-        bucket_name, blob_name = self.gcs_uri.replace("gs://", "").split("/", 1)
-        bucket = storage.bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-        raw_audio_data = blob.download_as_bytes()
-        storage.close()
+        if self.gcs_uri.startswith("gs://"):
+            logger.info(f"Downloading {self.gcs_uri}...")
+            storage = StorageClient()
+            bucket_name, blob_name = self.gcs_uri.replace("gs://", "").split("/", 1)
+            bucket = storage.bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            raw_audio_data = blob.download_as_bytes()
+            storage.close()
+        else:
+            logger.info(f"Reading local file {self.gcs_uri}...")
+            with open(self.gcs_uri, "rb") as f:
+                raw_audio_data = f.read()
         
         # Load and inspect audio using pydub
         seg = AudioSegment.from_file(io.BytesIO(raw_audio_data))
@@ -98,7 +103,7 @@ class AudioStreamSimulator:
 
         logger.info(f"Audio Ready: {self.source_channels}ch, {self.sample_rate}Hz -> Streaming as {self.channels}ch")
 
-    async def stream(self):
+    async def stream(self, duration: float = None):
         """
         Async generator that yields audio chunks at real-time speeds.
         Enforces chronological data release using precise sleep timers.
@@ -114,11 +119,15 @@ class AudioStreamSimulator:
         chunk_size = (chunk_size // frame_size) * frame_size
         chunks_queued = 0
 
+        # Calculate max bytes if duration is set
+        max_bytes = int(self.bytes_per_sec * duration) if duration else len(self.audio_bytes)
+        audio_to_stream = self.audio_bytes[:max_bytes]
+
         # High-precision timer start
         start_time = asyncio.get_event_loop().time()
 
-        for i in range(0, len(self.audio_bytes), chunk_size):
-            chunk = self.audio_bytes[i : i + chunk_size]
+        for i in range(0, len(audio_to_stream), chunk_size):
+            chunk = audio_to_stream[i : i + chunk_size]
 
             # Real-time Mono down-mixing if requested
             if self.force_mono and self.source_channels > 1:

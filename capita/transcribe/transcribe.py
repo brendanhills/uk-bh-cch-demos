@@ -54,10 +54,11 @@ class TranscriptionService:
     Implements the core 'Radical' logic: sequential ordering via a stability window.
     """
 
-    def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float):
+    def __init__(self, gcs_uri: str, customer_channel: str, buffer_timeout: float, duration: float = 60.0):
         self.gcs_uri = gcs_uri
         self.customer_channel = customer_channel
         self.buffer_timeout = buffer_timeout
+        self.duration = duration
         self.transcribe_client = cs.SpeechAsyncClient(
             client_options=ClientOptions(api_endpoint=f"{GCP_LOCATION}-speech.googleapis.com")
         )
@@ -122,11 +123,15 @@ class TranscriptionService:
             frame_size = self.number_of_channels * 2
             chunk_size = (chunk_size // frame_size) * frame_size
 
+            # Calculate limit
+            max_bytes = int(bytes_per_sec * self.duration)
+            stream_data = pcm_data[:max_bytes]
+
             start_send_time = asyncio.get_event_loop().time()
             chunks_sent = 0
 
-            for i in range(0, len(pcm_data), chunk_size):
-                chunk = pcm_data[i:i+chunk_size]
+            for i in range(0, len(stream_data), chunk_size):
+                chunk = stream_data[i:i+chunk_size]
                 if not chunk: break
                 await self.audio_q.put(chunk)
                 chunks_sent += 1
@@ -296,6 +301,7 @@ class TranscriptionService:
 async def main():
     parser = argparse.ArgumentParser(description="Legacy Baseline Demo")
     parser.add_argument("gcs_uri", help="The GCS URI (gs://...)")
+    parser.add_argument("--duration", type=float, default=60, help="Stop transcription after X seconds.")
     args = parser.parse_args()
 
     # Header
@@ -304,7 +310,8 @@ async def main():
 
     service = TranscriptionService(gcs_uri=args.gcs_uri, 
                                    customer_channel=os.getenv("CUSTOMER_CHANNEL", "channel_1"), 
-                                   buffer_timeout=0.5)
+                                   buffer_timeout=0.5,
+                                   duration=args.duration)
     await service.run()
 
 if __name__ == "__main__":
