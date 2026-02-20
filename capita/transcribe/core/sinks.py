@@ -1,3 +1,8 @@
+"""
+Output Sinks for the Transcription Pipeline.
+Handles UI rendering (Terminal) and persistent logging (JSON).
+"""
+
 import json
 import os
 import textwrap
@@ -5,8 +10,8 @@ from .models import TranscriptionEvent
 
 class RealTimeJsonSink:
     """
-    Progressively writes TranscriptionEvents to a JSON file.
-    Requirement: No post-processing. Writes as events are emitted.
+    Progressively writes TranscriptionEvents to a JSON file as they are emitted.
+    Designed for zero-post-processing reliability.
     """
     def __init__(self, output_path: str):
         self.output_path = output_path
@@ -14,118 +19,152 @@ class RealTimeJsonSink:
         self.first_item = True
 
     def open(self):
+        """Initializes the output directory and file."""
         os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
         self.file = open(self.output_path, "w")
         self.file.write("[\n")
         self.file.flush()
 
     def emit(self, event: TranscriptionEvent):
-        """Writes a single event to the file immediately."""
+        """Appends a single event to the JSON array immediately."""
         if not self.file or not event.is_final or event.event_type != "transcript":
             return
         
         if not self.first_item:
             self.file.write(",\n")
         
+        # Write flat dictionary format compatible with evaluation tools
         self.file.write("  " + json.dumps(event.to_dict()))
         self.file.flush()
         self.first_item = False
 
     def close(self):
+        """Finalizes the JSON array and closes the file handle."""
         if self.file:
             self.file.write("\n]\n")
             self.file.close()
             self.file = None
 
 class TerminalSink:
-    """Renders TranscriptionEvents in a multi-column terminal layout."""
-    def __init__(self, channels: int = 2):
-        self.channels = channels
+    """
+    Renders TranscriptionEvents in a high-fidelity, multi-column CLI layout.
+    Supports real-time 'typing' effects and chronological reflow.
+    """
+    COL_WIDTH = 38
+    COL_SPACING = 2
+
+    def __init__(self):
+        # UI State
         self.last_printed_channel = None
         self.last_was_final = True
         self.last_line_count = 0
         
-        # Speaker mapping for arbitrary IDs
+        # Mapping for consistent column assignment
         self.speaker_to_col = {} # {speaker_id: column_index}
         
-        # History for Reflow (last 10 finalized blocks)
+        # History for Dynamic Reflow (last 10 finalized utterances)
         self.history = [] # List of (event, wrapped_text, line_count)
         
-        # Colors
+        # ANSI Escape Colors
         self.COLOR_SPEAKER_1 = "\033[92m" # Green
         self.COLOR_SPEAKER_2 = "\033[93m" # Yellow
-        self.COLOR_DRAFT = "\033[90m"    # Grey
+        self.COLOR_DRAFT = "\033[90m"    # Grey (for Interims)
         self.COLOR_RESET = "\033[0m"
 
     def _get_col(self, speaker_id):
+        """Maps an arbitrary speaker ID to a fixed UI column (0 or 1)."""
         if speaker_id not in self.speaker_to_col:
-            self.speaker_to_col[speaker_id] = len(self.speaker_to_col)
+            # Prefer 1-indexed speaker IDs to their corresponding columns
+            if isinstance(speaker_id, int) and 1 <= speaker_id <= 8:
+                self.speaker_to_col[speaker_id] = speaker_id - 1
+            else:
+                self.speaker_to_col[speaker_id] = len(self.speaker_to_col)
         return self.speaker_to_col[speaker_id]
 
+    def _format_event(self, event: TranscriptionEvent, col_idx: int, is_final: bool):
+        """Helper to format a transcript event with correct columns and wrapping."""
+        prefix = "" if is_final else "... "
+        colors = [self.COLOR_SPEAKER_1, self.COLOR_SPEAKER_2]
+        color = colors[col_idx % len(colors)] if is_final else self.COLOR_DRAFT
+        
+        if is_final:
+            model_label = f"[{event.metadata['model']}] " if event.metadata and "model" in event.metadata else ""
+            text = f"{model_label}Speaker {event.speaker_id}: [{event.start_sec:05.1f}s] \"{event.text}\" [{event.end_sec:05.1f}s]"
+        else:
+            text = f"[{event.start_sec:05.1f}s] \"{event.text}\""
+
+        full_text = f"{prefix}{text}"
+        offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
+        
+        # Wrap plain text first to avoid ANSI length issues
+        wrapper = textwrap.TextWrapper(
+            width=self.COL_WIDTH, 
+            initial_indent="", 
+            subsequent_indent="    "
+        )
+        lines = wrapper.wrap(full_text)
+        
+        colored_lines = [f"{offset_str}{color}{line}{self.COLOR_RESET}" for line in lines]
+        return "\n".join(colored_lines)
+
     def emit(self, event: TranscriptionEvent):
+        """Main rendering entry point."""
         if event.event_type != "transcript":
-            self._print_event(event)
+            self._print_marker(event)
             return
 
         col_idx = self._get_col(event.speaker_id)
 
-        # REFLOW LOGIC:
-        # Check if this finalized event belongs BEFORE the last finalized event in history
+        # 1. DYNAMIC REFLOW:
+        # If a finalized event belongs BEFORE our most recent output, we must rewrite.
         if event.is_final and self.history and event.start_sec < self.history[-1][0].start_sec:
             self._handle_reflow(event)
             return
 
-        # Smart overwrite logic for real-time typing effect
+        # 2. OVERWRITE/NEWLINE LOGIC:
         if not self.last_was_final and self.last_printed_channel == event.speaker_id:
+            # Overwrite existing draft from same channel
             for _ in range(self.last_line_count):
                 print("\033[F\033[K", end="", flush=True)
-
-        prefix = "" if event.is_final else "... "
-        colors = [self.COLOR_SPEAKER_1, self.COLOR_SPEAKER_2, self.COLOR_SPEAKER_1, self.COLOR_SPEAKER_2]
-        color = colors[col_idx % 4] if event.is_final else self.COLOR_DRAFT
-        
-        text = event.text
-        if event.is_final:
-            speaker_label = f"Speaker {event.speaker_id}"
-            text = f"{speaker_label}: [{event.start_sec:05.1f}s] \"{text}\" [{event.end_sec:05.1f}s]"
         else:
-            text = f"[{event.start_sec:05.1f}s] \"{text}\""
+            # If we were previously inline (heartbeats), or we are starting a new block,
+            # clear the draft if it's from a different channel, then move to new line.
+            if not self.last_was_final:
+                for _ in range(self.last_line_count):
+                    print("\033[F\033[K", end="", flush=True)
+            
+            if getattr(self, "last_was_inline", False):
+                print()
+                self.last_was_inline = False
 
-        colored_content = f"{color}{prefix}{text}{self.COLOR_RESET}"
+        # 3. FORMATTING:
+        wrapped = self._format_event(event, col_idx, event.is_final)
         
-        # Column formatting
-        COL_WIDTH = 38
-        COL_SPACING = 2
-        offset_str = " " * (col_idx * (COL_WIDTH + COL_SPACING))
-        
-        wrapper = textwrap.TextWrapper(
-            width=offset_str.__len__() + COL_WIDTH, 
-            initial_indent=offset_str, 
-            subsequent_indent=offset_str + " " * 4
-        )
-        wrapped = wrapper.fill(colored_content)
+        # Output to stdout
         print(wrapped, flush=True)
 
+        # 4. UPDATE UI STATE:
         if event.is_final:
             self.history.append((event, wrapped, len(wrapped.split("\n"))))
-            if len(self.history) > 10: self.history.pop(0)
+            if len(self.history) > 50: self.history.pop(0)
             self.last_was_final = True
         else:
             self.last_was_final = False
             
         self.last_printed_channel = event.speaker_id
         self.last_line_count = len(wrapped.split("\n"))
+        self.last_was_inline = False
 
     def _handle_reflow(self, new_event):
-        """Rewrites the terminal to insert a late-arriving event into history."""
-        # Find insertion point
+        """Surgically inserts a late-arriving event into the terminal history."""
+        # Find chronological insertion point
         insert_idx = len(self.history)
         for i, (old_ev, _, _) in enumerate(self.history):
             if new_event.start_sec < old_ev.start_sec:
                 insert_idx = i
                 break
         
-        # Calculate how many lines to move up
+        # Calculate lines to rollback
         lines_to_clear = 0
         if not self.last_was_final:
             lines_to_clear += self.last_line_count
@@ -133,53 +172,63 @@ class TerminalSink:
         for i in range(insert_idx, len(self.history)):
             lines_to_clear += self.history[i][2]
             
-        # Move up and clear
+        # Execute rollback
+        # 1. Clear current line (handles heartbeats/dots or cursor position)
+        print("\r\033[K", end="", flush=True)
+        
+        # 2. Move up and clear history lines
         for _ in range(lines_to_clear):
             print("\033[F\033[K", end="", flush=True)
             
-        # Wrap the new event
+        # Re-render new event
         col_idx = self._get_col(new_event.speaker_id)
-        color = [self.COLOR_SPEAKER_1, self.COLOR_SPEAKER_2][col_idx % 2]
-        text = f"Speaker {new_event.speaker_id}: [{new_event.start_sec:05.1f}s] \"{new_event.text}\" [{new_event.end_sec:05.1f}s]"
-        colored_content = f"{color}{text}{self.COLOR_RESET}"
+        wrapped = self._format_event(new_event, col_idx, True)
         
-        offset_str = " " * (col_idx * (38 + 2))
-        wrapper = textwrap.TextWrapper(width=offset_str.__len__() + 38, initial_indent=offset_str, subsequent_indent=offset_str + " " * 4)
-        wrapped = wrapper.fill(colored_content)
-        
-        # Update history and reprint
+        # Update history
         self.history.insert(insert_idx, (new_event, wrapped, len(wrapped.split("\n"))))
-        if len(self.history) > 10: self.history.pop(0)
+        if len(self.history) > 50: self.history.pop(0)
         
+        # Reprint timeline
         for i in range(insert_idx, len(self.history)):
             print(self.history[i][1], flush=True)
             
         self.last_was_final = True
         self.last_line_count = self.history[-1][2]
         self.last_printed_channel = self.history[-1][0].speaker_id
+        self.last_was_inline = False
 
-    def _print_event(self, event: TranscriptionEvent):
-        """Prints non-transcript markers (e.g. VAD, heartbeats) in a unified style."""
-        color = "\033[90m" # Grey for all system events
+    def _print_marker(self, event: TranscriptionEvent):
+        """Renders system markers (VAD, Heartbeats) in a unified, subtle style."""
+        color = "\033[90m" # Grey
         
         if event.event_type == "heartbeat":
-            # Just a subtle activity dot
-            print(f"{color}.{self.COLOR_RESET}", end="", flush=True)
+            col_idx = self._get_col(event.speaker_id)
+            offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
+            print(f"{offset_str}{color}.{self.COLOR_RESET}", end="", flush=True)
+            self.last_was_inline = True
             return
 
-        # Handle VAD / Speech Activity Events
-        event_label = "???"
-        if "begin" in event.event_type: event_label = "TALKING"
-        elif "end" in event.event_type: event_label = "SILENT"
-        else: event_label = event.event_type.upper()
+        # Ensure we start on a new line, but don't double-newline
+        if getattr(self, "last_was_inline", False):
+            print()
+            self.last_was_inline = False
 
-        content = f"<{event_label} @ {event.start_sec:05.1f}s>"
-        
+        # Voice Activity Events
+        label = "???"
+        if "begin" in event.event_type: label = "TALKING"
+        elif "end" in event.event_type: label = "SILENT"
+        else: label = event.event_type.upper()
+
+        content = f"<{label} @ {event.start_sec:05.1f}s>"
         col_idx = self._get_col(event.speaker_id)
-        offset_str = " " * (col_idx * (38 + 2))
+        offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
         
-        # Move to a new line for VAD events to avoid overwriting heartbeats
-        print(f"\n{offset_str}{color}{content}{self.COLOR_RESET}", flush=True)
+        full_line = f"{offset_str}{color}{content}{self.COLOR_RESET}"
+        print(full_line, flush=True)
         
-        self.last_was_final = True # Reset overwrite state
+        self.history.append((event, full_line, 1))
+        if len(self.history) > 50: self.history.pop(0)
+
+        self.last_was_final = True 
         self.last_line_count = 1
+        self.last_was_inline = False
