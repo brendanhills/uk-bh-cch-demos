@@ -11,3 +11,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [~] **Track: Decoupled Multi-Channel Transcription Architecture with Producer-Consumer pattern and Sequential Interleaving.**
 *Link: [./tracks/decoupled_architecture_20260219/](./tracks/decoupled_architecture_20260219/)*
+
+---
+
+- [ ] **Track: make it work with chirp-3 as all other models will be deprecated soon**
+*Link: [./tracks/chirp3_migration_20260220/](./tracks/chirp3_migration_20260220/)*
