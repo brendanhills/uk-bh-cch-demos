@@ -56,3 +56,8 @@ capita/transcribe/transcribe_project.zip
 
 capita/catalyst-front-door/node_modules/
 loan-approval-agent/.coverage
+capita/transcribe/.coverage
+
+capita/transcribe/REMINDER.md
+capita/transcribe/samples/*
+capita/transcribe/output/*
