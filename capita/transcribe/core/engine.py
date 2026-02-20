@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import List, Callable, Optional
 from .models import TranscriptionEvent
 
@@ -89,7 +90,7 @@ class TranscriptionEngine:
             
             # Diagnostic log
             if event.event_type == "transcript":
-                print(f"DEBUG: Checking {event.text[:10]} @ {event.start_sec:.1f}s - Clock: {self.current_audio_time:.1f}s, Active: {self.active_starts}, Blocked: {is_blocked}")
+                logging.debug(f"Checking {event.text[:10]} @ {event.start_sec:.1f}s - Clock: {self.current_audio_time:.1f}s, Active: {self.active_starts}, Blocked: {is_blocked}")
 
             if should_release:
                 stable.append(event)
