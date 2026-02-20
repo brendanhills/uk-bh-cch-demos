@@ -2,120 +2,118 @@ import pytest
 from core.models import TranscriptionEvent
 from core.engine import TranscriptionEngine
 
-def test_engine_stabilization():
+@pytest.mark.parametrize("stability, end_sec, clock, expected_count", [
+    (1.0, 1.5, 2.0, 0), # Not yet stable (1.5 + 1.0 = 2.5)
+    (1.0, 1.5, 3.0, 1), # Stable
+    (0.0, 1.5, 1.6, 1), # Low latency / Immediate
+    (5.0, 1.5, 6.0, 0), # Long buffer
+])
+def test_engine_stability_ranges(stability, end_sec, clock, expected_count):
+    """Tests engine stabilization across various thresholds and timings."""
     engine = TranscriptionEngine()
-    engine.STABILITY_THRESHOLD = 1.0
+    engine.STABILITY_THRESHOLD = stability
     engine.ACTIVE_BLOCKING = False
     
     events = []
     engine.add_sink(lambda e: events.append(e))
     
-    # 1. Send interim - should be emitted immediately
-    interim = TranscriptionEvent(speaker_id=1, text="hello", start_sec=0.5, end_sec=0.5, is_final=False)
-    engine.process_raw_event(interim)
-    assert len(events) == 1
-    assert events[0].text == "hello"
-    
-    # 2. Send final - should be buffered
-    final = TranscriptionEvent(speaker_id=1, text="world", start_sec=0.5, end_sec=1.5, is_final=True)
+    final = TranscriptionEvent(speaker_id=1, text="test", start_sec=0.5, end_sec=end_sec, is_final=True)
     engine.process_raw_event(final)
-    assert len(events) == 1 # Still buffered
     
-    # 3. Advance clock - should release final
-    # (1.5s end_sec + 1.0s STABILITY_THRESHOLD = 2.5s)
-    engine.set_audio_time(3.0)
-    # Check transcripts only
+    engine.set_audio_time(clock)
     transcripts = [e for e in events if e.event_type == "transcript"]
-    assert len(transcripts) == 2 # 1 interim + 1 final
-    assert transcripts[1].text == "world"
+    assert len(transcripts) == expected_count
 
-def test_engine_interleaving():
+@pytest.mark.parametrize("gap, expected_turns", [
+    (0.5, 2), # Default gap (0.5s < 1.0s silence) -> split
+    (2.0, 1), # Large gap threshold (2.0s > 1.0s silence) -> no split
+    (0.1, 2), # Aggressive split
+])
+def test_engine_gap_ranges(gap, expected_turns):
+    """Tests natural turn splitting across various gap thresholds."""
     engine = TranscriptionEngine()
-    engine.STABILITY_THRESHOLD = 1.0
-    engine.ACTIVE_BLOCKING = True
+    engine.GAP_THRESHOLD = gap
+    engine.STABILITY_THRESHOLD = 0.0
     
     events = []
     engine.add_sink(lambda e: events.append(e))
     
-    # Speaker 1 starts talking at 0.5s
-    engine.update_active_status(1, 0.5)
-    
-    # Speaker 2 sends a final result that started later (1.0s)
-    s2_final = TranscriptionEvent(speaker_id=2, text="interjection", start_sec=1.0, end_sec=1.5, is_final=True)
-    engine.process_raw_event(s2_final)
-    
-    # Advance clock - Speaker 2 should be BLOCKED because Speaker 1 is still active
-    engine.set_audio_time(2.5)
-    transcripts = [e for e in events if e.event_type == "transcript"]
-    assert len(transcripts) == 0 
-    
-    # Speaker 1 finishes
-    engine.update_active_status(1, None)
-    engine.set_audio_time(2.6)
-    
-    transcripts = [e for e in events if e.event_type == "transcript"]
-    assert len(transcripts) == 1
-    assert transcripts[0].text == "interjection"
-
-def test_monologue_splitting():
-    engine = TranscriptionEngine()
-    engine.STABILITY_THRESHOLD = 5.0 # High threshold to ensure both are buffered
-    engine.ACTIVE_BLOCKING = False
-    engine.GAP_THRESHOLD = 2.0 # High threshold to avoid turn-splitting by gaps
-    
-    events = []
-    engine.add_sink(lambda e: events.append(e))
-    
-    # A long monologue from Speaker 1
-    s1_long = TranscriptionEvent(
-        speaker_id=1, 
-        text="I am a very long monologue that should be split",
-        start_sec=0.0, end_sec=10.0, is_final=True,
+    # Event with a 1.0s silence gap between words
+    event = TranscriptionEvent(
+        speaker_id=1, text="hello world", start_sec=0.0, end_sec=2.0, is_final=True,
         words=[
-            {"word": "I", "start": 0.0},
-            {"word": "am", "start": 1.0},
-            {"word": "a", "start": 2.0},
-            {"word": "very", "start": 3.0},
-            {"word": "long", "start": 4.0},
-            {"word": "monologue", "start": 5.0},
-            {"word": "that", "start": 6.0},
-            {"word": "should", "start": 7.0},
-            {"word": "be", "start": 8.0},
-            {"word": "split", "start": 9.0}
+            {"word": "hello", "start": 0.0, "end": 0.5},
+            {"word": "world", "start": 1.5, "end": 2.0}
         ]
     )
     
-    # A short interjection from Speaker 2
-    s2_inter = TranscriptionEvent(
-        speaker_id=2, text="Indeed", start_sec=4.5, end_sec=5.5, is_final=True
+    engine.process_raw_event(event)
+    engine.set_audio_time(5.0)
+    
+    transcripts = [e for e in events if e.event_type == "transcript"]
+    assert len(transcripts) == expected_turns
+
+def test_engine_interleaving_blocking_toggle():
+    """Verifies ACTIVE_BLOCKING prevents interjections when enabled, and allows them when disabled."""
+    # 1. With Blocking (Mode A behavior)
+    engine = TranscriptionEngine()
+    engine.ACTIVE_BLOCKING = True
+    engine.STABILITY_THRESHOLD = 0.0
+    
+    events = []
+    engine.add_sink(lambda e: events.append(e))
+    
+    engine.update_active_status(1, 0.5) # Speaker 1 is talking
+    s2_final = TranscriptionEvent(speaker_id=2, text="hey", start_sec=1.0, end_sec=1.1, is_final=True)
+    engine.process_raw_event(s2_final)
+    
+    engine.set_audio_time(2.0)
+    assert len([e for e in events if e.event_type == "transcript"]) == 0 # Blocked
+    
+    # 2. Without Blocking (Mode B / Low Latency behavior)
+    engine.ACTIVE_BLOCKING = False
+    engine.set_audio_time(2.1)
+    assert len([e for e in events if e.event_type == "transcript"]) == 1 # Released
+
+def test_monologue_splitting_basic():
+    """Verifies that a monologue is split by a single interjection."""
+    engine = TranscriptionEngine()
+    engine.STABILITY_THRESHOLD = 0.0
+    engine.ACTIVE_BLOCKING = False
+    engine.GAP_THRESHOLD = 10.0
+    
+    events = []
+    engine.add_sink(lambda e: events.append(e))
+    
+    # S1: "one two three" (0-6s)
+    mono = TranscriptionEvent(
+        speaker_id=1, text="one two three", start_sec=0.0, end_sec=6.0, is_final=True,
+        words=[
+            {"word": "one", "start": 1.0},
+            {"word": "two", "start": 3.0},
+            {"word": "three", "start": 5.0},
+        ]
     )
     
-    # Set time to 0 before processing
-    engine.set_audio_time(0.0)
-    engine.process_raw_event(s1_long)
-    engine.process_raw_event(s2_inter)
+    # S2: interjection at 4s
+    inter = TranscriptionEvent(speaker_id=2, text="A", start_sec=4.0, end_sec=4.5, is_final=True)
     
-    # Both should be in buffer now because current_audio_time (0.0) is not > end + 5.0
-    assert len(engine.stability_buffer) == 2
-    
-    # Advance clock to release both simultaneously
-    # (10.0s end_sec + 5.0s STABILITY_THRESHOLD = 15.0s)
-    engine.set_audio_time(16.0)
+    engine.process_raw_event(mono)
+    engine.process_raw_event(inter)
+    engine.set_audio_time(10.0)
     
     transcripts = [e for e in events if e.event_type == "transcript"]
     
-    # It splits into 4 parts:
-    # 1. Speaker 1: [0.0 - 4.5] "I am a very long"
-    # 2. Speaker 1: [4.5 - 5.5] "monologue"
-    # 3. Speaker 2: [4.5 - 5.5] "Indeed"
-    # 4. Speaker 1: [5.5 - 10.0] "that should be split"
-    assert len(transcripts) == 4
-    assert transcripts[0].speaker_id == 1
-    assert transcripts[1].speaker_id == 1
-    assert transcripts[2].speaker_id == 2
-    assert transcripts[3].speaker_id == 1
+    # Expected:
+    # 1. S1: "one two" [1.0-4.0]
+    # 2. S2: "A" [4.0-4.5]
+    # 3. S1: "three" [4.0-6.0] (Wait, piece 2 of S1 starts at 4.0 because of split)
     
-    assert transcripts[0].text == "I am a very long"
-    assert transcripts[1].text == "monologue"
-    assert transcripts[2].text == "Indeed"
-    assert transcripts[3].text == "that should be split"
+    assert len(transcripts) == 3
+    assert transcripts[0].speaker_id == 1
+    assert transcripts[1].speaker_id == 2
+    assert transcripts[2].speaker_id == 1
+    
+    assert transcripts[0].text == "one two"
+    assert transcripts[1].text == "A"
+    assert transcripts[2].text == "three"

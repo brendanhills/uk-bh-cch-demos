@@ -117,7 +117,7 @@ class TranscriptionEngine:
             processed_batch = self._interleave_and_split(split_batch)
 
             # 3. Final chronological sort before emission
-            processed_batch.sort(key=lambda x: (x.start_sec, x.end_sec))
+            processed_batch.sort(key=lambda x: (x.start_sec, x.end_sec, x.speaker_id))
             for event in processed_batch:
                 self._emit(event)
 
@@ -135,78 +135,89 @@ class TranscriptionEngine:
                     step = max(0.01, duration / len(words))
                     ev.words = [{"word": w, "start": ev.start_sec + i * step} for i, w in enumerate(words)]
 
-        # Separate monologues (to be split) from other events (potential interjections)
+        # Separate monologues from other events
         monologues = [e for e in events if e.event_type == "transcript" and e.words]
         others = [e for e in events if not (e.event_type == "transcript" and e.words)]
         
-        pieces = others[:]
+        result_pieces = others[:]
         for mono in monologues:
-            # Find all events from OTHER speakers that overlap this monologue
-            interjections = [
-                e for e in events 
-                if e.speaker_id != mono.speaker_id 
-                and e.start_sec < mono.end_sec 
-                and e.end_sec > mono.start_sec
-            ]
-            
-            if not interjections:
-                pieces.append(mono)
-                continue
-                
-            # Collect all unique split points within the monologue's duration
             split_times = set()
-            for inter in interjections:
-                if mono.start_sec < inter.start_sec < mono.end_sec:
-                    split_times.add(inter.start_sec)
-                if mono.start_sec < inter.end_sec < mono.end_sec:
-                    split_times.add(inter.end_sec)
+            for other in events:
+                if other.speaker_id != mono.speaker_id:
+                    # Boundaries of interjections
+                    if mono.start_sec < other.start_sec < mono.end_sec:
+                        split_times.add(other.start_sec)
+                    if mono.start_sec < other.end_sec < mono.end_sec:
+                        split_times.add(other.end_sec)
             
             if not split_times:
-                pieces.append(mono)
+                result_pieces.append(mono)
                 continue
                 
-            # Process monologue segments chronologically
-            sorted_splits = sorted(list(split_times))
-            current_mono = mono
-            for t in sorted_splits:
-                # Find word index for split time t
-                split_idx = -1
-                for idx, w in enumerate(current_mono.words):
-                    if w["start"] >= t:
-                        split_idx = idx
-                        break
-                
-                if split_idx > 0:
-                    prefix, suffix = self._split_event(current_mono, split_idx, t)
-                    if prefix.text.strip():
-                        pieces.append(prefix)
-                    current_mono = suffix
-                # If split_idx is 0 or -1, no split is needed at this time t for current_mono
+            segments = [mono]
+            for t in sorted(list(split_times)):
+                new_segments = []
+                for seg in segments:
+                    # Check if split point t is within the segment's total temporal range
+                    if seg.start_sec < t < seg.end_sec:
+                        # Find the first word that starts AT OR AFTER t
+                        split_idx = -1
+                        if seg.words:
+                            for idx, w in enumerate(seg.words):
+                                if w["start"] >= t:
+                                    split_idx = idx
+                                    break
+                        
+                        if split_idx > 0:
+                            # Divide into two new segments
+                            prefix, suffix = self._split_event(seg, split_idx, t)
+                            new_segments.append(prefix)
+                            new_segments.append(suffix)
+                        elif split_idx == 0:
+                            # Split is at or before the first word; just shift start_sec
+                            seg.start_sec = t
+                            new_segments.append(seg)
+                        else:
+                            # t is after all word starts; check if it's actually after all words
+                            # If t is after the last word's end, it's just a segment boundary update
+                            last_word_end = seg.words[-1].get("end", seg.words[-1]["start"] + 0.1)
+                            if t >= last_word_end:
+                                seg.end_sec = t
+                            new_segments.append(seg)
+                    else:
+                        new_segments.append(seg)
+                segments = new_segments
             
-            if current_mono.text.strip():
-                pieces.append(current_mono)
+            for seg in segments:
+                if seg.text.strip():
+                    result_pieces.append(seg)
                 
-        return sorted(pieces, key=lambda x: (x.start_sec, x.end_sec))
+        return result_pieces
 
     def _split_event(self, event: TranscriptionEvent, split_idx: int, split_time: float):
         """Helper to split an event at a given word index."""
         prefix_words = event.words[:split_idx]
         suffix_words = event.words[split_idx:]
         
+        prefix_end = prefix_words[-1].get("end", prefix_words[-1]["start"] + 0.1)
+
         prefix = TranscriptionEvent(
             speaker_id=event.speaker_id,
             text=" ".join([w["word"] for w in prefix_words]),
             start_sec=event.start_sec,
-            end_sec=split_time,
+            end_sec=prefix_end,
             is_final=True,
             words=prefix_words,
             timestamp=event.timestamp,
             metadata=event.metadata.copy()
         )
+        
+        suffix_start = suffix_words[0]["start"]
+
         suffix = TranscriptionEvent(
             speaker_id=event.speaker_id,
             text=" ".join([w["word"] for w in suffix_words]),
-            start_sec=split_time,
+            start_sec=suffix_start,
             end_sec=event.end_sec,
             is_final=True,
             words=suffix_words,

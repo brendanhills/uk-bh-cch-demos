@@ -17,7 +17,7 @@ Create the entry point and the side-by-side terminal rendering.
 
 - [x] Task: Implement `ComparisonUI` for side-by-side terminal output. f69a391
     - [x] Write tests for columnar rendering of multiple model outputs. f69a391
-    - [x] Implement side-by-side rendering logic in `transcribe_common.py`. f69a391
+    - [x] Implement side-by-side rendering logic in the core architecture. f69a391
 - [x] Task: Create `compare_models.py` CLI script. f69a391
     - [x] Write integration tests for the CLI script. f69a391
     - [x] Implement CLI argument parsing for multiple recognizers/models. f69a391

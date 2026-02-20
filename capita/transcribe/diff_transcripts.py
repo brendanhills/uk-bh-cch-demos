@@ -1,149 +1,208 @@
 """
-Advanced Transcript Evaluator
-
-Categorizes discrepancies between Batch (Ground Truth) and Stream (Live) transcripts:
-1. WORD_DIFF: Incorrect transcription (text content differs).
-2. ATTRIBUTION_DIFF: Differing speaker attribution for the same text.
-3. TIMING_DIFF: Utterance start time differs significantly.
-4. OOO_SAME_SPEAKER: Out-of-order sequence for the same speaker.
-5. OOO_CROSS_SPEAKER: Out-of-order sequence between different speakers.
+Unified Transcript Evaluator (Chronological View)
+Focus: Out of Order, Mistranslation, Incorrect Attribution
 """
 
 import json
 import argparse
 import difflib
+from collections import Counter
 
 def load_json(path):
-    with open(path, 'r') as f:
-        return json.load(f)
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, ValueError):
+        with open(path, 'r') as f:
+            content = f.read().strip()
+            if not content: return []
+            if not content.endswith(']'):
+                last_brace = content.rfind('}')
+                if last_brace != -1:
+                    content = content[:last_brace+1] + ']'
+                else:
+                    content = content + ']'
+            try:
+                return json.loads(content)
+            except:
+                return []
+
+def clean_text(text):
+    """Removes punctuation and extra whitespace for fuzzy comparison."""
+    import string
+    text = str(text).lower()
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    return " ".join(text.split())
 
 def analyze_diffs(batch_path, stream_path, timing_threshold=1.0):
     batch = load_json(batch_path)
     stream = load_json(stream_path)
 
-    print(f"\nEvaluating: {batch_path} vs {stream_path}")
-    print(f"{'='*80}\n")
+    if not batch:
+        print(f"Error: Could not load batch file {batch_path}")
+        return
+    if not stream:
+        print(f"Error: Could not load stream file {stream_path}")
+        return
 
-    # 1. Alignment Phase: Map Batch indices to Stream indices
-    # We use a greedy alignment based on highest similarity within a time window
-    alignment = [] # List of (batch_idx, stream_idx)
-    used_stream_indices = set()
+    # 1. PRE-ALIGNMENT: Build Robust Speaker Map
+    speaker_pair_counts = Counter()
+    for b_turn in batch:
+        b_c = clean_text(b_turn['text'])
+        if len(b_c) < 5: continue
+        for s_turn in stream:
+            if abs(b_turn['start_sec'] - s_turn['start_sec']) < 20.0:
+                s_c = clean_text(s_turn['text'])
+                if b_c in s_c or s_c in b_c or difflib.SequenceMatcher(None, b_c, s_c).ratio() > 0.6:
+                    speaker_pair_counts[(b_turn['speaker'], s_turn['speaker'])] += 1
     
-    # Speaker Mapping: Detect if Batch Speaker 1 is actually Stream Speaker 2 etc.
-    # We look at the first few aligned turns to build a map.
-    speaker_map = {} # {batch_speaker: stream_speaker}
+    speaker_map = {}
+    for b_spk in {p[0] for p in speaker_pair_counts.keys()}:
+        options = {p[1]: count for p, count in speaker_pair_counts.items() if p[0] == b_spk}
+        if options:
+            speaker_map[b_spk] = max(options, key=options.get)
+
+    print(f"\nEvaluating: {batch_path} vs {stream_path}")
+    print(f"{'='*115}")
+    print(f"Legend:  ✓ Match | ⚠ Text Diff | ⇄ Attribution | 🚨 Seq Error | ⏳ Timing | ✖ Missing | ✚ Extra")
+    print(f"{'='*115}")
+    print(f"{'Time':<8} | {'Stat':<4} | {'Speaker':<12} | {'Content (Stream follows Batch if different)':<60}")
+    print(f"{'-'*115}")
+
+    # 2. ALIGNMENT PHASE
+    # We allow Many-to-One: Multiple golden turns can align to the same stream turn
+    alignment = [] # List of (batch_idx, stream_idx or None)
+    used_stream_indices = set()
 
     for b_idx, b_turn in enumerate(batch):
         best_s_idx = -1
         max_sim = 0.0
+        b_c = clean_text(b_turn['text'])
         
         for s_idx, s_turn in enumerate(stream):
-            if s_idx in used_stream_indices:
-                continue
-            
-            # Use a generous window for initial alignment
-            if abs(b_turn['start_sec'] - s_turn['start_sec']) < 5.0:
-                sim = difflib.SequenceMatcher(None, b_turn['text'].lower(), s_turn['text'].lower()).ratio()
-                if sim > max_sim:
-                    max_sim = sim
+            if abs(b_turn['start_sec'] - s_turn['start_sec']) < 20.0:
+                s_c = clean_text(s_turn['text'])
+                ratio = difflib.SequenceMatcher(None, b_c, s_c).ratio()
+                if (b_c in s_c or s_c in b_c) and (len(b_c) > 5):
+                    ratio = max(ratio, 0.9)
+                
+                if ratio > max_sim:
+                    max_sim = ratio
                     best_s_idx = s_idx
         
-        if best_s_idx != -1 and max_sim > 0.4: # Lower threshold for discovery
+        if best_s_idx != -1 and max_sim > 0.5:
             alignment.append((b_idx, best_s_idx))
             used_stream_indices.add(best_s_idx)
-            
-            # Auto-discover speaker mapping
-            b_spk = b_turn['speaker']
-            s_spk = stream[best_s_idx]['speaker']
-            if b_spk not in speaker_map:
-                speaker_map[b_spk] = s_spk
         else:
             alignment.append((b_idx, None))
 
-    # 2. Categorization Phase
-    findings = {
-        "WORD_DIFF": [],
-        "ATTRIBUTION_DIFF": [],
-        "TIMING_DIFF": [],
-        "OOO_SAME_SPEAKER": [],
-        "OOO_CROSS_SPEAKER": [],
-        "MISSING": [],
-        "EXTRA": []
-    }
+    # Detect REAL Out of Order: Did the stream turn N arrive AFTER stream turn N+1?
+    # Since the stream file is written sequentially, we check if start_sec is monotonic
+    # WITHIN each speaker channel (inter-speaker overlaps are expected).
+    ooo_indices = set()
+    last_s_time_per_speaker = {}
+    for s_idx, s_turn in enumerate(stream):
+        spk = s_turn['speaker']
+        if spk in last_s_time_per_speaker:
+            if s_turn['start_sec'] < last_s_time_per_speaker[spk] - 0.5:
+                ooo_indices.add(s_idx)
+        last_s_time_per_speaker[spk] = s_turn['start_sec']
 
-    last_s_idx = -1
-    last_s_idx_per_speaker = {}
-
+    # 3. UNIFIED TIMELINE
+    timeline = []
     for b_idx, s_idx in alignment:
         b_turn = batch[b_idx]
-        
-        if s_idx is None:
-            findings["MISSING"].append(b_turn)
-            continue
-            
-        s_turn = stream[s_idx]
-        b_speaker = b_turn['speaker']
-        mapped_s_speaker = speaker_map.get(b_speaker, b_speaker)
+        s_turn = stream[s_idx] if s_idx is not None else None
+        timeline.append({
+            "time": b_turn['start_sec'],
+            "batch": b_turn,
+            "stream": s_turn,
+            "is_ooo": s_idx in ooo_indices if s_idx is not None else False
+        })
 
-        # --- Check: WORD_DIFF ---
-        if b_turn['text'].strip().lower() != s_turn['text'].strip().lower():
-            findings["WORD_DIFF"].append({"batch": b_turn, "stream": s_turn})
-
-        # --- Check: ATTRIBUTION_DIFF ---
-        # Compare against mapped speaker
-        if s_turn['speaker'] != mapped_s_speaker:
-            findings["ATTRIBUTION_DIFF"].append({"batch": b_turn, "stream": s_turn})
-
-        # --- Check: TIMING_DIFF ---
-        if abs(b_turn['start_sec'] - s_turn['start_sec']) > timing_threshold:
-            findings["TIMING_DIFF"].append({"batch": b_turn, "stream": s_turn})
-
-        # --- Check: OOO_CROSS_SPEAKER ---
-        if s_idx < last_s_idx:
-            findings["OOO_CROSS_SPEAKER"].append({"batch": b_turn, "stream": s_turn})
-        last_s_idx = s_idx
-
-        # --- Check: OOO_SAME_SPEAKER ---
-        prev_s_idx_for_speaker = last_s_idx_per_speaker.get(b_speaker, -1)
-        if s_idx < prev_s_idx_for_speaker:
-            findings["OOO_SAME_SPEAKER"].append({"batch": b_turn, "stream": s_turn, "speaker": b_speaker})
-        last_s_idx_per_speaker[b_speaker] = s_idx
-
-    # Find 'Extra' in stream
     for s_idx, s_turn in enumerate(stream):
         if s_idx not in used_stream_indices:
-            findings["EXTRA"].append(s_turn)
+            timeline.append({
+                "time": s_turn['start_sec'],
+                "batch": None,
+                "stream": s_turn,
+                "is_ooo": s_idx in ooo_indices
+            })
 
-    # 3. Reporting Phase
-    def print_finding(title, list_data, color_code):
-        if not list_data: return
-        print(f"\n\033[{color_code}m[ {title} ({len(list_data)}) ]\033[0m")
-        for item in list_data[:10]: # Limit to first 10 for brevity
-            if "batch" in item:
-                print(f"  @ {item['batch']['start_sec']:.1f}s: B_S{item['batch']['speaker']} -> S_S{item['stream']['speaker']}")
-                print(f"    Batch:  {item['batch']['text'][:80]}...")
-                print(f"    Stream: {item['stream']['text'][:80]}...")
+    timeline.sort(key=lambda x: (x['time'], x['batch']['speaker'] if x['batch'] else 99))
+    max_stream_time = stream[-1]['end_sec'] if stream else 0
+
+    # 4. OUTPUT
+    C_DIM, C_ERR, C_WARN, C_OK, C_OOO, C_RST = "\033[90m", "\033[91m", "\033[93m", "\033[92m", "\033[95m", "\033[0m"
+
+    for item in timeline:
+        b, s = item['batch'], item['stream']
+        if b and not s and b['start_sec'] > max_stream_time + 5.0: continue
+
+        time_str = f"{item['time']:05.1f}s"
+        stat, spk_str, content_str = " ✓ ", "", ""
+        
+        if b and s:
+            b_spk, s_spk = b['speaker'], s['speaker']
+            mapped_s_spk = speaker_map.get(b_spk, b_spk)
+            b_clean, s_clean = clean_text(b['text']), clean_text(s['text'])
+            similarity = difflib.SequenceMatcher(None, b_clean, s_clean).ratio()
+            
+            text_diff = similarity < 0.8 and not (b_clean in s_clean or s_clean in b_clean)
+            spk_diff = s_spk != mapped_s_spk
+            time_diff = abs(b['start_sec'] - s['start_sec']) > timing_threshold
+            is_ooo = item['is_ooo']
+            
+            spk_str = f"S{b_spk}"
+            if spk_diff: spk_str = f"S{b_spk} {C_ERR}➔{C_RST} S{s_spk}"
+            
+            if text_diff or spk_diff or time_diff or is_ooo:
+                if is_ooo: stat = f"{C_OOO} 🚨 {C_RST}"
+                elif spk_diff: stat = f"{C_ERR} ⇄ {C_RST}"
+                elif text_diff: stat = f"{C_WARN} ⚠ {C_RST}"
+                elif time_diff: stat = f"{C_WARN} ⏳ {C_RST}"
+                
+                drift = s['start_sec'] - b['start_sec']
+                drift_info = f"{C_WARN}[{drift:+.1f}s]{C_RST} " if abs(drift) > timing_threshold else ""
+                content_str = f"{drift_info}{C_DIM}B: {b['text']}{C_RST}\n{' '*13} |      | {' '*12} | {C_OK}S: {s['text']}{C_RST}"
             else:
-                print(f"  @ {item.get('start_sec', 0):.1f}s: S{item.get('speaker', 1)} - {item.get('text', '')[:80]}...")
-        if len(list_data) > 10: print(f"  ... and {len(list_data)-10} more.")
+                content_str = f"{b['text']}"
+        elif b:
+            stat, spk_str, content_str = f"{C_ERR} ✖ {C_RST}", f"S{b['speaker']}", f"{C_DIM}{b['text']}{C_RST}"
+        elif s:
+            stat, spk_str, content_str = f"{C_OK} ✚ {C_RST}", f"S{s['speaker']}", f"{C_OK}{s['text']}{C_RST}"
 
-    print_finding("ATTRIBUTION ERRORS", findings["ATTRIBUTION_DIFF"], "91")
-    print_finding("OUT OF ORDER: CROSS-SPEAKER", findings["OOO_CROSS_SPEAKER"], "95")
-    print_finding("OUT OF ORDER: SAME-SPEAKER", findings["OOO_SAME_SPEAKER"], "94")
-    print_finding("TIMING DRIFT (>1s)", findings["TIMING_DIFF"], "93")
-    print_finding("WORD/TEXT DIFFERENCES", findings["WORD_DIFF"], "90")
-    print_finding("MISSING IN STREAM", findings["MISSING"], "31")
-    print_finding("EXTRA IN STREAM", findings["EXTRA"], "34")
+        print(f"{time_str} | {stat} | {spk_str:<12} | {content_str}")
 
-    print(f"\nSummary Report:")
-    print(f"  - Total Aligned Turns: {len(alignment) - len(findings['MISSING'])}")
-    print(f"  - Total Potential Errors: {sum(len(v) for v in findings.values())}")
-    print(f"  - (See categorized logs above for details)")
+    # 5. SUMMARY
+    print(f"{'='*115}")
+    stats = Counter()
+    for item in timeline:
+        b, s = item['batch'], item['stream']
+        if b and s:
+            b_clean, s_clean = clean_text(b['text']), clean_text(s['text'])
+            similarity = difflib.SequenceMatcher(None, b_clean, s_clean).ratio()
+            spk_diff = s['speaker'] != speaker_map.get(b['speaker'], b['speaker'])
+            time_diff = abs(b['start_sec'] - s['start_sec']) > timing_threshold
+            if item['is_ooo']: stats["ooo"] += 1
+            elif spk_diff: stats["spk"] += 1
+            elif similarity < 0.8 and not (b_clean in s_clean or s_clean in b_clean): stats["text"] += 1
+            elif time_diff: stats["time"] += 1
+            else: stats["match"] += 1
+        elif b and b['start_sec'] <= max_stream_time: stats["miss"] += 1
+        elif s: stats["extra"] += 1
+
+    print(f" Summary Stats:")
+    print(f"  {C_OK}✓ Matches: {stats['match']}{C_RST} | {C_WARN}⚠ Text Diffs: {stats['text']}{C_RST} | {C_ERR}⇄ Attribution: {stats['spk']}{C_RST}")
+    print(f"  {C_OOO}🚨 Seq Errors: {stats['ooo']}{C_RST} | {C_WARN}⏳ Timing Drifts: {stats['time']}{C_RST} | {C_ERR}✖ Missing: {stats['miss']}{C_RST} | {C_OK}✚ Extra: {stats['extra']}{C_RST}")
+    mapping_str = " | ".join([f"B_S{k}➔S_S{v}" for k,v in speaker_map.items()])
+    print(f" Speaker Mapping: {mapping_str}")
+    print(f"{'='*115}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--batch", default="batch_output.json")
-    parser.add_argument("--stream", default="output.json")
-    parser.add_argument("--threshold", type=float, default=1.0, help="Timing drift threshold in seconds")
+    parser.add_argument("-b", "--batch", default="batch_output.json")
+    parser.add_argument("-s", "--stream", default="output.json")
+    parser.add_argument("-t", "--threshold", type=float, default=1.0)
     args = parser.parse_args()
     analyze_diffs(args.batch, args.stream, args.threshold)

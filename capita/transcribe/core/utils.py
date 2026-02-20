@@ -116,7 +116,7 @@ async def run_broadcaster(simulator, engine, audio_queues, duration, chunk_size)
             await audio_queues[0].put(audioop.tomono(chunk, 2, 1, 0))
             await audio_queues[1].put(audioop.tomono(chunk, 2, 0, 1))
         else:
-            # Monolithic Mode: Send raw stereo chunk to a single worker
+            # Two-Channel Mode: Send raw stereo chunk to a single worker
             await audio_queues.put(chunk)
             
     # Signal EOF to workers

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, AsyncMock
 from core.utils import run_broadcaster
 
 @pytest.mark.asyncio
-async def test_run_broadcaster_monolithic():
+async def test_run_broadcaster_two_channel():
     """Verifies broadcaster correctly feeds a single queue and advances engine clock."""
     simulator = MagicMock()
     # Mock a stream of 4 chunks, each representing 0.1s

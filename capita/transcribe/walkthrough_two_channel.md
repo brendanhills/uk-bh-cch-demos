@@ -1,10 +1,10 @@
-# Code Walkthrough: Monolithic Two-Channel Approach
+# Code Walkthrough: Two-Channel Approach
 
 This document explains the standard, recommended approach for real-time multi-channel transcription using Google Cloud Speech-to-Text V2.
 
 ## High-Level Architecture
 
-The Monolithic approach uses a **single bi-directional GRPC connection** to the Google STT API. The audio file is streamed as a stereo signal, and the API handles speaker separation based on the audio channels (Channel 1 = Caller, Channel 2 = Agent).
+The Two-Channel approach uses a **single bi-directional GRPC connection** to the Google STT API. The audio file is streamed as a stereo signal, and the API handles speaker separation based on the audio channels (Channel 1 = Caller, Channel 2 = Agent).
 
 ```mermaid
 graph TD
@@ -15,6 +15,18 @@ graph TD
     E -->|Stable Events| F[Terminal Sink: core/sinks.py]
     E -->|Stable Events| G[JSON Log Sink: core/sinks.py]
 ```
+
+## Configuration & Options
+
+The simulator provides several knobs to tune the balance between speed and readability:
+
+| Flag | Default | Description |
+| :--- | :--- | :--- |
+| `--mode` | `readability` | **Presets:** `readability` (stable/interleaved) vs `low_latency` (instant/raw). |
+| `--stability` | `1.0s` | **Buffer:** How long the Engine holds results to allow for chronological re-ordering. Higher = more stable. |
+| `--gap` | `0.5s` | **Turn Splitting:** Amount of silence between words required to split a block of text into a new speaker turn. |
+| `--chunk-size` | `0.1s` | **Streaming Rate:** The duration of each audio packet sent to the API. |
+| `--model` | `telephony` | **STT Model:** Selection of the underlying Google model (e.g., `telephony`, `chirp_2`). |
 
 ## Step-by-Step Logic
 

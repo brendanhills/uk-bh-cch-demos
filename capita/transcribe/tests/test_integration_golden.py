@@ -23,6 +23,8 @@ def test_transcription_vs_golden(script, arch, is_parallel):
     golden_path = "output/0638.mp3_golden_set.json"
     
     # 1. Run the script
+    simulator_arch = "two_channel" if script == "two_channel_transcribe_v2.py" else "parallel"
+    if script == "mono_transcribe_v1.py": simulator_arch = "mono_v1"
     cmd = ["uv", "run", script, audio_sample, "--duration", "15"]
     
     # Scripts that are not Mono V1 support --mode

@@ -1,5 +1,5 @@
 """
-Two-Channel Monolithic Transcription Demo (STT V2)
+Two-Channel Transcription Demo (STT V2)
 
 This script demonstrates the 'standard' approach for transcribing 2-channel 
 stereo audio using a single bi-directional GRPC stream.
@@ -17,8 +17,8 @@ from core.providers import V2Provider
 
 async def main():
     # 1. Pipeline Setup (Arg parsing, Engine/Simulator initialization)
-    args = parse_common_args("Two-Channel Monolithic Demo")
-    simulator, engine, terminal, json_log, output_path = await setup_pipeline(args, "monolithic")
+    args = parse_common_args("Two-Channel Demo")
+    simulator, engine, terminal, json_log, output_path = await setup_pipeline(args, "two_channel")
 
     # 2. Configure Google STT Client
     project = os.getenv("PROJECT_ID")
@@ -48,7 +48,7 @@ async def main():
             engine.process_raw_event(event)
 
     # 4. Orchestration
-    print(f"\nTWO-CHANNEL MONOLITHIC DEMO ({args.mode.upper()}): {os.path.basename(args.gcs_uri)}")
+    print(f"\nTWO-CHANNEL DEMO ({args.mode.upper()}): {os.path.basename(args.gcs_uri)}")
     print(f"Config: model={args.model}, chunk={args.chunk_size}s, stability={engine.STABILITY_THRESHOLD}s, gap={engine.GAP_THRESHOLD}s")
     print(f"Output File: {output_path}")
     print("-" * 100)

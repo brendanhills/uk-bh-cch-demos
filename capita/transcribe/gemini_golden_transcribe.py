@@ -4,7 +4,7 @@ import argparse
 import mimetypes
 from google import genai
 from google.genai import types
-from transcribe_common import GCP_PROJECT_ID, GCP_LOCATION
+
 
 # Detailed prompt from working test_gemini.py
 GOLDEN_PROMPT = """
@@ -39,9 +39,13 @@ Here is a sample of the format I want:
 
 def generate_golden_transcript(audio_path, model_id="gemini-3.1-pro-preview"):
     # Initialize the GenAI client for Vertex AI using ADC
+
+    project = os.getenv("PROJECT_ID")
+    location = os.getenv("LOCATION", "us-central1")
+
     client = genai.Client(
         vertexai=True,
-        project=GCP_PROJECT_ID,
+        project=project,
     )
 
     # Detect mime type
