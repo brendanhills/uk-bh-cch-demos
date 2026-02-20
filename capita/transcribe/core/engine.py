@@ -88,10 +88,6 @@ class TranscriptionEngine:
             # Logic: Release if forced OR (it's stable AND not blocked)
             should_release = force or (is_stable_time and not is_blocked)
             
-            # Diagnostic log
-            if event.event_type == "transcript":
-                logging.debug(f"Checking {event.text[:10]} @ {event.start_sec:.1f}s - Clock: {self.current_audio_time:.1f}s, Active: {self.active_starts}, Blocked: {is_blocked}")
-
             if should_release:
                 stable.append(event)
             else:
@@ -100,10 +96,93 @@ class TranscriptionEngine:
         self.stability_buffer = remaining
         
         if stable:
-            # Sort released batch chronologically
-            stable.sort(key=lambda x: x.start_sec)
-            for event in stable:
+            # INTERLEAVING LOGIC:
+            # We must check if any event in 'stable' can be split by another event in 'stable'
+            released = self._interleave_and_split(stable)
+            for event in released:
                 self._emit(event)
+
+    def _interleave_and_split(self, events: List[TranscriptionEvent]) -> List[TranscriptionEvent]:
+        """Splits monologues into segments if interjections occurred during them."""
+        if len(events) < 2:
+            return sorted(events, key=lambda x: x.start_sec)
+
+        # 1. Sort by start time
+        events.sort(key=lambda x: x.start_sec)
+        
+        result = []
+        while events:
+            current = events.pop(0)
+            
+            # Check for overlaps with subsequent events from DIFFERENT speakers
+            overlap_found = False
+            for i, other in enumerate(events):
+                if other.speaker_id != current.speaker_id and other.start_sec < current.end_sec:
+                    # Potential interjection! 
+                    if current.words:
+                        # 1. Split at other.start_sec
+                        split_idx = -1
+                        for idx, w in enumerate(current.words):
+                            if w["start"] >= other.start_sec:
+                                split_idx = idx
+                                break
+                        
+                        if split_idx > 0:
+                            prefix, suffix = self._split_event(current, split_idx, other.start_sec)
+                            result.append(prefix)
+                            events.insert(i, suffix)
+                            overlap_found = True
+                            break
+                        
+                        # 2. If already past start, split at other.end_sec
+                        split_idx = -1
+                        for idx, w in enumerate(current.words):
+                            if w["start"] >= other.end_sec:
+                                split_idx = idx
+                                break
+                        
+                        if split_idx > 0:
+                            prefix, suffix = self._split_event(current, split_idx, other.end_sec)
+                            result.append(other)
+                            events.pop(i)
+                            events.insert(0, prefix)
+                            events.insert(1, suffix)
+                            overlap_found = True
+                            break
+            
+            if not overlap_found:
+                result.append(current)
+                
+        # Final sort to ensure stable chronological order
+        return sorted(result, key=lambda x: (x.start_sec, x.end_sec))
+
+    def _split_event(self, event: TranscriptionEvent, split_idx: int, split_time: float):
+        """Helper to split an event at a given word index."""
+        prefix_words = event.words[:split_idx]
+        suffix_words = event.words[split_idx:]
+        
+        prefix_text = " ".join([w["word"] for w in prefix_words])
+        suffix_text = " ".join([w["word"] for w in suffix_words])
+        
+        prefix = TranscriptionEvent(
+            speaker_id=event.speaker_id,
+            text=prefix_text,
+            start_sec=event.start_sec,
+            end_sec=split_time,
+            is_final=True,
+            words=prefix_words,
+            timestamp=event.timestamp
+        )
+        suffix = TranscriptionEvent(
+            speaker_id=event.speaker_id,
+            text=suffix_text,
+            start_sec=split_time,
+            end_sec=event.end_sec,
+            is_final=True,
+            words=suffix_words,
+            timestamp=event.timestamp
+        )
+        return prefix, suffix
 
     def update_active_status(self, speaker_id: int, start_sec: Optional[float]):
         """Tracks when a speaker is currently talking (for blocking logic)."""
