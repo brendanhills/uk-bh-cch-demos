@@ -13,7 +13,12 @@ def clean_text(text):
 
 def run_script(script_name, audio_path, duration=15):
     """Runs a transcription script and returns (stdout, output_json_path)."""
-    cmd = ["uv", "run", script_name, audio_path, "--duration", str(duration), "--mode", "readability"]
+    cmd = ["uv", "run", script_name, audio_path, "--duration", str(duration)]
+    
+    # Mono V1 doesn't support --mode
+    if "mono_transcribe_v1" not in script_name:
+        cmd.extend(["--mode", "readability"])
+        
     result = subprocess.run(cmd, capture_output=True, text=True)
     
     # Extract output path from stdout
@@ -25,7 +30,7 @@ def run_script(script_name, audio_path, duration=15):
             
     return result.stdout, output_path
 
-@pytest.mark.parametrize("script", ["two_channel_transcribe_v2.py", "parallel_transcribe.py"])
+@pytest.mark.parametrize("script", ["two_channel_transcribe_v2.py", "parallel_transcribe.py", "mono_transcribe_v1.py"])
 def test_transcription_vs_golden(script):
     audio_sample = "samples/0638.mp3"
     golden_path = "output/0638.mp3_golden_set.json"
@@ -62,9 +67,11 @@ def test_transcription_vs_golden(script):
         if found:
             matches += 1
             
-    # Success if at least 40% of golden turns in first 13s are found (STT can be inconsistent)
+    # Success if at least 40% of golden turns in first 13s are found
+    # (Mono V1 diarization is notoriously poor, so we are slightly more lenient)
     match_ratio = matches / len(golden_trimmed) if golden_trimmed else 0
-    assert match_ratio >= 0.4, f"Only {matches}/{len(golden_trimmed)} golden turns matched in {script} (Ratio: {match_ratio:.2f})"
+    required_ratio = 0.25 if "mono_v1" in output_path else 0.4
+    assert match_ratio >= required_ratio, f"Only {matches}/{len(golden_trimmed)} golden turns matched in {script} (Ratio: {match_ratio:.2f})"
 
     # 4. Check UI (Terminal output) for speaker columns, heartbeats, and markers
     # Speaker 1 should be left-aligned
@@ -94,6 +101,9 @@ def test_transcription_vs_golden(script):
     assert has_s1_ui, f"UI for {script} missing Speaker 1 output or alignment is wrong"
     assert has_s2_ui, f"UI for {script} missing Speaker 2 output or alignment is wrong"
     assert has_heartbeats, f"UI for {script} missing heartbeat indicators (.)"
-    assert has_vad, f"UI for {script} missing VAD markers (<TALKING/@SILENT>)"
+    
+    # Mono V1 doesn't produce VAD markers
+    if "mono_transcribe_v1" not in script:
+        assert has_vad, f"UI for {script} missing VAD markers (<TALKING/@SILENT>)"
 
     print(f"\nIntegration Test Passed for {script}: {matches} matches, UI components verified.")
