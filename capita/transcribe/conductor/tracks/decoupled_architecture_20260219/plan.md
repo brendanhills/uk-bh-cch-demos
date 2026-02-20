@@ -45,11 +45,14 @@ Apply the new architecture to the primary demo and validate performance.
 - [x] Task: Update `two_channel_transcribe_v2.py` for Mode A
     - [x] Refactor the main entry point to orchestrate the new Producer-Consumer components
 - [x] Task: Create `parallel_transcribe.py` for true multi-stream handling.
-- [ ] Task: Performance Tuning and Evaluation
-    - [ ] Verify fix for "Monologue vs Interjection" race condition using `samples/0638.mp3`
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Mode A Integration'
+- [x] Task: Performance Tuning and Evaluation
+    - [x] Verify fix for "Monologue vs Interjection" race condition using `samples/0638.mp3`
+    - [x] Implement natural turn-splitting (gap detection) to match Gemini style.
+    - [x] Refine evaluation tool (`diff_transcripts.py`) for chronological side-by-side view.
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Mode A Integration'
 
-## Phase 6: Mode B - Producer-Side Stabilization
+## Phase 6: Mode B - Producer-Side Stabilization (EXPERIMENTAL)
+*Note: This experimental phase is being explored in the `feature/mode-b-stabilization` branch.*
 Implement the alternative distributed logic for comparative evaluation.
 
 - [ ] Task: Stabilized Channel Worker
