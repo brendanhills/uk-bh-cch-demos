@@ -117,6 +117,9 @@ class TranscriptionEngine:
             processed_batch = self._interleave_and_split(split_batch)
 
             # 3. Final chronological sort before emission
+            # Use start_sec, then end_sec, then speaker_id to ensure a stable, 
+            # interleaved order where shorter interjections come before the 
+            # remainder of a split monologue.
             processed_batch.sort(key=lambda x: (x.start_sec, x.end_sec, x.speaker_id))
             for event in processed_batch:
                 self._emit(event)
@@ -126,23 +129,27 @@ class TranscriptionEngine:
         if len(events) < 2:
             return sorted(events, key=lambda x: (x.start_sec, x.end_sec))
 
-        # Ensure we have word-level timestamps for all transcripts
+        # Ensure we have word-level timestamps (or estimates) for all transcripts
         for ev in events:
             if ev.event_type == "transcript" and not ev.words and ev.text:
                 words = ev.text.split()
                 if words:
                     duration = ev.end_sec - ev.start_sec
-                    step = max(0.01, duration / len(words))
-                    ev.words = [{"word": w, "start": ev.start_sec + i * step} for i, w in enumerate(words)]
+                    # If start/end are same (interims), use small dummy duration
+                    if duration <= 0: duration = 0.5
+                    
+                    step = duration / len(words)
+                    ev.words = [{"word": w, "start": ev.start_sec + i * step, "end": ev.start_sec + (i + 1) * step} for i, w in enumerate(words)]
 
-        # Separate monologues from other events
-        monologues = [e for e in events if e.event_type == "transcript" and e.words]
-        others = [e for e in events if not (e.event_type == "transcript" and e.words)]
+        # Separate long monologues from short interjections/events
+        # A 'monologue' is a transcript that is long enough to be split by others.
+        monologues = [e for e in events if e.event_type == "transcript" and (e.end_sec - e.start_sec) > 3.0]
+        # result_pieces starts with everything EXCEPT the long monologues we are about to split
+        result_pieces = [e for e in events if e not in monologues]
         
-        result_pieces = others[:]
         for mono in monologues:
             split_times = set()
-            for other in events:
+            for other in result_pieces:
                 if other.speaker_id != mono.speaker_id:
                     # Boundaries of interjections
                     if mono.start_sec < other.start_sec < mono.end_sec:
