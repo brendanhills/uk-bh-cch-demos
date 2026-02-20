@@ -46,10 +46,17 @@ uv run two_channel_transcribe_v2.py gs://your-bucket/file.wav --mode low_latency
 ## 2. Advanced Demo: Parallel Workers
 **Script:** `parallel_transcribe.py`
 
-Demonstrates maximum flexibility by splitting a stereo file into two independent mono streams, each with its own API worker.
+Demonstrates maximum flexibility by splitting a stereo file into two independent mono streams, each with its own API worker. Supports two architectural modes:
+
+*   **Mode A (Default):** Centralized Interleaving. Raw results from all workers are sorted by a single "Brain" (the Engine).
+*   **Mode B:** Distributed Stabilization. Each worker handles its own buffering and gap-splitting before sending results to the Engine.
 
 ```bash
-uv run parallel_transcribe.py gs://your-bucket/file.wav
+# Mode A (Centralized - Recommended for stability)
+uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_a
+
+# Mode B (Distributed - Experimental)
+uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_b
 ```
 
 ## 3. Advanced Demo: Model Comparison

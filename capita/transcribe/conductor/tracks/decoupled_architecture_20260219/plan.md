@@ -52,15 +52,14 @@ Apply the new architecture to the primary demo and validate performance.
 - [x] Task: Conductor - User Manual Verification 'Phase 5: Mode A Integration'
 
 ## Phase 6: Mode B - Producer-Side Stabilization (EXPERIMENTAL)
-*Note: This experimental phase is being explored in the `feature/mode-b-stabilization` branch.*
 Implement the alternative distributed logic for comparative evaluation.
 
-- [ ] Task: Stabilized Channel Worker
-    - [ ] Implement local stability buffer and gap-splitting within the worker
-    - [ ] Ensure only "finalized" or "stable" segments are pushed to the queue
-- [ ] Task: Mode Toggle and Final Integration
-    - [ ] Add CLI flag to switch between Mode A (Consumer Sort) and Mode B (Producer Sort)
-- [ ] Task: Conductor - User Manual Verification 'Phase 6: Mode B' (Protocol in workflow.md)
+- [x] Task: Stabilized Channel Worker
+    - [x] Implement local stability buffer and gap-splitting within the worker
+    - [x] Ensure only "finalized" or "stable" segments are pushed to the queue
+- [x] Task: Mode Toggle and Final Integration
+    - [x] Add CLI flag to switch between Mode A (Consumer Sort) and Mode B (Producer Sort)
+- [x] Task: Conductor - User Manual Verification 'Phase 6: Mode B' (Protocol in workflow.md)
 
 ## Phase: Review Fixes
 - [x] Task: Apply review suggestions 289224b

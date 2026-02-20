@@ -117,3 +117,38 @@ def test_monologue_splitting_basic():
     assert transcripts[0].text == "one two"
     assert transcripts[1].text == "A"
     assert transcripts[2].text == "three"
+
+def test_engine_wordless_interleaving():
+    """Verifies that interjections can still be woven in even if word timestamps are missing."""
+    engine = TranscriptionEngine()
+    engine.STABILITY_THRESHOLD = 0.0
+    engine.ACTIVE_BLOCKING = False
+    engine.GAP_THRESHOLD = 10.0
+    
+    events = []
+    engine.add_sink(lambda e: events.append(e))
+    
+    # S1: Monologue WITHOUT word-level timestamps (e.g., from Chirp or simplified provider)
+    mono = TranscriptionEvent(
+        speaker_id=1, text="monologue content", start_sec=0.0, end_sec=10.0, is_final=True,
+        words=[] # Explicitly empty
+    )
+    
+    # S2: Interjection at 5s
+    inter = TranscriptionEvent(speaker_id=2, text="interjection", start_sec=5.0, end_sec=6.0, is_final=True)
+    
+    engine.process_raw_event(mono)
+    engine.process_raw_event(inter)
+    engine.set_audio_time(15.0)
+    
+    transcripts = [e for e in events if e.event_type == "transcript"]
+    
+    # Expected: The engine should estimate word positions and split it
+    assert len(transcripts) == 3
+    assert transcripts[0].speaker_id == 1
+    assert transcripts[1].speaker_id == 2
+    assert transcripts[2].speaker_id == 1
+    
+    assert transcripts[0].text == "monologue"
+    assert transcripts[1].text == "interjection"
+    assert transcripts[2].text == "content"

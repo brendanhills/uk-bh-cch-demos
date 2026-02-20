@@ -26,9 +26,10 @@ async def test_raw_channel_worker():
     # We don't need audio_gen for this test
     await worker.run(None, output_q, chunk_duration_sec=0.1)
     
-    assert output_q.qsize() == 2
+    assert output_q.qsize() == 3
     assert (await output_q.get()).text == "hello"
     assert (await output_q.get()).text == "world"
+    assert (await output_q.get()) is None
 
 @pytest.mark.asyncio
 async def test_stabilized_channel_worker_buffering():
@@ -49,9 +50,10 @@ async def test_stabilized_channel_worker_buffering():
     # Run the worker in a task so we can manipulate time
     run_task = asyncio.create_task(worker.run(None, output_q, chunk_duration_sec=0.1))
     
-    # 1. Initially, clock is 0.0. Queue should be empty.
+    # 1. Initially, clock is 0.0. Queue should be empty of transcripts, but contain None if finished.
     await asyncio.sleep(0.1)
-    assert output_q.qsize() == 0
+    assert output_q.qsize() == 1
+    assert (await output_q.get()) is None
     
     # 2. Advance clock to 1.5s. Still not stable (1.0 + 1.0 = 2.0 needed).
     worker.update_time(1.5)
@@ -91,12 +93,14 @@ async def test_stabilized_channel_worker_gap_splitting():
     worker.current_audio_time = 10.0
     await worker.run(None, output_q, chunk_duration_sec=0.1)
     
-    # Should be 2 events now
-    assert output_q.qsize() == 2
+    # Should be 2 events now + None
+    assert output_q.qsize() == 3
     ev1 = await output_q.get()
     ev2 = await output_q.get()
+    ev3 = await output_q.get()
     
     assert ev1.text == "part one"
     assert ev2.text == "part two"
+    assert ev3 is None
     assert ev1.start_sec == 0.0
     assert ev2.start_sec == 2.0

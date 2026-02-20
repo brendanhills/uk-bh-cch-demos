@@ -1,32 +1,32 @@
-# Implementation Plan: Chirp 3 Migration
+# Implementation Plan: Specialized Chirp-3 Module
 
-Migrate the system to use Chirp 3 as the default STT model and ensure robustness against missing word-level timestamps.
+Implement a dedicated `Chirp3Provider` module to handle the unique requirements of the Chirp-3 model, including specialized arguments, missing word-level timestamps, and custom output/interleaving logic.
 
-## Phase 1: Configuration and Defaults
-Update the project configuration to use Chirp 3 and the appropriate GCP region.
+## Phase 1: Dedicated Chirp-3 Provider
+Build the foundation for specialized Chirp-3 interaction.
 
-- [ ] Task: Update `core/utils.py` to set Chirp 3 as default
-    - [ ] Change `--model` default to `chirp-3`
-- [ ] Task: Update Regional Endpoint Logic
-    - [ ] Modify `two_channel_transcribe_v2.py` and `parallel_transcribe.py` to use `us` location for all Chirp models.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Configuration' (Protocol in workflow.md)
+- [ ] Task: Create `core/chirp3_provider.py`
+    - [ ] Implement `Chirp3Provider` class based on `V2Provider` but with specialized configurations (location, language codes, decoding config).
+    - [ ] Ensure it supports streaming and yields `TranscriptionEvent` objects with correctly handled (but empty) `words` lists.
+- [ ] Task: CLI Integration
+    - [ ] Update `two_channel_transcribe_v2.py` and `parallel_transcribe.py` to support a `--use-chirp3` flag that selects the new provider.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Dedicated Provider' (Protocol in workflow.md)
 
-## Phase 2: Engine Resilience
-Ensure the `TranscriptionEngine` handles Chirp 3 results that may lack word-level timestamps.
+## Phase 2: Interleaving Engine Enhancements
+Refine how the `TranscriptionEngine` handles segments that lack word-level timestamps.
 
-- [ ] Task: Write Tests for Wordless Transcripts
-    - [ ] Create a test case in `tests/test_engine.py` simulating a transcript event with an empty `words` list.
-    - [ ] Verify that interleaving/splitting still functions using the fallback estimation logic.
-- [ ] Task: Refine Engine Fallback Logic
-    - [ ] Ensure `_interleave_and_split` in `core/engine.py` correctly populates estimated word timings if missing.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Engine Resilience' (Protocol in workflow.md)
+- [ ] Task: Fallback Interleaving Strategy
+    - [ ] Update `_interleave_and_split` in `core/engine.py` to robustly handle missing `words` by estimating word boundaries or splitting at mid-segment time points.
+- [ ] Task: Unit Testing for Wordless Interleaving
+    - [ ] Expand `tests/test_engine.py` with complex scenarios involving long wordless segments interrupted by short interjections with timestamps.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: Engine Enhancements' (Protocol in workflow.md)
 
-## Phase 3: Integration and Baseline
-Validate the migration across the primary demos and comparison tools.
+## Phase 3: Specialized Output and Validation
+Optimize the visual and logical output for the Chirp-3 experience.
 
-- [ ] Task: Update `compare_models.py`
-    - [ ] Update default comparison models to include Chirp 3.
-- [ ] Task: End-to-End Verification
-    - [ ] Run `two_channel_transcribe_v2.py` with `samples/0638.mp3` using Chirp 3.
-    - [ ] Verify UI labels and chronological stability.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Integration' (Protocol in workflow.md)
+- [ ] Task: Terminal UI Optimization
+    - [ ] Ensure `TerminalSink` correctly labels Chirp-3 results and handles their potentially larger chunk size without UI jitter.
+- [ ] Task: Integration and Performance Testing
+    - [ ] Run end-to-end tests using `samples/0638.mp3` with the new Chirp-3 module.
+    - [ ] Verify chronological integrity and structural validity of the JSON output.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Validation' (Protocol in workflow.md)
