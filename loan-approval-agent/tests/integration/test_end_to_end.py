@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 # Mark E2E test to depend on integration scenarios
 pytestmark = [
-    pytest.mark.dependency(name="e2e", depends=["integration_scenarios"]),
+    pytest.mark.depends(name="e2e", depends=["integration_scenarios"]),
     pytest.mark.run(order=3)
 ]
 

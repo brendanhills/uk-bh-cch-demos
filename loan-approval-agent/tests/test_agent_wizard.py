@@ -8,7 +8,7 @@ from google.adk.runners import InMemoryRunner
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.dependency(name="unit_wizard"),
+    pytest.mark.depends(name="unit_wizard"),
     pytest.mark.run(order=1)
 ]
 

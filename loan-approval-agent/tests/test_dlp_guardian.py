@@ -5,7 +5,7 @@ from loan_agent.utils.dlp_guardian import DLPGuardian, guardian
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.dependency(name="unit_dlp"),
+    pytest.mark.depends(name="unit_dlp"),
     pytest.mark.run(order=1)
 ]
 

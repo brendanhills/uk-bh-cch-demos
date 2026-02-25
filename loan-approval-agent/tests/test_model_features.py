@@ -4,7 +4,7 @@ from loan_agent.utils.model_client import Client, get_best_model_name
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.dependency(name="unit_model"),
+    pytest.mark.depends(name="unit_model"),
     pytest.mark.run(order=1)
 ]
 

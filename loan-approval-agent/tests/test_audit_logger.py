@@ -6,7 +6,7 @@ from loan_agent.utils.audit_logger import log_event, LOG_FILE, LOG_DIR
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.dependency(name="unit_audit"),
+    pytest.mark.depends(name="unit_audit"),
     pytest.mark.run(order=1)
 ]
 

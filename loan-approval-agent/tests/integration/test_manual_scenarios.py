@@ -5,7 +5,7 @@ import sys
 
 # Mark integration test to depend on unit tests
 pytestmark = [
-    pytest.mark.dependency(name="integration_scenarios", depends=["unit_agents"]),
+    pytest.mark.depends(name="integration_scenarios", depends=["unit_agents"]),
     pytest.mark.run(order=2)
 ]
 from google.adk.runners import InMemoryRunner

@@ -4,7 +4,7 @@ from loan_agent.utils.tool_dispatcher import call_tool, list_tools, TOOL_REGISTR
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.dependency(name="unit_dispatcher"),
+    pytest.mark.depends(name="unit_dispatcher"),
     pytest.mark.run(order=1)
 ]
 
