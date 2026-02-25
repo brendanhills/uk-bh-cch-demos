@@ -7,22 +7,26 @@ import shutil
 from google.adk.runners import InMemoryRunner
 from google.genai.types import Part, UserContent
 
-# Ensure we are in the project root
-sys.path.append(os.getcwd())
+# --- CONFIGURATION & PATHS ---
+# Robustly resolve paths relative to this file
+# demo_frontend/app.py -> ../
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.append(BASE_DIR)
 
 # Import config to load environment variables
-from loan_approval_agent import config
-from loan_approval_agent.agent import loan_manager
-from loan_approval_agent.tools.intake import register_application as register_application_base
-from loan_approval_agent.tools import token_vault
-from loan_approval_agent.tools.audit_logger import log_event
-from loan_approval_agent.tools.security import check_injection
+from loan_agent import config
+from loan_agent.agent import loan_manager
+from loan_agent.tools.intake import register_application as register_application_base
+from loan_agent.utils import token_vault
+from loan_agent.utils.audit_logger import log_event
+from loan_agent.utils.dlp_guardian import mask_pii # Optional direct use
 
 st.set_page_config(page_title="Fintech Loan Agent", layout="wide")
 
 # Wrapper for register_application to update Streamlit state
 def register_application(name: str, gov_id: str, income: int, employer: str, amount: int, purpose: str):
     """Local wrapper that updates session state when the agent calls the tool."""
+    # The actual tool logic is in loan_agent.tools.intake
     result = register_application_base(name, gov_id, income, employer, amount, purpose)
     if result.get("status") == "success":
         st.session_state["form_data"] = {
@@ -40,15 +44,11 @@ def register_application(name: str, gov_id: str, income: int, employer: str, amo
 st.title("🤖 Fintech Loan Approval Agent")
 st.markdown("### AI-Powered Underwriting Demo")
 
-# Mock Data for Demo
-# Load Demo Data
-# Load Demo Data
-# Resolve path robustly relative to THIS file
-# --- CONFIGURATION & PATHS ---
-# Robustly resolve paths relative to this file
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DEMO_DATA_DIR = os.path.join(BASE_DIR, "loan_approval_agent/data/demo_data")
-AUDIT_LOG_FILE = os.path.join(BASE_DIR, "loan_approval_agent/data/audit_logs/events.jsonl")
+# --- PATHS ---
+DEMO_DATA_DIR = os.path.join(BASE_DIR, "external_services/data")
+# Audit logs are in loan_agent/data/audit_logs
+AUDIT_LOG_FILE = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
+DECISION_DIR = os.path.join(BASE_DIR, "data/decisions") # This might have been root data/decisions
 
 def load_json_data(filename):
     """Safe JSON loader for demo data."""
@@ -96,7 +96,14 @@ with st.sidebar:
 
     # 1. Scenario Selector
     st.subheader("1. Scenarios")
-    scenario_options = {s["name"]: s for s in scenarios}
+    
+    # Check if scenarios is valid
+    if not scenarios:
+        st.warning("No scenarios loaded.")
+        scenario_options = {}
+    else:
+        scenario_options = {s["name"]: s for s in scenarios}
+        
     selected_scenario_name = st.selectbox(
         "Select Scenario",
         ["Choose..."] + list(scenario_options.keys())
@@ -110,6 +117,7 @@ with st.sidebar:
         
         if st.button("⚡ Quick Fill Form"):
             if a:
+                # Store the prompt instructions in session state to auto-send
                 clear_session_state()
 
                 # 2. Inject the message
@@ -142,7 +150,6 @@ with st.sidebar:
             st.warning("Applicant details missing for this scenario.")
 
 
-
     # 2. Controls
     st.subheader("2. Controls")
     
@@ -155,17 +162,6 @@ with st.sidebar:
     config.LATENCY_MODE = latency_mode
 
     st.divider()
-
-    # 3. Policy Hot-Swap (X-Factor)
-    st.subheader("3. Agility (X-Factor)")
-    policy_mode = st.radio("Active Policy", ["Standard (Conservative)", "Growth (Aggressive)"])
-    if policy_mode == "Growth (Aggressive)":
-        st.caption("✅ Growth Policy Active: Allows thinner files and higher DTI.")
-        # In a real app, this would swap the PDF file in data/policy_docs
-        # For demo, we can set a session flag or env var
-        os.environ["POLICY_MODE"] = "GROWTH"
-    else:
-        os.environ["POLICY_MODE"] = "STANDARD"
 
     with st.expander("🔍 Debug State"):
         st.json(st.session_state)
@@ -184,12 +180,6 @@ if "intake_step" not in st.session_state:
 if "form_data" not in st.session_state:
     st.session_state["form_data"] = {}
 
-# Tools for Agent-Driven Intake
-# The register_application function is now imported from loan_approval_agent.tools.intake
-# It handles the tokenization internally.
-
-# Initialize Loan Manager & Tools
-# We need to ensure we don't add the tool repeatedly on rerun
 # Initialize Loan Manager & Tools
 # Ensure we use the CURRENT 'register_application' function (fresh closure over st.session_state)
 # Remove any existing instance of the tool (from previous runs/reloads)
@@ -262,17 +252,6 @@ with c_main:
         
         st.divider()
 
-        # Security check logic
-        if "security_checked" not in st.session_state:
-            with st.spinner("🛡️ Running Security Scan..."):
-                user_input = f"{data.get('purpose', '')} {data.get('name', '')}"
-                if check_injection(user_input):
-                    st.error("🚨 SECURITY ALERT: Prompt Injection Detected!")
-                    st.stop()
-                else:
-                    st.session_state["security_checked"] = True
-                    st.rerun()
-
     # 2. Chat History (Shared for both phases)
     chat_container = st.container()
     with chat_container:
@@ -321,7 +300,7 @@ with c_main:
                             async for event in runner.run_async(
                                 session_id=session.id,
                                 user_id="demo_user",
-                                new_message=UserContent(parts=[Part(text=prompt)])
+                                new_message=UserContent(parts=[Part.from_text(text=prompt)])
                             ):
                                 if hasattr(event, "content") and event.content:
                                     parts = [p.text for p in event.content.parts if p.text]
@@ -339,8 +318,13 @@ with c_main:
                                                  pass
                                 render_audit_log(log_container)
                         
-                        asyncio.run(run_chat())
-                        full_response = response_container["text"]
+                        try:
+                            asyncio.run(run_chat())
+                            full_response = response_container["text"]
+                        except Exception as e:
+                            full_response = f"⚠️ System Error: {e}"
+                            st.error(full_response)
+
                         placeholder.markdown(full_response)
                         st.session_state["messages"].append({"role": "assistant", "content": full_response})
                         
@@ -370,23 +354,27 @@ with c_main:
                     with st.chat_message("assistant"):
                         placeholder = st.empty()
                         full_text = ""
-                        async for event in runner_analysis.run_async(
-                            session_id=session.id,
-                            user_id="demo_user",
-                            new_message=UserContent(parts=[Part(text=input_text)])
-                        ):
-                            if hasattr(event, "content") and event.content:
-                                text = "".join([p.text for p in event.content.parts if p.text])
-                                full_text += text
-                                placeholder.markdown(full_text + "▌")
-                            elif hasattr(event, "tool_calls") and event.tool_calls:
-                                for tc in event.tool_calls:
-                                    for fc in tc.function_calls:
-                                        msg_content = f"🛠️ Executing {fc.name}..."
-                                        st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
-                                        with st.status(msg_content, state="complete"):
-                                            pass
-                            render_audit_log(log_container)
+                        try:
+                            async for event in runner_analysis.run_async(
+                                session_id=session.id,
+                                user_id="demo_user",
+                                new_message=UserContent(parts=[Part.from_text(text=input_text)])
+                            ):
+                                if hasattr(event, "content") and event.content:
+                                    text = "".join([p.text for p in event.content.parts if p.text])
+                                    full_text += text
+                                    placeholder.markdown(full_text + "▌")
+                                elif hasattr(event, "tool_calls") and event.tool_calls:
+                                    for tc in event.tool_calls:
+                                        for fc in tc.function_calls:
+                                            msg_content = f"🛠️ Executing {fc.name}..."
+                                            st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
+                                            with st.status(msg_content, state="complete"):
+                                                pass
+                                render_audit_log(log_container)
+                        except Exception as e:
+                            full_text += f"\n\n⚠️ Error: {e}"
+                        
                         placeholder.markdown(full_text)
                         st.session_state["messages"].append({"role": "assistant", "content": full_text})
 
@@ -410,26 +398,33 @@ with c_main:
             )
             
             if uploaded_file:
-                upload_dir = os.path.join(BASE_DIR, "loan_approval_agent/data/uploads")
+                # Save to loan_agent/data/uploads 
+                upload_dir = os.path.join(BASE_DIR, "loan_agent/data/uploads")
                 os.makedirs(upload_dir, exist_ok=True)
                 save_path = os.path.join(upload_dir, uploaded_file.name)
+                
                 with open(save_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
+                
                 st.success(f"Uploaded: `{uploaded_file.name}`")
+                
+                # TRIGGER ANALYSIS AUTOMATICALLY?
+                # Or suggest prompt.
                 st.info(f"💡 **Tip**: Tell the agent: 'I have uploaded my pay stub. Please analyze it from `{save_path}`'")
+                
+                # OPTIONAL: Multimodal Injection directly into Chat?
+                # For now, let user prompt it.
 
         # Decision PDF Download
-        decisions_dir = os.path.join(BASE_DIR, "data/decisions")
-        if os.path.exists(decisions_dir):
+        if os.path.exists(DECISION_DIR):
             data = st.session_state["form_data"]
             # Search by Application ID first, then Applicant Token
-            pdf_files = [f for f in os.listdir(decisions_dir) if f.endswith(".pdf") and 
-                         (data.get("application_id") in f or data.get("applicant_id") in f)]
-            pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(decisions_dir, x)), reverse=True)
+            pdf_files = [f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf") and 
+                         (data.get("application_id", "xxxx") in f or data.get("applicant_id", "xxxx") in f)]
+            pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(DECISION_DIR, x)), reverse=True)
             if pdf_files:
                 st.divider()
                 st.subheader("📄 Decision Record (Compliance)")
                 latest_pdf = pdf_files[0]
-                with open(os.path.join(decisions_dir, latest_pdf), "rb") as f:
+                with open(os.path.join(DECISION_DIR, latest_pdf), "rb") as f:
                     st.download_button("📥 Download Decision Record (PDF)", f.read(), latest_pdf, "application/pdf")
-

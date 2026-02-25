@@ -1,5 +1,13 @@
 
 import pytest
+import os
+import sys
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.dependency(name="unit_qa"),
+    pytest.mark.run(order=1)
+]
 import asyncio
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part

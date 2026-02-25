@@ -1,11 +1,16 @@
-
 import pytest
 import asyncio
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from google.genai.types import (
     UserContent, Part, GenerateContentResponse, Candidate, Content, FunctionCall, FinishReason
 )
 from google.adk.runners import InMemoryRunner
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.dependency(name="unit_tokenization"),
+    pytest.mark.run(order=1)
+]
 from google.adk.models.base_llm import BaseLlm
 from google.adk.models.registry import LLMRegistry
 from loan_approval_agent.agent import loan_manager

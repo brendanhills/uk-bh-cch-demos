@@ -1,0 +1,54 @@
+graph TD
+    %% High Level Architecture - V2.2 (Safe Syntax)
+    
+    subgraph External [External or Public Zone]
+        User([Applicant])
+        UI[Streamlit UI]
+    end
+
+    subgraph Internal [Trusted Internal Zone]
+        direction TB
+        Orchestrator[Loan Manager Agent]
+        
+        subgraph Agents [Specialized Agents]
+            Invest[Investigator]
+            Policy[Policy Expert]
+            Risk[Underwriter]
+        end
+        
+        subgraph Security [Security Core]
+            DLP[DLP Guardian]
+            Audit[Audit Logger]
+        end
+        
+        Human([Human Underwriter])
+    end
+    
+    subgraph ThirdParty [External Services]
+        APIs[Credit / Fraud / Employment / Bank APIs]
+        Conf[Confluence Policy Docs]
+    end
+
+    %% Data Flow
+    User --> UI
+    UI -- "Sanitized Input" --> DLP
+    DLP --> Orchestrator
+    
+    Orchestrator --> Invest
+    Orchestrator --> Policy
+    Orchestrator --> Risk
+    
+    Invest -- "Secure Token ID" --> APIs
+    Policy -- "Retrieve Rules" --> Conf
+    Risk --> Human
+    
+    %% Styling
+    classDef external fill:#f5f5f5,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef internal fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef security fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    classDef api fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    
+    class Internal internal;
+    class External external;
+    class DLP,Audit security;
+    class APIs,ThirdParty,Conf api;

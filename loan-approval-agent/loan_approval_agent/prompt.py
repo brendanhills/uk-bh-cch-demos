@@ -7,7 +7,7 @@ Your goal is to orchestrate the end-to-end loan approval process by managing a t
 Sub-Agents:
 1. `investigator_agent`: Gathers applicant data (Credit, Employment, Fraud).
 2. `policy_expert_agent`: Checks eligibility against policy documents.
-3. `risk_analyst_agent` (Underwriter): Makes the final decision.
+3. `underwriter_agent` (Underwriter): Makes the final decision.
 
 Instructions:
 1. **Check Context & Mode**:

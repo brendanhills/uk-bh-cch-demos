@@ -6,6 +6,12 @@ import asyncio
 from google.genai.types import Part, UserContent
 from google.adk.runners import InMemoryRunner
 
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.dependency(name="unit_wizard"),
+    pytest.mark.run(order=1)
+]
+
 # Add project root to path
 sys.path.append(os.getcwd())
 
@@ -14,6 +20,7 @@ from loan_approval_agent import config
 config.LATENCY_MODE = "TESTING"
 
 from loan_approval_agent.agent import loan_manager
+
 
 @pytest.mark.asyncio
 async def test_orchestrator_wizard_input():

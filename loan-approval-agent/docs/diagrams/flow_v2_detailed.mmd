@@ -1,0 +1,59 @@
+sequenceDiagram
+    box "Public Zone" #fafafa
+        actor User
+        participant UI as Streamlit UI
+    end
+    
+    box "Secure Internal Zone" #e8f5e9
+        participant DLP as DLP Guardian
+        participant Orch as Loan Manager
+        participant Invest as Investigator
+        participant Policy as Policy Expert
+        participant Underwriter as Underwriter Agent
+        participant Vault as Token Vault
+    end
+    
+    box "External APIs" #fff8e1
+        participant External as Credit/Fraud/Emp/Bank
+    end
+
+    User->>UI: Submit Loan Application
+    UI->>DLP: inspect(input_text)
+    DLP-->>UI: sanitized_text
+    
+    UI->>Orch: "Process this loan..."
+    
+    rect rgb(230, 240, 255)
+        note right of Orch: Investigation Phase
+        Orch->>Invest: gather_evidence(applicant_id)
+        Invest->>Vault: resolve_token(applicant_id)
+        Vault-->>Invest: real_id
+        Invest->>External: fetch_data(real_id)
+        External-->>Invest: raw_data
+        Invest-->>Orch: Investigation Report
+    end
+
+    rect rgb(240, 255, 230)
+        note right of Orch: Policy Phase
+        Orch->>Policy: check_eligibility(report)
+        Policy->>External: Fetch (Confluence)
+        External-->>Policy: Policy Rules
+        Policy-->>Orch: Policy Assessment
+    end
+
+    rect rgb(255, 240, 240)
+        note right of Orch: Decision Phase
+        Orch->>Risk: make_decision(assessment, report)
+        
+        alt Low Risk
+            Risk-->>Orch: APPROVE
+        else High Risk
+            Risk-->>Orch: DENY
+        else Borderline
+            Risk-->>Orch: ESCALATE
+        end
+    end
+
+    Orch-->>DLP: Final Response
+    DLP-->>UI: Redacted Response
+    UI->>User: Show Outcome

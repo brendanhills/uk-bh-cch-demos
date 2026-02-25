@@ -1,0 +1,28 @@
+graph TD
+    User[User / Demo UI] --> |"Assess loan for {id}..."| LM[Loan Manager Agent]
+
+    subgraph Agents
+        LM --> |"Investigation Request"| INV[Investigator Agent]
+        LM --> |"Policy Check"| POL[Policy Expert Agent]
+        LM --> |"Risk Assessment"| UNDERWRITER[Underwriter Agent]
+    end
+
+    subgraph "External Integrations"
+        INV --> |calls| CR[tools/credit_bureau.py]
+        INV --> |calls| EMP[tools/employment_service.py]
+        INV --> |calls| FR[tools/fraud_service.py]
+    end
+
+    subgraph "Internal Integrations"
+        POL --> |calls| POL_ENG[tools/policy_engine.py]
+        RISK --> |calls| RISK_ENG[tools/risk_engine.py]
+    end
+
+    subgraph "Data Simulation"
+        CR --> |reads| CB[credit_bureau.json]
+        EMP --> |reads| ER[employment_registry.json]
+        FR --> |reads| FW[fraud_watch_list.json]
+        
+        POL_ENG --> |reads| P[policies/*.pdf]
+        RISK_ENG --> |reads| RM[risk_engine_config.json]
+    end

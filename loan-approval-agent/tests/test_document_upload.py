@@ -1,15 +1,22 @@
-
 import pytest
 import asyncio
 import os
+import shutil
 from unittest.mock import patch, MagicMock
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.dependency(name="unit_upload"),
+    pytest.mark.run(order=1)
+]
+
 from google.genai.types import (
     UserContent, Part, GenerateContentResponse, Candidate, Content, FunctionCall
 )
 from google.adk.runners import InMemoryRunner
-from loan_approval_agent.agent import loan_manager
-from loan_approval_agent.sub_agents.investigator.agent import investigator_agent
-from loan_approval_agent import config
+from loan_agent.agent import loan_manager
+from loan_agent.sub_agents.investigator.agent import investigator_agent
+from loan_agent import config
 
 # Use TESTING latency
 config.LATENCY_MODE = "TESTING"
@@ -20,7 +27,8 @@ def create_mock_response(text=None, function_calls=None):
         parts.append(Part(text=text))
     if function_calls:
         for fc in function_calls:
-            parts.append(Part(function_call=fc))
+            # FunctionCall args must be dict
+            parts.append(Part(function_call=FunctionCall(name=fc.name, args=fc.args)))
             
     return GenerateContentResponse(
         candidates=[
@@ -34,8 +42,8 @@ def create_mock_response(text=None, function_calls=None):
     )
 
 @pytest.mark.asyncio
-@pytest.mark.skip(reason="Fetching model resolution mocking is complex and flaky in test env. Verified manually via demo.")
-@patch("loan_approval_agent.sub_agents.investigator.tools.Client")
+@pytest.mark.skip(reason="Legacy test targeting loan_agent. Needs migration to loan_approval_agent and doc_analyzer.")
+@patch("loan_agent.tools.doc_analyzer.Client")
 async def test_document_upload_analysis(MockClient, capsys):
     """Verifies that the agent analyzes uploaded documents when provided."""
     
@@ -47,12 +55,15 @@ async def test_document_upload_analysis(MockClient, capsys):
 
     # Ensure mock docs exist
     upload_dir = "artifacts/uploads"
+    os.makedirs(upload_dir, exist_ok=True)
     payslip_path = os.path.join(upload_dir, "mock_payslip.pdf")
     bank_path = os.path.join(upload_dir, "mock_bank_statement.pdf")
     
-    if not os.path.exists(payslip_path) or not os.path.exists(bank_path):
-        pytest.skip("Mock documents not found. Run generate_mock_docs.py first.")
-
+    # Create dummy files if they don't exist
+    with open(payslip_path, "wb") as f:
+        f.write(b"dummy pdf content")
+    with open(bank_path, "wb") as f:
+        f.write(b"dummy pdf content")
 
     # Mock the Agent Models to avoid network calls and infinite loops
     from unittest.mock import AsyncMock
@@ -62,11 +73,16 @@ async def test_document_upload_analysis(MockClient, capsys):
     
     # We need to mock registry.resolve because LlmAgent resolves the model name string to a class
     # and then instantiates it.
-    # We'll make resolve return a MockClass where MockClass() returns our mock_model.
     
     # Orchestrator calls investigator_agent
     mock_orch_model.generate_content_async.return_value = create_mock_response(
-        function_calls=[FunctionCall(name="investigator_agent", args={})]
+        function_calls=[FunctionCall(name="investigator_agent", args={
+             "loan_amount": 10000,
+             "loan_purpose": "Home Improvement",
+             "stated_income": 80000,
+             "application_id": "APP-TEST",
+             "monthly_payment": 500
+        })]
     )
     
     # Investigator calls analyze_document then returns analysis
@@ -85,38 +101,21 @@ async def test_document_upload_analysis(MockClient, capsys):
     ]
 
     # Create a mock for the Registry resolve
-    with patch("google.adk.models.registry.resolve") as mock_resolve:
-        # Define side_effect to return different models based on input name if needed,
-        # or simplified for this test since we control the agents.
-        # loan_manager uses ORCHESTRATOR_MODEL (let's assume "gemini-2.5-pro")
-        # investigator_agent uses correct model too.
-        
-        # We need a MockClass that returns our pre-configured mock_model instance
+    with patch("google.adk.models.registry.LLMRegistry.resolve") as mock_resolve:
         MockOrchClass = MagicMock(return_value=mock_orch_model)
         MockInvClass = MagicMock(return_value=mock_inv_model)
         
         def resolve_side_effect(model_name):
-            if model_name == getattr(config, "ORCHESTRATOR_MODEL", "gemini-2.5-pro"):
-                 return MockOrchClass
-            # For investigator, we might need to check its model name.
-            # But simpler: if model_name matches the investigator's model, return MockInvClass.
-            # Let's just return a generic Mock that returns mock_orch_model by default,
-            # but we need to distinguish them?
-            # Actually, loan_manager is the top level. Investigator is a sub-agent.
-            # The runner runs loan_manager.
-            # loan_manager calls investigator via AgentTool.
-            # AgentTool uses investigator_agent.
-            # investigator_agent also has a model.
-            
-            # If we just mock resolve to return MockOrchClass for everything, output might be confused.
-            # Let's check agent names or just assume Orchestrator is first.
-            if "flash" in model_name or "investigator" in model_name or model_name == getattr(config, "MODEL_FLASH", "gemini-2.5-flash-exp"):
+            # Simplistic check
+            if "investigator" in model_name or "flash" in model_name:
                  return MockInvClass
             return MockOrchClass
 
         mock_resolve.side_effect = resolve_side_effect
         
-
+        # Override agent models to ensure they use strings that trigger our mock
+        loan_manager.model.model = "gemini-2.5-pro"
+        investigator_agent.model.model = "gemini-2.5-flash"
 
         runner = InMemoryRunner(agent=loan_manager, app_name="agents")
         session = await runner.session_service.create_session(app_name="agents", user_id="test_user")
@@ -136,7 +135,6 @@ async def test_document_upload_analysis(MockClient, capsys):
         analyzed_docs = False
         
         print("\n--- Starting Document Upload Test ---")
-        # We only run for a few turns to verify the tool call
         step_count = 0
         async for event in runner.run_async(
             user_id=session.user_id,
@@ -151,23 +149,7 @@ async def test_document_upload_analysis(MockClient, capsys):
                         if fc.name == "analyze_document":
                             analyzed_docs = True
             
-            # Break early once we've seen enough
             if analyzed_docs or step_count > 5:
                 break
                             
-        # Verify analyze_document execution via debug print
-        captured = capsys.readouterr()
-        # print(captured.out) # Only print if needed
-        
-        # Verify that we actually mocked the response correctly and the tool was called
-        # Note: InMemoryRunner might not actually call the tool if we intercept the model response 
-        # BUT we want to verify the AGENT DECIDED to call the tool.
-        # If we mock the model to return a function call, the Runner WILL try to execute it.
-        # Since analyze_document is a real function (wrapped in tool), it will be executed.
-        # And since we mocked Client inside it, it should run fine.
-        
         assert analyzed_docs, "Agent did not choose to call analyze_document"
-        assert "DEBUG: analyze_document called" in captured.out or True, "analyze_document implementation was not executed." # Or True because we might not see the print if captured
-        
-        # Check explicit call
-        # print(captured.out) # Re-print to see if it was called if assertion fails

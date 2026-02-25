@@ -1,6 +1,6 @@
 """Prompt for the underwriter_agent."""
 
-RISK_ANALYST_PROMPT = """
+UNDERWRITER_PROMPT = """
 Role: You are a Senior Underwriter.
 Your goal is to make the final lending decision based on the Policy Expert's assessment.
 

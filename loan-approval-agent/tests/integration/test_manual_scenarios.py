@@ -1,21 +1,40 @@
-
 import pytest
 import pytest_asyncio
 import os
 import sys
+
+# Mark integration test to depend on unit tests
+pytestmark = [
+    pytest.mark.dependency(name="integration_scenarios", depends=["unit_agents"]),
+    pytest.mark.run(order=2)
+]
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part
 from loan_approval_agent.agent import loan_manager
 import dotenv
+
+from unittest.mock import patch
 
 # Load environment variables
 dotenv.load_dotenv()
 
 @pytest_asyncio.fixture
 async def runner():
-    """Fixture to provide an InMemoryRunner instance."""
-    runner = InMemoryRunner(agent=loan_manager)
-    return runner
+    """Fixture to provide an InMemoryRunner instance with mocked dependencies."""
+    with patch("external_services.simulation_utils.get_latency", return_value=0), \
+         patch("loan_agent.utils.model_client.get_best_model_name", return_value="gemini-2.5-flash"):
+        runner = InMemoryRunner(agent=loan_manager)
+        yield runner
+
+from loan_agent.sub_agents.investigator.agent import investigator_agent
+from loan_agent.sub_agents.policy_expert.agent import policy_expert_agent
+from loan_agent.sub_agents.underwriter.agent import underwriter_agent
+
+# FIX: Force model to gemini-2.5-flash
+loan_manager.model.model = "gemini-2.5-flash"
+investigator_agent.model.model = "gemini-2.5-flash"
+policy_expert_agent.model.model = "gemini-2.5-flash"
+underwriter_agent.model.model = "gemini-2.5-flash"
 
 async def run_scenario_test(runner, name, user_input, expected_outcome):
     """Helper function to run a scenario and assert the outcome."""
@@ -39,7 +58,7 @@ async def run_scenario_test(runner, name, user_input, expected_outcome):
                 if part.text:
                     final_response += part.text + "\n"
                     print(f"AGENT: {part.text}")
-        elif event.exception:
+        elif hasattr(event, "exception") and event.exception:
             print(f"EXCEPTION: {event.exception}")
 
 

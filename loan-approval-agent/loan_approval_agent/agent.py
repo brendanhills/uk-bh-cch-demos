@@ -20,7 +20,7 @@ from google.adk.tools.agent_tool import AgentTool
 from . import prompt
 from .sub_agents.investigator.agent import investigator_agent
 from .sub_agents.policy_expert.agent import policy_expert_agent
-from .sub_agents.underwriter.agent import risk_analyst_agent
+from .sub_agents.underwriter.agent import underwriter_agent
 
 
 from .tools.intake import register_application
@@ -39,7 +39,7 @@ loan_manager = LlmAgent(
         register_application,
         AgentTool(agent=investigator_agent),
         AgentTool(agent=policy_expert_agent),
-        AgentTool(agent=risk_analyst_agent),
+        AgentTool(agent=underwriter_agent),
     ],
 )
 

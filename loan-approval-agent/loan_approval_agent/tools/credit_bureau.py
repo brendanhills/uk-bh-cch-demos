@@ -7,9 +7,11 @@ from typing import Dict, Any
 from loan_approval_agent.tools.audit_logger import log_event
 from loan_approval_agent.tools import token_vault
 
+from loan_approval_agent.tools.simulation_utils import simulate_delay_async
+
 DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/credit_score.json")
 
-def get_credit_report(applicant_id: str, simulate_failure: bool = False, application_id: str = None) -> Dict[str, Any]:
+async def get_credit_report(applicant_id: str, simulate_failure: bool = False, application_id: str = None) -> Dict[str, Any]:
     """
     Retrieves the credit report for an applicant.
     
@@ -27,7 +29,7 @@ def get_credit_report(applicant_id: str, simulate_failure: bool = False, applica
     log_event(applicant_id, "CREDIT_CHECK_INIT", {"simulate_failure": simulate_failure}, "CreditBureau", application_id=application_id)
     
     # Simulate API Latency (NFR: 2-3 seconds)
-    time.sleep(2)
+    await simulate_delay_async(2)
     
     # Simulate Random Failure (Resilience Test)
     if simulate_failure and random.random() < 0.3:

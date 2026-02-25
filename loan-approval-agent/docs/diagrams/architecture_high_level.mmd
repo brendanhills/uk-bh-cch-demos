@@ -1,0 +1,32 @@
+graph TD
+    %% Top Level
+    User([Applicant])
+    Human([Human Underwriter])
+
+    User --> UI[Streamlit UI]
+    UI --> Guard[Security Guardian]
+    Guard --> Manager
+
+    subgraph Secure [Secure Internal Environment]
+        direction TB
+        
+        subgraph Agents [Expert Agents]
+            direction LR
+            Manager[Loan Manager]
+            Invest[Investigator]
+            Policy[Policy Expert]
+            Risk[Risk Analyst]
+            Underwriter[Underwriter]
+        end
+
+        subgraph Tools [Internal Tools]
+            direction LR
+            T_Reg[Registration]
+            T_DTI[DTI Calc]
+            T_RAG[Policy RAG]
+           
+        end
+
+        Agents ~~~~ Tools
+        Manager --> Underwriter
+    end

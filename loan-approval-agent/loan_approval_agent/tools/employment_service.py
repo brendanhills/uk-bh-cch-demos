@@ -6,22 +6,24 @@ from typing import Dict, Any
 
 from loan_approval_agent.tools.audit_logger import log_event
 from loan_approval_agent.tools import token_vault
+from loan_approval_agent.tools.simulation_utils import simulate_delay_async
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "../data/external_data/employment_registry.json")
 
-def verify_employment(applicant_id: str, company: str = None, application_id: str = None) -> Dict[str, Any]:
+async def verify_employment(applicant_id: str, company: str = None, application_id: str = None) -> Dict[str, Any]:
     """
-    Verifies employment status and income.
-    
-    SECURITY NOTE: Receives Token ID. Internal Tool.
+    Verifies employment via the External Service.
     """
     # DETOKENIZATION for Legacy DB Lookup
     raw_id = token_vault.detokenize(applicant_id) or applicant_id
     
-    log_event(applicant_id, "EMPLOYMENT_CHECK_INIT", {}, "EmploymentService", application_id=application_id)
+    log_event(applicant_id, "EMPLOYMENT_CHECK_INIT", {"company": company}, "EmploymentService", application_id=application_id)
     
-    # Simulate API Latency
-    time.sleep(1)
+    # Simulate Latency (5-30s reduced for demo/test)
+    # in DEMO mode this will be capped at 1.5s
+    # in REALISTIC mode this will be 5-30s
+    delay = random.uniform(5, 30)
+    await simulate_delay_async(delay)
     
     try:
         with open(DATA_FILE, "r") as f:

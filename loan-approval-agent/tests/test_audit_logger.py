@@ -4,6 +4,12 @@ import shutil
 import json
 from loan_approval_agent.tools.audit_logger import log_event, LOG_FILE, LOG_DIR
 
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.dependency(name="unit_audit"),
+    pytest.mark.run(order=1)
+]
+
 @pytest.fixture
 def clean_audit_dir():
     """Fixture to clean up audit logs before/after tests."""

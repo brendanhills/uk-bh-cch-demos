@@ -20,7 +20,7 @@ graph TD
     
     Manager --> Invest[Investigator Agent]
     Manager --> Policy[Policy Expert Agent]
-    Manager --> Risk[Risk Analyst Agent]
+    Manager --> Underwriter[Underwriter Agent]
 
     subgraph Tools [Specialized Tools]
         T1[register_application]
@@ -34,7 +34,7 @@ graph TD
     Manager --- T1
     Invest --- T2 & T3 & T4
     Policy --- T5
-    Risk --- T6
+    Underwriter --- T6
     
     T2 -- "Secure Lookup" --> Bureau[(Credit Bureau)]
     T5 -- "RAG" --> PolicyDocs[(Policy PDFs)]

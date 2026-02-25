@@ -31,7 +31,7 @@ def log_investigation_finding(applicant_id: str, finding_type: str, observation:
     }, agent_name="Investigator", application_id=application_id)
     return {"status": "success", "message": f"Finding '{finding_type}' logged to audit trail."}
 
-def check_data_consistency(applicant_id: str, stated_income: int, application_id: str = None) -> Dict[str, Any]:
+async def check_data_consistency(applicant_id: str, stated_income: int, application_id: str = None) -> Dict[str, Any]:
     """
     Uses LLM to cross-reference Stated Application Data against verified Internal Records.
     
@@ -46,8 +46,8 @@ def check_data_consistency(applicant_id: str, stated_income: int, application_id
     log_event(applicant_id, "data_consistency_check_init", {"stated_income": stated_income}, "LLM_DataSentry", application_id=application_id)
     
     # 1. Fetch Internal Data
-    credit_data = get_credit_report(applicant_id, application_id=application_id)
-    employment_data = verify_employment(applicant_id, application_id=application_id)
+    credit_data = await get_credit_report(applicant_id, application_id=application_id)
+    employment_data = await verify_employment(applicant_id, application_id=application_id)
     
     # Flatten strictly for the prompt context
     context = {
@@ -83,7 +83,7 @@ def check_data_consistency(applicant_id: str, stated_income: int, application_id
         log_event(applicant_id, "data_consistency_check_error", {"error": str(e)}, "LLM_DataSentry", application_id=application_id)
         return {"consistent": True, "reason": "Check failed due to system error, defaulting to safe."}
 
-def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
+async def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
     """
     Fetches full credit report for an applicant from Equifax.
     
@@ -98,7 +98,7 @@ def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str
         return {"error": "Invalid Token: Access Denied"}
         
     # 2. Call External API (Equifax)
-    result = core_get_credit(real_id)
+    result = await core_get_credit(applicant_id, application_id=application_id)
     
     # 3. Log receipt of external data (Client Side Audit Trail)
     log_event(applicant_id, "EXTERNAL_API_RESPONSE_EQUIFAX", {
@@ -108,13 +108,13 @@ def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str
     
     return result
 
-def verify_employment(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
+async def verify_employment(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
     """Verifies employment status and income from Workday."""
     real_id = token_vault.detokenize(applicant_id)
     if not real_id: return {"error": "Invalid Token"}
     
     # Call External API (Workday)
-    result = core_verify_employment(real_id)
+    result = await core_verify_employment(applicant_id, application_id=application_id)
     
     # Log receipt of external data (Client Side Audit Trail)
     log_event(applicant_id, "EXTERNAL_API_RESPONSE_WORKDAY", {
@@ -124,13 +124,13 @@ def verify_employment(applicant_id: str, application_id: str = None) -> Dict[str
     
     return result
 
-def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
+async def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
     """Checks for fraud signals from Fraud.net."""
     real_id = token_vault.detokenize(applicant_id)
     if not real_id: return {"error": "Invalid Token"}
     
     # Call External API (Fraud.net)
-    result = core_check_fraud(real_id)
+    result = await core_check_fraud(applicant_id, application_id=application_id)
     
     # Log receipt of external data (Client Side Audit Trail)
     log_event(applicant_id, "EXTERNAL_API_RESPONSE_FRAUD_NET", {
@@ -140,14 +140,14 @@ def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dict[str,
     
     return result
 
-def calculate_dti(applicant_id: str, loan_amount: int, loan_term_months: int = 60, application_id: str = None) -> Dict[str, Any]:
+async def calculate_dti(applicant_id: str, loan_amount: int, loan_term_months: int = 60, application_id: str = None) -> Dict[str, Any]:
     """
     Calculates the Debt-To-Income (DTI) ratio.
     Includes BOTH existing monthly debts AND the estimated payment for the new loan.
     """
     # 1. Fetch Data (Internal check, no external API call here as they are called separately)
-    credit_data = get_credit_report(applicant_id, application_id=application_id)
-    employment_data = verify_employment(applicant_id, application_id=application_id)
+    credit_data = await get_credit_report(applicant_id, application_id=application_id)
+    employment_data = await verify_employment(applicant_id, application_id=application_id)
     
     if "error" in credit_data or "error" in employment_data:
         return {"error": "Could not fetch necessary data for DTI calculation."}

@@ -1,74 +1,109 @@
 # Loan Approval Agent - Presentation Guide
 
-**Time:** 30 Minutes (Presentation + Demo) + 15 Minutes Q&A
+**Total Time:** 30 Minutes
+- **Context & Architecture (Slides):** 10 Minutes
+- **Live Demo (Interactive):** 10 Minutes
+- **Deep Dive & Business Value:** 10 Minutes
+
 **Audience:** Technical Stakeholder (Domain Expert) & VP of Strategy (Business)
 
-## 1. Title & Context (2 mins)
+## 1. Title & Context (3 mins)
 *   **Hook**: "Lending is slow because it's manual. We fixed that with Agents."
 *   **Context**: Building a Proof-of-Concept for a modern, automated underwriting system.
 *   **Goal**: Demonstrate how Google Cloud's Agent Development Kit (ADK) allows us to build **compliant**, **auditable**, and **resilient** lending agents.
 
-## 2. The Specialized Challenge (3 mins)
+## 2. The Specialized Challenge (4 mins)
 *   **The "Unblocker"**: Why off-the-shelf didn't work.
     *   *Complexity*: Loans require fetching data from disparate sources (Credit Bureau, Employment Registry, Fraud Lists).
     *   *Regulation*: Decisions must be explainable (no "black box" denials).
     *   *Policy Agility*: Lending rules change weekly; hard-coding rules is too slow.
-*   **Solution**: A Multi-Agent System where specific agents handle specific domains (Policy, Risk, Data Gathering).
+*   **Solution**: A Multi-Agent System where specific agents handle specific domains:
+    *   **Investigator**: Fetches and validates data.
+    *   **Policy Expert**: Interprets guidelines (RAG).
+    *   **Underwriter**: Synthesizes risk and makes the decision.
 
-#### 2. The Orchestrator Pattern
-*   **Single Point of Contact**: The `loan_manager` (Orchestrator) is the only agent that communicates with the User. This ensures a consistent voice and prevents sub-agents from confusing the user with overlapping questions.
-*   **Specialization**: Sub-agents like the `investigator` are backend experts focused on data processing, not conversation management.
-*   **Control Flow**: If a sub-agent needs information (e.g., "Missing Income"), it checks with the Orchestrator, who then politely formats the request to the user.
+#### The Orchestrator Pattern
+*   **Single Point of Contact**: The `loan_manager` (Orchestrator) communicates with the User.
+*   **Specialization**: Sub-agents like the `investigator` and `underwriter` are backend experts.
 
-### Architecture Diagram
-![Architecture Diagram](architecture.png)
+### Architecture Diagram (3 mins)
+![Architecture Diagram](diagrams/architecture_v2_high_level.png)
 
 ### Process Flow (Swimlanes)
-![Process Flow Diagram](flow.png)
+![Process Flow Diagram](diagrams/flow_v2_detailed.png)
 
-## 3. Technical Deep-Dive & Live Demo (12 mins)
-*   *Transition to Demo Driver (Strict Timebox)*
+## 3. Live Demo (10 mins)
+*   *Transition to Demo Driver*
+*   **Goal**: Prove the architecture works in real-time.
 
-#### P0: The Core Value (Must Show) - 5 mins
+#### P0: The Core Value (Must Show) - 6 mins
 *   **1. Auto-Approval Speed** (`sarah_speed`)
     *   *Why*: Proves the core ROI (Speed/Parallelism).
     *   *Talk Track*: "Parallelized 3 APIs + Bank Statements. Approved in seconds."
     *   *Answer to Challenge*: **"Reduce time from 48h to <5m."**
+    *   *Prompt*:
+        ```text
+        process a new loan application for 
+        name: Sarah Speed, 
+        gov_id: 900-00-1234, 
+        income: 59758, 
+        employer: City Hospital, 
+        amount: 20000, 
+        purpose: Debt Consolidation, 
+        monthly_payment: 300
+        ```
+
 *   **2. Explainable Decline** (`sarah_decline`)
     *   *Why*: Proves Compliance/Explainability (Req #2).
     *   *Talk Track*: "Risk Engine flagged DTI > 43%. Decision is explainable."
     *   *Answer to Challenge*: **"Provide clear, explainable decisions (no black box)."**
+    *   *Prompt*:
+        ```text
+        process a new loan application for 
+        name: Sarah Speed, 
+        gov_id: 900-00-1234, 
+        income: 59758, 
+        employer: City Hospital, 
+        amount: 50000, 
+        purpose: Home Improvement, 
+        monthly_payment: 1200, 
+        Loan-to-Value: 90%, 
+        tenure: 5 years
+        ```
+
 *   **3. Seamless Handoff** (`gary_escalate`)
     *   *Why*: Proves Human-in-the-Loop (Req #5).
     *   *Talk Track*: "Escalated case. Underwriter sees pre-populated case file."
     *   *Answer to Challenge*: **"Handle borderline cases with human review."**
+    *   *Prompt*:
+        ```text
+        process a new loan application for 
+        name: Gary Escalate, 
+        gov_id: 900-00-3456, 
+        income: 60000, 
+        employer: Medianville Manufacturing, 
+        amount: 25000, 
+        purpose: Business, 
+        monthly_payment: 300
+        ```
 
 #### P1: The "X-Factors" (Key Differentiators) - 4 mins
-*   **4. Resilience** (`alex_resilience`)
-    *   *Why*: Proves Robustness/Error Handling.
-    *   *Talk Track*: "API failure/not found. Handled gracefully. Rate limits respected."
-    *   *Answer to Challenge*: **"Graceful failure handling (NFR)."**
-*   **5. Data Consistency** (`jane_fraud`)
-    *   *Why*: Proves LLM Reasoning (Fraud Detection).
-    *   *Talk Track*: "LLM detected 'Stated Income' contradicts 'Tax Record'. Blocked."
-    *   *Answer to Challenge*: **"Detect inconsistencies and fraud."**
+*   **4. Security: DLP Guardian** (`dlp_guardian.py`)
+    *   *Why*: Proves Privacy by Design.
+    *   *Talk Track*: "We embedded a **DLP Guardian** that inspects every byte. It acts as a firewall for PII, redacting SSNs/Names *before* they even touch the LLM logs. It falls back to Regex if the Cloud DLP service is unreachable."
+    *   *Answer to Challenge*: **"Secure PII handling (NFR)."**
 
-#### P2: If Time Permits (Nice to Have) - 3 mins
-*   **6. Policy Agility** (`maria_agility`)
-    *   *Why*: Proves "Policy-as-Code".
-    *   *Talk Track*: "Swapped Policy PDF. Agent adapted instantly."
-    *   *Answer to Challenge*: **"Adapt to changing policy rules quickly."**
-*   **7. Security Deep Dive** (Code View)
-    *   *Why*: Proves PCI-DSS.
-    *   *Talk Track*: "Stateless architecture. Tokens only."
-    *   *Answer to Challenge*: **"Constraints: PCI-DSS, PII compliance."**
+
+
+
 
 ## 4. Architectural Decisions & Trade-offs (4 mins)
+*   **Modular "MCP-Lite" Pattern**:
+    *   We split the agent into `loan_agent` (Orchestrator) and `external_services` (Simulators).
+    *   A `tool_dispatcher` acts as a central registry, making it easy to swap "Mock Tools" for "Real APIs" later.
 *   **Why Agents?**: vs standard automation.
     *   *Flexibility*: We can swap the "Policy Expert" knowledge base without rewriting code.
     *   *Reasoning*: LLMs can handle unstructured data (e.g., "Analyze this bank statement") that regex can't.
-*   **Trade-off**: Latency vs. Accuracy.
-    *   We added "Human-in-the-Loop" for borderline cases (Gary Escalate scenario) to balance risk.
 
 ## 5. Business & Strategic Value (5 mins)
 *   **ROI (Return on Investment)**:
@@ -80,10 +115,9 @@
 *   **Compliance**: Automated audit trails reduce regulatory fines.
 *   **Cost Control (Gemini Specifics)**:
     *   **Context Caching**: Cache the 200-page Policy PDF to reduce input token costs by ~90%.
-    *   **Model Selection**: Use `gemini-2.5-flash` for high-volume intake (cheap/fast) vs `gemini-2.5-pro` (or `gemini-3`) for complex policy reasoning.
+    *   **Model Selection**: Use `gemini-2.5-flash` for high-volume intake (cheap/fast) vs `gemini-3` for complex policy reasoning.
     *   **Quotas**: Strict daily quotas per project to prevent runaway bills.
     *   **Provisioned Throughput (PT)**: For predictable high-volume scaling (10k+ loans/day), switch to PT for fixed monthly costs and guaranteed latency.
-    *   **User Impact**: Measure NPS (Net Promoter Score) & "Time-to-Decision" (48h -> 5m) to quantify delight.
 
 ## 6. Requirements Checklist & X-Factors
 *This checklist demonstrates we have hit every requirement in `interview_task.txt`.*
@@ -98,7 +132,7 @@
 | **5. Human Handoff** | *Scenario 4 (Gary)*: Returns "ESCALATE" with pre-filled case file. |
 | **6. Audit Trail** | *Sidebar*: Live JSON logs for every action (NFR). |
 | **7. Isolation / Stateless** | *Architecture*: Each request uses a fresh session. PII not persisted. |
-| **8. Graceful Failure** | *Scenario 3 (missing)*: API failure caught, "Safe Error" returned (NFR). |
+
 
 ### ✨ The "X-Factors" (The "Wow" Moments)
 *Things we added to go above and beyond:*

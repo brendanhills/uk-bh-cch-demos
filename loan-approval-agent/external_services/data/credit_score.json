@@ -1,0 +1,66 @@
+{
+  "900-00-1234": {
+    "score": {
+      "value": 725,
+      "provider": "Equifax"
+    },
+    "history": {
+      "delinquencies_2yr": 0,
+      "hard_inquiries_6mo": 1,
+      "oldest_line_years": 8
+    },
+    "summary": {
+      "totalMonthlyPayment": 500,
+      "totalDebt": 12000,
+      "creditUtilization": 15
+    }
+  },
+  "900-00-5678": {
+    "score": {
+      "value": 680,
+      "provider": "Experian"
+    },
+    "history": {
+      "delinquencies_2yr": 0,
+      "hard_inquiries_6mo": 3,
+      "oldest_line_years": 4
+    },
+    "summary": {
+      "totalMonthlyPayment": 2500,
+      "totalDebt": 45000,
+      "creditUtilization": 65
+    }
+  },
+  "900-00-3456": {
+    "score": {
+      "value": 640,
+      "provider": "TransUnion"
+    },
+    "history": {
+      "delinquencies_2yr": 1,
+      "hard_inquiries_6mo": 2,
+      "oldest_line_years": 12
+    },
+    "summary": {
+      "totalMonthlyPayment": 1200,
+      "totalDebt": 30000,
+      "creditUtilization": 85
+    }
+  },
+  "900-00-9012": {
+    "score": {
+      "value": 710,
+      "provider": "Equifax"
+    },
+    "history": {
+      "delinquencies_2yr": 0,
+      "hard_inquiries_6mo": 0,
+      "oldest_line_years": 3
+    },
+    "summary": {
+      "totalMonthlyPayment": 300,
+      "totalDebt": 5000,
+      "creditUtilization": 10
+    }
+  }
+}
