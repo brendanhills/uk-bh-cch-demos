@@ -32,6 +32,6 @@ investigator_agent = Agent(
         tools.analyze_document,
         tools.calculate_dti,
         tools.check_data_consistency,
-        tools.log_investigation_finding
+        tools.log_investigation_finding,
     ],
 )

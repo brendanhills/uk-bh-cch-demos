@@ -2,7 +2,7 @@ import pytest
 import os
 import shutil
 import json
-from loan_approval_agent.tools.audit_logger import log_event, LOG_FILE, LOG_DIR
+from loan_agent.utils.audit_logger import log_event, LOG_FILE, LOG_DIR
 
 # Mark as unit test dependency
 pytestmark = [

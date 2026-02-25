@@ -11,7 +11,7 @@ pytestmark = [
 import asyncio
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part
-from loan_approval_agent.agent import loan_manager
+from loan_agent.agent import loan_manager
 
 @pytest.mark.asyncio
 @pytest.mark.skip(reason="Interactive Validation deferred to Phase 4")

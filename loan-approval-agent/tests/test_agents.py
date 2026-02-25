@@ -12,15 +12,15 @@ pytestmark = [
 # Add project root to path
 sys.path.append(os.getcwd())
 
-from loan_approval_agent import config
+from loan_agent import config
 # Set latency to testing mode for speed
 config.LATENCY_MODE = "TESTING"
 
-from loan_approval_agent.sub_agents.investigator import tools as inv_tools
-from loan_approval_agent.sub_agents.policy_expert import tools as pol_tools
-from loan_approval_agent.sub_agents.underwriter import tools as und_tools
+from loan_agent.sub_agents.investigator import tools as inv_tools
+from loan_agent.sub_agents.policy_expert import tools as pol_tools
+from loan_agent.sub_agents.underwriter import tools as und_tools
 
-from loan_approval_agent.tools import token_vault
+from loan_agent.utils import token_vault
 
 @pytest.mark.asyncio
 async def test_investigator_credit_report():

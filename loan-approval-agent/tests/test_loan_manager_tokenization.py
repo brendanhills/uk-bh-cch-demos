@@ -13,8 +13,8 @@ pytestmark = [
 ]
 from google.adk.models.base_llm import BaseLlm
 from google.adk.models.registry import LLMRegistry
-from loan_approval_agent.agent import loan_manager
-from loan_approval_agent import config
+from loan_agent.agent import loan_manager
+from loan_agent import config
 from typing import ClassVar, List, Any
 
 # Use TESTING latency

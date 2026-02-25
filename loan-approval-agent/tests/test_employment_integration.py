@@ -10,8 +10,9 @@ pytestmark = [
     pytest.mark.run(order=1)
 ]
 
-def test_verify_employment_sarah():
-    result = verify_employment("900-00-1234")
+@pytest.mark.asyncio
+async def test_verify_employment_sarah():
+    result = await verify_employment("900-00-1234")
     print(f"\nResult: {result}")
     assert "error" not in result
     assert result["employer"] == "City Hospital"

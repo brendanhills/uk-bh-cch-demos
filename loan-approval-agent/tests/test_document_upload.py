@@ -42,7 +42,7 @@ def create_mock_response(text=None, function_calls=None):
     )
 
 @pytest.mark.asyncio
-@pytest.mark.skip(reason="Legacy test targeting loan_agent. Needs migration to loan_approval_agent and doc_analyzer.")
+@pytest.mark.skip(reason="Legacy test targeting loan_agent. Needs migration to loan_agent and doc_analyzer.")
 @patch("loan_agent.tools.doc_analyzer.Client")
 async def test_document_upload_analysis(MockClient, capsys):
     """Verifies that the agent analyzes uploaded documents when provided."""

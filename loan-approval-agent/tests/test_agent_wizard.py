@@ -15,11 +15,11 @@ pytestmark = [
 # Add project root to path
 sys.path.append(os.getcwd())
 
-from loan_approval_agent import config
+from loan_agent import config
 # Set latency to testing mode
 config.LATENCY_MODE = "TESTING"
 
-from loan_approval_agent.agent import loan_manager
+from loan_agent.agent import loan_manager
 
 
 @pytest.mark.asyncio

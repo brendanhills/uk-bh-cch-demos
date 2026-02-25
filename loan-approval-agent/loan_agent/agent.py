@@ -14,6 +14,7 @@
 
 """Loan Manager: orchestrates the loan approval process."""
 
+from google.adk.apps import App as AdkApp
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 
@@ -35,12 +36,19 @@ loan_manager = LlmAgent(
     ),
     instruction=prompt.LOAN_MANAGER_PROMPT,
     output_key="final_decision",
+    sub_agents=[
+        investigator_agent,
+    ],
     tools=[
         register_application,
-        AgentTool(agent=investigator_agent),
         AgentTool(agent=policy_expert_agent),
         AgentTool(agent=underwriter_agent),
     ],
 )
 
 root_agent = loan_manager
+
+app = AdkApp(
+    name="loan_agent",
+    root_agent=root_agent,
+)

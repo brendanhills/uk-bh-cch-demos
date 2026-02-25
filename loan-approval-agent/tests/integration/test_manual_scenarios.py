@@ -10,7 +10,7 @@ pytestmark = [
 ]
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part
-from loan_approval_agent.agent import loan_manager
+from loan_agent.agent import loan_manager
 import dotenv
 
 from unittest.mock import patch

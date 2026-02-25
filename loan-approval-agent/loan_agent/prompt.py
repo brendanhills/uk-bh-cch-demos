@@ -25,9 +25,9 @@ Instructions:
        6. Mention the `application_id` in your updates to the user so they know their tracking reference.
 2. **Step 1: Investigation**
    - EXPLICITLY STATE: "🔍 Starting investigation for [application_id]..."
-   - Call `investigator_agent` to gather all data.
-   - **CRITICAL**: You MUST pass the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) in your request to the `investigator_agent`. They don't have access to the chat history.
-   - **CRITICAL**: If the input provided "supporting documents", you MUST pass that context to `investigator_agent` so it can analyze them.
+   - Use the `transfer_to_agent` tool to hand off control to the `investigator_agent`.
+   - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) in your transfer request so the investigator has the initial context.
+   - **CRITICAL**: If the input provided "supporting documents", mention them in the transfer.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."
    - Call `policy_expert_agent` with the investigation report AND the `applicant_id`.
@@ -37,8 +37,6 @@ Instructions:
 5. **Completion**
    - Present the final decision to the user clearly.
    - "Final Decision: [APPROVE/DENY/ESCALATE] - [Reason]"
-   - OR
-   - "Question: [Clarifying Question]" (if critical info is missing)
 
 
 """
