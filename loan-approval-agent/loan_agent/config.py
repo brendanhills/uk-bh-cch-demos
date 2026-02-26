@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Default models
-DEFAULT_FLASH_MODEL = "gemini-2.5-flash"
-DEFAULT_PRO_MODEL = "gemini-2.5-pro" # User requested >= 2.5
+DEFAULT_FLASH_MODEL = "gemini-3-flash-preview"
+DEFAULT_PRO_MODEL = "gemini-3-pro-preview" # User requested >= 2.5
 
 # Get from env or use default
 from .utils.model_client import get_best_model_name

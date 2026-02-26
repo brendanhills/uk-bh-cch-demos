@@ -3,8 +3,8 @@
 import time
 from typing import Dict, Any, Optional
 from loan_approval_agent.tools import token_vault
-from google.genai import Client
-from google.genai.types import Part, UserContent, GenerateContentConfig
+from google import genai
+from google.genai import types
 
 # Delegate to core services
 from loan_approval_agent.tools.credit_bureau import get_credit_report as core_get_credit
@@ -57,20 +57,33 @@ async def check_data_consistency(applicant_id: str, stated_income: int, applicat
     }
     
     try:
-        client = Client()
+        client = genai.Client(vertexai=True)
         model_id = config.MODEL_FLASH
         
-        prompt = (
+        prompt_text = (
             f"Analyze the consistency of this loan application data. "
             f"Compare 'Stated_Application' against 'Verified_Employment' and 'Credit_Report_Summary'. "
             f"Look for major discrepancies like Income Inflation, Employer Mismatch, or Identity issues. "
             f"Return JSON: {{ 'consistent': boolean, 'reason': string }}.\n\nData context: {context}"
         )
         
-        response = client.models.generate_content(
+        contents = [
+            types.Content(
+                role="user",
+                parts=[types.Part.from_text(text=prompt_text)]
+            )
+        ]
+        
+        config_obj = types.GenerateContentConfig(
+            temperature=0.0, 
+            response_mime_type="application/json",
+            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
+        )
+        
+        response = await client.aio.models.generate_content(
             model=model_id,
-            contents=[UserContent(parts=[Part.from_text(text=prompt)])],
-            config=GenerateContentConfig(temperature=0.0, response_mime_type="application/json")
+            contents=contents,
+            config=config_obj
         )
         
         import json
@@ -194,20 +207,30 @@ def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", 
         with open(file_path, "rb") as f:
             file_data = f.read()
             
-        client = Client()
+        client = genai.Client(vertexai=True)
         model_id = config.MODEL_FLASH
         
-        prompt = f"Analyze the attached document and answer this query: {query}. Return the answer in JSON format if possible, or structured text."
+        prompt_text = f"Analyze the attached document and answer this query: {query}. Return the answer in JSON format if possible, or structured text."
+        
+        contents = [
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_bytes(data=file_data, mime_type="application/pdf"),
+                    types.Part.from_text(text=prompt_text)
+                ]
+            )
+        ]
+        
+        config_obj = types.GenerateContentConfig(
+            temperature=0.0,
+            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
+        )
         
         response = client.models.generate_content(
             model=model_id,
-            contents=[
-                UserContent(parts=[
-                    Part.from_bytes(data=file_data, mime_type="application/pdf"),
-                    Part.from_text(text=prompt)
-                ])
-            ],
-            config=GenerateContentConfig(temperature=0.0)
+            contents=contents,
+            config=config_obj
         )
         
         result = {"analysis": response.text}

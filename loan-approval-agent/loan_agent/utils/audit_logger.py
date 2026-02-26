@@ -13,9 +13,17 @@ LOG_FILE = os.path.join(LOG_DIR, "events.jsonl")
 from loan_agent.utils.dlp_guardian import guardian
 
 def _mask_pii(data: Any) -> Any:
-    """Recursively masks sensitive values using dlp_guardian."""
+    """Recursively masks sensitive values using dlp_guardian and key-based rules."""
+    SENSITIVE_KEYS = {"account_number", "ssn", "gov_id", "password", "token"}
+    
     if isinstance(data, dict):
-        return {k: _mask_pii(v) for k, v in data.items()}
+        new_dict = {}
+        for k, v in data.items():
+            if k.lower() in SENSITIVE_KEYS:
+                new_dict[k] = "*****" # Simple mask for known keys
+            else:
+                new_dict[k] = _mask_pii(v)
+        return new_dict
     elif isinstance(data, list):
         return [_mask_pii(item) for item in data]
     elif isinstance(data, str):

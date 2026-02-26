@@ -1,5 +1,12 @@
 import pytest
 import asyncio
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.depends(name="unit_tests"),
+    pytest.mark.run(order=1)
+]
+
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part
 from loan_agent.agent import loan_manager
@@ -22,7 +29,7 @@ async def test_handoff_to_investigator():
     # Mock the model to call transfer_to_agent
     # Note: In a real test we might use a mock model, but here we want to see the ADK events.
     
-    with patch("loan_agent.utils.model_client.get_best_model_name", return_value="gemini-2.0-flash"):
+    with patch("loan_agent.utils.model_client.get_best_model_name", return_value="gemini-2.5-flash"):
         # We need to ensure the agents use a model that won't actually call the API if we want it to be a true unit test,
         # but for handoff verification, seeing the 'transfer_to_agent' call in the event stream is best.
         

@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.depends(name="unit_upload"),
+    pytest.mark.depends(name="unit_tests"),
     pytest.mark.run(order=1)
 ]
 

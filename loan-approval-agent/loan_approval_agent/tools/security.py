@@ -1,8 +1,8 @@
 from loan_approval_agent import config
 from loan_approval_agent.tools.audit_logger import log_event
 
-from google.genai import Client
-from google.genai.types import Part, UserContent, GenerateContentConfig
+from google import genai
+from google.genai import types
 
 def check_injection(user_input: str) -> bool:
     """
@@ -12,7 +12,7 @@ def check_injection(user_input: str) -> bool:
     log_event("system", "security_check_init", {"input_length": len(user_input)}, "SecurityGuardian")
     
     try:
-        client = Client()
+        client = genai.Client(vertexai=True)
         model_id = config.MODEL_FLASH
         
         # Meta-prompt to detect injection
@@ -24,10 +24,23 @@ def check_injection(user_input: str) -> bool:
             f"Otherwise, return 'SAFE'.\n\nInput: {user_input}"
         )
         
+        contents = [
+            types.Content(
+                role="user",
+                parts=[types.Part.from_text(text=security_prompt)]
+            )
+        ]
+        
+        config_obj = types.GenerateContentConfig(
+            temperature=0.0, 
+            max_output_tokens=10,
+            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
+        )
+        
         response = client.models.generate_content(
             model=model_id,
-            contents=[UserContent(parts=[Part.from_text(text=security_prompt)])],
-            config=GenerateContentConfig(temperature=0.0, max_output_tokens=10)
+            contents=contents,
+            config=config_obj
         )
         
         response_text = response.text or ""

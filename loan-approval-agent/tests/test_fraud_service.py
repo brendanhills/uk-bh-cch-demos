@@ -5,7 +5,7 @@ from external_services.fraud_service import check_fraud_risk
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.depends(name="unit_fraud"),
+    pytest.mark.depends(name="unit_tests"),
     pytest.mark.run(order=1)
 ]
 

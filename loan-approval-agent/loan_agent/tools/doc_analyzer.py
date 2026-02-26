@@ -1,6 +1,6 @@
 from typing import Dict, Any, Union
-from google.genai import Client
-from google.genai.types import Part, UserContent, GenerateContentConfig
+from google import genai
+from google.genai import types
 from loan_agent.utils.model_client import get_best_model_name
 from loan_agent.utils.audit_logger import log_event
 import base64
@@ -21,10 +21,10 @@ def analyze_paystub(file_content: Union[bytes, str], applicant_id: str = "UNKNOW
     
     try:
         # 1. Instantiate Client
-        client = Client()
+        client = genai.Client(vertexai=True)
         model_id = get_best_model_name()
         
-        prompt = """
+        prompt_text = """
         Analyze this Paystub document.
         Extract the following fields into JSON format:
         - employer_name (str)
@@ -42,21 +42,31 @@ def analyze_paystub(file_content: Union[bytes, str], applicant_id: str = "UNKNOW
         parts = []
         if isinstance(file_content, bytes):
              # Assume image/png for now or detect?
-             parts.append(Part.from_bytes(data=file_content, mime_type="image/png"))
+             parts.append(types.Part.from_bytes(data=file_content, mime_type="image/png"))
         else:
              # Assume text path? Or text content?
-             # If it's a path string, we should read it? 
-             # But the tool signature says "file_content".
-             # For safety, let's treat string as text content or base64?
-             parts.append(Part.from_text(text=str(file_content)))
+             parts.append(types.Part.from_text(text=str(file_content)))
 
-        parts.append(Part.from_text(text=prompt))
+        parts.append(types.Part.from_text(text=prompt_text))
+
+        contents = [
+            types.Content(
+                role="user",
+                parts=parts
+            )
+        ]
 
         # 3. Generate
+        config = types.GenerateContentConfig(
+            temperature=0.0, 
+            response_mime_type="application/json",
+            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
+        )
+        
         response = client.models.generate_content(
             model=model_id,
-            contents=[UserContent(parts=parts)],
-            config=GenerateContentConfig(temperature=0.0, response_mime_type="application/json")
+            contents=contents,
+            config=config
         )
         
         # 4. Parse JSON

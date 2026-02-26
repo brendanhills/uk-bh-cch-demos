@@ -1,5 +1,12 @@
 import pytest
 import asyncio
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.depends(name="unit_tests"),
+    pytest.mark.run(order=1)
+]
+
 import time
 import sys
 import os
@@ -41,7 +48,7 @@ async def test_get_credit_report_async_structure():
     token_id = "TOKEN-123"
     # Note: call_tool is what actually does the work now
     with patch("loan_agent.utils.token_vault.detokenize", return_value="900-00-1234"), \
-         patch("loan_agent.utils.tool_dispatcher.call_tool") as mock_call:
+         patch("loan_agent.tools.credit_bureau.call_tool") as mock_call:
          
         async def async_mock(*args, **kwargs):
              return {"score": 750}
@@ -57,7 +64,7 @@ async def test_verify_employment_async():
     assert is_async
         
     with patch("loan_agent.utils.token_vault.detokenize", return_value="900-00-1234"), \
-         patch("loan_agent.utils.tool_dispatcher.call_tool") as mock_call:
+         patch("loan_agent.tools.employment_service.call_tool") as mock_call:
          
         async def async_mock(*args, **kwargs):
              return {"employer": "City Hospital", "verified_annual_income": 59758}
@@ -73,7 +80,7 @@ async def test_check_fraud_risk_async():
     assert is_async
 
     with patch("loan_agent.utils.token_vault.detokenize", return_value="900-00-9999"), \
-         patch("loan_agent.utils.tool_dispatcher.call_tool") as mock_call:
+         patch("loan_agent.tools.fraud_service.call_tool") as mock_call:
          
         async def async_mock(*args, **kwargs):
              return {"risk_level": "HIGH"}

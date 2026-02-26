@@ -6,7 +6,7 @@ from external_services.employment_registry import DATA_FILE
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.depends(name="unit_employment"),
+    pytest.mark.depends(name="unit_tests"),
     pytest.mark.run(order=1)
 ]
 

@@ -6,7 +6,7 @@ from loan_agent.utils.audit_logger import log_event, LOG_FILE, LOG_DIR
 
 # Mark as unit test dependency
 pytestmark = [
-    pytest.mark.depends(name="unit_audit"),
+    pytest.mark.depends(name="unit_tests"),
     pytest.mark.run(order=1)
 ]
 
@@ -53,7 +53,7 @@ def test_audit_logger_masks_pii(clean_audit_dir):
         details = entry["details"]
         
         # Check direct key masking
-        assert details["ssn"] == "***-**-****"
+        assert details["ssn"] == "[REDACTED_SSN]"
         
         # Check nested key masking
         assert details["nested"]["account_number"] == "*****"
@@ -61,5 +61,5 @@ def test_audit_logger_masks_pii(clean_audit_dir):
         
         # Check regex masking in string (if implemented)
         # The current implementation checks for SSN regex in strings
-        assert "***-**-****" in details["description"]
+        assert "[REDACTED_SSN]" in details["description"]
         assert "123-45-6789" not in details["description"]

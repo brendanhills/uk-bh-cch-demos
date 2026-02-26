@@ -60,16 +60,19 @@ class DLPGuardian:
         if not text:
             return ""
 
-        # Trigger lazy init
+        # Always start with local regex for speed and predictable demo behavior
+        text = self._regex_mask(text)
+
+        # Trigger lazy init and supplement with Cloud DLP for complex PII (Names, CC, etc)
         if self.client:
             try:
                 return self._call_cloud_dlp(text)
             except Exception as e:
-                # Fallback on error
+                # Fallback on error (we already ran regex)
                 print(f"[DLP] Error checking content: {e}")
-                return self._regex_mask(text)
+                return text
         
-        return self._regex_mask(text)
+        return text
 
     def _call_cloud_dlp(self, text: str) -> str:
         # Client is already ensured to exist if we are here

@@ -1,6 +1,5 @@
 import logging
-from google.genai import Client
-from google.genai.types import GenerateContentConfig
+from google.genai import Client, types
 
 # Cache the result to avoid repeated checks
 _BEST_MODEL_NAME = None
@@ -21,12 +20,13 @@ def get_best_model_name() -> str:
     print(f"[ModelClient] Checking availability of {preferred_model}...")
     
     try:
-        client = Client()
+        # Use Vertex AI as seen in gemini_3.py
+        client = Client(vertexai=True)
         # Minimal generation to test access
         response = client.models.generate_content(
             model=preferred_model,
             contents="Test",
-            config=GenerateContentConfig(max_output_tokens=1)
+            config=types.GenerateContentConfig(max_output_tokens=1)
         )
         print(f"[ModelClient] ✅ {preferred_model} is available.")
         _BEST_MODEL_NAME = preferred_model
