@@ -30,10 +30,12 @@ Instructions:
    - **CRITICAL**: If the input provided "supporting documents", mention them in the transfer.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."
-   - Call `policy_expert_agent` with the investigation report AND the `applicant_id`.
+   - Use the `transfer_to_agent` tool to hand off control to the `policy_expert_agent`.
+   - Provide the `investigation_report` AND the `applicant_id`.
 4. **Step 3: Final Decision**
    - EXPLICITLY STATE: "⚖️ Requesting final underwriting decision..."
-   - Call `underwriter_agent` (Underwriter) with the policy assessment AND the `investigation_report`.
+   - Use the `transfer_to_agent` tool to hand off control to the `underwriter_agent`.
+   - Provide the policy assessment AND the `investigation_report`.
 5. **Completion**
    - Present the final decision to the user clearly.
    - "Final Decision: [APPROVE/DENY/ESCALATE] - [Reason]"

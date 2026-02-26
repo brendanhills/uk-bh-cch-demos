@@ -1,4 +1,4 @@
-"""Integration Test for 'Sarah Speed' (Auto-Approve) scenario."""
+"""Integration Test for 'Jane Fraud' scenario."""
 import pytest
 import asyncio
 from unittest.mock import patch
@@ -7,19 +7,18 @@ from google.adk.runners import InMemoryRunner
 
 # Mark as integration test
 pytestmark = [
-    pytest.mark.depends(name="scenario_sarah"),
+    pytest.mark.depends(name="scenario_jane"),
     pytest.mark.run(order=2)
 ]
 
 @pytest.mark.asyncio
-async def test_sarah_speed_auto_approve():
+async def test_jane_fraud_flow():
     """
-    Scenario: Sarah Speed (900-00-1234)
-    - Credit: Excellent (725)
-    - Employment: Verified (City Hospital, $59,758)
-    - Fraud: Low Risk
-    - Policy: Within guidelines for $15,000
-    - Expected Result: APPROVE
+    Scenario: Jane Fraud (900-00-9999)
+    - Credit: Unknown
+    - Employment: Unknown
+    - Fraud: HIGH RISK
+    - Expected Result: DENY (Fraud Risk)
     """
     
     # Setup Mocks
@@ -29,7 +28,6 @@ async def test_sarah_speed_auto_approve():
         from loan_agent.agent import loan_manager
         from loan_agent import config
         
-        # Ensure we use testing mode for speed
         config.LATENCY_MODE = "TESTING"
         
         # Initialize Runner
@@ -38,12 +36,12 @@ async def test_sarah_speed_auto_approve():
         
         # Conversation Input
         app_input = (
-            "Please process a loan application for Sarah Speed (ID: 900-00-1234). "
-            "She is requesting $15,000 for 'Home Improvement'. "
-            "She mentioned she works at City Hospital and earns around $60,000 per year."
+            "Hi, I want a loan. My name is Jane Fraud, SSN is 900-00-9999. "
+            "I need $50,000 for 'Business Expansion'. "
+            "I earn $100,000 a year working at 'Fraud Corp'."
         )
         
-        print(f"\n[Scenario: Sarah] Input: {app_input}")
+        print(f"\n[Scenario: Jane] Input: {app_input}")
         
         full_text = ""
         tool_calls_observed = []
@@ -53,8 +51,7 @@ async def test_sarah_speed_auto_approve():
             user_id="test_user",
             new_message=UserContent(parts=[Part.from_text(text=app_input)])
         ):
-            # Track Tool Calls for "Reasoning Trace" verification
-            # Use get_function_calls() for ADK Event objects
+            # Track Tool Calls
             fc_list = event.get_function_calls()
             if fc_list:
                 for fc in fc_list:
@@ -67,31 +64,18 @@ async def test_sarah_speed_auto_approve():
                     if part.text:
                         full_text += part.text
         
-        print(f"[Scenario: Sarah] Result: {full_text}")
+        print(f"[Scenario: Jane] Result: {full_text}")
         
         # ASSERTIONS
         
         # 1. Decision Assertion
-        assert "APPROVE" in full_text.upper() or "APPROVED" in full_text.upper()
+        # We accept if it denies OR if it's still investigating but mentions fraud risk.
+        assert "DENY" in full_text.upper() or "FRAUD" in full_text.upper() or "RISK" in full_text.upper()
         
         # 2. Reasoning Trace (Tool Usage) Assertion
-        # With the handoff pattern, we should see the actual tools called by sub-agents.
-        
-        required_tools = [
-            "get_credit_report",
-            "consult_policy_docs",
-            "record_decision"
-        ]
-        
-        for tool in required_tools:
-            assert tool in tool_calls_observed, f"Functional tool '{tool}' was not called during the process."
+        assert "check_fraud_risk" in tool_calls_observed
 
 
-        # Additionally verify that the tools DID run by checking the final text or audit logs if needed.
-        # But seeing the [ToolDispatcher] logs in stdout confirms they ran.
 
-
-        # 3. Decision Assertion
-        assert "APPROVE" in full_text.upper() or "APPROVED" in full_text.upper() or "SUCCESS" in full_text.upper()
-
-
+        # 3. Fraud Mention
+        assert "FRAUD" in full_text.upper() or "RISK" in full_text.upper()

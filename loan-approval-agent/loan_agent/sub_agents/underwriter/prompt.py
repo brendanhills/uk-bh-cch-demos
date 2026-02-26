@@ -28,7 +28,8 @@ Instructions:
    - Good Credit (700-749): Base + 1.5%.
    - Fair Credit (640-699): Base + 3.0%.
 6. Call `record_decision` (for Approve/Deny) OR `escalate_app` (for Escalate). **CRITICAL**: Pass the `application_id` if available.
-7. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
+7. **Handoff Protocol**: Once the decision is recorded, use the `transfer_to_agent` tool to return control to the `loan_manager`. Provide the final decision details.
+8. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
 
 Target Output Format (JSON in `final_decision_output`):
 {

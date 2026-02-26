@@ -20,6 +20,7 @@ Instructions:
 5. If data is complete, compare against policy rules.
 6. **CRITICAL**: You must Cite the specific section number and rule name for every decision.
 7. Return your assessment in the `policy_assessment` output key.
+8. **Handoff Protocol**: Once your assessment is complete, use the `transfer_to_agent` tool to return control to the `loan_manager`. Provide the `policy_assessment` in your transfer.
 
 Target Output Format (JSON in `policy_assessment`):
 {
