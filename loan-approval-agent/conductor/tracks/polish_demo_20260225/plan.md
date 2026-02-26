@@ -4,8 +4,8 @@
 - [x] Task: Conductor - Update API calls to Gemini 3.0+ and fix signature-related 404s [ab7e276]
 - [x] Task: Conductor - Write failing integration tests for 'Sarah Speed' (Auto-Approve) flow [0547b32]
 - [x] Task: Conductor - Implement/Fix 'Sarah Speed' flow and verify Reasoning Trace [0547b32]
-- [ ] Task: Conductor - Write failing integration tests for 'Gary Escalate' (Escalation) flow
-- [ ] Task: Conductor - Implement/Fix 'Gary Escalate' flow
+- [x] Task: Conductor - Write failing integration tests for 'Gary Escalate' (Escalation) flow [6208c4a]
+- [x] Task: Conductor - Implement/Fix 'Gary Escalate' flow [6208c4a]
 - [ ] Task: Conductor - Write failing integration tests for 'Jane Fraud' (Fraud) flow
 - [ ] Task: Conductor - Implement/Fix 'Jane Fraud' flow
 - [ ] Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)
