@@ -36,11 +36,10 @@ loan_manager = LlmAgent(
     ),
     instruction=prompt.LOAN_MANAGER_PROMPT,
     output_key="final_decision",
-    sub_agents=[
-        investigator_agent,
-    ],
+    sub_agents=[],
     tools=[
         register_application,
+        AgentTool(agent=investigator_agent),
         AgentTool(agent=policy_expert_agent),
         AgentTool(agent=underwriter_agent),
     ],
