@@ -2,8 +2,8 @@
 
 ## Phase 1: Scenario Hardening and Handoff Verification
 - [x] Task: Conductor - Update API calls to Gemini 3.0+ and fix signature-related 404s [ab7e276]
-- [ ] Task: Conductor - Write failing integration tests for 'Sarah Speed' (Auto-Approve) flow
-- [ ] Task: Conductor - Implement/Fix 'Sarah Speed' flow and verify Reasoning Trace
+- [x] Task: Conductor - Write failing integration tests for 'Sarah Speed' (Auto-Approve) flow [0547b32]
+- [x] Task: Conductor - Implement/Fix 'Sarah Speed' flow and verify Reasoning Trace [0547b32]
 - [ ] Task: Conductor - Write failing integration tests for 'Gary Escalate' (Escalation) flow
 - [ ] Task: Conductor - Implement/Fix 'Gary Escalate' flow
 - [ ] Task: Conductor - Write failing integration tests for 'Jane Fraud' (Fraud) flow
