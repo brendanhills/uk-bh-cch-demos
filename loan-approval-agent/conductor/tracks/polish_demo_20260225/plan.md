@@ -6,9 +6,9 @@
 - [x] Task: Conductor - Implement/Fix 'Sarah Speed' flow and verify Reasoning Trace [0547b32]
 - [x] Task: Conductor - Write failing integration tests for 'Gary Escalate' (Escalation) flow [6208c4a]
 - [x] Task: Conductor - Implement/Fix 'Gary Escalate' flow [6208c4a]
-- [ ] Task: Conductor - Write failing integration tests for 'Jane Fraud' (Fraud) flow
-- [ ] Task: Conductor - Implement/Fix 'Jane Fraud' flow
-- [ ] Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)
+- [x] Task: Conductor - Write failing integration tests for 'Jane Fraud' (Fraud) flow [8b96f71]
+- [x] Task: Conductor - Implement/Fix 'Jane Fraud' flow [8b96f71]
+- [x] Task: Conductor - User Manual Verification 'Phase 1' [8b96f71] (Protocol in workflow.md)
 
 ## Phase 2: UI Polishing and CLI Fix
 - [ ] Task: Conductor - Verify Streamlit Trace visualization matches 'Clean Financial White' guidelines
