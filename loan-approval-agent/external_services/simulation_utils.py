@@ -3,9 +3,9 @@ import time
 import random
 
 # "REALISTIC" = full realistic delays (e.g. 5-30s for Employment)
-# "DEMO" = fast but noticeable delays (e.g. 1-2s) - DEFAULT
-# "TESTING" = 0s delay
-LATENCY_MODE = os.getenv("LATENCY_MODE", "DEMO")
+# "DEMO" = fast but noticeable delays (e.g. 1-2s)
+# "TESTING" = 0s delay - DEFAULT
+LATENCY_MODE = os.getenv("LATENCY_MODE", "TESTING")
 
 import asyncio
 

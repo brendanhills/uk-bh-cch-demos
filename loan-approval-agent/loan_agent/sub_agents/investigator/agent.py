@@ -18,10 +18,11 @@ from google.adk import Agent
 from . import tools
 from . import prompt
 
-from ...config import INVESTIGATOR_MODEL
+from ...config import INVESTIGATOR_MODEL, get_gen_config
 
 investigator_agent = Agent(
     model=INVESTIGATOR_MODEL,
+    generate_content_config=get_gen_config(is_pro=False),
     name="investigator_agent",
     instruction=prompt.INVESTIGATOR_PROMPT,
     output_key="investigation_report",

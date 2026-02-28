@@ -6,21 +6,21 @@ A specialized AI agent system that automates the loan underwriting process using
 
 The Loan Approval Agent decomposes the underwriting process into three distinct roles, orchestrated by a central manager:
 
-1.  **Loan Manager (Orchestrator)**: Coordinates the entire workflow, manages state, and interacts with the user.
-2.  **Investigator Agent**: Gathers factual data about the applicant (Credit Reports, Employment Verification, Fraud Checks, Document Analysis).
-3.  **Policy Expert Agent**: Retrieves and interprets specific lending guidelines from policy documents (PDFs) using RAG (Retrieval Augmented Generation).
-4.  **Underwriter Agent**: Synthesizes findings from the Investigator and Policy Expert to make a final Approve/Deny/Escalate decision and generates a formal decision record.
+1.  **Loan Manager (Orchestrator)**: [Gemini 3 Flash] Coordinates the entire workflow, manages state, and interacts with the user.
+2.  **Investigator Agent**: [Gemini 3 Flash] Gathers factual data about the applicant (Credit Reports, Employment Verification, Fraud Checks, Document Analysis).
+3.  **Policy Expert Agent**: [Gemini 3.1 Pro - Thinking: HIGH] Retrieves and interprets specific lending guidelines from policy documents (PDFs) using RAG (Retrieval Augmented Generation).
+4.  **Underwriter Agent**: [Gemini 3.1 Pro - Thinking: HIGH] Synthesizes findings from the Investigator and Policy Expert to make a final Approve/Deny/Escalate decision.
 
 ## Architecture
 
 ```mermaid
 graph TD
     User([Applicant]) --> UI[Streamlit UI]
-    UI --> Manager[Loan Manager]
+    UI --> Manager[Loan Manager<br/><i>Gemini 3 Flash</i>]
     
-    Manager --> Invest[Investigator Agent]
-    Manager --> Policy[Policy Expert Agent]
-    Manager --> Underwriter[Underwriter Agent]
+    Manager --> Invest[Investigator Agent<br/><i>Gemini 3 Flash</i>]
+    Manager --> Policy[Policy Expert Agent<br/><i>Gemini 3.1 Pro<br/>Thinking: HIGH</i>]
+    Manager --> Underwriter[Underwriter Agent<br/><i>Gemini 3.1 Pro<br/>Thinking: HIGH</i>]
 
     subgraph Tools [Specialized Tools]
         T1[register_application]
@@ -86,13 +86,13 @@ graph TD
 #### 1. Command Line Interface (CLI)
 Run the agent interactively in your terminal:
 ```bash
-uv run loan_approval_agent/agent.py
+uv run loan_agent/agent.py
 ```
 
 #### 2. Streamlit Web App (Recommended)
 Launch the interactive demo dashboard:
 ```bash
-uv run streamlit run demo_app.py
+uv run streamlit run demo_frontend/app.py
 ```
 **[📜 View the Full Demo Script (DEMO.md)](docs/DEMO.md)**
 
@@ -110,7 +110,7 @@ uv run streamlit run demo_app.py
 
 The system uses local mock data to ensure reliability and repeatability.
 
--   **Applicants**: Pre-defined profiles in `loan_approval_agent/data/demo_data/applicants.json`.
+-   **Applicants**: Pre-defined profiles in `loan_agent/data/demo_data/applicants.json`.
     -   `900-00-1234`: "Sarah Speed" - Perfect Candidate (Auto-Approve) or High DTI (Decline).
     -   `900-00-3456`: "Gary Escalate" - Borderline Credit (Escalation Test).
     -   `900-00-9999`: "Jane Fraud" - Data Inconsistency (Fraud Detection).

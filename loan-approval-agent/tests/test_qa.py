@@ -20,7 +20,8 @@ async def test_qa_missing_info():
     Test that the agent asks a clarifying question when 'Employer' is Unknown.
     Uses mock applicant 12349.
     """
-    runner = InMemoryRunner(agent=loan_manager)
+    from loan_agent.agent import app
+    runner = InMemoryRunner(app=app)
     session = await runner.session_service.create_session(
         app_name=runner.app_name, user_id="test_qa_user"
     )

@@ -14,17 +14,17 @@
 
 """Loan Approval Agent package."""
 
+import os
+import google.auth
+
+# CRITICAL: To avoid 404 errors in this environment (matching gemini_3.py success),
+# we must unset these environment variables before the genai client is initialized.
+os.environ.pop("GOOGLE_CLOUD_PROJECT", None)
+os.environ.pop("GOOGLE_CLOUD_LOCATION", None)
+
+# Set these so the SDK defaults to Vertex AI correctly
+os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
+
 from .agent import loan_manager
 
 __all__ = ["loan_manager"]
-
-import os
-
-import google.auth
-
-from . import agent
-
-_, project_id = google.auth.default()
-os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
-os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
-os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")

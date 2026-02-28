@@ -25,16 +25,16 @@ Instructions:
        6. Mention the `application_id` in your updates to the user so they know their tracking reference.
 2. **Step 1: Investigation**
    - EXPLICITLY STATE: "🔍 Starting investigation for [application_id]..."
-   - Use the `transfer_to_agent` tool to hand off control to the `investigator_agent`.
-   - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) in your transfer request so the investigator has the initial context.
-   - **CRITICAL**: If the input provided "supporting documents", mention them in the transfer.
+   - Call the `investigator_agent` tool to gather data.
+   - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) so the investigator has the initial context.
+   - **CRITICAL**: If the input provided "supporting documents", mention them.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."
-   - Use the `transfer_to_agent` tool to hand off control to the `policy_expert_agent`.
-   - Provide the `investigation_report` AND the `applicant_id`.
+   - Call the `policy_expert_agent` tool.
+   - Provide the `investigation_report`, the `applicant_id`, AND the requested `loan_amount`.
 4. **Step 3: Final Decision**
    - EXPLICITLY STATE: "⚖️ Requesting final underwriting decision..."
-   - Use the `transfer_to_agent` tool to hand off control to the `underwriter_agent`.
+   - Call the `underwriter_agent` tool.
    - Provide the policy assessment AND the `investigation_report`.
 5. **Completion**
    - Present the final decision to the user clearly.

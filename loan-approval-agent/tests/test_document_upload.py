@@ -117,7 +117,8 @@ async def test_document_upload_analysis(MockClient, capsys):
         loan_manager.model.model = "gemini-2.5-pro"
         investigator_agent.model.model = "gemini-2.5-flash"
 
-        runner = InMemoryRunner(agent=loan_manager, app_name="agents")
+        from loan_agent.agent import app
+        runner = InMemoryRunner(app=app)
         session = await runner.session_service.create_session(app_name="agents", user_id="test_user")
 
         # Simulate applicant with documents

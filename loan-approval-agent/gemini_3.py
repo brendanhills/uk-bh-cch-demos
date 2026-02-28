@@ -1,29 +1,37 @@
 from google import genai
 from google.genai import types
-import base64
 import os
+import google.auth
 
 def generate():
+  # VS Code automatically injects .env vars. If the project in .env is incorrect,
+  # it breaks the client. Unset them to force usage of the working gcloud ADC defaults.
+  os.environ.pop("GOOGLE_CLOUD_PROJECT", None)
+  os.environ.pop("GOOGLE_CLOUD_LOCATION", None)
+
+  _, project = google.auth.default()
+  print(f"Using Project: {project}")
+  print("Using Location: us-central1 (default)")
+
   client = genai.Client(
       vertexai=True,
-      api_key=os.environ.get("GOOGLE_CLOUD_API_KEY"),
+      project=project,
+      http_options={'api_version': 'v1beta1'},
   )
 
-  msg1_image1 = types.Part.from_uri(
-      file_uri="gs://cloud-samples-data/generative-ai/image/homework.png",
-      mime_type="image/png",
-  )
+  models = ["gemini-3.1-pro-preview", "gemini-3-pro-preview", "gemini-3-flash-preview"]
 
-  model = "gemini-3.1-pro-preview"
+  print("Setting up contents...")
   contents = [
     types.Content(
       role="user",
       parts=[
-        msg1_image1,
-        types.Part.from_text(text="""Answer the question in the image with step by step solution.""")
+        types.Part.from_text(text="""write a haiku""")
       ]
     ),
   ]
+
+  print("Creating gen config")
 
   generate_content_config = types.GenerateContentConfig(
     temperature = 1,
@@ -43,16 +51,20 @@ def generate():
       category="HARM_CATEGORY_HARASSMENT",
       threshold="OFF"
     )],
-    thinking_config=types.ThinkingConfig(
-      thinking_level="HIGH",
-    ),
   )
 
-  for chunk in client.models.generate_content_stream(
-    model = model,
-    contents = contents,
-    config = generate_content_config,
-    ):
-    print(chunk.text, end="")
+  for model in models:
+    print(f"\n--- Testing Model: {model} ---")
+    try:
+      print("Generating content...")
+      for chunk in client.models.generate_content_stream(
+        model = model,
+        contents = contents,
+        config = generate_content_config,
+        ):
+        print(chunk.text or "", end="")
+      print()
+    except Exception as e:
+      print(f"\nError with {model}: {e}")
 
 generate()

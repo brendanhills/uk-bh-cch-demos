@@ -9,7 +9,8 @@ async def run_chat():
     print("=== Loan Manager CLI Test ===")
     
     # Initialize Runner
-    runner = InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+    from loan_agent.agent import app
+    runner = InMemoryRunner(app=app)
     session = await runner.session_service.create_session(user_id="cli_user", app_name="loan_agent")
     
     user_input = (

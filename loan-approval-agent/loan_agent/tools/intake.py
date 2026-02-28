@@ -6,7 +6,7 @@ import json
 import os
 import streamlit as st
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ def register_application(
         "amount": amount,
         "purpose": purpose,
         "status": "Registered",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
     
     # In a real app, we'd save the MAPPING (Token -> Raw ID) in a generic SECURE VAULT

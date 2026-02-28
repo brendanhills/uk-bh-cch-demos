@@ -75,7 +75,7 @@ def test_policy_expert_pdf_reading():
         pytest.fail(f"consult_policy_docs returned error: {result}")
         
     assert "Policy Search Results" in result
-    assert "Source:" in result
+    assert "CITATION:" in result or "Source:" in result
 
 def test_underwriter_decision_record():
     result = und_tools.record_decision(

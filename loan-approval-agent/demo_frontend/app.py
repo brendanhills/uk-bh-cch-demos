@@ -8,423 +8,216 @@ from google.adk.runners import InMemoryRunner
 from google.genai.types import Part, UserContent
 
 # --- CONFIGURATION & PATHS ---
-# Robustly resolve paths relative to this file
-# demo_frontend/app.py -> ../
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-# Import config to load environment variables
-from loan_agent import config
-from loan_agent.agent import loan_manager
-from loan_agent.tools.intake import register_application as register_application_base
-from loan_agent.utils import token_vault
-from loan_agent.utils.audit_logger import log_event
-from loan_agent.utils.dlp_guardian import mask_pii # Optional direct use
+try:
+    from loan_agent.agent import loan_manager, app
+    from loan_agent import config
+    from loan_agent.utils import token_vault
+except ImportError as e:
+    st.error(f"Failed to import loan_agent: {e}. Ensure you are running from the project root.")
+    st.stop()
 
-st.set_page_config(page_title="Fintech Loan Agent", layout="wide")
-
-# Wrapper for register_application to update Streamlit state
-def register_application(name: str, gov_id: str, income: int, employer: str, amount: int, purpose: str):
-    """Local wrapper that updates session state when the agent calls the tool."""
-    # The actual tool logic is in loan_agent.tools.intake
-    result = register_application_base(name, gov_id, income, employer, amount, purpose)
-    if result.get("status") == "success":
-        st.session_state["form_data"] = {
-            "name": name,
-            "application_id": result.get("application_id"),
-            "applicant_id": result.get("applicant_id"),
-            "income": income,
-            "employer": employer,
-            "amount": amount,
-            "purpose": purpose
-        }
-        st.session_state["submitted"] = True
-    return result
-
-st.title("🤖 Fintech Loan Approval Agent")
-st.markdown("### AI-Powered Underwriting Demo")
-
-# --- PATHS ---
-DEMO_DATA_DIR = os.path.join(BASE_DIR, "external_services/data")
-# Audit logs are in loan_agent/data/audit_logs
-AUDIT_LOG_FILE = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
-DECISION_DIR = os.path.join(BASE_DIR, "data/decisions") # This might have been root data/decisions
-
-def load_json_data(filename):
-    """Safe JSON loader for demo data."""
-    path = os.path.join(DEMO_DATA_DIR, filename)
-    if not os.path.exists(path):
-        st.error(f"File not found: {path}")
-        return []
-    try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        st.error(f"Error loading {filename}: {e}")
-        return []
-
-# Load applicants
-raw_applicants = load_json_data("applicants.json")
-applicants = {}
-if isinstance(raw_applicants, list):
-    for a in raw_applicants:
-        if "applicant_id" in a:
-            applicants[a["applicant_id"]] = a
-elif isinstance(raw_applicants, dict):
-    applicants = raw_applicants
-
-scenarios = load_json_data("scenarios.json")
-
-def clear_session_state():
-    """Completely resets the application state for a fresh start."""
-    st.session_state.clear()
-    st.session_state["initialized"] = True
-    
-    # Truncate Audit Log for fresh demo
-    if os.path.exists(AUDIT_LOG_FILE):
-         open(AUDIT_LOG_FILE, "w").close()
-
-# Sidebar: Demo Controller
-with st.sidebar:
-    st.header("🎮 Demo Controller")
-    
-    if st.button("🔄 Start New Application", use_container_width=True):
-        clear_session_state()
-        st.rerun()
-    
-    st.divider()
-
-    # 1. Scenario Selector
-    st.subheader("1. Scenarios")
-    
-    # Check if scenarios is valid
-    if not scenarios:
-        st.warning("No scenarios loaded.")
-        scenario_options = {}
-    else:
-        scenario_options = {s["name"]: s for s in scenarios}
-        
-    selected_scenario_name = st.selectbox(
-        "Select Scenario",
-        ["Choose..."] + list(scenario_options.keys())
-    )
-    
-    if selected_scenario_name != "Choose...":
-        s = scenario_options[selected_scenario_name]
-        a = applicants.get(s["applicant_id"])
-        
-        st.info(f"Loaded: {s['name']}")
-        
-        if st.button("⚡ Quick Fill Form"):
-            if a:
-                # Store the prompt instructions in session state to auto-send
-                clear_session_state()
-
-                # 2. Inject the message
-                quick_msg = (
-                    f"Hi, I am {a['name']}. "
-                    f"My Government ID is {s['applicant_id']}. "
-                    f"I earn {a['stated_income']} USD working at {a['employer']}. "
-                    f"I would like to borrow {s['loan_amount']} USD for {s['purpose']}."
-                )
-                st.session_state["auto_input"] = quick_msg
-                st.rerun()
-            else:
-                st.error("Applicant data not found!")
-
-        # Manual Entry Details
-        if a:
-            with st.expander("️ Scenario Details (Admin View)", expanded=True):
-                st.info(f"Roleplay as: **{a['name']}**")
-                
-                # Hidden ID
-                st.caption("Government ID (SSN):")
-                st.code(s["applicant_id"], language="text")
-                
-                st.text_input("Name", value=a["name"], disabled=True)
-                st.text_input("Income", value=str(a["stated_income"]), disabled=True)
-                st.text_input("Employer", value=a["employer"], disabled=True)
-                st.text_input("Amount", value=str(s["loan_amount"]), disabled=True)
-                st.text_input("Purpose", value=s["purpose"], disabled=True)
-        else:
-            st.warning("Applicant details missing for this scenario.")
-
-
-    # 2. Controls
-    st.subheader("2. Controls")
-    
-    latency_mode = st.radio(
-        "Latency Simulation",
-        ["REALISTIC", "TESTING"],
-        index=1,
-        help="REALISTIC adds delays to tools."
-    )
-    config.LATENCY_MODE = latency_mode
-
-    st.divider()
-
-    with st.expander("🔍 Debug State"):
-        st.json(st.session_state)
+# --- STREAMLIT UI SETUP ---
+st.set_page_config(
+    page_title="Loan Approval Demo",
+    page_icon="💰",
+    layout="wide"
+)
 
 # Initialize Session State
-if "initialized" not in st.session_state:
-    # Truncate Audit Log on first launch
-    if os.path.exists(AUDIT_LOG_FILE):
-        open(AUDIT_LOG_FILE, "w").close()
-    st.session_state["initialized"] = True
-
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "Welcome to the Loan Portal! I can help you submit a new application. To begin, please tell me your full name."}]
-if "intake_step" not in st.session_state:
-    st.session_state["intake_step"] = 0
-if "form_data" not in st.session_state:
-    st.session_state["form_data"] = {}
+    st.session_state["messages"] = []
+if "events" not in st.session_state:
+    st.session_state["events"] = []
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = None
 
-# Initialize Loan Manager & Tools
-# Ensure we use the CURRENT 'register_application' function (fresh closure over st.session_state)
-# Remove any existing instance of the tool (from previous runs/reloads)
-loan_manager.tools = [t for t in loan_manager.tools if getattr(t, "__name__", str(t)) != "register_application"]
-# Add the fresh tool instance
-loan_manager.tools.append(register_application)
-st.session_state["intake_agent_setup"] = True
+# --- DIRECTORY MANAGEMENT ---
+DECISION_DIR = os.path.join(BASE_DIR, "data/decisions")
+os.makedirs(DECISION_DIR, exist_ok=True)
 
-# Helper to get runner
-@st.cache_resource
-def get_runner():
-    return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+def clear_decisions():
+    for f in os.listdir(DECISION_DIR):
+        os.remove(os.path.join(DECISION_DIR, f))
 
-runner = get_runner()
+# --- SIDEBAR: DEMO CONTROL & CONVENIENCE ---
+st.sidebar.title("🛠️ Demo Control")
+st.sidebar.caption("Presenter convenience tools (Not part of the UI)")
+st.sidebar.markdown("---")
 
-# --- LAYOUT SETUP ---
+# Mock Applicant Data for Copy/Paste
+st.sidebar.subheader("📋 Applicant Profiles")
+st.sidebar.caption("Copy these values into the chat panel.")
+
+mock_data = {
+    "Sarah Speed (Approve)": {
+        "prompt": "Hi, I'm Sarah Speed.\n\nSSN 900-00-1234. I earn $59,758\nI work at City Hospital.\n$20,000\ndebt consolidation."
+    },
+    "Sarah Speed (Decline)": {
+        "prompt": "Hi, I'm Sarah Speed.\n\nSSN 900-00-1234.\nI'd like to increase my loan request to $50,000 for a luxury home improvement project."
+    },
+    "Gary Escalate": {
+        "prompt": "Hi, I'm Gary Escalate.\n\nSSN 900-00-3456. I earn $60,000\nI work at Medianville Manufacturing.\n$15,000\nbusiness purchase."
+    },
+    "Jane Fraud": {
+        "prompt": "Hi, I'm Jane Fraud.\n\nSSN 900-00-9999.\nI want a $5,000 loan.\nI don't currently have an employer."
+    }
+}
+
+for name, data in mock_data.items():
+    with st.sidebar.expander(f"👤 {name}"):
+        st.code(data["prompt"], language="text")
+
+# Simulation Settings
+st.sidebar.markdown("---")
+st.sidebar.subheader("⚙️ Simulation Settings")
+latency_mode = st.sidebar.radio("Latency:", ["TESTING", "REALISTIC"], index=0)
+config.LATENCY_MODE = latency_mode
+
+if st.sidebar.button("🗑️ Clear Decision Records"):
+    clear_decisions()
+    st.sidebar.success("Cleared!")
+
+# --- MAIN: SIMULATED USER INTERFACE ---
 c_main, c_audit = st.columns([0.65, 0.35], gap="large")
 
-# --- AUDIT LOG (Always Visible) ---
-with c_audit:
-    st.subheader("📜 Live Audit Log")
-    # Use a scrolling container but put a placeholder inside that we can reliably clear
-    log_scroll_area = st.container(height=700)
-    with log_scroll_area:
-        log_container = st.empty()
-
-def render_audit_log(placeholder):
-    with placeholder.container():
-        if os.path.exists(AUDIT_LOG_FILE):
-            with open(AUDIT_LOG_FILE, "r") as f:
-                lines = f.readlines()
-                # Show last 100 events, newest on top
-                for line in reversed(lines[-100:]):
-                    if not line.strip():
-                        continue
-                    try:
-                        event = json.loads(line)
-                        agent = event.get('agent', 'System')
-                        app_id_str = f" | {event.get('application_id')}" if event.get('application_id') else ""
-                        st.caption(f"{event.get('timestamp', '')[11:19]} - **{agent}**{app_id_str}: {event.get('event_type')} ")
-                        st.json(event.get("details"), expanded=False)
-                        st.divider()
-                    except:
-                        st.text(line)
-        else:
-            st.info("No audit logs found yet.")
-
-# Initial Render of Log
-render_audit_log(log_container)
-
-# --- MAIN INTERFACE ---
 with c_main:
-    # 1. Dashboard (Only after submission)
-    if st.session_state.get("submitted"):
-        data = st.session_state["form_data"]
-        c1, c2 = st.columns(2)
-        app_id = data.get("application_id", "Unknown")
-        token_id = data.get("applicant_id", "Unknown")
-        
-        with c1:
-            st.markdown(f"**Applicant**: {data.get('name')}")
-            st.markdown(f"**Application ID**: `{app_id}`")
-            st.markdown(f"**Applicant ID (Token)**: `{token_id}`")
-            st.markdown(f"**Employer**: {data.get('employer')}")
-            
-        with c2:
-            st.markdown(f"**Income**: ${data.get('income', 0):,}")
-            st.markdown(f"**Loan Amount**: ${data.get('amount', 0):,}")
-            st.markdown(f"**Purpose**: {data.get('purpose')}")
-        
-        st.divider()
+    st.title("💰 FastLoan Portal")
+    st.caption("Apply for your personal loan in seconds.")
 
-    # 2. Chat History (Shared for both phases)
-    chat_container = st.container()
-    with chat_container:
-        for msg in st.session_state["messages"]:
-            if msg.get("role") == "tool_call":
-                with st.status(msg["content"], state="complete"):
-                    pass
-            else:
-                with st.chat_message(msg["role"]):
-                    st.write(msg["content"] + "\n")
-                    # Check for "Final Decision" to show success/error/warning icons
-                    if msg["role"] == "assistant" and "Final Decision" in msg["content"]:
-                        if "APPROVE" in msg["content"]: st.success("✅ Approved")
-                        elif "DENY" in msg["content"]: st.error("❌ Denied")
-                        elif "ESCALATE" in msg["content"]: st.warning("⚠️ Escalated")
+    # Display Chat History
+    for msg in st.session_state["messages"]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-    # 3. Input Handling
-    if not st.session_state.get("submitted"):
-        # INTAKE PHASE INPUT
-        if "auto_input" in st.session_state:
-            prompt = st.session_state.pop("auto_input")
-        else:
-            prompt = st.chat_input("Enter your details...")
+    # Chat Input
+    if prompt_text := st.chat_input("Tell us about your loan request..."):
+        st.session_state["messages"].append({"role": "user", "content": prompt_text})
+        with st.chat_message("user"):
+            st.markdown(prompt_text)
 
-        if prompt:
-            with chat_container:
-                with st.chat_message("user"):
-                    st.write(prompt)
-            st.session_state["messages"].append({"role": "user", "content": prompt})
-            
-            log_event("Guest", "Intake_Processing_Start", {"input_length": len(prompt)})
-            
-            with chat_container:
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
-                        if "agent_session_id" not in st.session_state:
-                            session = asyncio.run(runner.session_service.create_session(user_id="demo_user", app_name="loan_agent"))
-                            st.session_state["agent_session_id"] = session.id
-                        else:
-                            session = asyncio.run(runner.session_service.get_session(session_id=st.session_state["agent_session_id"], user_id="demo_user", app_name="loan_agent"))
-
-                        placeholder = st.empty()
-                        response_container = {"text": ""}
-
-                        async def run_chat():
-                            async for event in runner.run_async(
-                                session_id=session.id,
-                                user_id="demo_user",
-                                new_message=UserContent(parts=[Part.from_text(text=prompt)])
-                            ):
-                                if hasattr(event, "content") and event.content:
-                                    parts = [p.text for p in event.content.parts if p.text]
-                                    if parts:
-                                        text = "".join(parts)
-                                        response_container["text"] += text
-                                        placeholder.markdown(response_container["text"] + "▌")
-                                        
-                                if hasattr(event, "tool_calls") and event.tool_calls:
-                                     for tc in event.tool_calls:
-                                         for fc in tc.function_calls:
-                                             msg_content = f"🛠️ Executing {fc.name}..."
-                                             st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
-                                             with st.status(msg_content, state="complete"):
-                                                 pass
-                                render_audit_log(log_container)
-                        
-                        try:
-                            asyncio.run(run_chat())
-                            full_response = response_container["text"]
-                        except Exception as e:
-                            full_response = f"⚠️ System Error: {e}"
-                            st.error(full_response)
-
-                        placeholder.markdown(full_response)
-                        st.session_state["messages"].append({"role": "assistant", "content": full_response})
-                        
-                        if st.session_state.get("submitted"):
-                            st.rerun()
-    else:
-        # ANALYSIS PHASE / HITL INPUT
-        if reply := st.chat_input("Response..."):
-            with chat_container:
-                with st.chat_message("user"):
-                    st.write(reply)
-            st.session_state["messages"].append({"role": "user", "content": reply})
+        # Run Agent
+        with st.chat_message("assistant"):
+            response_placeholder = st.empty()
             
             @st.cache_resource
-            def get_runner_analysis():
-                return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
-            runner_analysis = get_runner_analysis()
+            def get_runner():
+                return InMemoryRunner(app=app)
+            
+            runner = get_runner()
+            
+            # Start session if not exists
+            if not st.session_state["session_id"]:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                session = loop.run_until_complete(runner.session_service.create_session(user_id="demo_user", app_name="loan_agent"))
+                st.session_state["session_id"] = session.id
 
-            async def execute_run_hitl(input_text):
-                if "analysis_session_id" not in st.session_state:
-                    # Continue using intake session
-                    st.session_state["analysis_session_id"] = st.session_state["agent_session_id"]
-                
-                session = await runner_analysis.session_service.get_session(st.session_state["analysis_session_id"])
-                
-                with chat_container:
-                    with st.chat_message("assistant"):
-                        placeholder = st.empty()
-                        full_text = ""
-                        try:
-                            async for event in runner_analysis.run_async(
-                                session_id=session.id,
-                                user_id="demo_user",
-                                new_message=UserContent(parts=[Part.from_text(text=input_text)])
-                            ):
-                                if hasattr(event, "content") and event.content:
-                                    text = "".join([p.text for p in event.content.parts if p.text])
-                                    full_text += text
-                                    placeholder.markdown(full_text + "▌")
-                                elif hasattr(event, "tool_calls") and event.tool_calls:
-                                    for tc in event.tool_calls:
-                                        for fc in tc.function_calls:
-                                            msg_content = f"🛠️ Executing {fc.name}..."
-                                            st.session_state["messages"].append({"role": "tool_call", "content": msg_content})
-                                            with st.status(msg_content, state="complete"):
-                                                pass
-                                render_audit_log(log_container)
-                        except Exception as e:
-                            full_text += f"\n\n⚠️ Error: {e}"
-                        
-                        placeholder.markdown(full_text)
-                        st.session_state["messages"].append({"role": "assistant", "content": full_text})
+            async def execute_run(input_text):
+                user_content = UserContent(parts=[Part(text=input_text)])
+                async for event in runner.run_async(
+                    user_id="demo_user",
+                    session_id=st.session_state["session_id"],
+                    new_message=user_content
+                ):
+                    if event.content and event.content.parts:
+                        for part in event.content.parts:
+                            if part.text:
+                                yield part.text
 
-            asyncio.run(execute_run_hitl(reply))
-            st.rerun()
+            async def stream_output(text_input):
+                full_resp = ""
+                async for chunk in execute_run(text_input):
+                    full_resp += chunk
+                    response_placeholder.markdown(full_resp + "▌")
+                response_placeholder.markdown(full_resp)
+                return full_resp
 
-        # 4. Supporting Documents (Positioned between Input and Record)
-        # Hide if a final decision has been reached
-        decision_reached = any(any(x in m["content"] for x in ["APPROVE", "DENY", "ESCALATE"]) 
-                               for m in st.session_state["messages"] if m["role"] == "assistant" and "Final Decision" in m["content"])
+            full_response = asyncio.run(stream_output(prompt_text))
+            st.session_state["messages"].append({"role": "assistant", "content": full_response})
+
+    # Auto-Greeting Logic
+    if not st.session_state["messages"]:
+        # Setup session
+        @st.cache_resource
+        def get_runner_init():
+            return InMemoryRunner(app=app)
+        runner_init = get_runner_init()
         
-        if not decision_reached:
-            st.divider()
-            st.subheader("📁 Supporting Documents")
-            
-            uploaded_file = st.file_uploader(
-                "Upload Pay Stubs or Bank Statements", 
-                type=["pdf", "png", "jpg"], 
-                key="doc_uploader",
-                help="Upload documents for agent analysis."
-            )
-            
-            if uploaded_file:
-                # Save to loan_agent/data/uploads 
-                upload_dir = os.path.join(BASE_DIR, "loan_agent/data/uploads")
-                os.makedirs(upload_dir, exist_ok=True)
-                save_path = os.path.join(upload_dir, uploaded_file.name)
-                
-                with open(save_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                st.success(f"Uploaded: `{uploaded_file.name}`")
-                
-                # TRIGGER ANALYSIS AUTOMATICALLY?
-                # Or suggest prompt.
-                st.info(f"💡 **Tip**: Tell the agent: 'I have uploaded my pay stub. Please analyze it from `{save_path}`'")
-                
-                # OPTIONAL: Multimodal Injection directly into Chat?
-                # For now, let user prompt it.
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        session = loop.run_until_complete(runner_init.session_service.create_session(user_id="demo_user", app_name="loan_agent"))
+        st.session_state["session_id"] = session.id
 
-        # Decision PDF Download
-        if os.path.exists(DECISION_DIR):
-            data = st.session_state["form_data"]
-            # Search by Application ID first, then Applicant Token
-            pdf_files = [f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf") and 
-                         (data.get("application_id", "xxxx") in f or data.get("applicant_id", "xxxx") in f)]
-            pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(DECISION_DIR, x)), reverse=True)
-            if pdf_files:
-                st.divider()
-                st.subheader("📄 Decision Record (Compliance)")
-                latest_pdf = pdf_files[0]
-                with open(os.path.join(DECISION_DIR, latest_pdf), "rb") as f:
-                    st.download_button("📥 Download Decision Record (PDF)", f.read(), latest_pdf, "application/pdf")
+        async def execute_greeting():
+            user_content = UserContent(parts=[Part(text="Hello! I am a new customer.")])
+            async for event in runner_init.run_async(
+                user_id="demo_user",
+                session_id=st.session_state["session_id"],
+                new_message=user_content
+            ):
+                if event.content and event.content.parts:
+                    for part in event.content.parts:
+                        if part.text:
+                            yield part.text
+
+        async def stream_greeting():
+            full_resp = ""
+            with st.chat_message("assistant"):
+                ph = st.empty()
+                async for chunk in execute_greeting():
+                    full_resp += chunk
+                    ph.markdown(full_resp + "▌")
+                ph.markdown(full_resp)
+            return full_resp
+
+        greeting_text = asyncio.run(stream_greeting())
+        st.session_state["messages"].append({"role": "assistant", "content": greeting_text})
+        st.rerun()
+
+# --- RIGHT: REAL-TIME REASONING TRACE (Audit Log) ---
+with c_audit:
+    st.subheader("🕵️ Reasoning Trace")
+    st.caption("Live developer view of agent orchestration")
+    
+    # Audit log display
+    audit_container = st.container(height=600)
+    with audit_container:
+        LOG_PATH = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
+        if os.path.exists(LOG_PATH):
+            with open(LOG_PATH, "r") as f:
+                lines = f.readlines()
+                # Show last 20 events
+                for line in reversed(lines[-20:]):
+                    try:
+                        data = json.loads(line)
+                        icon = "🔍" if "INVESTIGATION" in data["event_type"] else "📜" if "POLICY" in data["event_type"] else "⚖️" if "DECISION" in data["event_type"] else "🔘"
+                        st.markdown(f"**{icon} {data['event_type']}**")
+                        st.caption(f"{data['timestamp']} | Agent: {data['agent']}")
+                        with st.expander("View Internal Data"):
+                            st.json(data["details"])
+                        st.markdown("---")
+                    except:
+                        pass
+        else:
+            st.write("Waiting for agent activity...")
+
+    # Decision Record Download
+    pdf_files = sorted([f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf")], reverse=True)
+    if pdf_files:
+        st.markdown("### 📄 Generated Records")
+        for pdf in pdf_files[:3]:
+            st.download_button(f"⬇️ {pdf}", open(os.path.join(DECISION_DIR, pdf), "rb"), file_name=pdf)
+
+# --- FILE UPLOAD (OPTIONAL) ---
+st.sidebar.markdown("---")
+st.sidebar.subheader("📎 Document Upload")
+uploaded_file = st.sidebar.file_uploader("Upload for Vision Analysis", type=["pdf", "png", "jpg"])
+if uploaded_file:
+    if st.sidebar.button("🔍 Analyze with Vision"):
+        with st.spinner("Processing..."):
+            from loan_agent.tools.doc_analyzer import analyze_paystub
+            result = analyze_paystub(uploaded_file.getvalue())
+            st.sidebar.json(result)

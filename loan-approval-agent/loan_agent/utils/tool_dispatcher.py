@@ -1,13 +1,14 @@
 from typing import Dict, Any, Callable
 import importlib 
 
-# Registry of available tools (MCP-Lite)
-# Maps "tool_name" -> (module_path, function_name)
+# --- TOOL REGISTRY (MCP-Lite) ---
+# This mimics the Model Context Protocol (MCP) server pattern.
+# It decouples the Agent from the underlying implementation, allowing us to
+# swap "Mock Services" for "Real Bank APIs" by simply updating this mapping.
 TOOL_REGISTRY = {
     "get_credit_report": ("external_services.credit_bureau", "get_credit_report"),
     "verify_employment": ("external_services.employment_registry", "verify_employment"),
     "check_fraud_risk": ("external_services.fraud_service", "check_fraud_risk"),
-    # Add new tools here
 }
 
 import inspect

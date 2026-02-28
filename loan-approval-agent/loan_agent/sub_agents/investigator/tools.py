@@ -1,6 +1,7 @@
 """Tools for the Investigator agent."""
 
 import time
+import os
 from typing import Dict, Any, Optional
 from loan_agent.utils import token_vault
 from google import genai
@@ -13,7 +14,6 @@ from loan_agent.tools.fraud_service import check_fraud_risk as core_check_fraud
 from loan_agent.tools.doc_analyzer import analyze_paystub
 from loan_agent.utils.audit_logger import log_event
 from loan_agent import config
-from loan_agent.utils.model_client import Client, get_best_model_name
 
 def log_investigation_finding(applicant_id: str, finding_type: str, observation: str, evidence: Dict[str, Any] = None, application_id: str = None) -> Dict[str, Any]:
     """
@@ -59,9 +59,9 @@ async def check_data_consistency(applicant_id: str, stated_income: int, applicat
     }
     
     try:
-        # Use Vertex AI as seen in gemini_3.py
-        client = genai.Client(vertexai=True)
-        model_id = get_best_model_name()
+        # Use centralized client and config
+        client = config.get_client()
+        model_id = config.MODEL_FLASH
         
         prompt_text = (
             f"Analyze the consistency of this loan application data. "
@@ -77,17 +77,14 @@ async def check_data_consistency(applicant_id: str, stated_income: int, applicat
             )
         ]
         
-        config = types.GenerateContentConfig(
-            temperature=0.0, 
-            response_mime_type="application/json",
-            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
-        )
+        gen_config = config.get_gen_config(is_pro=False)
+        gen_config.response_mime_type = "application/json"
         
         # Use async client in async function
         response = await client.aio.models.generate_content(
             model=model_id,
             contents=contents,
-            config=config
+            config=gen_config
         )
         
         import json
@@ -172,8 +169,8 @@ def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", 
         with open(file_path, "rb") as f:
             content = f.read()
             
-        client = genai.Client(vertexai=True)
-        model_id = get_best_model_name()
+        client = config.get_client()
+        model_id = config.MODEL_FLASH
         
         prompt_text = f"Analyze the attached document and answer this query: {query}. Return the answer in JSON format if possible, or structured text."
         
@@ -187,15 +184,12 @@ def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", 
             )
         ]
         
-        config = types.GenerateContentConfig(
-            temperature=0.0,
-            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
-        )
+        gen_config = config.get_gen_config(is_pro=False)
         
         response = client.models.generate_content(
             model=model_id,
             contents=contents,
-            config=config
+            config=gen_config
         )
         
         result = {"analysis": response.text}

@@ -1,5 +1,5 @@
 graph TD
-    %% High Level Architecture - V2.2 (Safe Syntax)
+    %% High Level Architecture - V3.0 (Gemini 3.1)
     
     subgraph External [External or Public Zone]
         User([Applicant])
@@ -8,12 +8,12 @@ graph TD
 
     subgraph Internal [Trusted Internal Zone]
         direction TB
-        Orchestrator[Loan Manager Agent]
+        Orchestrator[Loan Manager Agent<br/><i>Gemini 3 Flash</i>]
         
         subgraph Agents [Specialized Agents]
-            Invest[Investigator]
-            Policy[Policy Expert]
-            Risk[Underwriter]
+            Invest[Investigator<br/><i>Gemini 3 Flash</i>]
+            Policy[Policy Expert<br/><i>Gemini 3.1 Pro (Thinking: HIGH)</i>]
+            Risk[Underwriter<br/><i>Gemini 3.1 Pro (Thinking: HIGH)</i>]
         end
         
         subgraph Security [Security Core]

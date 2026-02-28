@@ -29,11 +29,13 @@ async def test_orchestrator_wizard_input():
     user_input = (
         "Begin review for applicant_id: 12345. "
         "Requested Loan Amount: $50,000. "
+        "Stated Income: $60,000. "
         "Loan Purpose: Home Improvement."
     )
     
     # Run the agent with this input
-    runner = InMemoryRunner(agent=loan_manager)
+    from loan_agent.agent import app
+    runner = InMemoryRunner(app=app)
     session = await runner.session_service.create_session(
         app_name=runner.app_name, user_id="test_user"
     )

@@ -1,0 +1,84 @@
+{
+  "900-00-1234": {
+    "applicant_id": "900-00-1234",
+    "employer": {
+      "name": "City Hospital",
+      "employer_ein": "99-1234567"
+    },
+    "employment": {
+      "status": "Full-Time",
+      "title": "Senior Nurse",
+      "startDate": "2019-05-15",
+      "verifiedAnnualIncome": 60000
+    },
+    "metadata": {
+      "lastVerified": "2024-10-25T10:00:00Z",
+      "source": "The Work Number"
+    }
+  },
+  "900-00-5678": {
+    "applicant_id": "900-00-5678",
+    "employer": {
+      "name": "Tech Giant Corp",
+      "employer_ein": "99-9876543"
+    },
+    "employment": {
+      "status": "Full-Time",
+      "title": "Software Engineer L5",
+      "startDate": "2022-08-01",
+      "verifiedAnnualIncome": 180000
+    },
+    "metadata": {
+      "lastVerified": "2024-10-25T09:30:00Z",
+      "source": "The Work Number"
+    }
+  },
+  "900-00-9012": {
+    "applicant_id": "900-00-9012",
+    "employer": {
+      "name": "Maria's Designs",
+      "employer_ein": "99-5555555"
+    },
+    "employment": {
+      "status": "Self-Employed",
+      "title": "Owner",
+      "startDate": "2023-01-15",
+      "verifiedAnnualIncome": 85000
+    },
+    "metadata": {
+      "lastVerified": "2024-10-24T14:15:00Z",
+      "source": "Tax Transcript"
+    }
+  },
+  "900-00-3456": {
+    "applicant_id": "900-00-3456",
+    "employer": {
+      "name": "Medianville Manufacturing",
+      "employer_ein": "99-1112223"
+    },
+    "employment": {
+      "status": "Full-Time",
+      "title": "Shift Supervisor",
+      "startDate": "2016-03-01",
+      "verifiedAnnualIncome": 60000
+    },
+    "metadata": {
+      "lastVerified": "2024-10-25T11:45:00Z",
+      "source": "The Work Number"
+    }
+  },
+  "900-00-9999": {
+    "applicant_id": "900-00-9999",
+    "employer": null,
+    "employment": {
+      "status": "Unknown",
+      "title": null,
+      "startDate": null,
+      "verifiedAnnualIncome": 0
+    },
+    "metadata": {
+      "lastVerified": "2024-10-25T12:00:00Z",
+      "source": "No Record Found"
+    }
+  }
+}

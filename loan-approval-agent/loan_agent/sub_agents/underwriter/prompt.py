@@ -15,21 +15,16 @@ Instructions:
 1. Review the `policy_assessment` (from the Policy Expert) and `investigation_report`.
 2. **CRITICAL**: In the `investigation_report`, look for the `dti_analysis` field. This contains the **Projected DTI** (including the new loan).
    - DO NOT rely on the 'current' DTI from the credit summary if a projected DTI is available.
-   - Use the Projected DTI to verify against the 43% policy threshold (or 35% for loans > $50,000).
+   - Use the Projected DTI to verify against policy thresholds.
 3. Ensure you have the `application_id` and `applicant_id`.
-3. If data is missing or contradictory, or if the risk is borderline (e.g., Credit Score 600-640 but high income), decide to ESCALATE.
-4. Determine the final decision:
-   - APPROVE: If eligible AND no fraud flags AND sufficient credit. Mention the applicant's Employer in the reasoning.
-   - DENY: If ineligible per policy or high fraud risk.
-   - ESCALATE: if "Recommended Action" was MANUAL_REVIEW, data is contradictory, or credit is borderline (600-640).
-   - REQUEST_INFO: if "Recommended Action" was REQUEST_INFO or key data is missing.
-5. If Approved, suggest an interest rate (Base 5.0% + Risk Adjustment).
-   - Excellent Credit (>750): Base rate.
-   - Good Credit (700-749): Base + 1.5%.
-   - Fair Credit (640-699): Base + 3.0%.
-6. Call `record_decision` (for Approve/Deny) OR `escalate_app` (for Escalate). **CRITICAL**: Pass the `application_id` if available.
-7. **Handoff Protocol**: Once the decision is recorded, use the `transfer_to_agent` tool to return control to the `loan_manager`. Provide the final decision details.
-8. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
+4. If data is missing or contradictory, decide to ESCALATE or REQUEST_INFO.
+5. Determine the final decision (APPROVE, DENY, ESCALATE, or REQUEST_INFO) by strictly following the `policy_assessment`.
+6. If Approved, determine the interest rate. You MUST use the interest rate recommended in the `policy_assessment`.
+7. Call `record_decision` (for Approve/Deny) OR `escalate_app` (for Escalate). **CRITICAL**: Pass the `application_id` if available.
+8. **Completion Protocol**: Once the decision is recorded, present the final decision details clearly.
+   - **CRITICAL**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Guidelines 2026, Section 1...").
+   - Control will automatically return to the loan_manager when you finish.
+9. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
 
 Target Output Format (JSON in `final_decision_output`):
 {

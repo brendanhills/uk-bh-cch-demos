@@ -22,7 +22,7 @@ This checklist maps the requirements from `demo_task.txt` to the verification st
 - [ ] **Privacy (DLP)**: Check `audit_logs/events.jsonl` to ensure NO raw SSNs are visible (only Tokens or Redacted).
 - [ ] **Resilience**:
     - [ ] **Latency**: Set `LATENCY_MODE=TESTING` and verify near-instant response.
-    - [ ] **Model Fallback**: (Harder to test without forcing error, but check logs for initialization).
+    - [ ] **High Reasoning**: Verify complex cases (e.g. Sarah $50k) use **Gemini 3.1 Pro (Thinking: HIGH)** for deep policy alignment.
     - [ ] **Service Failure**: Set `simulate_failure=True` in Credit Bureau tool (manual code tweak or flag) and see if Agent handles it gracefully (Escalates or Retries).
 
 ## 3. Demo Experience

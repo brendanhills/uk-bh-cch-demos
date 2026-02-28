@@ -1,7 +1,8 @@
 from typing import Dict, Any, Union
+import os
 from google import genai
 from google.genai import types
-from loan_agent.utils.model_client import get_best_model_name
+from loan_agent import config
 from loan_agent.utils.audit_logger import log_event
 import base64
 import json
@@ -21,8 +22,8 @@ def analyze_paystub(file_content: Union[bytes, str], applicant_id: str = "UNKNOW
     
     try:
         # 1. Instantiate Client
-        client = genai.Client(vertexai=True)
-        model_id = get_best_model_name()
+        client = config.get_client()
+        model_id = config.MODEL_FLASH
         
         prompt_text = """
         Analyze this Paystub document.
@@ -57,16 +58,13 @@ def analyze_paystub(file_content: Union[bytes, str], applicant_id: str = "UNKNOW
         ]
 
         # 3. Generate
-        config = types.GenerateContentConfig(
-            temperature=0.0, 
-            response_mime_type="application/json",
-            thinking_config=types.ThinkingConfig(thinking_level="HIGH") if "pro" in model_id.lower() else None
-        )
+        gen_config = config.get_gen_config(is_pro=False)
+        gen_config.response_mime_type = "application/json"
         
         response = client.models.generate_content(
             model=model_id,
             contents=contents,
-            config=config
+            config=gen_config
         )
         
         # 4. Parse JSON

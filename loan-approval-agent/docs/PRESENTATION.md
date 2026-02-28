@@ -16,11 +16,12 @@
 *   **The "Unblocker"**: Why off-the-shelf didn't work.
     *   *Complexity*: Loans require fetching data from disparate sources (Credit Bureau, Employment Registry, Fraud Lists).
     *   *Regulation*: Decisions must be explainable (no "black box" denials).
-    *   *Policy Agility*: Lending rules change weekly; hard-coding rules is too slow.
-*   **Solution**: A Multi-Agent System where specific agents handle specific domains:
-    *   **Investigator**: Fetches and validates data.
-    *   **Policy Expert**: Interprets guidelines (RAG).
-    *   **Underwriter**: Synthesizes risk and makes the decision.
+    *   **Agility**: Lending rules change weekly; hard-coding rules is too slow.
+    *   **Solution**: A Multi-Agent System powered by **Gemini 3.1**:
+        *   **Investigator**: [Flash] Fetches and validates data in parallel.
+        *   **Policy Expert**: [Pro Thinking: HIGH] Interprets 200+ pages of guidelines (RAG).
+        *   **Underwriter**: [Pro Thinking: HIGH] Synthesizes risk and makes the final decision.
+
 
 #### The Orchestrator Pattern
 *   **Single Point of Contact**: The `loan_manager` (Orchestrator) communicates with the User.
@@ -115,7 +116,7 @@
 *   **Compliance**: Automated audit trails reduce regulatory fines.
 *   **Cost Control (Gemini Specifics)**:
     *   **Context Caching**: Cache the 200-page Policy PDF to reduce input token costs by ~90%.
-    *   **Model Selection**: Use `gemini-2.5-flash` for high-volume intake (cheap/fast) vs `gemini-3` for complex policy reasoning.
+    *   **Model Selection**: Use `gemini-3-flash` for high-volume intake (cheap/fast) vs `gemini-3.1-pro` for complex policy reasoning where "Thinking: HIGH" is required to ensure 100% policy alignment.
     *   **Quotas**: Strict daily quotas per project to prevent runaway bills.
     *   **Provisioned Throughput (PT)**: For predictable high-volume scaling (10k+ loans/day), switch to PT for fixed monthly costs and guaranteed latency.
 
@@ -160,9 +161,9 @@
 
 ### Technical Questions
 *   *Q: Agents are non-deterministic. How do we guarantee the same policy outcome every time?*
-    *   **A**: "For logical rules 'Temperature=0' and 'Function Calling' are key. We don't ask the LLM to *guess* the DTI limit; we ask it to *extract* the DTI and *call* the rule engine. The logic is deterministic; the extraction is probabilistic but highly reliable with Gemini 2.5."
+    *   **A**: "For logical rules 'Temperature=0' and 'Function Calling' are key. We don't ask the LLM to *guess* the DTI limit; we ask it to *extract* the DTI and *call* the rule engine. The logic is deterministic; the extraction is probabilistic but highly reliable with Gemini 3.1."
 *   *Q: What happens if the Policy PDF contradicts itself?*
-    *   **A**: "The 'Policy Expert' agent is instructed to flag ambiguity. In the roadmap, we add a 'Conflict Check' step during document upload that uses `gemini-2.5-pro` to scan for inconsistencies before the policy goes live."
+    *   **A**: "The 'Policy Expert' agent is instructed to flag ambiguity. In the roadmap, we add a 'Conflict Check' step during document upload that uses `gemini-3.1-pro` to scan for inconsistencies before the policy goes live."
 *   *Q: How do you handle PII/PCI data?*
 *   *Q: How do you handle PII/PCI data?*
     *   **A**: "Crucially, the **Agent never needs to 'read' the PII** to make a decision. We pass a *tokenized ID* (`User-123`) to the tools. The tools (running in a secure VPC) resolve the ID to fetch data, calculate ratios (e.g., DTI), and return *only the risk signals* (e.g., 'DTI=45%') to the Agent. The LLM processes the *signals*, not the *identity*."

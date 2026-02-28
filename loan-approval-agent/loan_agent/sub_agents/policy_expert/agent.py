@@ -18,10 +18,11 @@ from google.adk import Agent
 from . import tools
 from . import prompt
 
-from ...config import POLICY_EXPERT_MODEL
+from ...config import POLICY_EXPERT_MODEL, get_gen_config
 
 policy_expert_agent = Agent(
     model=POLICY_EXPERT_MODEL,
+    generate_content_config=get_gen_config(is_pro=True),
     name="policy_expert_agent",
     instruction=prompt.POLICY_EXPERT_PROMPT,
     output_key="policy_assessment",

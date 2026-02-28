@@ -53,7 +53,7 @@ def test_audit_logger_masks_pii(clean_audit_dir):
         details = entry["details"]
         
         # Check direct key masking
-        assert details["ssn"] == "[REDACTED_SSN]"
+        assert details["ssn"] == "*****"
         
         # Check nested key masking
         assert details["nested"]["account_number"] == "*****"

@@ -1,7 +1,8 @@
-graph TD
+graph LR
     %% Detailed Architecture - V2.8 (Safe Labels)
 
     subgraph UserZone [User and Frontend]
+        direction TB
         User([Applicant])
         UI[Streamlit App]
         Uploader[File Uploader]
@@ -30,6 +31,7 @@ graph TD
 
     subgraph ExternalZone [External Simulated Services]
         style ExternalZone fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+        direction TB
         
         Credit[Credit Bureau API]
         Fraud[Fraud Detection API]

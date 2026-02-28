@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 
 # Configure where logs go
@@ -39,7 +39,7 @@ def log_event(applicant_id: str, event_type: str, details: Dict[str, Any], agent
         os.makedirs(LOG_DIR, exist_ok=True)
         
         entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "applicant_id": applicant_id,
             "application_id": application_id,
             "event_type": event_type,

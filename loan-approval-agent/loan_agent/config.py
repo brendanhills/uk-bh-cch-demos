@@ -1,21 +1,34 @@
 import os
+import google.auth
 from dotenv import load_dotenv
 
+# Load environment variables from .env
 load_dotenv()
 
-# Default models
-DEFAULT_FLASH_MODEL = "gemini-3-flash-preview"
-DEFAULT_PRO_MODEL = "gemini-3-pro-preview" # User requested >= 2.5
+# Project resolution after __init__.py cleanup
+try:
+    _, PROJECT_ID = google.auth.default()
+except Exception:
+    PROJECT_ID = None
 
-# Get from env or use default
-from .utils.model_client import get_best_model_name
-MODEL_FLASH = os.getenv("MODEL_FLASH", get_best_model_name())
-MODEL_PRO = os.getenv("MODEL_PRO", DEFAULT_PRO_MODEL)
+LOCATION = "us-central1"
+
+# ALWAYS use Gemini 3 or higher.
+_FLASH = os.getenv("MODEL_FLASH", "gemini-3-flash-preview").strip('"').strip("'")
+_PRO = os.getenv("MODEL_PRO", "gemini-3.1-pro-preview").strip('"').strip("'")
+
+# Fix known bad environment strings
+if _FLASH == "gemini-2.5-flash":
+    _FLASH = "gemini-3-flash-preview"
+if _PRO == "gemini-3-pro-preview":
+    _PRO = "gemini-3.1-pro-preview"
+
+MODEL_FLASH = _FLASH
+MODEL_PRO = _PRO
 
 # Latency Configuration
-# REALISTIC: Mimics real-world API delays (e.g. 30s for employment verification)
-# TESTING: Near-zero latency for rapid debugging
-LATENCY_MODE = os.getenv("LATENCY_MODE", "REALISTIC") 
+# DEFAULT: TESTING (0 latency) for speed and CI reliability.
+LATENCY_MODE = os.getenv("LATENCY_MODE", "TESTING") 
 
 def get_latency(min_seconds: float, max_seconds: float) -> float:
     """Returns a random latency if in REALISTIC mode, else 0."""
@@ -24,38 +37,50 @@ def get_latency(min_seconds: float, max_seconds: float) -> float:
         return 0
     return random.uniform(min_seconds, max_seconds)
 
-# Assign roles
-# Policy Expert and Underwriter might benefit from Pro's reasoning, 
-# but Flash is faster for Investigator.
-# For now, following user instruction to stick with 2.5 (Flash) where appropriate, 
-# but user said "use pro if you need to".
-
-# Let's use Flash for everything by default for speed/cost in demo, 
-# unless specific agents need Pro. 
-# User said "use pro if you need to". 
-# Policy Expert (reading PDFs) and Underwriter (decision) are good candidates for Pro.
-# However, 2.0 Flash is very capable. 
-# Let's set defaults and allow granular override.
-
-from google.genai import types
+from google.genai import types, Client
 from google.adk.models.google_llm import Gemini
 
-# ... existing models ...
+def get_client() -> Client:
+    """Returns a configured google.genai.Client based on gemini_3.py success."""
+    return Client(
+        vertexai=True,
+        project=PROJECT_ID,
+        location=LOCATION,
+        http_options={'api_version': 'v1beta1'}
+    )
 
-# Helper to get model with retry logic
 def get_model(model_name: str):
     """Returns a Gemini model instance with configured retry options."""
+    # Fail fast: 2 attempts, short delay.
     return Gemini(
         model=model_name,
         retry_options=types.HttpRetryOptions(
-            initial_delay=1.0,
-            # multiplier=2.0, # Not supported in this version
-            attempts=10, # Aggressive retries for 429
-            # max_delay=60.0 # Optional cap
-        )
+            initial_delay=0.5,
+            attempts=2, 
+        ),
+        http_options={'api_version': 'v1beta1'}
+    )
+
+def get_gen_config(is_pro: bool = False) -> types.GenerateContentConfig:
+    """Returns a standard GenerateContentConfig with Gemini 3 settings."""
+    thinking_config = None
+    if is_pro:
+        thinking_config = types.ThinkingConfig(thinking_level="HIGH")
+        
+    return types.GenerateContentConfig(
+        temperature=1,
+        top_p=0.95,
+        http_options=types.HttpOptions(api_version='v1beta1'),
+        thinking_config=thinking_config,
+        safety_settings=[
+            types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="OFF"),
+            types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="OFF"),
+            types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="OFF"),
+            types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF")
+        ]
     )
 
 INVESTIGATOR_MODEL = get_model(MODEL_FLASH)
-POLICY_EXPERT_MODEL = get_model(MODEL_FLASH)
-UNDERWRITER_MODEL = get_model(MODEL_FLASH)
+POLICY_EXPERT_MODEL = get_model(MODEL_PRO)
+UNDERWRITER_MODEL = get_model(MODEL_PRO)
 ORCHESTRATOR_MODEL = get_model(MODEL_FLASH)

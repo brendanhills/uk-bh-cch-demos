@@ -1,0 +1,101 @@
+{
+  "900-00-1234": {
+    "applicant_id": "900-00-1234",
+    "identityVerification": {
+      "status": "Verified",
+      "ssn": "900-00-1234",
+      "matchLevel": "High"
+    },
+    "riskScore": {
+      "provider": "Sift",
+      "value": 10,
+      "riskLevel": "Low"
+    },
+    "watchlistHits": [],
+    "deviceFingerprint": {
+      "knownDevice": true,
+      "riskLevel": "Low"
+    }
+  },
+  "900-00-5678": {
+    "applicant_id": "900-00-5678",
+    "identityVerification": {
+      "status": "Verified",
+      "ssn": "900-00-5678",
+      "matchLevel": "High"
+    },
+    "riskScore": {
+      "provider": "Sift",
+      "value": 15,
+      "riskLevel": "Low"
+    },
+    "watchlistHits": [],
+    "deviceFingerprint": {
+      "knownDevice": true,
+      "riskLevel": "Low"
+    }
+  },
+  "900-00-9012": {
+    "applicant_id": "900-00-9012",
+    "identityVerification": {
+      "status": "Verified",
+      "ssn": "900-00-9012",
+      "matchLevel": "Medium"
+    },
+    "riskScore": {
+      "provider": "SoCure",
+      "value": 30,
+      "riskLevel": "Medium-Low"
+    },
+    "watchlistHits": [],
+    "deviceFingerprint": {
+      "knownDevice": true,
+      "riskLevel": "Low"
+    }
+  },
+  "900-00-3456": {
+    "applicant_id": "900-00-3456",
+    "identityVerification": {
+      "status": "Verified",
+      "ssn": "900-00-3456",
+      "matchLevel": "High"
+    },
+    "riskScore": {
+      "provider": "Sift",
+      "value": 20,
+      "riskLevel": "Low"
+    },
+    "watchlistHits": [],
+    "deviceFingerprint": {
+      "knownDevice": true,
+      "riskLevel": "Low"
+    }
+  },
+  "900-00-9999": {
+    "applicant_id": "900-00-9999",
+    "identityVerification": {
+      "status": "Flagged",
+      "ssn": "900-00-0000",
+      "matchLevel": "Low"
+    },
+    "riskScore": {
+      "provider": "SoCure",
+      "value": 85,
+      "riskLevel": "High",
+      "factors": [
+        "SSN Mismatch",
+        "Address Velocity"
+      ]
+    },
+    "watchlistHits": [
+      {
+        "listName": "Internal",
+        "reason": "Prior Fraud Suspected"
+      }
+    ],
+    "deviceFingerprint": {
+      "knownDevice": false,
+      "riskLevel": "High"
+    }
+  }
+}

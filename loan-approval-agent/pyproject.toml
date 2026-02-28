@@ -48,13 +48,13 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.hatch.build.targets.wheel]
 # Ensures Hatchling finds the package folder correctly
-packages = ["loan_approval_agent"]
+packages = ["loan_agent"]
 
 [tool.agent-starter-pack]
 example_question = "Assess loan for applicant 9813ee1d"
 
 [tool.agent-starter-pack.settings]
-agent_directory = "loan_approval_agent"
+agent_directory = "loan_agent"
 
 [build-system]
 requires = ["hatchling"]

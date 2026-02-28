@@ -1,0 +1,124 @@
+{
+  "900-00-1234": {
+    "applicant_id": "900-00-1234",
+    "consumer": {
+      "firstName": "Sarah",
+      "lastName": "Speed"
+    },
+    "score": {
+      "provider": "Equifax",
+      "value": 787
+    },
+    "summary": {
+      "totalDebt": 35000,
+      "totalMonthlyPayment": 1200,
+      "creditUtilization": 0.14
+    },
+    "tradelines": [
+      {
+        "creditor": "CHASE",
+        "balance": 2450,
+        "monthly_payment": 100,
+        "status": "Current"
+      },
+      {
+        "creditor": "AUTO LOAN",
+        "balance": 32550,
+        "monthly_payment": 1100,
+        "status": "Current"
+      }
+    ]
+  },
+  "900-00-5678": {
+    "applicant_id": "900-00-5678",
+    "consumer": {
+      "firstName": "David",
+      "lastName": "Leverage"
+    },
+    "score": {
+      "provider": "Experian",
+      "value": 720
+    },
+    "summary": {
+      "totalDebt": 350000,
+      "creditUtilization": 0.45
+    },
+    "tradelines": [
+      {
+        "creditor": "JUMBO MORTGAGE",
+        "balance": 350000,
+        "monthly_payment": 2000,
+        "status": "Current"
+      }
+    ]
+  },
+  "900-00-9012": {
+    "applicant_id": "900-00-9012",
+    "consumer": {
+      "firstName": "Maria",
+      "lastName": "Agility"
+    },
+    "score": {
+      "provider": "TransUnion",
+      "value": 650
+    },
+    "summary": {
+      "totalDebt": 5000,
+      "creditUtilization": 0.30
+    },
+    "tradelines": [
+      {
+        "creditor": "CAPITAL ONE",
+        "balance": 1200,
+        "monthly_payment": 50,
+        "status": "Current"
+      }
+    ]
+  },
+  "900-00-3456": {
+    "applicant_id": "900-00-3456",
+    "consumer": {
+      "firstName": "Gary",
+      "lastName": "Escalate"
+    },
+    "score": {
+      "provider": "Equifax",
+      "value": 620
+    },
+    "summary": {
+      "totalDebt": 15000,
+      "totalMonthlyPayment": 400,
+      "creditUtilization": 0.85
+    },
+    "tradelines": [
+      {
+        "creditor": "DISCOVER",
+        "balance": 15000,
+        "monthly_payment": 400,
+        "status": "Past Due 30"
+      }
+    ]
+  },
+  "900-00-9999": {
+    "applicant_id": "900-00-9999",
+    "consumer": {
+      "firstName": "Jane",
+      "lastName": "Fraud"
+    },
+    "score": {
+      "provider": "Experian",
+      "value": 700
+    },
+    "summary": {
+      "totalDebt": 10000,
+      "creditUtilization": 0.20
+    },
+    "tradelines": [
+      {
+        "creditor": "CITI",
+        "balance": 2000,
+        "status": "Current"
+      }
+    ]
+  }
+}

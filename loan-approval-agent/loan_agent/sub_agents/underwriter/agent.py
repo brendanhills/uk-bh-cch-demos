@@ -18,10 +18,11 @@ from google.adk import Agent
 from . import tools
 from . import prompt
 
-from ...config import UNDERWRITER_MODEL
+from ...config import UNDERWRITER_MODEL, get_gen_config
 
 underwriter_agent = Agent(
     model=UNDERWRITER_MODEL,
+    generate_content_config=get_gen_config(is_pro=True),
     name="underwriter_agent",
     instruction=prompt.UNDERWRITER_PROMPT,
     output_key="final_decision_output",

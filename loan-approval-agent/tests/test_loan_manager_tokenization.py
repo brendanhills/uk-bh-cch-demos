@@ -121,8 +121,9 @@ async def test_loan_manager_tokenization_flow():
     loan_manager.model = "mock-model-tokenization"
     
     # 3. Initialize Runner
-    runner = InMemoryRunner(agent=loan_manager, app_name="agents")
-    session = await runner.session_service.create_session(app_name="agents", user_id="test_user")
+    from loan_agent.agent import app
+    runner = InMemoryRunner(app=app)
+    session = await runner.session_service.create_session(app_name=runner.app_name, user_id="test_user")
     
     # 4. User Input
     user_input = (

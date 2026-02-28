@@ -10,7 +10,7 @@ Implement **Real ID** data handling, **DLP Security**, **Paystub Upload**, **Mod
 > **Data Handling**: Strict "Gov ID" required.
 > **Security**: DLP sanitizes PII in logs.
 > **Multimodal**: Users can upload Paystub PDFs/Images for income verification.
-> **Model**: Tries `gemini-3-flash` first, falls back to `gemini-2.5-flash`.
+> **Model**: ALWAYS uses Gemini 3.1. Flash for orchestration, Pro with **Thinking: HIGH** for policy and underwriting.
 > **MCP-Lite**: Tools are called via a central Dispatcher (mocking MCP).
 > **UAT**: A `docs/UAT_CHECKLIST.md` will be created to map code features to `demo_task.txt` requirements.
 
@@ -24,7 +24,6 @@ Implement **Real ID** data handling, **DLP Security**, **Paystub Upload**, **Mod
 - `agent.py`, `sub_agents/`.
 - `tools/`: **Refactored** to use the new Dispatcher pattern.
 - `utils/dlp_guardian.py`: PII redaction.
-- `utils/model_client.py`: Model fallback logic.
 - `utils/tool_dispatcher.py`: **New** MCP-Lite Registry & Router.
 
 #### [NEW] `demo_frontend/`

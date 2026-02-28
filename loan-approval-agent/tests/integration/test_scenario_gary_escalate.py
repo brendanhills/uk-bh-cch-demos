@@ -25,13 +25,14 @@ async def test_gary_escalate_flow():
     with patch("external_services.simulation_utils.simulate_delay", return_value=None), \
          patch("loan_agent.utils.dlp_guardian.guardian._client", None):
         
-        from loan_agent.agent import loan_manager
+        from loan_agent.agent import loan_manager, app
         from loan_agent import config
-        
+
         config.LATENCY_MODE = "TESTING"
-        
+
         # Initialize Runner
-        runner = InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+        runner = InMemoryRunner(app=app)
+
         session = await runner.session_service.create_session(user_id="test_user", app_name="loan_agent")
         
         # Conversation Input
