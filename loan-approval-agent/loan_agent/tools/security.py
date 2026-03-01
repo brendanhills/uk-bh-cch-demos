@@ -26,7 +26,9 @@ def check_injection(user_input: str, applicant_id: str = "system", application_i
             "SAFE examples:\n"
             "- 'Hi, I'm Sarah Speed. I want a loan.'\n"
             "- 'SSN 900-00-1234. I earn $50,000.'\n"
-            "- 'No employer.'\n\n"
+            "- 'No employer.'\n"
+            "- 'Jane Fraud, SSN 900-00-9999, $0 income, $5,000 personal.'\n"
+            "- 'I am currently unemployed.'\n\n"
             f"INPUT: {user_input}"
         )
         
