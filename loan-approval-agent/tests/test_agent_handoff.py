@@ -17,7 +17,7 @@ async def test_handoff_to_investigator():
     """Verify that loan_manager hands off to investigator_agent when needed."""
     
     # 1. Setup Runner
-    runner = InMemoryRunner(agent=loan_manager)
+    runner = InMemoryRunner(agent=loan_manager, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_user", app_name="loan_agent")
     
     # 2. Start with a state that has an applicant_id
