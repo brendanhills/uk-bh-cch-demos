@@ -1,6 +1,7 @@
 import glob
 import os
 import pypdf
+import json
 from typing import Dict, Any
 
 from loan_agent.utils.audit_logger import log_event
@@ -10,8 +11,9 @@ from loan_agent.utils.audit_logger import log_event
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 POLICY_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../../external_services/confluence"))
 
-# Global cache for policy chunks to speed up demo
+# Global cache for policy chunks
 _POLICY_CHUNKS_CACHE = []
+CACHE_FILE = os.path.abspath(os.path.join(BASE_DIR, "policy_chunks_cache.json"))
 
 def consult_policy_docs(query: str, applicant_id: str = "unknown", application_id: str = None) -> str:
     """Reads and returns the content of the loan policy documents."""
@@ -23,34 +25,48 @@ def consult_policy_docs(query: str, applicant_id: str = "unknown", application_i
         log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert", application_id=application_id)
         return error_msg
 
-    files = glob.glob(os.path.join(POLICY_DIR, "*.pdf"))
-    
-    if not files:
-        error_msg = "Error: No policy documents found."
-        log_event(applicant_id, "consult_policy_docs_error", {"error": error_msg}, "PolicyExpert", application_id=application_id)
-        return error_msg
-
-    # 1. Loading/Chunking (with Cache)
+    # 1. Loading/Chunking (with Persistent Cache)
     if not _POLICY_CHUNKS_CACHE:
-        print("[PolicyExpert] 📄 Parsing policy PDFs for the first time (caching)...")
-        
-        for file_path in files:
+        # Try loading from JSON cache first for speed
+        if os.path.exists(CACHE_FILE):
+            print(f"[PolicyExpert] 🚀 Loading pre-parsed chunks from {CACHE_FILE}...")
             try:
-                reader = pypdf.PdfReader(file_path)
-                source_name = os.path.basename(file_path)
-                
-                for page_num, page in enumerate(reader.pages):
-                    text = page.extract_text()
-                    if text.strip():
-                        _POLICY_CHUNKS_CACHE.append({
-                            "source": source_name,
-                            "page": page_num + 1,
-                            "text": text
-                        })
+                with open(CACHE_FILE, 'r') as f:
+                    _POLICY_CHUNKS_CACHE = json.load(f)
             except Exception as e:
-                log_event(applicant_id, "read_error", {"file": file_path, "error": str(e)}, "PolicyExpert", application_id=application_id)
+                print(f"[PolicyExpert] ⚠️ Cache load failed: {e}. Parsing PDFs...")
+
+        if not _POLICY_CHUNKS_CACHE:
+            print("[PolicyExpert] 📄 Parsing 300+ pages of policy PDFs (first-time initialization)...")
+            files = glob.glob(os.path.join(POLICY_DIR, "*.pdf"))
+            
+            for file_path in files:
+                try:
+                    reader = pypdf.PdfReader(file_path)
+                    source_name = os.path.basename(file_path)
+                    
+                    print(f"[PolicyExpert] Reading {source_name} ({len(reader.pages)} pages)...")
+                    for page_num, page in enumerate(reader.pages):
+                        text = page.extract_text()
+                        if text.strip():
+                            _POLICY_CHUNKS_CACHE.append({
+                                "source": source_name,
+                                "page": page_num + 1,
+                                "text": text
+                            })
+                except Exception as e:
+                    log_event(applicant_id, "read_error", {"file": file_path, "error": str(e)}, "PolicyExpert", application_id=application_id)
+            
+            # Save to persistent cache
+            try:
+                with open(CACHE_FILE, 'w') as f:
+                    json.dump(_POLICY_CHUNKS_CACHE, f)
+                print(f"[PolicyExpert] ✅ Cached {len(_POLICY_CHUNKS_CACHE)} chunks to {CACHE_FILE}")
+            except Exception as e:
+                print(f"[PolicyExpert] ⚠️ Failed to save cache: {e}")
     
     chunks = _POLICY_CHUNKS_CACHE
+    files = glob.glob(os.path.join(POLICY_DIR, "*.pdf")) # For logging
 
     # 2. Retrieval (Simple Keyword)
     if not query:
