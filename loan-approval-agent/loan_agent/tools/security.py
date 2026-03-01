@@ -1,5 +1,5 @@
 from loan_agent import config
-from loan_agent.tools.audit_logger import log_event
+from loan_agent.utils.audit_logger import log_event
 
 from google import genai
 from google.genai import types

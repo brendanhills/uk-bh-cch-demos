@@ -11,7 +11,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1' [8b96f71] (Protocol in workflow.md)
 
 ## Phase 2: UI Polishing and CLI Fix
-- [ ] Task: Conductor - Verify Streamlit Trace visualization matches 'Clean Financial White' guidelines
-- [ ] Task: Conductor - Fix CLI mode (Add __main__ block to loan_agent/agent.py)
+- [x] Task: Conductor - Verify Streamlit Trace visualization matches 'Clean Financial White' guidelines [dce58e4]
+- [x] Task: Conductor - Fix CLI mode (Add __main__ block to loan_agent/agent.py)
 - [ ] Task: Conductor - Final E2E demo run verification (10-minute timing check)
 - [ ] Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)

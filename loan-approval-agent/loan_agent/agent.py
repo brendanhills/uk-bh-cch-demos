@@ -54,3 +54,26 @@ app = AdkApp(
     name="loan_agent",
     root_agent=root_agent,
 )
+
+if __name__ == "__main__":
+    from google.adk.runners import InMemoryRunner
+    import asyncio
+
+    async def main():
+        runner = InMemoryRunner(agent=loan_manager)
+        print("--- Loan Approval Agent CLI ---")
+        print("Type 'exit' to quit.")
+        
+        while True:
+            user_input = input("\nYou: ")
+            if user_input.lower() in ["exit", "quit"]:
+                break
+                
+            async for event in runner.run_async(user_id="cli_user", new_message=user_input):
+                if event.content and event.content.parts:
+                    for part in event.content.parts:
+                        if part.text:
+                            print(part.text, end="", flush=True)
+            print()
+
+    asyncio.run(main())
