@@ -11,8 +11,12 @@ The Loan Approval Agent is a multi-agent system that transforms a manual, 48-hou
     *   **New Way**: **Vertex AI RAG Engine** performs sub-second semantic search across a massive policy corpus in GCS.
 3.  **Sophisticated Reasoning**:
     *   Uses **Gemini 3.1 Pro (Thinking: HIGH)** for the Policy Expert and Underwriter to ensure granular rule matching and strict citation requirements.
-4.  **Zero-Trust Data Boundary**:
+4.  **Hybrid Intelligence Strategy**:
+    *   *Efficiency*: **Gemini 3 Flash** handles high-speed orchestration, parallel data gathering (Investigator), and real-time security screening (Guardian).
+    *   *Precision*: **Gemini 3.1 Pro** is reserved for the "heavy lifting"—deep policy analysis and final decision synthesis.
+5.  **Zero-Trust Data Boundary**:
     *   Integrates **Google Cloud DLP** for automatic PII redaction in logs and a secure Token Vault for identity protection.
+    *   *Roadmap*: Transition from LLM-based guardrails to **Model Armor** for enterprise-grade, low-latency prompt injection and jailbreak protection.
 
 ## 🎥 Demo Walkthrough (10 Minutes)
 1.  **The Intake**: Show the agent extracting SSN, Income, and Employer from a single chat message.
