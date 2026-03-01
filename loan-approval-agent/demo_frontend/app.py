@@ -217,8 +217,9 @@ with c_main:
         with st.chat_message("assistant"):
             ph = st.empty()
             resp = asyncio.run(run_agent(prompt_text, ph))
-            st.session_state["messages"].append({"role": "assistant", "content": resp})
-            st.rerun()
+            if resp != "SECURITY_VIOLATION":
+                st.session_state["messages"].append({"role": "assistant", "content": resp})
+                st.rerun()
 
 # Final static render
 render_audit_trace()
