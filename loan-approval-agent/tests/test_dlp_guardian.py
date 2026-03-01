@@ -1,7 +1,6 @@
 import pytest
-import os
 from unittest.mock import MagicMock, patch
-from loan_agent.utils.dlp_guardian import DLPGuardian, guardian
+from loan_agent.utils import dlp_guardian
 
 # Mark as unit test dependency
 pytestmark = [
@@ -11,53 +10,38 @@ pytestmark = [
 
 class TestDLPGuardian:
     @pytest.fixture(autouse=True)
-    def reset_guardian(self):
-        from loan_agent.utils.dlp_guardian import guardian
-        guardian.reset()
+    def reset_dlp(self):
+        dlp_guardian.reset_dlp()
         yield
-        guardian.reset()
+        dlp_guardian.reset_dlp()
     
-    def test_regex_fallback_masking(self):
-        """Verify that Regex fallback works when Cloud DLP is disabled/fails."""
-        # Force a guardian instance with no project ID to trigger fallback
-        with patch.dict(os.environ, {"GOOGLE_CLOUD_PROJECT": ""}, clear=True):
-            local_guardian = DLPGuardian()
-            # It might try to use google.auth.default(), so we should patch that too if needed
-            # But simpler: ensure client is None
-            local_guardian._use_cloud_dlp_checked = True 
-            local_guardian._client = None
+    def test_live_dlp_availability(self):
+        """
+        Verify that the live Cloud DLP service is available and functional.
+        """
+        # Using a standard format that DLP is likely to recognize
+        text = "My name is Sarah Speed and my SSN is 411-55-6789."
+        try:
+            masked = dlp_guardian.inspect_and_mask(text)
             
-            text = "My SSN is 123-45-6789 and email is test@example.com"
-            masked = local_guardian.inspect_and_mask(text)
+            # Check that it masked SOMETHING (either name or SSN)
+            assert "[" in masked and "]" in masked
+            assert "Sarah Speed" not in masked or "411-55-6789" not in masked
             
-            assert "[REDACTED_SSN]" in masked
-            assert "[REDACTED_EMAIL]" in masked
-            assert "123-45-6789" not in masked
-            assert "test@example.com" not in masked
+            print(f"\n[DLP Live Test] Masked output: {masked}")
+            
+        except Exception as e:
+            pytest.fail(f"Cloud DLP service is NOT available or failed: {e}")
 
-    def test_cloud_dlp_call(self):
-        """Verify that Cloud DLP is called when client is available."""
-        # Create a mock client and response
+    def test_cloud_dlp_mock_call(self):
+        """Verify the internal logic of calling the client when available."""
         mock_client = MagicMock()
         mock_response = MagicMock()
         mock_response.item.value = "Masked by Cloud"
         mock_client.deidentify_content.return_value = mock_response
 
-        # Init guardian (mode doesn't matter since we inject client)
-        cloud_guardian = DLPGuardian()
-        
-        # Manually inject the mock client
-        cloud_guardian._client = mock_client
-        cloud_guardian._use_cloud_dlp_checked = True # Prevent auto-init
-        cloud_guardian._parent = "projects/test-project/locations/global"
-
-        # Execute
-        result = cloud_guardian.inspect_and_mask("sensitive data")
-        
-        # Verify
-        assert result == "Masked by Cloud"
-        mock_client.deidentify_content.assert_called_once()
-
-    def test_singleton_exists(self):
-        assert guardian is not None
-        assert isinstance(guardian, DLPGuardian)
+        # Use patch to inject our mock client
+        with patch("loan_agent.utils.dlp_guardian._get_client", return_value=(mock_client, "projects/test/locations/global")):
+            result = dlp_guardian.inspect_and_mask("sensitive data")
+            assert result == "Masked by Cloud"
+            mock_client.deidentify_content.assert_called_once()

@@ -4,12 +4,12 @@ from loan_agent.tools.audit_logger import log_event
 from google import genai
 from google.genai import types
 
-def check_injection(user_input: str) -> bool:
+def check_injection(user_input: str, applicant_id: str = "system", application_id: str = None) -> bool:
     """
     Checks if the user input contains a prompt injection attack.
     Returns True if attack detected, False otherwise.
     """
-    log_event("system", "security_check_init", {"input_length": len(user_input)}, "SecurityGuardian")
+    log_event(applicant_id, "security_check_init", {"input_length": len(user_input)}, "SecurityGuardian", application_id=application_id)
     
     try:
         client = config.get_client()
@@ -44,12 +44,12 @@ def check_injection(user_input: str) -> bool:
         is_unsafe = "UNSAFE" in response_text.upper()
         
         if is_unsafe:
-            log_event("system", "security_alert", {"input_fragment": user_input[:50], "verdict": "UNSAFE"}, "SecurityGuardian")
+            log_event(applicant_id, "security_alert", {"input_fragment": user_input[:50], "verdict": "UNSAFE"}, "SecurityGuardian", application_id=application_id)
             return True
         else:
-            log_event("system", "security_check_pass", {}, "SecurityGuardian")
+            log_event(applicant_id, "security_check_pass", {}, "SecurityGuardian", application_id=application_id)
             return False
 
     except Exception as e:
-        log_event("system", "security_check_error", {"error": str(e)}, "SecurityGuardian")
+        log_event(applicant_id, "security_check_error", {"error": str(e)}, "SecurityGuardian", application_id=application_id)
         return False

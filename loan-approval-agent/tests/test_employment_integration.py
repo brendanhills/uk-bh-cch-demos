@@ -1,6 +1,4 @@
 import pytest
-import os
-import json
 from loan_agent.tools.employment_service import verify_employment
 from external_services.employment_registry import DATA_FILE
 

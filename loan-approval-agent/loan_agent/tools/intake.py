@@ -96,7 +96,7 @@ def register_application(
         "name": name,
         "amount": amount,
         "purpose": purpose
-    }, application_id=application_id)
+    }, agent_name="IntakeSystem", application_id=application_id)
     
     return {
         "status": "success",

@@ -1,6 +1,4 @@
 import pytest
-import os
-import sys
 import asyncio
 from google.genai.types import Part, UserContent
 from google.adk.runners import InMemoryRunner
@@ -11,6 +9,10 @@ pytestmark = [
     pytest.mark.depends(name="unit_tests"),
     pytest.mark.run(order=1)
 ]
+
+from loan_agent import config
+# Set latency to testing mode for speed
+config.LATENCY_MODE = "TESTING"
 
 @pytest.mark.asyncio
 async def test_orchestrator_wizard_input():

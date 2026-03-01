@@ -9,9 +9,8 @@ from loan_agent.utils.audit_logger import log_event
 
 # Paths relative to this file: loan_agent/sub_agents/underwriter/tools.py
 base_dir = os.path.dirname(os.path.abspath(__file__))
-# Project Root: ../../../../
-project_root = os.path.abspath(os.path.join(base_dir, "../../../../"))
-DECISION_DIR = os.path.join(project_root, "data/decisions")
+# loan_agent/sub_agents/underwriter/tools.py -> ../../data/decisions
+DECISION_DIR = os.path.abspath(os.path.join(base_dir, "../../data/decisions"))
 
 def _create_decision_pdf(record: Dict[str, Any]) -> str:
     # Ensure directory exists
@@ -65,8 +64,8 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
     pdf.set_font("Arial", size=8)  # Smaller font for logs
     
     # Path to Audit Log
-    # loan_agent/data/audit_logs/events.jsonl
-    log_path = os.path.join(project_root, "loan_agent/data/audit_logs/events.jsonl")
+    # loan_agent/sub_agents/underwriter/tools.py -> ../../data/audit_logs/events.jsonl
+    log_path = os.path.abspath(os.path.join(base_dir, "../../data/audit_logs/events.jsonl"))
     
     found_logs = False
     if os.path.exists(log_path):
@@ -79,17 +78,24 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
                 from loan_agent.utils import token_vault
                 raw_id = token_vault.detokenize(app_id)
                 
-                # Collection of valid IDs for this application
-                valid_ids = {app_id, "Guest"}
-                if raw_id:
-                    valid_ids.add(raw_id)
+                # Specific filtering criteria for this PDF
+                target_app_id = record.get('application_id')
+                target_applicant_id = record.get('applicant_id')
                 
                 for line in lines:
                     try:
                         event = json.loads(line)
-                        log_app_id = event.get("applicant_id")
+                        log_app_id = event.get("application_id")
+                        log_applicant_id = event.get("applicant_id")
                         
-                        if log_app_id in valid_ids:
+                        # Match: Must match application_id if we have one, otherwise fall back to applicant_id
+                        is_match = False
+                        if target_app_id and target_app_id != "N/A":
+                            is_match = (log_app_id == target_app_id)
+                        else:
+                            is_match = (log_applicant_id == target_applicant_id)
+                        
+                        if is_match:
                             found_logs = True
                             timestamp = event.get("timestamp", "")[11:19] # Time part
                             agent = event.get("agent", "System")

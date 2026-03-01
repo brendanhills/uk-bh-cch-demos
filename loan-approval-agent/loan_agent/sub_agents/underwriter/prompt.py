@@ -18,11 +18,12 @@ Instructions:
    - Use the Projected DTI to verify against policy thresholds.
 3. Ensure you have the `application_id` and `applicant_id`.
 4. If data is missing or contradictory, decide to ESCALATE or REQUEST_INFO.
-5. Determine the final decision (APPROVE, DENY, ESCALATE, or REQUEST_INFO) by strictly following the `policy_assessment`.
+5. Determine the final decision (APPROVE, DENY, ESCALATE, or REQUEST_INFO) by strictly following the `policy_assessment`. 
+   - If the `policy_assessment` recommends DENY, you MUST DENY.
 6. If Approved, determine the interest rate. You MUST use the interest rate recommended in the `policy_assessment`.
 7. Call `record_decision` (for Approve/Deny) OR `escalate_app` (for Escalate). **CRITICAL**: Pass the `application_id` if available.
 8. **Completion Protocol**: Once the decision is recorded, present the final decision details clearly.
-   - **CRITICAL**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Guidelines 2026, Section 1...").
+   - **CRITICAL**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Underwriting Guidelines 2026, Section 1...").
    - Control will automatically return to the loan_manager when you finish.
 9. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
 

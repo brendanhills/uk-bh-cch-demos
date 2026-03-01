@@ -12,7 +12,7 @@ load_dotenv()
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-APPLICANTS_FILE = os.path.join(BASE_DIR, "loan_approval_agent/data/demo_data/applicants.json")
+APPLICANTS_FILE = os.path.join(BASE_DIR, "external_services/data/applicants.json")
 OUTPUT_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
 
 # Ensure output directory exists

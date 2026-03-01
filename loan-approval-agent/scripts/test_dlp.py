@@ -1,24 +1,22 @@
-from loan_agent import config # Loads .env
-from loan_agent.utils.dlp_guardian import guardian
 import os
+from loan_agent.utils.dlp_guardian import inspect_and_mask
 
-def test_dlp():
-    print("=== Testing DLP Guardian ===")
-    print(f"DEBUG: GOOGLE_CLOUD_PROJECT = {os.getenv('GOOGLE_CLOUD_PROJECT')}")
-    # Force init to check client
-    is_cloud = guardian.client is not None
-    print(f"Mode: {'Cloud DLP' if is_cloud else 'Regex Fallback'}")
+def test_dlp_integration():
+    """Manual script to verify DLP integration."""
+    print("\n--- DLP Integration Test ---")
     
-    sample_text = "My SSN is 900-00-1234 and my email is sarah.speed@example.com."
-    print(f"\nOriginal: {sample_text}")
+    test_cases = [
+        "My Social Security Number is 411-55-6789.",
+        "Contact me at sarah.speed@example.com or call 555-0199.",
+        "The applicant's name is Sarah Speed.",
+        "Safe text with no PII."
+    ]
     
-    masked = guardian.inspect_and_mask(sample_text)
-    print(f"Masked:   {masked}")
-    
-    if "[REDACTED" in masked:
-        print("\n✅ Redaction successful.")
-    else:
-        print("\n❌ Redaction failed.")
+    for text in test_cases:
+        masked = inspect_and_mask(text)
+        print(f"Original: {text}")
+        print(f"Masked:   {masked}")
+        print("-" * 30)
 
 if __name__ == "__main__":
-    test_dlp()
+    test_dlp_integration()

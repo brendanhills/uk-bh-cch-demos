@@ -20,7 +20,8 @@ Instructions:
        2. **CRITICAL**: Use the `register_application` tool to submit the data. This will tokenize the Government ID.
           - **NEVER** skip this step if you have a raw Government ID (e.g., SSN).
        3. The `register_application` tool will return an `application_id` (e.g., APP-123456) and a `applicant_id` (Token ID).
-       4. Use the `applicant_id` (Token ID) for all subsequent agent calls and data lookups.
+       4. **MANDATORY**: Explicitly state the tokenized `applicant_id` in your internal state or response so it can be tracked.
+       5. Use the `applicant_id` (Token ID) for all subsequent agent calls and data lookups.
        5. **ERROR PREVENTION**: If you pass a raw SSN/ID to `investigator_agent`, the tool will reject it. ALWAYS use the Token ID.
        6. Mention the `application_id` in your updates to the user so they know their tracking reference.
 2. **Step 1: Investigation**

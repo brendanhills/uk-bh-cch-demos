@@ -74,7 +74,7 @@ def test_policy_expert_pdf_reading():
     if "Error:" in result:
         pytest.fail(f"consult_policy_docs returned error: {result}")
         
-    assert "Policy Search Results" in result
+    assert "Hybrid RAG Search Results" in result
     assert "CITATION:" in result or "Source:" in result
 
 def test_underwriter_decision_record():

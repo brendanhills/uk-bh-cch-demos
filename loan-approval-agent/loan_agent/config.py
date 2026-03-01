@@ -29,6 +29,7 @@ MODEL_PRO = _PRO
 # Latency Configuration
 # DEFAULT: TESTING (0 latency) for speed and CI reliability.
 LATENCY_MODE = os.getenv("LATENCY_MODE", "TESTING") 
+THINKING_LEVEL = os.getenv("THINKING_LEVEL", "MEDIUM") # Use MEDIUM for faster demo responses
 
 def get_latency(min_seconds: float, max_seconds: float) -> float:
     """Returns a random latency if in REALISTIC mode, else 0."""
@@ -51,12 +52,12 @@ def get_client() -> Client:
 
 def get_model(model_name: str):
     """Returns a Gemini model instance with configured retry options."""
-    # Fail fast: 2 attempts, short delay.
+    # Fail fast: 1 attempt, short delay.
     return Gemini(
         model=model_name,
         retry_options=types.HttpRetryOptions(
-            initial_delay=0.5,
-            attempts=2, 
+            initial_delay=0.1,
+            attempts=1, 
         ),
         http_options={'api_version': 'v1beta1'}
     )
@@ -65,7 +66,7 @@ def get_gen_config(is_pro: bool = False) -> types.GenerateContentConfig:
     """Returns a standard GenerateContentConfig with Gemini 3 settings."""
     thinking_config = None
     if is_pro:
-        thinking_config = types.ThinkingConfig(thinking_level="HIGH")
+        thinking_config = types.ThinkingConfig(thinking_level=THINKING_LEVEL)
         
     return types.GenerateContentConfig(
         temperature=1,
