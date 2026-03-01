@@ -8,7 +8,7 @@ This project is a sophisticated multi-agent system designed for automated loan u
 - **Main Technologies**: 
     - **Language**: Python 3.12+ (managed with `uv`)
     - **AI Framework**: Google Cloud ADK (`google-adk`)
-    - **Security**: Google Cloud DLP (Sensitive Data Protection) for PII masking.
+    - **Security**: Google Cloud DLP (Sensitive Data Protection) for PII masking. Proactive prompt injection guardrail (Production target: **Model Armor**).
     - **Models**: 
         - **Flash**: `gemini-3.1-flash-preview` for high-speed orchestration and data gathering.
         - **Pro**: `gemini-3.1-pro-preview` with **ThinkingLevel: HIGH** for complex policy reasoning and underwriting.

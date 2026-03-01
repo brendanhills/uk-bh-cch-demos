@@ -64,35 +64,30 @@ def consult_policy_docs(query: str, applicant_id: str = "unknown", application_i
         print(f"[PolicyExpert] ⚠️ Vertex RAG search failed: {e}")
 
     try:
-        # 2. Local Precision Search (High-Confidence Demo Grounding)
-        # Always check the Standard Guidelines locally to ensure Sarah Speed rules are 100% found
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        # CORRECT PATH: loan_agent/sub_agents/policy_expert/../../../external_services/confluence/
-        POLICY_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../../external_services/confluence"))
-        guidelines_file = "Standard_Underwriting_Guidelines_2026.pdf"
-        guidelines_path = os.path.join(POLICY_DIR, guidelines_file)
-        
-        if os.path.exists(guidelines_path):
-            reader = pypdf.PdfReader(guidelines_path)
-            for i, page in enumerate(reader.pages):
-                text = page.extract_text()
-                # Debug content if query is about high value
-                if "high value" in query.lower():
-                    print(f"[PolicyExpert] DEBUG: Checking LOCAL {guidelines_file} Page {i+1} content...")
-                
-                # Robust match: Check for high-value keywords or explicit 2026 mentions
-                match_terms = ["2026", "high value", "150,000", "35%", "REQUIREMENT"]
-                if any(t.lower() in text.lower() for t in match_terms) or \
-                   any(term.lower() in text.lower() for term in search_query.lower().split()):
+        # 2. Local Precision Search (FALLBACK ONLY)
+        # We only supplement with local if RAG didn't find enough relevant context
+        if len(top_chunks) < 3:
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            POLICY_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../../external_services/confluence"))
+            guidelines_file = "Standard_Underwriting_Guidelines_2026.pdf"
+            guidelines_path = os.path.join(POLICY_DIR, guidelines_file)
+            
+            if os.path.exists(guidelines_path):
+                reader = pypdf.PdfReader(guidelines_path)
+                for i, page in enumerate(reader.pages):
+                    text = page.extract_text()
                     
-                    top_chunks.insert(0, {
-                        "source": f"LOCAL: {guidelines_file}",
-                        "text": text,
-                        "page": i + 1
-                    })
-                    break
-        else:
-            print(f"[PolicyExpert] ⚠️ Guidelines NOT FOUND at: {guidelines_path}")
+                    # Robust match: Check for high-confidence terms only if RAG missed them
+                    match_terms = ["2026", "high value", "150000", "35 PERCENT"]
+                    if any(t.lower() in text.lower() for t in match_terms) or \
+                       any(term.lower() in text.lower() for term in search_query.lower().split()):
+                        
+                        top_chunks.append({ # Add to the end, don't override RAG unless necessary
+                            "source": f"LOCAL: {guidelines_file}",
+                            "text": text,
+                            "page": i + 1
+                        })
+                        break
     except Exception as e:
         print(f"[PolicyExpert] ⚠️ Local precision search failed: {e}")
 

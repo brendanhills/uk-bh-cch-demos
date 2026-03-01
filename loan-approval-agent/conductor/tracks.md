@@ -4,20 +4,20 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Polish and Verify the Interview Demo Flow**
+- [x] **Track: Polish and Verify the Interview Demo Flow**
   *Link: [./tracks/polish_demo_20260225/](./tracks/polish_demo_20260225/)*
 
 ---
 
-- [ ] **Track: Demo Polish, Enhanced Grounding, and Test Hardening**
+- [x] **Track: Demo Polish, Enhanced Grounding, and Test Hardening**
   *Link: [./tracks/polish_grounding_20260228/](./tracks/polish_grounding_20260228/)*
 
 ---
 
-- [ ] **Track: UI Polish and Runner Simplification**
+- [x] **Track: UI Polish and Runner Simplification**
   *Link: [./tracks/ui_polish_20260228/](./tracks/ui_polish_20260228/)*
 
 ---
 
-- [ ] **Track: Robust RAG Integration**
+- [x] **Track: Robust RAG Integration**
   *Link: [./tracks/robust_rag_20260301/](./tracks/robust_rag_20260301/)*
