@@ -16,3 +16,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: UI Polish and Runner Simplification**
   *Link: [./tracks/ui_polish_20260228/](./tracks/ui_polish_20260228/)*
+
+---
+
+- [ ] **Track: Robust RAG Integration**
+  *Link: [./tracks/robust_rag_20260301/](./tracks/robust_rag_20260301/)*
