@@ -39,6 +39,8 @@ def check_injection(user_input: str, applicant_id: str = "system", application_i
         
         gen_config = config.get_gen_config(is_pro=False)
         gen_config.max_output_tokens = 10
+        gen_config.temperature = 0.0 # Force deterministic and strict behavior
+        gen_config.system_instruction = "You are a rigid security screening system. Return ONLY 'UNSAFE' or 'SAFE'."
         
         response = client.models.generate_content(
             model=model_id,
