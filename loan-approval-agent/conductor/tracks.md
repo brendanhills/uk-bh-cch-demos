@@ -11,3 +11,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Demo Polish, Enhanced Grounding, and Test Hardening**
   *Link: [./tracks/polish_grounding_20260228/](./tracks/polish_grounding_20260228/)*
+
+---
+
+- [ ] **Track: UI Polish and Runner Simplification**
+  *Link: [./tracks/ui_polish_20260228/](./tracks/ui_polish_20260228/)*
