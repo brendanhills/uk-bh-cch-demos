@@ -27,8 +27,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- GLOBAL RUNNER ---
+# --- GLOBAL RUNNER (Cached) ---
+@st.cache_resource
 def get_runner():
+    # Caching the runner ensures the InMemorySessionService persists history
     return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
 
 # --- PATHS & STATE ---
@@ -37,9 +39,7 @@ DECISION_DIR = os.path.join(BASE_DIR, "loan_agent/data/decisions")
 os.makedirs(DECISION_DIR, exist_ok=True)
 
 # Data paths for scenarios
-# External Source of Truth
 APPLICANTS_PATH = os.path.join(BASE_DIR, "external_services/data/applicants.json")
-# Demo-specific scenario configuration
 SCENARIOS_PATH = os.path.join(BASE_DIR, "demo_frontend/data/scenarios.json")
 
 # Initialize Session State
@@ -158,13 +158,14 @@ async def run_agent(text_input, response_placeholder):
     runner = get_runner()
     
     # 1. PRE-PROCESSING SECURITY CHECK
-    # We demonstrate proactive protection against prompt injection
     if check_injection(text_input, applicant_id="demo_user"):
         st.error("🚨 Security Alert: Potential prompt injection or system override detected. Transaction halted.")
         render_audit_trace()
         return "SECURITY_VIOLATION"
 
     # 2. Session Management
+    # Caching the runner above handles the session service persistence.
+    # We just need to ensure the session exists.
     session = await runner.session_service.get_session(
         app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
     )
