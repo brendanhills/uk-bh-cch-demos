@@ -59,3 +59,6 @@ loan-approval-agent/.coverage
 data/decisions/*
 capita/transcribe/output/*
 capita/transcribe/.coverage
+loan-approval-agent/loan_agent/data/decisions/*
+
+loan-approval-agent/loan_agent/data/audit_logs/events.jsonl
