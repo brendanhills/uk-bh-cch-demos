@@ -52,12 +52,12 @@ def get_client() -> Client:
 
 def get_model(model_name: str):
     """Returns a Gemini model instance with configured retry options."""
-    # Fail fast: 1 attempt, short delay.
+    # More robust retries for 429 errors: 3 attempts with 1s initial delay.
     return Gemini(
         model=model_name,
         retry_options=types.HttpRetryOptions(
-            initial_delay=0.1,
-            attempts=1, 
+            initial_delay=1.0,
+            attempts=3, 
         ),
         http_options={'api_version': 'v1beta1'}
     )
