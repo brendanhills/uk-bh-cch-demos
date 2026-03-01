@@ -1,8 +1,8 @@
 import pytest
 import asyncio
 from google.adk.runners import InMemoryRunner
-from google.adk.apps import App
 from google.genai.types import UserContent, Part
+from loan_agent.agent import loan_manager
 from loan_agent.sub_agents.investigator.agent import investigator_agent
 from loan_agent.sub_agents.policy_expert.agent import policy_expert_agent
 from loan_agent.sub_agents.underwriter.agent import underwriter_agent
@@ -16,8 +16,7 @@ pytestmark = [
 @pytest.mark.asyncio
 async def test_investigator_agent_sarah():
     """Verify investigator_agent correctly gathers data for Sarah Speed."""
-    test_app = App(name="loan_agent", root_agent=investigator_agent)
-    runner = InMemoryRunner(app=test_app)
+    runner = InMemoryRunner(agent=investigator_agent, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_sarah", app_name="loan_agent")
     
     # Sarah Speed's token is user_01
@@ -41,8 +40,7 @@ async def test_investigator_agent_sarah():
 @pytest.mark.asyncio
 async def test_policy_expert_agent_sarah():
     """Verify policy_expert_agent reasoning given a mock report."""
-    test_app = App(name="loan_agent", root_agent=policy_expert_agent)
-    runner = InMemoryRunner(app=test_app)
+    runner = InMemoryRunner(agent=policy_expert_agent, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_policy", app_name="loan_agent")
     
     mock_report = {
@@ -71,8 +69,7 @@ async def test_policy_expert_agent_sarah():
 @pytest.mark.asyncio
 async def test_underwriter_agent_sarah():
     """Verify underwriter_agent reasoning given a mock policy assessment."""
-    test_app = App(name="loan_agent", root_agent=underwriter_agent)
-    runner = InMemoryRunner(app=test_app)
+    runner = InMemoryRunner(agent=underwriter_agent, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_underwriter", app_name="loan_agent")
     
     mock_assessment = {
@@ -99,8 +96,7 @@ async def test_underwriter_agent_sarah():
 @pytest.mark.asyncio
 async def test_policy_expert_agent_gary_escalate():
     """Verify Gary Escalate triggers a manual review recommendation due to borderline credit."""
-    test_app = App(name="loan_agent", root_agent=policy_expert_agent)
-    runner = InMemoryRunner(app=test_app)
+    runner = InMemoryRunner(agent=policy_expert_agent, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_gary", app_name="loan_agent")
     
     mock_report = {
@@ -130,8 +126,7 @@ async def test_policy_expert_agent_gary_escalate():
 @pytest.mark.asyncio
 async def test_underwriter_agent_jane_fraud():
     """Verify Jane Fraud is denied due to high risk."""
-    test_app = App(name="loan_agent", root_agent=underwriter_agent)
-    runner = InMemoryRunner(app=test_app)
+    runner = InMemoryRunner(agent=underwriter_agent, app_name="loan_agent")
     session = await runner.session_service.create_session(user_id="test_jane", app_name="loan_agent")
     
     mock_assessment = {

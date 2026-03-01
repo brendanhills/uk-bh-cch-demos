@@ -11,7 +11,7 @@ try:
 except Exception:
     PROJECT_ID = None
 
-LOCATION = "us-central1"
+LOCATION = None
 
 # ALWAYS use Gemini 3 or higher.
 _FLASH = os.getenv("MODEL_FLASH", "gemini-3-flash-preview").strip('"').strip("'")

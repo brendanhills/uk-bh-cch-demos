@@ -9,7 +9,7 @@ pytestmark = [
 
 from google.adk.runners import InMemoryRunner
 from google.genai.types import UserContent, Part
-from loan_agent.agent import loan_manager, app
+from loan_agent.agent import loan_manager
 from loan_agent.sub_agents.investigator.agent import investigator_agent
 from unittest.mock import patch, MagicMock
 
@@ -18,21 +18,13 @@ async def test_handoff_to_investigator():
     """Verify that loan_manager hands off to investigator_agent when needed."""
     
     # 1. Setup Runner
-    # We use a real runner but mock the model responses to be fast and predictable
-    runner = InMemoryRunner(app=app)
+    runner = InMemoryRunner(agent=loan_manager)
     session = await runner.session_service.create_session(user_id="test_user", app_name="loan_agent")
     
     # 2. Start with a state that has an applicant_id
-    # We'll simulate a user providing data that triggers investigation
     user_input = "Start investigation for Sarah Speed (ID: 900-00-1234, Token: TOKEN-123). She wants $10,000."
     
-    # Capture events
-    events = []
-    
-    # We'll mock the LLM response to force a transfer
-    # This is tricky because ADK handles the LLM call internally.
-    # Instead, let's verify the configuration first.
-    
+    # Static check of the agent tree configuration.
     from google.adk.tools.agent_tool import AgentTool
     tool_agents = [t.agent for t in loan_manager.tools if isinstance(t, AgentTool)]
     assert investigator_agent in tool_agents
@@ -56,9 +48,6 @@ def test_investigator_as_subagent_config():
 
 @pytest.mark.asyncio
 async def test_investigator_interactive_capability():
-    """Verify that investigator agent can indeed 'ask' questions (is not just a tool)."""
-    # When an agent is wrapped in AgentTool, its content events flow through to the user.
-    
-    # This is more of an integration check, but we can verify the prompt contains the instruction.
+    """Verify that investigator agent can indeed 'ask' questions."""
     from loan_agent.sub_agents.investigator.prompt import INVESTIGATOR_PROMPT
     assert "Ask the User" in INVESTIGATOR_PROMPT
