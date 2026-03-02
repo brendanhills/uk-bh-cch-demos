@@ -112,7 +112,7 @@ st.sidebar.subheader("⚙️ Settings")
 latency_mode = st.sidebar.radio("Latency:", ["TESTING", "REALISTIC"], index=0)
 config.LATENCY_MODE = latency_mode
 
-simulate_failure = st.sidebar.toggle("🚨 Simulate API Downtime", value=False, help="Forces external tools (e.g. Credit Bureau) to fail to test resilience.")
+simulate_failure = st.sidebar.toggle("🚨 Simulate Global API Downtime", value=False, help="Forces ALL external APIs (Credit, Fraud, Employment) to report downtime to test agentic resilience.")
 
 # --- LAYOUT ---
 c_portal, c_audit = st.columns([0.6, 0.4], gap="large")
@@ -224,7 +224,7 @@ async def run_agent(text_input, response_placeholder):
         files_info += f"\n[User has uploaded the following documents to the secure system: {', '.join(st.session_state['uploaded_files'])}]"
     
     if simulate_failure:
-        files_info += "\n[SYSTEM ALERT: External Credit Bureau API is currently reporting DOWNTIME. All calls will fail. Inform the user and proceed with available internal data.]"
+        files_info += "\n[SYSTEM ALERT: ALL External APIs (Credit, Fraud, Employment) are currently reporting DOWNTIME. All tool calls will return errors. Inform the user and proceed with available internal data or ask for alternative documents.]"
     
     user_content = UserContent(parts=[Part(text=text_input + files_info)])
     

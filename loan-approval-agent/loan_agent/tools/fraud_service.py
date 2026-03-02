@@ -3,7 +3,7 @@ from loan_agent.utils.tool_dispatcher import call_tool
 from loan_agent.utils.audit_logger import log_event
 from loan_agent.utils import token_vault
 
-async def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
+async def check_fraud_risk(applicant_id: str, application_id: str = None, simulate_failure: bool = False) -> Dict[str, Any]:
     """
     Checks fraud risk via External Service.
     """
@@ -12,7 +12,10 @@ async def check_fraud_risk(applicant_id: str, application_id: str = None) -> Dic
     log_event(applicant_id, "FRAUD_CHECK_INIT", {}, "Tool:FraudService", application_id=application_id)
     
     # Call Dispatcher
-    result = await call_tool("check_fraud_risk", {"gov_id": raw_gov_id})
+    result = await call_tool("check_fraud_risk", {
+        "gov_id": raw_gov_id,
+        "simulate_failure": simulate_failure
+    })
     print(f"[Tool:FraudService] Result for {applicant_id}: {result}")
     
     if "error" in result:

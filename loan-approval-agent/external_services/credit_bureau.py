@@ -26,10 +26,10 @@ async def get_credit_report(gov_id: str, simulate_failure: bool = False) -> Dict
     # Simulate API Latency (2 seconds)
     await simulate_delay_async(2)
     
-    # Simulate Random Failure
-    if simulate_failure and random.random() < 0.3:
+    # Simulate Failure (MANDATORY if flag is True for Demo reliability)
+    if simulate_failure:
         print("[ExternalAPI:CreditBureau] Simulated 503 Service Unavailable")
-        raise ConnectionError("Credit Bureau API is currently unavailable (Simulated).")
+        return {"error": "Credit Bureau API is currently unavailable (Simulated Downtime)."}
 
     try:
         with open(DATA_FILE, "r") as f:
