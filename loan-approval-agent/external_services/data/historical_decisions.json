@@ -1,0 +1,21 @@
+{
+  "900-00-1234": [
+    {
+      "date": "2024-05-12",
+      "loan_id": "L-88213",
+      "amount": 5000,
+      "outcome": "APPROVED",
+      "status": "PAID_OFF"
+    }
+  ],
+  "900-00-3456": [
+    {
+      "date": "2023-11-05",
+      "loan_id": "L-77120",
+      "amount": 2000,
+      "outcome": "APPROVED",
+      "status": "ACTIVE"
+    }
+  ],
+  "900-00-9999": []
+}

@@ -28,3 +28,10 @@ The Loan Approval Agent is a multi-agent system that transforms a manual, 48-hou
 -   **70% Automation**: Auto-approves standard cases, freeing up human underwriters for high-value complex loans.
 -   **100% Auditability**: Every decision is backed by a permanent, PII-masked audit log.
 -   **Customer Satisfaction**: Approval time reduced from days to seconds.
+
+## 🚀 Future Roadmap: Scaling to Enterprise
+*Briefly mention the transition plan for a 10,000 application/day production environment:*
+1.  **Event-Driven Architecture**: Moving to **Cloud Pub/Sub** for asynchronous, reliable queuing.
+2.  **Centralized Rate Limiting**: Implementing a **Redis-backed token bucket** to strictly enforce external API constraints (100 calls/min).
+3.  **Historical Intelligence**: Closing the loop by feeding 5 years of past decision data into the reasoning chain for complex case analysis.
+4.  **PII-Stateless Core**: Transitioning from memory-based tokenization to **Model Armor** and hardware-backed secure boundaries.

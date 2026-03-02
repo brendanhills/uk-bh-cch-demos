@@ -53,8 +53,9 @@ def _create_decision_pdf(record: Dict[str, Any]) -> str:
         
     pdf.ln(5)
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, "Reasoning:", 0, 1)
+    pdf.cell(0, 10, "Risk Analysis Report:", 0, 1)
     pdf.set_font("Arial", size=11)
+    # The reason field now contains the Markdown Risk Report
     pdf.multi_cell(0, 6, record['reason'])
     pdf.ln(10)
     

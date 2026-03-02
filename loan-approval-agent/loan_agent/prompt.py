@@ -30,6 +30,7 @@ Instructions:
    - EXPLICITLY STATE: "🔍 Starting investigation for [application_id]..."
    - Call the `investigator_agent` tool to gather data.
    - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) so the investigator has the initial context.
+   - **CRITICAL**: If the user is self-employed or if income verification is flagged as a requirement by the sub-agents, YOU MUST ask the user to upload a "Bank Statement" PDF for verification.
    - **CRITICAL**: If the input provided "supporting documents", mention them.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."

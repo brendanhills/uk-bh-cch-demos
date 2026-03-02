@@ -12,6 +12,7 @@ from loan_agent.tools.credit_bureau import get_credit_report as core_get_credit
 from loan_agent.tools.employment_service import verify_employment as core_verify_employment
 from loan_agent.tools.fraud_service import check_fraud_risk as core_check_fraud
 from loan_agent.tools.doc_analyzer import analyze_paystub
+from loan_agent.tools.risk_assessment import get_ml_risk_score, lookup_historical_decisions
 from loan_agent.utils.audit_logger import log_event
 from loan_agent import config
 

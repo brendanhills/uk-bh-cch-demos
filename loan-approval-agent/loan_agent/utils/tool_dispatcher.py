@@ -9,6 +9,8 @@ TOOL_REGISTRY = {
     "get_credit_report": ("external_services.credit_bureau", "get_credit_report"),
     "verify_employment": ("external_services.employment_registry", "verify_employment"),
     "check_fraud_risk": ("external_services.fraud_service", "check_fraud_risk"),
+    "get_ml_risk_score": ("external_services.risk_scoring", "get_ml_risk_score"),
+    "lookup_historical_decisions": ("external_services.historical_decisions", "lookup_historical_decisions"),
 }
 
 import inspect

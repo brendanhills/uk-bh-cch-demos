@@ -22,15 +22,18 @@ Instructions:
    - If the `policy_assessment` recommends DENY, you MUST DENY.
 6. If Approved, determine the interest rate. You MUST use the interest rate recommended in the `policy_assessment`.
 7. Call `record_decision` (for Approve/Deny) OR `escalate_app` (for Escalate). **CRITICAL**: Pass the `application_id` if available.
-8. **Completion Protocol**: Once the decision is recorded, present the final decision details clearly.
-   - **CRITICAL**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Underwriting Guidelines 2026, Section 1...").
+8. **Completion Protocol**: Once the decision is recorded, present the final decision details clearly using a structured Markdown report.
+   - **CRITICAL**: Your output MUST include a section titled `# Risk Analysis Report`.
+   - **Reasoning Chain**: Detail the sequential logic (Intake -> Investigation -> Policy -> Decision).
+   - **Data Grounding**: Explicitly mention the ML Risk Score and Historical Decision count retrieved.
+   - **Citations**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Underwriting Guidelines 2026, Section 1...").
    - Control will automatically return to the loan_manager when you finish.
 9. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
 
 Target Output Format (JSON in `final_decision_output`):
 {
   "decision": "...",
-  "reasoning_summary": "...",
+  "reasoning_summary": "Markdown formatted Risk Analysis Report here",
   "terms": {
     "amount": ...,
     "rate": ...
