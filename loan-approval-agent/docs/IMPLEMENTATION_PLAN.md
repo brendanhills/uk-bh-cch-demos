@@ -1,86 +1,59 @@
-# Loan Agent Resilience & Fixes Plan
+# Re-Architecture Implementation Plan
 
 ## Goal
-Improve robustness and fix test failures while maintaining realistic behavior (no hallucinated credit scores).
+Restructure the project into 3 distinct components (`external_services`, `loan_agent`, `demo_frontend`).
+Implement **Real ID** data handling, **DLP Security**, **Paystub Upload**, **Model Fallback**, **MCP-Lite Pattern**, and **Continuous UAT**.
 
 ## User Review Required
 > [!IMPORTANT]
-> **Change of Strategy**: I will **REVERT** the synthetic data generation in `credit_bureau.py` and `employment_service.py`. A real credit bureau does not invent scores.
->
-> **Resilience approach**:
-> 1. **Data Consistency**: REVERT synthetic data in `credit_bureau.py` and `employment_service.py`.
-> 2. **Real ID Architecture**: Transition `applicant_id` to be a **Government ID** (e.g., SSN like `US-SSN-12345`).
->    - **Intake**: Update `demo_app.py` and `intake.py` to REQUIRE the user to provide their Gov ID. The application cannot proceed without it.
->    - **Services**: `credit_bureau.py`, `employment_service.py`, etc., will now lookup records by this Gov ID.
->    - **Validation**: If no record is found for the provided Gov ID, return a **realistic error** (e.g., "Credit Report Not Found"), halting the automated approval. This is the correct "happy path" for invalid data.
+> **Architecture Split**: Code moves to `external_services`, `loan_agent`, `demo_frontend`.
+> **Data Handling**: Strict "Gov ID" required.
+> **Security**: DLP sanitizes PII in logs.
+> **Multimodal**: Users can upload Paystub PDFs/Images for income verification.
+> **Model**: ALWAYS uses Gemini 3.1. Flash for orchestration, Pro with **Thinking: HIGH** for policy and underwriting.
+> **MCP-Lite**: Tools are called via a central Dispatcher (mocking MCP).
+> **UAT**: A `docs/UAT_CHECKLIST.md` will be created to map code features to `demo_task.txt` requirements.
 
 ## Proposed Changes
 
-### 1. Data Model Migration (Real IDs)
-Update all JSON data files to use Gov IDs (SSN format) as primary keys.
+### 1. Directory Restructuring
+#### [NEW] `external_services/`
+- `data/`, `confluence/`, `credit_bureau.py`, `employment_registry.py`.
 
-#### [MODIFY] [applicants.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/data/demo_data/applicants.json)
-- **Change**: Replace internal IDs (e.g., "12345") with realistic Gov IDs (e.g., `900-00-1234`).
-- **Map**:
-  - Sarah Speed -> `900-00-1234`
-  - David Leverage -> `900-00-5678`
-  - Jane Fraud -> `900-00-9999` (Invalid/No Record)
+#### [NEW] `loan_agent/`
+- `agent.py`, `sub_agents/`.
+- `tools/`: **Refactored** to use the new Dispatcher pattern.
+- `utils/dlp_guardian.py`: PII redaction.
+- `utils/tool_dispatcher.py`: **New** MCP-Lite Registry & Router.
 
-#### [MODIFY] [credit_score.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/data/external_data/credit_score.json)
-- **Change**: Update keys to match new Gov IDs.
+#### [NEW] `demo_frontend/`
+- `app.py`: Streamlit UI.
+- **New Feature**: File Uploader widget.
 
-### 2. Intake & Agent Logic
-Enforce Gov ID collection at the start of the flow.
+### 2. "Real ID" Implementation
+- `external_services/data/applicants.json`: Use Gov IDs.
 
-#### [MODIFY] [demo_app.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/demo_app.py)
-- **Change**: Update `sys_prompt` to explicit instructions: "You MUST collect the applicant's Government ID (SSN) before submitting."
-- **Change**: Update `register_application` to accept `gov_id` argument.
-- **UI**: Update "Quick Fill" button to populate the Gov ID for the selected scenario.
+### 3. MCP-Lite Tool Pattern
+- `loan_agent/utils/tool_dispatcher.py` handles `call_tool(name, args)`.
 
-#### [MODIFY] [intake.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/tools/intake.py)
-- **Change**: Update signature to `register_application(name, income, ..., gov_id)`.
-- **Logic**: Use `gov_id` as the primary key.
+### 4. Security (DLP)
+- implement `inspect_and_mask(text)` for logs.
 
-### 3. Service Updates
-Ensure strict lookup by Gov ID.
+### 5. Paystub Verification (Multimodal)
+- **Frontend**: Add file uploader.
+- **Agent**: Use `doc_analyzer.py` extract income.
 
-#### [MODIFY] [credit_bureau.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/tools/credit_bureau.py)
-- **Action**: Ensure it returns `{ "error": "Credit Report Not Found" }` if ID lookup fails. No synthetic data.
-
-#### [MODIFY] [employment_service.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/loan_approval_agent/tools/employment_service.py)
-- **Action**: Ensure it returns `{ "error": "Employment Record Not Found" }`.
-
-### 4. Demo Structure & Requirements Mapping
-Align `DEMO.md` with `interview_task.txt`, splitting into Operations (UI) and Technical/Resilience (Backend).
-
-#### [MODIFY] [DEMO.md](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/loan-approval-agent/DEMO.md)
-- **Part 1: Streamlit (Operations/Speed)**
-  - **Scenario 1 (Sarah Speed - Approve)**
-    - **Req 1 (Parallel Orchestration)**: "The agent checked Credit, Employment, and Risk in parallel."
-    - **Req 4 (Auto-Approve < 5 mins)**: "Auto-approved in seconds, not days."
-    - **NFR (Audit Trail)**: Show live audit log in sidebar.
-  - **Scenario 2 (Sarah - High DTI Decline)**
-    - **Req 2 (Business Rules)**: "Risk Engine flagged DTI > 43%."
-    - **Req 3 (Reasoning/Explainability)**: "Decline reason is precise."
-  - **Scenario 4 (Gary Escalate - Escalate)**
-    - **Req 5 (Seamless Handoff)**: "Generates Case File... human starts at 90% done."
-
-- **Part 2: ADK Web (Technical/X-Factors)**
-  - **Scenario 5 (Jane Fraud - Fraud)**
-    - **X-Factor (Data Consistency)**: "Stated income ($0) contradicts tax record... proactively blocked."
-    - **Req 1 (Fraud API)**: Demonstrates integration.
-  - **Scenario 6 (Invalid ID - Resilience)**
-    - **Req (Graceful Failure)**: "returned a clear 'Record Not Found' error, halting the process safely."
-    - **NFR (Isolation)**: Each session is independent.
-  - **Scenario 3 (Maria - Policy Agility)**
-    - **X-Factor (Policy-as-Code)**: "Swapped policy doc... agent applies new rules."
-    - **Req 2 (Policy Updates)**: "Policy documents change weekly."
+### 6. Continuous UAT
+#### [NEW] `docs/UAT_CHECKLIST.md`
+- **Purpose**: A living document mapping `demo_task.txt` reqs to verification steps.
+- **Content**:
+    - [ ] Req 1: Parallel API Calls -> Verify logs show async execution.
+    - [ ] Req 4: Auto-approve < 5 mins -> Verify "Sarah Speed" case.
+    - [ ] Req 39: Rate Limits -> Verify `external_services` simulation.
+- **Workflow**: We will check off items in this file as we build/verify phases.
 
 ## Verification Plan
-
-### Automated Tests
-1. Run `uv run pytest` to ensure all tests pass.
-
-### Manual Verification
-1. Run `uv run streamlit run demo_app.py` -> Execute Scenarios 1, 2, 4.
-2. Run `uv run adk web .` -> Execute Scenarios 5, 6, 3 (via prompt).
+1.  **DLP Test**: Verify SSN masking.
+2.  **Dispatcher Test**: Verify `call_tool("get_credit_report")` works.
+3.  **End-to-End**: Run full flow with all features.
+4.  **UAT Run**: Walk through `docs/UAT_CHECKLIST.md` manually.

@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor User as Applicant
+    participant Portal as Streamlit Portal
+    participant Agents as Multi-Agent System
+    actor Senior as Senior Underwriter
+    participant External as External APIs & RAG
+
+    User->>Portal: Submit App & Upload Docs
+    Portal->>Agents: Initiate Automated Review
+    
+    rect rgb(230, 240, 255)
+        note right of Agents: PHASE 1: INVESTIGATION
+        Agents->>External: Parallel Data Gathering
+        Agents->>Agents: Multimodal Document Analysis
+    end
+
+    rect rgb(240, 255, 230)
+        note right of Agents: PHASE 2: POLICY COMPLIANCE
+        Agents->>External: Grounded retrieval (Vertex RAG)
+        Agents->>Agents: Automated Policy Review
+    end
+
+    rect rgb(255, 240, 240)
+        note right of Agents: PHASE 3: FINAL DECISION
+        alt Approved
+            Agents-->>Portal: Instant Approval
+        else Escalated (Borderline / Outage)
+            Agents-->>Senior: Handoff for Manual Review
+            Senior-->>Portal: Human Decision (Final)
+        end
+    end
+
+    Portal-->>User: Show Results & PDF Record

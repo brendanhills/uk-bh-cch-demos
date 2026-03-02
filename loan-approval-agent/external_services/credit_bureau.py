@@ -1,0 +1,48 @@
+import json
+import os
+import time
+import random
+from typing import Dict, Any
+
+from .simulation_utils import simulate_delay_async, is_service_down
+
+# Path to the local JSON database simulating the External Credit Bureau's data
+DATA_FILE = os.path.join(os.path.dirname(__file__), "data/credit_score.json")
+
+async def get_credit_report(gov_id: str) -> Dict[str, Any]:
+    """
+    Simulates an external Credit Bureau API Check.
+    
+    Args:
+        gov_id: The Government ID (SSN) of the applicant.
+        
+    Returns:
+        Dict: The full credit report or error message.
+    """
+    print(f"[ExternalAPI:CreditBureau] Received request for ID: {gov_id}")
+    
+    # Simulate API Latency (2 seconds)
+    await simulate_delay_async(2)
+    
+    # Check for external failure flag (Chaos Simulation)
+    if is_service_down("credit_bureau"):
+        print("[ExternalAPI:CreditBureau] 🚨 OUTAGE: Simulated 503 Service Unavailable")
+        return {"error": "Credit Bureau API is currently unavailable (External Downtime)."}
+
+    try:
+        with open(DATA_FILE, "r") as f:
+            data = json.load(f)
+            
+        # The JSON is keyed by Gov ID ("900-00-1234")
+        report = data.get(gov_id)
+        
+        if not report:
+            print(f"[ExternalAPI:CreditBureau] ID {gov_id} NOT FOUND")
+            return {"error": "Applicant not found in Credit Bureau"}
+            
+        print(f"[ExternalAPI:CreditBureau] Success. Score: {report.get('score', {}).get('value')}")
+        return report
+
+    except FileNotFoundError:
+        print("[ExternalAPI:CreditBureau] CRITICAL: DB File Missing")
+        return {"error": "System Error: Credit Database not found"}

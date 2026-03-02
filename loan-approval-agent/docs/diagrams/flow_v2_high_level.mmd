@@ -1,0 +1,40 @@
+sequenceDiagram
+    box "External / Public" #f9f9f9
+        actor User
+        participant App as Loan App (UI)
+    end
+    
+    box "Secure Internal Zone" #e1f5fe
+        participant Agent as Loan Agent
+        participant Human as Underwriter
+    end
+    
+    box "Third Party APIs" #fff3e0
+        participant Ext as External Services
+    end
+
+    User->>App: Submits Application
+    App->>Agent: Process Application
+    
+    Agent->>Agent: 1. Sanitize PII (DLP)
+    
+    rect rgb(240, 255, 240)
+        note right of Agent: Investigation
+        Agent->>Ext: Fetch Credit/Fraud/Emp
+        Ext-->>Agent: Raw Data
+    end
+    
+    Agent->>Agent: 2. Check Policy (RAG)
+    Agent->>Agent: 3. Assess Risk
+    
+    alt Auto-Approval
+        Agent-->>App: Approved
+        App-->>User: Success
+    else Denial
+        Agent-->>App: Denied (with Reason)
+        App-->>User: Failure
+    else Escalation
+        Agent-->>Human: Request Review
+        Human-->>App: Final Decision
+        App-->>User: Notification
+    end

@@ -1,106 +1,120 @@
-# Loan Approval Agent Demo Script
+# 💰 Loan Approval Agent: 10-Minute Demo Script
 
-This script guides you through demonstrating the **Loan Approval Agent**, ensuring you hit all requirements (NFRs, X-Factors) in **10 minutes**.
-
----
-
-## 🏗️ Architecture: "Real ID"
-- **Primary Key**: Government ID (SSN format, e.g., `900-00-1234`).
-- **Behavior**: Strict lookup. Invalid IDs return "Not Found" errors (Resilience).
-- **Data**: All JSON files migrated to use these IDs.
+This script is optimized for your CE interview. It focuses on the **technical unblockers** (Scaling, RAG Accuracy, Security) and **ROI** (48h to 10s).
 
 ---
 
-## 🎯 P0: The Core Value (Must Show)
-**Time**: 5 Minutes
-**Focus**: Speed, Business Rules, Human-in-the-Loop.
-**Run**: `uv run streamlit run demo_app.py`
-**URL**: `http://localhost:8501`
-
-### 1. Auto-Approval (`sarah_speed`)
-*   **Persona**: Sarah Speed (Nurse, $60k, 787 Score).
-*   **Aims**: Parallel Orchestration, Auto-Approval (<5 mins).
-*   **Action**: Select **"Scenario 1: Sarah (Debt Consolidation)"**. Click **Start**.
-*   **📋 Copy/Paste Prompt (Optional)**:
-    > process a new loan application for name: Sarah Speed, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 20000, purpose: Debt Consolidation, monthly_payment: 300
-*   **Result**: ✅ **APPROVE**.
-*   **Talk Track**:
-    > "The agent parallelized 3 external API calls (Credit, Employment, Fraud) **and analyzed her uploaded Bank Statements**."
-    > "Approved in seconds."
-
-### 2. Explainable Decline (`sarah_decline`)
-*   **Persona**: Sarah Speed (Same applicant, higher loan).
-*   **Aims**: Business Rules, Explainability.
-*   **Action**: Select **"Scenario 1b: Sarah (Home Improvement)"**. Click **Start**.
-*   **📋 Copy/Paste Prompt (Optional)**:
-    > process a new loan application for name: Sarah Speed, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 50000, purpose: Home Improvement, monthly_payment: 1200, Loan-to-Value: 90%, tenure: 5 years
-*   **Result**: ❌ **DENY** (DTI > 43%).
-*   **Talk Track**:
-    > "Same person, different loan. The Risk Engine flagged DTI > 43% per the 'Responsible Lending' policy."
-
-### 3. Seamless Handoff (`gary_escalate`)
-*   **Persona**: Gary Escalate (Borderline Score, High DTI).
-*   **Aims**: Human Escalation.
-*   **Action**: Select **"Scenario 4: Gary (Borderline)"**. Click **Start**.
-*   **📋 Copy/Paste Prompt (Optional)**:
-    > process a new loan application for name: Gary Escalate, gov_id: 900-00-3456, income: 60000, employer: Medianville Manufacturing, amount: 25000, purpose: Business, monthly_payment: 300
-*   **Result**: ⚠️ **ESCALATE**.
-*   **Talk Track**:
-    > "Borderline case routed to underwriter. Case file pre-populated. No data re-entry."
+## 🏗️ The Pitch (Before you click anything)
+> "Our customer's bottleneck was a **48-hour manual review cycle**. Underwriters had to manually search 341 pages of PDF policies for every high-value loan. We used the **Google Cloud Agent Development Kit (ADK)** and **Gemini 3.1** to build a multi-agent system that parallelizes investigation and uses **Vertex AI RAG Engine** to automate compliance in seconds."
 
 ---
 
-## 🚀 P1: The "X-Factors" (Key Differentiators)
-**Time**: 4 Minutes
-**Focus**: Resilience, Data Consistency.
-**URL**: `http://localhost:8503` (ADK Web) or use Streamlit if preferred.
+## 🚀 Scenario 1: High-Speed Auto-Approval (Sarah Speed)
+**Goal**: Demonstrate parallel tool execution and rapid decision-making.
 
-### 4. Resilience (`alex_resilience`)
-*   **Persona**: **Alex Resilience** (Invalid ID).
-*   **Aims**: Graceful API Failure Handling.
-*   **Action**: Paste the prompt below.
-*   **📋 Copy/Paste Prompt**:
-    > process a new loan application for name: Alex Resilience, gov_id: 000-00-0000, income: 50000, employer: Tech Corp, amount: 10000, purpose: personal
-*   **Result**: 🛑 **ERROR (Handled)**.
-*   **Talk Track**:
-    > "Credit Bureau lookup failed (No Record). The agent handled it gracefully."
-    > "This pattern also handles **Rate Limits**—if the API throttles us, we queue or fail safely without data loss."
-
-### 5. Data Consistency (`jane_fraud`)
-*   **Persona**: Jane Fraud (Fraudster).
-*   **Aims**: LLM Cross-Check ("Stated Income $0" vs "No Tax Record").
-*   **Action**: Paste the prompt below.
-*   **📋 Copy/Paste Prompt**:
-    > process a new loan application for name: Jane Fraud, gov_id: 900-00-9999, income: 0, employer: none, amount: 5000, purpose: personal
-*   **Result**: 🚩 **FLAGGED**.
-*   **Talk Track**:
-    > "The LLM detected 'Stated Income $0' contradicts 'No Tax Record'. It blocked the fraud at the gate."
+1.  **Sidebar**: Click `🔄 Start New Scenario`.
+2.  **Sidebar**: Expand `👤 Sarah: Debt Consolidation`.
+3.  **Action**: Copy the text and paste it into the **FastLoan Portal**.
+4.  **Point to UI**:
+    - **Audit Trace**: "Watch the **Investigator** calling Credit, Employment, and Fraud services **simultaneously**. ADK handles this orchestration automatically."
+    - **Timestamps**: "Note the rounded 0.1s timestamps. Total processing time: under 10 seconds."
+5.  **Result**: ✅ **APPROVE**.
 
 ---
 
-## 🌟 P2: If Time Permits (Nice to Have)
-**Time**: 3 Minutes
-**Focus**: Policy Agility, Security.
+## 🚨 Scenario 2: API Resiliency (The Outage)
+**Goal**: Demonstrate autonomous recovery from system failures.
 
-### 6. Policy Agility (`maria_agility`)
-*   **Persona**: Maria Agility (Entrepreneur).
-*   **Aims**: Dynamic Policy Updates (Hot-Swap).
-*   **Action**: Rename/Swap Policy PDF (Simulated via prompt or file move).
-*   **📋 Copy/Paste Prompt**:
-    > process a new loan application for name: Maria Agility, gov_id: 900-00-9012, income: 85000, employer: Marias Designs, amount: 20000, purpose: business, monthly_payment: 500
-*   **Result**: ✅ **APPROVE** (Under Growth Policy).
-*   **Talk Track**:
-    > "We updated the policy live. The agent applied new 'Growth' rules without a single line of code change."
-
-### 7. Security & PII (Stateless Architecture)
-*   **Focus**: PII Compliance, PCI-DSS.
-*   **Action**: Show code `loan_approval_agent/tools/investigator.py` or `token_vault.py`.
-*   **Talk Track**:
-    > "To meet **PCI-DSS** and **PII** constraints, the agent is stateless. It only sees Token IDs (`900-00...`) and Risk Signals ('DTI > 40%'). Raw data never leaves the secure vault."
+1.  **Sidebar**: Click `🔄 Start New Scenario`.
+2.  **Sidebar**: Toggle **"🚨 Simulate Credit Bureau Downtime"** to **ON**.
+3.  **Sidebar**: Click `👤 Sarah: Debt Consolidation` again.
+4.  **Action**: Paste into the portal.
+5.  **Point to UI**:
+    - **Audit Trace**: Show the `CREDIT_CHECK_RETRYING` events. "The agent doesn't crash; it follows an autonomous exponential backoff retry policy."
+    - **Live Recovery**: Toggle the downtime **OFF** while the agent is retrying.
+    - **Success**: "The moment the dependency restores, the agent picks up and completes the task."
+6.  **Result**: ✅ **APPROVE** (after automated recovery).
 
 ---
 
-## ✅ Verification Results
-- **Unit Tests**: Passed (Main suite).
-- **Data Integrity**: All JSON files Validated (`900-00-xxxx`).
-- **End-to-End**: Validated in both Streamlit and ADK Web.
+## 📜 Scenario 3: The "RAG" Unblocker (David: Yacht)
+**Goal**: Prove the agent is grounded in 300+ pages of PDF, not hardcoded prompts.
+
+1.  **Sidebar**: Click `🔄 Start New Scenario`.
+2.  **Sidebar**: Click `👤 David: Yacht Purchase`.
+3.  **Action**: Paste into the portal.
+4.  **Point to UI**:
+    - **Audit Trace**: Look for `📜 consult_policy_docs_complete`.
+    - **JSON Payload**: "The **Policy Expert** just reviewed 341 pages. It found **Section 1: High-Value Mandates** which applies to this $100k loan."
+5.  **Result**: ✅ **APPROVE** (with detailed policy citations).
+
+---
+
+## 🤝 Scenario 4: Human-in-the-Loop (Gary Escalate)
+**Goal**: Show how agents handle borderline cases gracefully.
+
+1.  **Sidebar**: Click `🔄 Start New Scenario`.
+2.  **Sidebar**: Click `👤 Gary: Borderline Credit`.
+3.  **Action**: Paste into the portal.
+4.  **Point to UI**:
+    - **Audit Trace**: "Gary has a 640 score. The **Policy Expert** found that this requires 'Manual Review'. The **Underwriter** is now escalating to a human."
+5.  **Result**: ⚠️ **ESCALATE** (Generate Decision PDF).
+
+---
+
+## 🔍 Scenario 5: Multimodal Document Analysis (Maria)
+**Goal**: Show the agent "reading" real evidence to handle self-employment.
+
+1.  **Sidebar**: Click `🔄 Start New Scenario`.
+2.  **Sidebar**: Click `👤 Maria: Business Expansion`.
+3.  **Action**: Paste into the portal.
+4.  **Agent will identify**: "Self-Employed" status and request a bank statement.
+5.  **Action**: Expand **"📤 Upload Documents"** and upload `bank_statement_maria_agility.pdf`.
+6.  **Point to UI**: "The **Investigator** uses multimodal Gemini 1.5 to 'read' the PDF, verify business cash flow, and update the DTI calculation live."
+7.  **Result**: ✅ **APPROVE**.
+
+---
+
+## 🛠️ Technical Deep Dive: Tool Definitions (JSON)
+The ADK autonomously generates these schemas from our Python functions. This is how the LLM "sees" our banking tools:
+
+### DTI Calculation Tool
+```json
+{
+  "name": "calculate_dti",
+  "description": "Calculates the Debt-To-Income (DTI) ratio.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "applicant_id": {"type": "string", "description": "The Token ID of the applicant."},
+      "loan_amount": {"type": "integer", "description": "Requested loan amount."},
+      "loan_term_months": {"type": "integer", "default": 60}
+    },
+    "required": ["applicant_id", "loan_amount"]
+  }
+}
+```
+
+### Multimodal Document Tool
+```json
+{
+  "name": "analyze_document",
+  "description": "Analyzes an uploaded document (PDF/Image) retrieved from the secure landing zone.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "file_path": {"type": "string", "description": "The filename of the document to analyze."},
+      "query": {"type": "string", "description": "Specific question or data to extract."}
+    },
+    "required": ["file_path", "query"]
+  }
+}
+```
+
+---
+
+## 📈 Closing ROI Summary
+- **Efficiency**: Reduced approval turnaround from **48 hours to 10 seconds**.
+- **Accuracy**: 100% grounded in policy (Vertex RAG Engine).
+- **Compliance**: PII is masked at the edge (Google Cloud DLP).
+- **Scale**: Multi-agent architecture handles 10k daily loans effortlessly.

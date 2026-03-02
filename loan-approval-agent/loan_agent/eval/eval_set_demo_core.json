@@ -1,0 +1,191 @@
+{
+  "eval_set_id": "loan_approval_demo_core",
+  "name": "Loan Approval - Core Demo Scenarios",
+  "description": "Core scenarios covering P0 (Core), P1 (Resilience), and P2 (Agility) with strict naming.",
+  "eval_cases": [
+    {
+      "eval_id": "sarah_speed",
+      "conversation": [
+        {
+          "invocation_id": "uuid-sarah-1",
+          "user_content": { 
+            "parts": [
+              {
+                "text": "process a new loan application for name: Sarah Speed, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 20000, purpose: Debt Consolidation, monthly_payment: 300"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { 
+            "parts": [
+              {
+                "text": "APPROVE"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ 
+              {
+                "args": {
+                  "applicant_id": "user_01"
+                },
+                "name": "credit_bureau_get_credit_report"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "loan_agent",
+        "user_id": "test_user_sarah",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "sarah_decline",
+      "conversation": [
+        {
+          "invocation_id": "uuid-sarah-2",
+          "user_content": {
+            "parts": [
+              {
+                "text": "process a new loan application for name: Sarah Speed, gov_id: 900-00-1234, income: 59758, employer: City Hospital, amount: 50000, purpose: Home Improvement, monthly_payment: 1200, Loan-to-Value: 90%, tenure: 5 years"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "DENY"
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "loan_agent",
+        "user_id": "test_user_sarah_2",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "gary_escalate",
+      "conversation": [
+        {
+          "invocation_id": "uuid-gary-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "process a new loan application for name: Gary Escalate, gov_id: 900-00-3456, income: 60000, employer: Medianville Manufacturing, amount: 10000, purpose: Home Improvement, monthly_payment: 300"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "ESCALATE"
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "loan_agent",
+        "user_id": "test_user_gary",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "alex_resilience",
+      "conversation": [
+        {
+          "invocation_id": "uuid-alex-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "process a new loan application for name: Alex Resilience, gov_id: 000-00-0000, income: 50000, employer: Tech Corp, amount: 10000, purpose: personal"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "ERROR"
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": { 
+        "app_name": "loan_agent",
+        "user_id": "test_user_alex",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "jane_fraud",
+      "conversation": [
+        {
+          "invocation_id": "uuid-jane-1",
+          "user_content": { 
+            "parts": [
+              {
+                "text": "process a new loan application for name: Jane Fraud, gov_id: 900-00-9999, income: 0, employer: none, amount: 5000, purpose: personal"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { 
+            "parts": [
+              {
+                "text": "FLAGGED"
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "loan_agent",
+        "user_id": "test_user_jane",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "maria_agility",
+      "conversation": [
+        {
+          "invocation_id": "uuid-maria-1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "process a new loan application for name: Maria Agility, gov_id: 900-00-9012, income: 85000, employer: Marias Designs, amount: 20000, purpose: business, monthly_payment: 500"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "APPROVE"
+              }
+            ],
+            "role": "model"
+          }
+        }
+      ],
+      "session_input": { 
+        "app_name": "loan_agent",
+        "user_id": "test_user_maria",
+        "state": {}
+      }
+    }
+  ]
+}

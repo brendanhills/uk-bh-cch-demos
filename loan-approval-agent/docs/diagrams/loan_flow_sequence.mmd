@@ -1,0 +1,42 @@
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as Streamlit UI
+    participant Agent as Loan Manager
+    participant Tools as Tools/Services
+
+    User->>UI: Submit Application
+    UI->>Agent: Process Loan(Application)
+    activate Agent
+    
+    Agent->>Tools: Register Application
+    Tools-->>Agent: Application ID
+    
+    par Investigation
+        Agent->>Tools: Check Credit
+        Agent->>Tools: Verify Employment
+        Agent->>Tools: Check Fraud
+    end
+    
+    Tools-->>Agent: Credit Report
+    Tools-->>Agent: Employment Status
+    Tools-->>Agent: Fraud Risk Score
+    
+    Agent->>Tools: Analyze Risk (DTI, etc.)
+    Tools-->>Agent: Risk Assessment
+    
+    alt Needs Policy Check
+        Agent->>Tools: Consult Policy (RAG)
+        Tools-->>Agent: Policy Guidelines
+    end
+    
+    alt Auto-Approve
+        Agent->>UI: Approved
+    else Needs Review
+        Agent->>UI: Escalated to Human
+    else Denied
+        Agent->>UI: Denied
+    end
+    
+    deactivate Agent
+```

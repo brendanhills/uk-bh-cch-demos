@@ -1,0 +1,27 @@
+graph TD
+    User[User / Demo UI] --> |"Assess loan for {id}..."| LM[Loan Manager Agent<br/><i>Gemini 3 Flash</i>]
+
+    subgraph Agents
+        LM --> |"Investigation Request"| INV[Investigator Agent<br/><i>Gemini 3 Flash</i>]
+        LM --> |"Policy Check"| POL[Policy Expert Agent<br/><i>Gemini 3.1 Pro (Thinking: HIGH)</i>]
+        LM --> |"Risk Assessment"| UNDERWRITER[Underwriter Agent<br/><i>Gemini 3.1 Pro (Thinking: HIGH)</i>]
+    end
+
+    subgraph "External Integrations"
+        INV --> |calls| CR[loan_agent/tools/credit_bureau.py]
+        INV --> |calls| EMP[loan_agent/tools/employment_service.py]
+        INV --> |calls| FR[loan_agent/tools/fraud_service.py]
+    end
+
+    subgraph "Internal Integrations"
+        POL --> |calls| POL_DOCS[loan_agent/sub_agents/policy_expert/tools.py]
+        UNDERWRITER --> |calls| UNDER_TOOLS[loan_agent/sub_agents/underwriter/tools.py]
+    end
+
+    subgraph "Data Simulation"
+        CR --> |reads| CB[credit_score.json]
+        EMP --> |reads| ER[employment_registry.json]
+        FR --> |reads| FW[fraud_profiles.json]
+        
+        POL_DOCS --> |reads| P[data/policy_docs/*.pdf]
+    end

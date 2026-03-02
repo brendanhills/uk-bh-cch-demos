@@ -1,0 +1,58 @@
+{
+  "900-00-1234": {
+    "applicant_id": "900-00-1234",
+    "employer": {
+      "name": "City Hospital",
+      "address": "123 Med Lane, Metropolis",
+      "phone": "555-0199"
+    },
+    "employment": {
+      "status": "Active",
+      "title": "Registered Nurse",
+      "start_date": "2018-05-15",
+      "verifiedAnnualIncome": 59758
+    }
+  },
+  "900-00-5678": {
+    "applicant_id": "900-00-5678",
+    "employer": {
+      "name": "Tech Giant Corp",
+      "address": "1 Infinite Loop, Tech City",
+      "phone": "555-0200"
+    },
+    "employment": {
+      "status": "Active",
+      "title": "Senior Software Engineer",
+      "start_date": "2021-03-10",
+      "verifiedAnnualIncome": 175000
+    }
+  },
+  "900-00-3456": {
+    "applicant_id": "900-00-3456",
+    "employer": {
+      "name": "Medianville Manufacturing",
+      "address": "456 Industrial Pkwy",
+      "phone": "555-0300"
+    },
+    "employment": {
+      "status": "Active",
+      "title": "Shift Manager",
+      "start_date": "2015-11-01",
+      "verifiedAnnualIncome": 60000
+    }
+  },
+  "900-00-9012": {
+    "applicant_id": "900-00-9012",
+    "employer": {
+      "name": "Maria's Designs",
+      "address": "789 Art Ave",
+      "phone": "555-0400"
+    },
+    "employment": {
+      "status": "Active",
+      "title": "Owner/Designer",
+      "start_date": "2022-01-01",
+      "verifiedAnnualIncome": 85000
+    }
+  }
+}

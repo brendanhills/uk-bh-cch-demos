@@ -19,6 +19,7 @@ dependencies = [
     "reportlab>=4.4.10",
     "google-cloud-dlp>=3.34.0",
     "pytest-coverage>=0.0",
+    "pytest-depends>=1.0.1",
 ]
 
 [dependency-groups]
@@ -31,6 +32,8 @@ dev = [
     "codespell>=2.2.0",
     "types-pyyaml>=6.0.12.20240917",
     "types-requests>=2.32.0.20240914",
+    "pytest-depends>=1.0.1",
+    "pytest-ordering>=0.6",
 ]
 
 deployment = [
@@ -45,13 +48,13 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.hatch.build.targets.wheel]
 # Ensures Hatchling finds the package folder correctly
-packages = ["loan_approval_agent"]
+packages = ["loan_agent"]
 
 [tool.agent-starter-pack]
 example_question = "Assess loan for applicant 9813ee1d"
 
 [tool.agent-starter-pack.settings]
-agent_directory = "loan_approval_agent"
+agent_directory = "loan_agent"
 
 [build-system]
 requires = ["hatchling"]

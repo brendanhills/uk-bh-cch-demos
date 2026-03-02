@@ -1,0 +1,30 @@
+graph TD
+    User([Applicant]) --> UI[FastLoan Portal<br/>Streamlit]
+    UI --> Manager[Loan Manager Agent<br/>Gemini 3.1 Flash]
+    
+    Manager --> Invest[Investigator Agent<br/>Gemini 3.1 Flash]
+    Manager --> Policy[Policy Expert Agent<br/>Gemini 3.1 Pro<br/>Thinking: HIGH]
+    Manager --> Underwriter[Underwriter Agent<br/>Gemini 3.1 Pro<br/>Thinking: HIGH]
+
+    subgraph "External Boundaries"
+        Bureau[Credit Bureau API]
+        Registry[Employment Registry]
+        Fraud[Fraud Service]
+    end
+
+    subgraph "Knowledge & Policy"
+        RAG[Vertex AI RAG Engine]
+        GCS[(GCS Bucket: Policy PDFs)]
+    end
+
+    subgraph "Compliance"
+        DLP[Google Cloud DLP]
+        Audit[(Audit Logs)]
+    end
+
+    Invest --> Bureau & Registry & Fraud
+    Policy --> RAG
+    RAG --> GCS
+    
+    Audit -.-> DLP -.-> UI
+    Underwriter --> PDF[Decision PDF]

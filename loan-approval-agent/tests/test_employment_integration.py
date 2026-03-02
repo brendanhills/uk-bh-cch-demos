@@ -1,0 +1,17 @@
+import pytest
+from loan_agent.tools.employment_service import verify_employment
+from external_services.employment_registry import DATA_FILE
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.depends(name="unit_tests"),
+    pytest.mark.run(order=1)
+]
+
+@pytest.mark.asyncio
+async def test_verify_employment_sarah():
+    result = await verify_employment("900-00-1234")
+    print(f"\nResult: {result}")
+    assert "error" not in result
+    assert result["employer"] == "City Hospital"
+    assert result["verified_annual_income"] == 59758

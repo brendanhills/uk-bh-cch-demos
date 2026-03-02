@@ -1,0 +1,70 @@
+graph LR
+    %% Detailed Architecture - V2.8 (Safe Labels)
+
+    subgraph UserZone [User and Frontend]
+        direction TB
+        User([Applicant])
+        UI[Streamlit App]
+        Uploader[File Uploader]
+    end
+
+    subgraph SecureZone [Secure Internal Environment]
+        style SecureZone fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+        
+        DLP[DLP Guardian]
+        Orch[Loan Manager]
+        
+        subgraph Agents [Specialized Agents]
+            direction TB
+            Invest[Investigator]
+            Policy[Policy Expert]
+            Risk[Underwriter]
+        end
+        
+        Disp[Tool Dispatcher]
+        Vault[(Token Vault)]
+        
+        %% Internal Resources
+        RiskModel[Risk Scoring Model]
+        HistoryDB[Historical Decisions DB]
+    end
+
+    subgraph ExternalZone [External Simulated Services]
+        style ExternalZone fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+        direction TB
+        
+        Credit[Credit Bureau API]
+        Fraud[Fraud Detection API]
+        Emp[Employment Verification API]
+        Bank[Bank Statement Analysis API]
+        Conf[Confluence Policy Docs]
+    end
+
+    %% Flow
+    User --> UI
+    UI -- "1. Input" --> DLP
+    DLP -- "2. Sanitized" --> Orch
+    
+    Orch -- "3. Delegate" --> Disp
+    Disp --> Agents
+    
+    Invest -- "4. Fetch Data" --> Credit
+    Invest --> Fraud
+    Invest --> Emp
+    Invest --> Bank
+    
+    Policy -- "4. RAG Retrieval" --> Conf
+    
+    Risk --> RiskModel
+    Risk --> HistoryDB
+    
+    %% Connections for Context
+    Invest -.-> Vault
+    Risk -.-> Human([Human Review])
+    
+    %% Classes
+    classDef plain fill:#fff,stroke:#333,stroke-width:1px;
+    classDef highlight fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    
+    class User,UI plain;
+    class Orch,DLP highlight;

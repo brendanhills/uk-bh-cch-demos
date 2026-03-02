@@ -2,7 +2,13 @@ import pytest
 import os
 import shutil
 import json
-from loan_approval_agent.tools.audit_logger import log_event, LOG_FILE, LOG_DIR
+from loan_agent.utils.audit_logger import log_event, LOG_FILE, LOG_DIR
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.depends(name="unit_tests"),
+    pytest.mark.run(order=1)
+]
 
 @pytest.fixture
 def clean_audit_dir():
@@ -31,12 +37,12 @@ def test_audit_logger_creates_file(clean_audit_dir):
 def test_audit_logger_masks_pii(clean_audit_dir):
     """Test that PII is masked in the logs."""
     sensitive_data = {
-        "ssn": "123-45-6789",
+        "ssn": "411-55-6789",
         "nested": {
             "account_number": "123456789",
             "safe": "value"
         },
-        "description": "User has SSN 123-45-6789 in text."
+        "description": "User has SSN 411-55-6789 in text."
     }
     
     log_event("user456", "SENSITIVE_EVENT", sensitive_data)
@@ -47,13 +53,12 @@ def test_audit_logger_masks_pii(clean_audit_dir):
         details = entry["details"]
         
         # Check direct key masking
-        assert details["ssn"] == "***-**-****"
+        assert details["ssn"] == "*****"
         
         # Check nested key masking
         assert details["nested"]["account_number"] == "*****"
         assert details["nested"]["safe"] == "value"
         
-        # Check regex masking in string (if implemented)
-        # The current implementation checks for SSN regex in strings
-        assert "***-**-****" in details["description"]
-        assert "123-45-6789" not in details["description"]
+        # Check masking in string (DLP typically uses [INFO_TYPE])
+        assert "411-55-6789" not in details["description"]
+        assert "[" in details["description"] and "]" in details["description"]

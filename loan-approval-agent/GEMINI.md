@@ -8,17 +8,20 @@ This project is a sophisticated multi-agent system designed for automated loan u
 - **Main Technologies**: 
     - **Language**: Python 3.12+ (managed with `uv`)
     - **AI Framework**: Google Cloud ADK (`google-adk`)
-    - **Models**: Gemini 2.5/3 (Flash/Pro) via Vertex AI.
+    - **Security**: Google Cloud DLP (Sensitive Data Protection) for PII masking. Proactive prompt injection guardrail (Production target: **Model Armor**).
+    - **Models**: 
+        - **Flash**: `gemini-3.1-flash-preview` for high-speed orchestration and data gathering.
+        - **Pro**: `gemini-3.1-pro-preview` with **ThinkingLevel: HIGH** for complex policy reasoning and underwriting.
     - **UI**: Streamlit (for the interactive dashboard).
-    - **Data/Docs**: Local mock databases (JSON) and PDF policy documents (RAG).
+    - **RAG Engine**: **Vertex AI RAG Engine** (Cloud-native retrieval grounded in GCS).
 
 ## Architecture
 
 The system uses a hierarchical multi-agent structure:
-- **Loan Manager (Orchestrator)**: The root agent (`loan_approval_agent/agent.py`) that manages the interaction flow and delegates tasks to specialized sub-agents.
-- **Investigator Agent**: Gathers applicant data from mock services (Credit, Employment, Fraud).
-- **Policy Expert Agent**: Performs RAG against lending policy PDFs to provide guidance.
-- **Underwriter Agent (Risk Analyst)**: Synthesizes findings and makes the final decision (Approve/Deny/Escalate).
+- **Loan Manager (Orchestrator)**: The root agent (`loan_agent/agent.py`) using **Gemini 3.1 Flash**. Manages the interaction flow and delegates tasks.
+- **Investigator Agent**: Gathers applicant data using **Gemini 3.1 Flash**.
+- **Policy Expert Agent**: Performs **Hybrid RAG** (Vertex AI RAG Engine + Local fallback) against 300+ pages of policy PDFs using **Gemini 3.1 Pro (Thinking: HIGH)**.
+- **Underwriter Agent (Risk Analyst)**: Synthesizes findings using **Gemini 3.1 Pro (Thinking: HIGH)** to make the final decision with strict policy citations.
 
 ## Building and Running
 
@@ -28,31 +31,34 @@ The system uses a hierarchical multi-agent structure:
   ```
 - **Run Streamlit Dashboard**: 
   ```bash
-  uv run streamlit run demo_app.py
+  uv run streamlit run demo_frontend/app.py
   ```
 - **Run Tests**: 
   ```bash
   uv run pytest
   ```
-- **Deploy to Vertex AI**: 
+- **Sync Policy to RAG**:
   ```bash
-  uv run deployment/deploy.py --create
+  uv run python scripts/sync_policy_rag.py
   ```
 
 ## Development Conventions
 
 - **Tool Execution**: Always use `uv` to run any Python script or tool (e.g., `uv run ...`).
-- **Model Usage**: Mandatory use of Gemini models version 2.5 or higher.
-- **Agent Structure**: Agents are defined using `google.adk` and are located in `loan_approval_agent/` and `loan_approval_agent/sub_agents/`.
+- **Model Usage**: Mandatory use of Gemini models version 3.1 or higher.
+- **Agent Structure**: Agents are defined using `google.adk` and are located in `loan_agent/` and `loan_agent/sub_agents/`.
 - **Latency Mode**: Controlled via `LATENCY_MODE` in `.env`. Set to `TESTING` for near-instant responses during development/testing, or `REALISTIC` for demo simulations.
-- **Mock Data**: Use the standardized mock applicants and IDs (e.g., `900-00-1234` for "Sarah Speed") found in `loan_approval_agent/data/demo_data/applicants.json`.
-- **Policy Documents**: Policy PDFs are located in `loan_approval_agent/data/policy_docs/`.
+- **Mock Data**: 
+    - **External Source**: Standardized mock applicants and IDs (e.g., `900-00-1234` for "Sarah Speed") found in `external_services/data/applicants.json`.
+    - **Demo Scenarios**: Presentation scenarios and prompts found in `demo_frontend/data/scenarios.json`.
+    - **Internal Logs**: Audit trails stored in `loan_agent/data/audit_logs/`.
+- **Policy Documents**: Policy PDFs are located in `external_services/confluence/` and mirrored in the **Vertex AI RAG Corpus**.
 
 ## Key Files & Directories
 
-- `loan_approval_agent/agent.py`: Root agent definition.
-- `loan_approval_agent/sub_agents/`: Directory containing specialized agents.
-- `loan_approval_agent/tools/`: Shared tools for data retrieval, logging, and decision making.
-- `demo_app.py`: Main Streamlit application entry point.
-- `.agents/rules/`: Project-specific AI agent instructions and constraints.
-- `docs/`: Technical documentation, including `IMPLEMENTATION_PLAN.md` and `DEMO.md`.
+- `loan_agent/agent.py`: Root agent definition.
+- `loan_agent/sub_agents/`: Directory containing specialized agents.
+- `loan_agent/tools/`: Shared tools for data retrieval, logging, and decision making.
+- `demo_frontend/app.py`: Main Streamlit application entry point.
+- `loan_agent/utils/dlp_guardian.py`: Cloud DLP integration for PII masking.
+- `loan_agent/sub_agents/policy_expert/tools.py`: Hybrid RAG implementation.

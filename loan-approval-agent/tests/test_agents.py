@@ -1,28 +1,35 @@
 import pytest
 import os
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+# Mark as unit test dependency
+pytestmark = [
+    pytest.mark.depends(name="unit_tests"),
+    pytest.mark.run(order=1)
+]
 
 # Add project root to path
 sys.path.append(os.getcwd())
 
-from loan_approval_agent import config
+from loan_agent import config
 # Set latency to testing mode for speed
 config.LATENCY_MODE = "TESTING"
 
-from loan_approval_agent.sub_agents.investigator import tools as inv_tools
-from loan_approval_agent.sub_agents.policy_expert import tools as pol_tools
-from loan_approval_agent.sub_agents.underwriter import tools as und_tools
+from loan_agent.sub_agents.investigator import tools as inv_tools
+from loan_agent.sub_agents.policy_expert import tools as pol_tools
+from loan_agent.sub_agents.underwriter import tools as und_tools
 
-from loan_approval_agent.tools import token_vault
+from loan_agent.utils import token_vault
 
-def test_investigator_credit_report():
+@pytest.mark.asyncio
+async def test_investigator_credit_report():
     # Test with a known valid ID (Sarah Speed)
     raw_id = "900-00-1234"
     # Tokenize first (simulating Intake)
     token_id = token_vault.tokenize(raw_id)
     
-    report = inv_tools.get_credit_report(token_id)
+    report = await inv_tools.get_credit_report(token_id)
     
     # Check for expected keys or error structure
     if "error" in report:
@@ -33,10 +40,11 @@ def test_investigator_credit_report():
     # verify_employment returns "applicant_id": "900-00-1234"
     assert "score" in report
 
-def test_investigator_employment():
+@pytest.mark.asyncio
+async def test_investigator_employment():
     raw_id = "900-00-1234"
     token_id = token_vault.tokenize(raw_id)
-    emp = inv_tools.verify_employment(token_id)
+    emp = await inv_tools.verify_employment(token_id)
     
     if "error" in emp:
          pytest.fail(f"Employment check returned error: {emp['error']}")
@@ -44,10 +52,11 @@ def test_investigator_employment():
     assert "verified_annual_income" in emp
     assert "status" in emp
 
-def test_investigator_fraud():
+@pytest.mark.asyncio
+async def test_investigator_fraud():
     raw_id = "900-00-1234"
     token_id = token_vault.tokenize(raw_id)
-    fraud = inv_tools.check_fraud_risk(token_id)
+    fraud = await inv_tools.check_fraud_risk(token_id)
     
     if "error" in fraud:
         pytest.fail(f"Fraud check returned error: {fraud['error']}")
@@ -55,22 +64,18 @@ def test_investigator_fraud():
     assert "risk_level" in fraud
 
 def test_policy_expert_pdf_reading():
-    # Check if the Master Policy exists and is readable
-    policy_path = "loan_approval_agent/data/policy_docs/Master_Lending_Policy_v2024.pdf"
-    assert os.path.exists(policy_path), "Master Policy PDF not found"
+    # Test the actual tool
+    from loan_agent.sub_agents.policy_expert.tools import consult_policy_docs
     
-    # Test the tool
-    # Note: consult_policy_docs calls the LLM, which we might want to mock for a unit test
-    # BUT, we can test the helper function `_read_policy_docs` if it exists, or just mock the dependencies.
-    # For now, let's just verify the file exists and is a valid PDF using pypdf directly
-    import pypdf
-    try:
-        reader = pypdf.PdfReader(policy_path)
-        assert len(reader.pages) > 0
-        text = reader.pages[0].extract_text()
-        assert len(text) > 0
-    except Exception as e:
-        pytest.fail(f"Failed to read Master Policy PDF: {e}")
+    # Empty query should return top chunks
+    result = consult_policy_docs("", applicant_id="TEST_UNIT")
+    
+    # Check for expected content or error
+    if "Error:" in result:
+        pytest.fail(f"consult_policy_docs returned error: {result}")
+        
+    assert "Hybrid RAG Search Results" in result
+    assert "CITATION:" in result or "Source:" in result
 
 def test_underwriter_decision_record():
     result = und_tools.record_decision(

@@ -1,0 +1,72 @@
+sequenceDiagram
+    box "Public Zone" #fafafa
+        actor User as Applicant
+        participant UI as Self-Service Portal
+    end
+    
+    box "Secure Internal Zone" #e8f5e9
+        participant DLP as Sensitive Data Protection
+        participant Orch as Loan Manager Orchestrator
+        participant Invest as Investigator Agent
+        participant Policy as Policy Expert Agent
+        participant Underwriter as Underwriter Agent
+    end
+    
+    box "Review Zone" #f3e5f5
+        actor Senior as Senior Underwriter
+    end
+
+    box "External APIs" #fff8e1
+        participant External as External Banking APIs
+    end
+
+    User->>UI: Submit Application & Upload PDF
+    UI->>DLP: inspect(input_text)
+    DLP-->>UI: sanitized_text
+    
+    UI->>Orch: "Process this loan..."
+    
+    rect rgb(230, 240, 255)
+        note right of Orch: Investigation Phase (Parallel & Resilient)
+        Orch->>Invest: gather_evidence(applicant_id)
+        
+        loop Exponential Backoff
+            Invest->>External: fetch_data()
+            alt Service Unavailable
+                External-->>Invest: 503 Error
+                Invest-->>Invest: Autonomous Retry (1s, 2s, 4s...)
+            else Success
+                External-->>Invest: Data Response
+            end
+        end
+        
+        Invest->>Invest: Multimodal Analysis of Evidence
+        Invest-->>Orch: Investigation Report
+    end
+
+    rect rgb(240, 255, 230)
+        note right of Orch: Policy Phase
+        Orch->>Policy: check_eligibility(report)
+        Policy->>External: Grounded Semantic Search (RAG)
+        External-->>Policy: Policy Guidelines & Tiers
+        Policy-->>Orch: Policy Assessment
+    end
+
+    rect rgb(255, 240, 240)
+        note right of Orch: Decision Phase
+        Orch->>Underwriter: make_decision(assessment, report)
+        
+        alt Straight-Through Processing
+            Underwriter-->>Orch: APPROVE / DENY
+            Orch-->>DLP: Finalize
+        else Escalation Required (Outage / Borderline)
+            Underwriter-->>Orch: ESCALATE
+            Orch-->>Senior: Handoff for Manual Review
+            Senior->>Senior: Evaluate Reasoning Trace
+            Senior-->>Orch: Override / Final Decision
+        end
+    end
+
+    Orch-->>DLP: Final Response
+    DLP-->>UI: Redacted Response
+    UI->>User: Show Outcome & Generate PDF

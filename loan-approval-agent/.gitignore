@@ -40,9 +40,13 @@ data/decisions/
 data/external_data/
 artifacts/uploads/*
 !artifacts/uploads/.pag
-loan_approval_agent/data/audit_logs/
 loan_approval_agent/data/decisions/
+
 
 # Node
 node_modules/
 package-lock.json
+
+loan_agent/data/uploads/*
+external_services/failure_configs.json
+loan_agent/data/audit_logs/events.jsonl

@@ -1,0 +1,45 @@
+graph LR
+    %% High Level Architecture - V3 (Clean / Production View)
+
+    subgraph Front [Customer Channel]
+        User([Applicant])
+        UI[Self-Service Portal]
+    end
+
+    subgraph Core [Multi-Agent Orchestration]
+        style Core fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+        Manager[Loan Manager]
+        
+        Invest[Investigator Agent]
+        Policy[Policy Expert Agent]
+        Under[Underwriter Agent]
+    end
+
+    subgraph Data [Enterprise Services]
+        style Data fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+        APIs[External Banking APIs]
+        RAG[Vertex AI RAG Engine]
+        DLP[Sensitive Data Protection]
+    end
+
+    subgraph Review [Human Oversight]
+        Senior([Senior Underwriter])
+    end
+
+    %% Flow
+    User --> UI
+    UI <--> Manager
+    
+    Manager --> Invest
+    Manager --> Policy
+    Manager --> Under
+    
+    Invest <--> APIs
+    Policy <--> RAG
+    
+    %% The "Hand Back"
+    Under -- "Decision / Escalation" --> Manager
+    Manager -- "Manual Review" --> Senior
+    Senior -- "Final Approval" --> UI
+    
+    UI -.-> DLP

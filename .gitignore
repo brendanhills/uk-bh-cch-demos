@@ -61,3 +61,8 @@ capita/transcribe/.coverage
 capita/transcribe/REMINDER.md
 capita/transcribe/samples/*
 capita/transcribe/output/*
+data/decisions/*
+capita/transcribe/output/*
+capita/transcribe/.coverage
+loan-approval-agent/loan_agent/data/decisions/*
+loan-approval-agent/loan_agent/data/audit_logs/*
