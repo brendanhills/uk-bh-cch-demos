@@ -3,7 +3,7 @@ from loan_agent.utils.tool_dispatcher import call_tool
 from loan_agent.utils.audit_logger import log_event
 from loan_agent.utils import token_vault
 
-async def verify_employment(applicant_id: str, company: str = None, application_id: str = None, simulate_failure: bool = False) -> Dict[str, Any]:
+async def verify_employment(applicant_id: str, company: str = None, application_id: str = None) -> Dict[str, Any]:
     """
     Verifies employment via the External Service.
     """
@@ -14,8 +14,7 @@ async def verify_employment(applicant_id: str, company: str = None, application_
     # Call Dispatcher
     result = await call_tool("verify_employment", {
         "gov_id": raw_gov_id,
-        "company": company,
-        "simulate_failure": simulate_failure
+        "company": company
     })
     
     if "error" in result:

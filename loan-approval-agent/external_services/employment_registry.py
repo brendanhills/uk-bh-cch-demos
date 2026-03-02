@@ -8,7 +8,7 @@ from .simulation_utils import simulate_delay_async
 # Path to local JSON database
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data/employment_registry.json")
 
-async def verify_employment(gov_id: str, company: str = None, simulate_failure: bool = False) -> Dict[str, Any]:
+async def verify_employment(gov_id: str, company: str = None) -> Dict[str, Any]:
     """
     Simulates an external Employment Verification API (e.g., Workday/The Work Number).
     """
@@ -18,10 +18,6 @@ async def verify_employment(gov_id: str, company: str = None, simulate_failure: 
     import random
     delay = random.uniform(5, 30)
     await simulate_delay_async(delay)
-    
-    if simulate_failure:
-        print("[ExternalAPI:EmploymentRegistry] Simulated 503 Service Unavailable")
-        return {"error": "Employment Registry API is currently unavailable (Simulated Downtime)."}
     
     try:
         with open(DATA_FILE, "r") as f:

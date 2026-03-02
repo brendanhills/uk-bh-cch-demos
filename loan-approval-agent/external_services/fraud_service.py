@@ -10,18 +10,13 @@ import os
 # Path to the local JSON database simulating the External Fraud Detection API
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data/fraud_profiles.json")
 
-async def check_fraud_risk(gov_id: str, simulate_failure: bool = False) -> Dict[str, Any]:
+async def check_fraud_risk(gov_id: str) -> Dict[str, Any]:
     """
     Simulates an external Fraud Detection API (e.g. Fraud.net).
     Returns a risk score and flags.
     """
     print(f"[ExternalAPI:FraudNet] Checking ID: {gov_id}")
     await simulate_delay_async(1) # Latency
-    
-    if simulate_failure:
-        print("[ExternalAPI:FraudNet] Simulated 503 Service Unavailable")
-        return {"error": "Fraud Detection API is currently unavailable (Simulated Downtime)."}
-    
     
     try:
         with open(DATA_FILE, "r") as f:
