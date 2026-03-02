@@ -6,6 +6,13 @@
       "amount": 5000,
       "outcome": "APPROVED",
       "status": "PAID_OFF"
+    },
+    {
+      "date": "2022-01-15",
+      "loan_id": "L-11023",
+      "amount": 2500,
+      "outcome": "APPROVED",
+      "status": "PAID_OFF"
     }
   ],
   "900-00-3456": [
@@ -15,7 +22,31 @@
       "amount": 2000,
       "outcome": "APPROVED",
       "status": "ACTIVE"
+    },
+    {
+      "date": "2021-06-20",
+      "loan_id": "L-00921",
+      "amount": 10000,
+      "outcome": "DENIED",
+      "status": "N/A",
+      "reason": "Insufficient Income"
     }
   ],
-  "900-00-9999": []
+  "900-00-9999": [],
+  "900-00-5678": [
+    {
+      "date": "2025-08-10",
+      "loan_id": "L-99213",
+      "amount": 50000,
+      "outcome": "APPROVED",
+      "status": "ACTIVE"
+    },
+    {
+      "date": "2023-04-12",
+      "loan_id": "L-44567",
+      "amount": 25000,
+      "outcome": "APPROVED",
+      "status": "PAID_OFF"
+    }
+  ]
 }
