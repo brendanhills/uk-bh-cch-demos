@@ -4,6 +4,7 @@ import asyncio
 import sys
 import os
 import uuid
+import shutil
 from datetime import datetime, timezone
 from google.adk.runners import InMemoryRunner
 from google.genai.types import Part, UserContent
@@ -35,9 +36,13 @@ def get_runner():
 # Paths & State
 LOG_PATH = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
 DECISION_DIR = os.path.join(BASE_DIR, "loan_agent/data/decisions")
-UPLOAD_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
+# SIMULATED CUSTOMER PC (Artifacts)
+CUSTOMER_PC_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
+# AGENT SECURE LANDING ZONE (System)
+AGENT_UPLOAD_DIR = os.path.join(BASE_DIR, "loan_agent/data/uploads")
+
 os.makedirs(DECISION_DIR, exist_ok=True)
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(AGENT_UPLOAD_DIR, exist_ok=True)
 
 # Data paths for scenarios
 APPLICANTS_PATH = os.path.join(BASE_DIR, "external_services/data/applicants.json")
@@ -61,7 +66,10 @@ if st.sidebar.button("🔄 Start New Scenario", use_container_width=True, type="
     st.session_state["session_id"] = str(uuid.uuid4())
     st.session_state["scenario_start_time"] = datetime.now(timezone.utc).isoformat()
     st.session_state["uploaded_files"] = []
-    # Clear decisions for a fresh feel
+    # Clear system uploads for a fresh feel
+    for f in os.listdir(AGENT_UPLOAD_DIR):
+        os.remove(os.path.join(AGENT_UPLOAD_DIR, f))
+    # Clear decisions
     for f in os.listdir(DECISION_DIR):
         os.remove(os.path.join(DECISION_DIR, f))
     st.rerun()
@@ -104,6 +112,8 @@ st.sidebar.subheader("⚙️ Settings")
 latency_mode = st.sidebar.radio("Latency:", ["TESTING", "REALISTIC"], index=0)
 config.LATENCY_MODE = latency_mode
 
+simulate_failure = st.sidebar.toggle("🚨 Simulate API Downtime", value=False, help="Forces external tools (e.g. Credit Bureau) to fail to test resilience.")
+
 # --- LAYOUT ---
 c_portal, c_audit = st.columns([0.6, 0.4], gap="large")
 
@@ -113,15 +123,42 @@ with c_audit:
     
     # Decision Records Download (Persona: Auditor)
     pdf_files = [f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf")]
-    # Sort by modification time (mtime) - most recent first
     pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(DECISION_DIR, x)), reverse=True)
     
     if pdf_files:
         st.subheader("📄 Compliance Artifacts")
-        # Show top 5 most recent
-        for pdf in pdf_files[:5]:
-            with open(os.path.join(DECISION_DIR, pdf), "rb") as f:
-                st.download_button(f"⬇️ {pdf}", f, file_name=pdf, key=f"dl_{pdf}")
+        current_app_id = None
+        if os.path.exists(LOG_PATH):
+            with open(LOG_PATH, "r") as f:
+                log_lines = f.readlines()
+                for line in reversed(log_lines):
+                    try:
+                        data = json.loads(line)
+                        if data.get("application_id") and data.get("application_id") != "N/A":
+                            current_app_id = data["application_id"]
+                            break
+                    except: pass
+
+        current_pdf = None
+        if current_app_id:
+            for f in pdf_files:
+                if current_app_id in f:
+                    current_pdf = f
+                    break
+        
+        if current_pdf:
+            st.write(f"**Current Application: {current_app_id}**")
+            with open(os.path.join(DECISION_DIR, current_pdf), "rb") as f:
+                st.download_button(f"⬇️ Download Decision Record ({current_app_id})", f, file_name=current_pdf, key="dl_current", type="primary", use_container_width=True)
+        else:
+            st.info("Waiting for final decision artifact...")
+
+        other_pdfs = [f for f in pdf_files if f != current_pdf]
+        if other_pdfs:
+            with st.expander("📚 Decision History (Previous Sessions)", expanded=False):
+                for pdf in other_pdfs[:5]:
+                    with open(os.path.join(DECISION_DIR, pdf), "rb") as f:
+                        st.download_button(f"⬇️ {pdf}", f, file_name=pdf, key=f"dl_hist_{pdf}")
         st.markdown("---")
 
     st.subheader("🕵️ Reasoning Trace")
@@ -181,10 +218,13 @@ async def run_agent(text_input, response_placeholder):
         )
 
     full_resp = ""
-    # Append info about uploaded files to the context if they exist
+    # Append info about uploaded files and failure mode
     files_info = ""
     if st.session_state.get("uploaded_files"):
-        files_info = f"\n[User has uploaded the following documents: {', '.join(st.session_state['uploaded_files'])}]"
+        files_info += f"\n[User has uploaded the following documents to the secure system: {', '.join(st.session_state['uploaded_files'])}]"
+    
+    if simulate_failure:
+        files_info += "\n[SYSTEM ALERT: External Credit Bureau API is currently reporting DOWNTIME. All calls will fail. Inform the user and proceed with available internal data.]"
     
     user_content = UserContent(parts=[Part(text=text_input + files_info)])
     
@@ -208,52 +248,58 @@ with c_portal:
     st.caption("Persona: Simulated Applicant")
     st.divider()
 
-    # Container for chat history to keep it separate from the bottom widgets
-    chat_container = st.container()
+    chat_history = st.container(height=500)
     
-    with chat_container:
+    with chat_history:
         for msg in st.session_state["messages"]:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-    # Document Upload (Persona: Applicant) - Placed in the flow
+    # Document Upload (Persona: Applicant)
     st.markdown("---")
     with st.expander("📤 Attach Documents (Bank Statement / ID)", expanded=False):
-        uploaded_file = st.file_uploader("Choose a file", type=["pdf", "png", "jpg"], label_visibility="collapsed")
-        if uploaded_file:
-            file_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
-            with open(file_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            st.success(f"File uploaded: {uploaded_file.name}")
-            if uploaded_file.name not in st.session_state["uploaded_files"]:
-                st.session_state["uploaded_files"].append(uploaded_file.name)
+        # We simulate selecting a file from the "Customer PC"
+        available_files = [f for f in os.listdir(CUSTOMER_PC_DIR) if f.endswith(".pdf")]
+        selected_file = st.selectbox("Select file from local disk:", [""] + available_files)
+        
+        if selected_file:
+            # Simulation: Copy from PC to System Upload Zone
+            src_path = os.path.join(CUSTOMER_PC_DIR, selected_file)
+            dst_path = os.path.join(AGENT_UPLOAD_DIR, selected_file)
+            shutil.copy(src_path, dst_path)
+            
+            if selected_file not in st.session_state["uploaded_files"]:
+                st.session_state["uploaded_files"].append(selected_file)
+                st.toast(f"File uploaded to secure portal: {selected_file}")
+                
+                st.session_state["messages"].append({"role": "user", "content": f"[Attached: {selected_file}]"})
+                with chat_history:
+                    with st.chat_message("assistant"):
+                        ph = st.empty()
+                        resp = asyncio.run(run_agent(f"I have just uploaded {selected_file} to the portal. Please process it.", ph))
+                        if resp != "SECURITY_VIOLATION":
+                            st.session_state["messages"].append({"role": "assistant", "content": resp})
+                            st.rerun()
 
-    # Auto-Greeting (Check if first run)
+    # Auto-Greeting
     if not st.session_state["messages"]:
-        with chat_container:
+        with chat_history:
             with st.chat_message("assistant"):
                 ph = st.empty()
                 resp = asyncio.run(run_agent("I am here to apply for a loan. Please greet me.", ph))
                 st.session_state["messages"].append({"role": "assistant", "content": resp})
                 st.rerun()
 
-    # User Input - st.chat_input automatically pins to the bottom of the PAGE or current CONTAINER.
-    # However, to ensure it doesn't appear "above" the recent input during the run loop,
-    # we handle it carefully here.
     if prompt_text := st.chat_input("Tell us about your loan request..."):
-        # Immediately display the user's message in the history
         st.session_state["messages"].append({"role": "user", "content": prompt_text})
-        
-        # Redraw to show the user message immediately
         st.rerun()
 
-    # If the last message is from the user, trigger the assistant
     if st.session_state["messages"] and st.session_state["messages"][-1]["role"] == "user":
-        last_user_message = st.session_state["messages"][-1]["content"]
-        with chat_container:
+        last_msg = st.session_state["messages"][-1]["content"]
+        with chat_history:
             with st.chat_message("assistant"):
                 ph = st.empty()
-                resp = asyncio.run(run_agent(last_user_message, ph))
+                resp = asyncio.run(run_agent(last_msg, ph))
                 if resp != "SECURITY_VIOLATION":
                     st.session_state["messages"].append({"role": "assistant", "content": resp})
                     st.rerun()

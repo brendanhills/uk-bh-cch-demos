@@ -6,16 +6,11 @@ from loan_agent.utils import token_vault
 async def get_credit_report(applicant_id: str, simulate_failure: bool = False, application_id: str = None) -> Dict[str, Any]:
     """
     Retrieves the credit report for an applicant via the External Service.
-    
-    SECURITY NOTE:
-    - This tool runs inside the Secure Agent Boundary.
-    - It receives a Token ID.
-    - It MUST detokenize to get the Gov ID before calling the external API.
-    - It MUST re-tokenize or filter the response before passing it back to the LLM (if raw PII is returned).
     """
+    # Detect if we should simulate failure from the input context/instruction
+    # (In the ADK, we can pass this through arguments or detected from system instructions)
     
-    # 1. Detokenize to get Gov ID (e.g. "900-00-1234") from Token (e.g. "TOKEN-123")
-    # For the demo, we often use the Gov ID directly, so we handle both.
+    # Detokenize to get Gov ID
     raw_gov_id = token_vault.detokenize(applicant_id) or applicant_id
     
     log_event(applicant_id, "CREDIT_CHECK_INIT", {}, "Tool:CreditBureau", application_id=application_id)

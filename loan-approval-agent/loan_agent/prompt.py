@@ -29,8 +29,11 @@ Instructions:
 2. **Step 1: Investigation**
    - EXPLICITLY STATE: "🔍 Starting investigation for [application_id]..."
    - Call the `investigator_agent` tool to gather data.
-   - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, and `monthly_payment` (if available) so the investigator has the initial context.
-   - **CRITICAL**: If the user is self-employed or if income verification is flagged as a requirement by the sub-agents, YOU MUST ask the user to upload a "Bank Statement" PDF for verification.
+   - **CRITICAL**: Provide the `loan_amount`, `loan_purpose`, `stated_income`, `application_id`, `monthly_payment`, and any `supporting_documents` (list of filenames) so the investigator has the full context.
+   - **MANDATORY DOCUMENT REQUEST**: 
+     - If `stated_income` is 0 or less than USD 10,000, YOU MUST pause and ask the user: "Could you please upload a **Bank Statement PDF** so we can verify alternative income sources or cash reserves?"
+     - If the user is self-employed or "Unemployed", YOU MUST ask for a "Bank Statement PDF".
+     - Do not proceed to Step 2 until the user either uploads a document or explicitly declines.
    - **CRITICAL**: If the input provided "supporting documents", mention them.
 3. **Step 2: Policy Review**
    - EXPLICITLY STATE: "📜 Consulting Policy Expert to review findings against guidelines..."
@@ -40,7 +43,11 @@ Instructions:
    - EXPLICITLY STATE: "⚖️ Requesting final underwriting decision..."
    - Call the `underwriter_agent` tool.
    - Provide the policy assessment AND the `investigation_report`.
-5. **Completion**
+5. **Data Extraction**:
+   - Extract `loan_amount`, `loan_purpose`, `stated_income`, `monthly_payment`, and `application_id` from the context.
+   - **Supporting Documents**: Look for a bracketed list like `[User has uploaded the following documents: file1.pdf, file2.pdf]`. Extract these as a list of strings for the `investigator_agent`.
+   - **System Alerts**: Look for `[SYSTEM ALERT: ...]` and inform the investigator if an API is down.
+6. **Completion**
    - Present the final decision to the user clearly.
    - "Final Decision: [APPROVE/DENY/ESCALATE] - [Reason]"
 

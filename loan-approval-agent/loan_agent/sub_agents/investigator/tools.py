@@ -160,16 +160,35 @@ async def calculate_dti(applicant_id: str, loan_amount: int, loan_term_months: i
     return result
 
 def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", application_id: str = None) -> Dict[str, Any]:
-    """Analyzes a document (PDF/Image)."""
-    # Use the new tool
-    # Note: The new tool expects 'file_content' (bytes/string), but the agent might pass a path?
-    # The original tool took a file path.
-    # We should update this to read the file likely.
+    """
+    Analyzes an uploaded document (PDF/Image) retrieved from the secure landing zone.
     
+    Args:
+        file_path: The filename of the document to analyze.
+        query: Specific question or data to extract from the document.
+    """
+    # loan_agent/sub_agents/investigator/tools.py -> ../../data/uploads/
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    upload_dir = os.path.abspath(os.path.join(base_dir, "../../data/uploads"))
+    actual_path = os.path.join(upload_dir, os.path.basename(file_path))
+    
+    if not os.path.exists(actual_path):
+        error_msg = f"Document not found in secure landing zone: {file_path}."
+        log_event(applicant_id, "analyze_document_error", {"error": error_msg}, "Investigator", application_id=application_id)
+        return {"error": error_msg}
+
     try:
-        with open(file_path, "rb") as f:
+        with open(actual_path, "rb") as f:
             content = f.read()
-            
+        
+        # PCI-DSS COMPLIANCE: Securely remove the file from the landing zone 
+        # immediately after reading into memory. We do not persist PII.
+        try:
+            os.remove(actual_path)
+            print(f"[Investigator] 🛡️ PCI-DSS Compliance: Temporary file {os.path.basename(actual_path)} has been purged.")
+        except Exception as delete_err:
+            print(f"[Investigator] ⚠️ Failed to purge temporary file: {delete_err}")
+
         client = config.get_client()
         model_id = config.MODEL_FLASH
         
@@ -194,10 +213,5 @@ def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", 
         )
         
         result = {"analysis": response.text}
-        log_investigation_finding(applicant_id, "DOCUMENT_ANALYSIS", f"Completed analysis of {file_path}", result, application_id=application_id)
+        log_investigation_finding(applicant_id, "DOCUMENT_ANALYSIS", f"Completed analysis of {os.path.basename(actual_path)}", result, application_id=application_id)
         return result
-        
-    except Exception as e:
-        error_res = {"error": str(e)}
-        log_event(applicant_id, "analyze_document_error", error_res, "Investigator", application_id=application_id)
-        return error_res
