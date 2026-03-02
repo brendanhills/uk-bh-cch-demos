@@ -24,8 +24,8 @@ CRITICAL INSTRUCTIONS:
     - `calculate_dti(applicant_id, loan_amount, application_id=application_id)`
     - `check_data_consistency(applicant_id, stated_income, application_id=application_id)`
     - `get_ml_risk_score(applicant_id, application_id)`
-    - `lookup_historical_decisions(applicant_id, application_id)`
-    - `analyze_document(file_path, query, applicant_id, application_id)`: **MANDATORY** - If `supporting_documents` are provided, call this tool for EVERY file. Use a query like "Verify income and check for suspicious transactions" for bank statements.
+    - `analyze_document(file_path, query, applicant_id, application_id)`: **MANDATORY**
+ - If `supporting_documents` are provided, call this tool for EVERY file. Use a query like "Verify income and check for suspicious transactions" for bank statements.
 7.  **RESILIENCE & ERROR HANDLING**: 
     - If a tool fails (e.g., API offline, simulated failure), do NOT crash.
     - Explain the failure in your investigation report (e.g., "Note: External Credit Bureau is currently offline. Proceeding with alternative internal data.").

@@ -25,13 +25,13 @@ To respect external API constraints (e.g., Credit Bureau: 100 calls/minute) with
 
 ---
 
-## 3. Deep Historical Decisions Intelligence
-Leveraging 5 years of approved/denied decisions to improve agentic accuracy.
+## 3. Deep Historical Decisions Intelligence (Phase 2 Roadmap)
+To further reduce manual oversight, the system will leverage 5 years of historical approve/deny data (18M+ records) to perform **Precedent Analysis**.
 
 ### Design:
-- **Decision Warehouse**: Export the reasoning traces and outcomes of all decisions to **BigQuery**.
-- **Historical Grounding**: Add a `DecisionHistoryAgent` that performs semantic search across past "complex" cases.
-- **Outcome Analysis**: Feed decision data back into the ML Risk Model (`v2.2.0+`) to refine the automated risk thresholds.
+- **Decision Warehouse**: Reasoning traces and final outcomes for all historical applications will be migrated to **BigQuery**.
+- **Historical Grounding Agent**: A new specialized agent will perform semantic similarity searches across past "complex" or "escalated" cases to find how similar profiles were resolved.
+- **Continuous Learning Loop**: Outcomes from BigQuery will be used to automatically retrain the ML Risk Model (v2.2.0+) every quarter.
 
 ---
 

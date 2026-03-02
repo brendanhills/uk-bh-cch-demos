@@ -25,7 +25,7 @@ Instructions:
 8. **Completion Protocol**: Once the decision is recorded, present the final decision details clearly using a structured Markdown report.
    - **CRITICAL**: Your output MUST include a section titled `# Risk Analysis Report`.
    - **Reasoning Chain**: Detail the sequential logic (Intake -> Investigation -> Policy -> Decision).
-   - **Data Grounding**: Explicitly mention the ML Risk Score and Historical Decision count retrieved.
+   - **Data Grounding**: Explicitly mention the ML Risk Score retrieved.
    - **Citations**: Your reasoning summary MUST include specific citations from the policy (e.g., "Per Standard Underwriting Guidelines 2026, Section 1...").
    - Control will automatically return to the loan_manager when you finish.
 9. If decision is REQUEST_INFO, do NOT call a tool. Instead, output: "Question: [Your question to the applicant]".
