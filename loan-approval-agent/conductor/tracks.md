@@ -21,8 +21,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Robust RAG Integration**
   *Link: [./tracks/robust_rag_20260301/](./tracks/robust_rag_20260301/)*
-
----
-
-- [x] **Track: final_demo_sprint_20260302**
-  *Link: [./tracks/final_demo_sprint_20260302/](./tracks/final_demo_sprint_20260302/)*
