@@ -17,11 +17,14 @@ A high-impact demonstration of agentic AI capabilities, specifically engineered 
 3. **Policy Expert RAG**: A live look-up where the agent cites specific policy PDF guidelines to justify a decision, showcasing grounding and accuracy.
 4. **Decision Synthesis & HIL**: The Underwriter Agent's final reasoning chain, culminating in either a "Fast-Path" approval or a seamless escalation to a human for complex cases.
 5. **Transparency & Trust**: Automated generation of a Decision PDF and live Audit Logs to prove regulatory compliance.
+6. **Structured Risk Reporting**: A detailed "Risk Analysis Report" using Markdown to provide step-by-step decision grounding for auditors.
+7. **ML-Assisted Scoring**: Integration of internal ML risk models to supplement external credit data.
 
 ## Demo Persona & Narrative
 - **The Problem**: 48-hour approval delay causing customer churn.
 - **The Solution**: An agentic system that auto-approves 70% of cases in under 5 minutes.
 - **The Proof**: A live walkthrough of a "Straightforward" case vs. a "Complex" case.
+- **The Future**: A strategic roadmap for high-throughput scaling using Cloud Pub/Sub and deterministic rate limiting.
 
 ## Architecture Overview
 

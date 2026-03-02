@@ -30,13 +30,14 @@ st.set_page_config(
 # --- GLOBAL RUNNER (Cached) ---
 @st.cache_resource
 def get_runner():
-    # Caching the runner ensures the InMemorySessionService persists history
     return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
 
-# --- PATHS & STATE ---
+# Paths & State
 LOG_PATH = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
 DECISION_DIR = os.path.join(BASE_DIR, "loan_agent/data/decisions")
+UPLOAD_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
 os.makedirs(DECISION_DIR, exist_ok=True)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Data paths for scenarios
 APPLICANTS_PATH = os.path.join(BASE_DIR, "external_services/data/applicants.json")
@@ -46,18 +47,20 @@ SCENARIOS_PATH = os.path.join(BASE_DIR, "demo_frontend/data/scenarios.json")
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
     st.session_state["scenario_start_time"] = datetime.now(timezone.utc).isoformat()
+    st.session_state["uploaded_files"] = []
 
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
-# --- SIDEBAR: DEMO CONTROL ---
+# --- SIDEBAR: DEMO CONTROL (PERSONA: PRESENTER) ---
 st.sidebar.title("🛠️ Demo Control")
-st.sidebar.caption("Presenter tools (Not part of the UI)")
+st.sidebar.caption("Presenter tools for managing the live simulation.")
 
 if st.sidebar.button("🔄 Start New Scenario", use_container_width=True, type="primary"):
     st.session_state["messages"] = []
     st.session_state["session_id"] = str(uuid.uuid4())
     st.session_state["scenario_start_time"] = datetime.now(timezone.utc).isoformat()
+    st.session_state["uploaded_files"] = []
     # Clear decisions for a fresh feel
     for f in os.listdir(DECISION_DIR):
         os.remove(os.path.join(DECISION_DIR, f))
@@ -66,7 +69,7 @@ if st.sidebar.button("🔄 Start New Scenario", use_container_width=True, type="
 st.sidebar.markdown("---")
 
 # Load and Display Scenarios from JSON
-st.sidebar.subheader("📋 Demo Scenarios")
+st.sidebar.subheader("📋 Scenario Selector")
 
 def load_scenario_prompts():
     """Generates conversational prompts from JSON data."""
@@ -97,26 +100,31 @@ for name, prompt in scenario_prompts.items():
         st.code(prompt, language="text")
 
 st.sidebar.markdown("---")
-
-# Decision Records Download
-pdf_files = sorted([f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf")], reverse=True)
-if pdf_files:
-    st.sidebar.subheader("📄 Generated Records")
-    for pdf in pdf_files[:3]:
-        with open(os.path.join(DECISION_DIR, pdf), "rb") as f:
-            st.sidebar.download_button(f"⬇️ {pdf}", f, file_name=pdf, key=f"dl_{pdf}")
-    st.sidebar.markdown("---")
-
 st.sidebar.subheader("⚙️ Settings")
 latency_mode = st.sidebar.radio("Latency:", ["TESTING", "REALISTIC"], index=0)
 config.LATENCY_MODE = latency_mode
 
 # --- LAYOUT ---
-c_main, c_audit_col = st.columns([0.65, 0.35], gap="large")
+c_portal, c_audit = st.columns([0.6, 0.4], gap="large")
 
-with c_audit_col:
-    st.subheader("🕵️ Audit Trace")
-    st.caption("Live audit log of all agent actions and tool calls")
+with c_audit:
+    st.header("⚖️ Auditor & Oversight")
+    st.caption("Live compliance monitoring and technical reasoning trace.")
+    
+    # Decision Records Download (Persona: Auditor)
+    pdf_files = [f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf")]
+    # Sort by modification time (mtime) - most recent first
+    pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(DECISION_DIR, x)), reverse=True)
+    
+    if pdf_files:
+        st.subheader("📄 Compliance Artifacts")
+        # Show top 5 most recent
+        for pdf in pdf_files[:5]:
+            with open(os.path.join(DECISION_DIR, pdf), "rb") as f:
+                st.download_button(f"⬇️ {pdf}", f, file_name=pdf, key=f"dl_{pdf}")
+        st.markdown("---")
+
+    st.subheader("🕵️ Reasoning Trace")
     audit_placeholder = st.empty()
 
 def render_audit_trace():
@@ -164,8 +172,6 @@ async def run_agent(text_input, response_placeholder):
         return "SECURITY_VIOLATION"
 
     # 2. Session Management
-    # Caching the runner above handles the session service persistence.
-    # We just need to ensure the session exists.
     session = await runner.session_service.get_session(
         app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
     )
@@ -175,7 +181,12 @@ async def run_agent(text_input, response_placeholder):
         )
 
     full_resp = ""
-    user_content = UserContent(parts=[Part(text=text_input)])
+    # Append info about uploaded files to the context if they exist
+    files_info = ""
+    if st.session_state.get("uploaded_files"):
+        files_info = f"\n[User has uploaded the following documents: {', '.join(st.session_state['uploaded_files'])}]"
+    
+    user_content = UserContent(parts=[Part(text=text_input + files_info)])
     
     async for event in runner.run_async(
         user_id="demo_user",
@@ -192,34 +203,60 @@ async def run_agent(text_input, response_placeholder):
     response_placeholder.markdown(full_resp)
     return full_resp
 
-with c_main:
+with c_portal:
     st.title("💰 FastLoan Portal")
-    st.caption("Apply for your personal loan in seconds.")
+    st.caption("Persona: Simulated Applicant")
+    st.divider()
 
-    for msg in st.session_state["messages"]:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+    # Container for chat history to keep it separate from the bottom widgets
+    chat_container = st.container()
+    
+    with chat_container:
+        for msg in st.session_state["messages"]:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
-    # Auto-Greeting
+    # Document Upload (Persona: Applicant) - Placed in the flow
+    st.markdown("---")
+    with st.expander("📤 Attach Documents (Bank Statement / ID)", expanded=False):
+        uploaded_file = st.file_uploader("Choose a file", type=["pdf", "png", "jpg"], label_visibility="collapsed")
+        if uploaded_file:
+            file_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.success(f"File uploaded: {uploaded_file.name}")
+            if uploaded_file.name not in st.session_state["uploaded_files"]:
+                st.session_state["uploaded_files"].append(uploaded_file.name)
+
+    # Auto-Greeting (Check if first run)
     if not st.session_state["messages"]:
-        with st.chat_message("assistant"):
-            ph = st.empty()
-            resp = asyncio.run(run_agent("I am here to apply for a loan. Please greet me.", ph))
-            st.session_state["messages"].append({"role": "assistant", "content": resp})
-            st.rerun()
-
-    # User Input
-    if prompt_text := st.chat_input("Tell us about your loan request..."):
-        st.session_state["messages"].append({"role": "user", "content": prompt_text})
-        with st.chat_message("user"):
-            st.markdown(prompt_text)
-
-        with st.chat_message("assistant"):
-            ph = st.empty()
-            resp = asyncio.run(run_agent(prompt_text, ph))
-            if resp != "SECURITY_VIOLATION":
+        with chat_container:
+            with st.chat_message("assistant"):
+                ph = st.empty()
+                resp = asyncio.run(run_agent("I am here to apply for a loan. Please greet me.", ph))
                 st.session_state["messages"].append({"role": "assistant", "content": resp})
                 st.rerun()
+
+    # User Input - st.chat_input automatically pins to the bottom of the PAGE or current CONTAINER.
+    # However, to ensure it doesn't appear "above" the recent input during the run loop,
+    # we handle it carefully here.
+    if prompt_text := st.chat_input("Tell us about your loan request..."):
+        # Immediately display the user's message in the history
+        st.session_state["messages"].append({"role": "user", "content": prompt_text})
+        
+        # Redraw to show the user message immediately
+        st.rerun()
+
+    # If the last message is from the user, trigger the assistant
+    if st.session_state["messages"] and st.session_state["messages"][-1]["role"] == "user":
+        last_user_message = st.session_state["messages"][-1]["content"]
+        with chat_container:
+            with st.chat_message("assistant"):
+                ph = st.empty()
+                resp = asyncio.run(run_agent(last_user_message, ph))
+                if resp != "SECURITY_VIOLATION":
+                    st.session_state["messages"].append({"role": "assistant", "content": resp})
+                    st.rerun()
 
 # Final static render
 render_audit_trace()
