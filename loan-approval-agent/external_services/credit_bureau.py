@@ -4,18 +4,17 @@ import time
 import random
 from typing import Dict, Any
 
-from .simulation_utils import simulate_delay_async
+from .simulation_utils import simulate_delay_async, is_service_down
 
 # Path to the local JSON database simulating the External Credit Bureau's data
 DATA_FILE = os.path.join(os.path.dirname(__file__), "data/credit_score.json")
 
-async def get_credit_report(gov_id: str, simulate_failure: bool = False) -> Dict[str, Any]:
+async def get_credit_report(gov_id: str) -> Dict[str, Any]:
     """
     Simulates an external Credit Bureau API Check.
     
     Args:
         gov_id: The Government ID (SSN) of the applicant.
-        simulate_failure: If True, may raise an error to test resilience.
         
     Returns:
         Dict: The full credit report or error message.
@@ -23,13 +22,12 @@ async def get_credit_report(gov_id: str, simulate_failure: bool = False) -> Dict
     print(f"[ExternalAPI:CreditBureau] Received request for ID: {gov_id}")
     
     # Simulate API Latency (2 seconds)
-    # Simulate API Latency (2 seconds)
     await simulate_delay_async(2)
     
-    # Simulate Failure (MANDATORY if flag is True for Demo reliability)
-    if simulate_failure:
-        print("[ExternalAPI:CreditBureau] Simulated 503 Service Unavailable")
-        return {"error": "Credit Bureau API is currently unavailable (Simulated Downtime)."}
+    # Check for external failure flag (Chaos Simulation)
+    if is_service_down("credit_bureau"):
+        print("[ExternalAPI:CreditBureau] 🚨 OUTAGE: Simulated 503 Service Unavailable")
+        return {"error": "Credit Bureau API is currently unavailable (External Downtime)."}
 
     try:
         with open(DATA_FILE, "r") as f:

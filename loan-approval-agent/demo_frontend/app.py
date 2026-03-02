@@ -5,6 +5,8 @@ import sys
 import os
 import uuid
 import shutil
+import threading
+import queue
 from datetime import datetime, timezone
 from google.adk.runners import InMemoryRunner
 from google.genai.types import Part, UserContent
@@ -17,6 +19,7 @@ try:
     from loan_agent.agent import loan_manager
     from loan_agent import config
     from loan_agent.tools.security import check_injection
+    from external_services.simulation_utils import set_service_failure
 except ImportError as e:
     st.error(f"Failed to import loan_agent: {e}")
     st.stop()
@@ -28,59 +31,172 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- GLOBAL RUNNER (Cached) ---
+from streamlit.runtime.scriptrunner_utils.script_run_context import add_script_run_ctx, get_script_run_ctx
+
+# --- PERSISTENT BACKGROUND LOOP FOR AGENTS ---
+# This ensures that cached ADK objects always see the same event loop.
 @st.cache_resource
+def get_agent_event_loop():
+    loop = asyncio.new_event_loop()
+    thread = threading.Thread(target=loop.run_forever, daemon=True, name="AgentLoopThread")
+    # We don't add script context to the LOOP thread itself, 
+    # but we will add it to the TASK thread/coro when it runs.
+    thread.start()
+    return loop, thread
+
+def run_async_on_agent_loop(coro):
+    """Bridge for simple coroutines."""
+    loop, _ = get_agent_event_loop()
+    future = asyncio.run_coroutine_threadsafe(coro, loop)
+    return future.result()
+
+def run_agent_generator_bridge(text_input, response_placeholder):
+    """Bridge for the agent run (AsyncGenerator -> Streamlit UI)."""
+    loop, _ = get_agent_event_loop()
+    ctx = get_script_run_ctx() # Get current UI context
+    q = queue.Queue()
+    
+    # This wrapper will run ON the background loop
+    async def agent_task():
+        # Attach the UI context to this task's execution thread (if possible)
+        # or at least ensure it's available for libraries that check it.
+        if ctx:
+            add_script_run_ctx(threading.current_thread(), ctx)
+        
+        try:
+            async for event in run_agent(text_input):
+                q.put(("event", event))
+            q.put(("done", None))
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            q.put(("error", str(e)))
+
+    asyncio.run_coroutine_threadsafe(agent_task(), loop)
+    
+    # This loop runs ON the Streamlit thread
+    full_resp = ""
+    while True:
+        try:
+            msg_type, val = q.get(timeout=1.0) # Check for events every second
+            if msg_type == "event":
+                if val == "SECURITY_VIOLATION":
+                    st.error("🚨 Security Alert: Potential prompt injection or system override detected.")
+                    return "SECURITY_VIOLATION"
+                
+                # Update UI
+                full_resp = val
+                response_placeholder.markdown(full_resp + "▌")
+                
+            elif msg_type == "done":
+                response_placeholder.markdown(full_resp)
+                return full_resp
+            elif msg_type == "error":
+                st.error(f"Agent Error: {val}")
+                return f"ERROR: {val}"
+        except queue.Empty:
+            # On timeout, just refresh the audit trace and keep waiting
+            pass
+        
+        # Refresh audit trace on every iteration (event or timeout)
+        render_audit_trace()
+
+# --- GLOBAL RUNNER (Cached) ---
+@st.cache_resource(show_spinner=False)
 def get_runner():
     return InMemoryRunner(agent=loan_manager, app_name="loan_agent")
+
+async def run_agent(text_input):
+    """
+    Async generator to run the agent. 
+    MUST be called from the agent background loop.
+    """
+    runner = get_runner()
+    
+    # 1. PRE-PROCESSING SECURITY CHECK
+    if check_injection(text_input, applicant_id="demo_user"):
+        yield "SECURITY_VIOLATION"
+        return
+
+    # 2. Session Management
+    session = await runner.session_service.get_session(
+        app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
+    )
+    if not session:
+        await runner.session_service.create_session(
+            app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
+        )
+
+    full_resp = ""
+    files_info = ""
+    if st.session_state.get("uploaded_files"):
+        files_info += f"\n[User has uploaded the following documents to the secure system: {', '.join(st.session_state['uploaded_files'])}]"
+    
+    user_content = UserContent(parts=[Part(text=text_input + files_info)])
+    
+    async for event in runner.run_async(
+        user_id="demo_user",
+        session_id=st.session_state["session_id"],
+        new_message=user_content
+    ):
+        if event.content and event.content.parts:
+            for part in event.content.parts:
+                if part.text:
+                    full_resp += part.text
+                    yield full_resp
 
 # Paths & State
 LOG_PATH = os.path.join(BASE_DIR, "loan_agent/data/audit_logs/events.jsonl")
 DECISION_DIR = os.path.join(BASE_DIR, "loan_agent/data/decisions")
-# SIMULATED CUSTOMER PC (Artifacts)
 CUSTOMER_PC_DIR = os.path.join(BASE_DIR, "artifacts/uploads")
-# AGENT SECURE LANDING ZONE (System)
 AGENT_UPLOAD_DIR = os.path.join(BASE_DIR, "loan_agent/data/uploads")
 
 os.makedirs(DECISION_DIR, exist_ok=True)
 os.makedirs(AGENT_UPLOAD_DIR, exist_ok=True)
 
-# Data paths for scenarios
 APPLICANTS_PATH = os.path.join(BASE_DIR, "external_services/data/applicants.json")
 SCENARIOS_PATH = os.path.join(BASE_DIR, "demo_frontend/data/scenarios.json")
+
+def get_now_ts():
+    """Matches the timestamp format in audit_logger.py exactly."""
+    now = datetime.now(timezone.utc)
+    return now.strftime("%Y-%m-%dT%H:%M:%S") + f".{round(now.microsecond / 100000) % 10}"
 
 # Initialize Session State
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
-    st.session_state["scenario_start_time"] = datetime.now(timezone.utc).isoformat()
+    st.session_state["scenario_start_time"] = get_now_ts()
     st.session_state["uploaded_files"] = []
 
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
-# --- SIDEBAR: DEMO CONTROL (PERSONA: PRESENTER) ---
+if "simulate_failure" not in st.session_state:
+    st.session_state["simulate_failure"] = False
+
+if "uploader_key" not in st.session_state:
+    st.session_state["uploader_key"] = 0
+
+# --- SIDEBAR: DEMO CONTROL ---
 st.sidebar.title("🛠️ Demo Control")
 st.sidebar.caption("Presenter tools for managing the live simulation.")
 
 if st.sidebar.button("🔄 Start New Scenario", use_container_width=True, type="primary"):
     st.session_state["messages"] = []
     st.session_state["session_id"] = str(uuid.uuid4())
-    st.session_state["scenario_start_time"] = datetime.now(timezone.utc).isoformat()
+    st.session_state["scenario_start_time"] = get_now_ts()
     st.session_state["uploaded_files"] = []
-    # Clear system uploads for a fresh feel
+    st.session_state["uploader_key"] += 1
     for f in os.listdir(AGENT_UPLOAD_DIR):
         os.remove(os.path.join(AGENT_UPLOAD_DIR, f))
-    # Clear decisions
     for f in os.listdir(DECISION_DIR):
         os.remove(os.path.join(DECISION_DIR, f))
     st.rerun()
 
 st.sidebar.markdown("---")
-
-# Load and Display Scenarios from JSON
 st.sidebar.subheader("📋 Scenario Selector")
 
 def load_scenario_prompts():
-    """Generates conversational prompts from JSON data."""
     try:
         with open(APPLICANTS_PATH, 'r') as f:
             applicants = {a['applicant_id']: a for a in json.load(f)}
@@ -94,8 +210,13 @@ def load_scenario_prompts():
             prompt += f"SSN {s['applicant_id']}. I earn ${app.get('stated_income', 0):,}\n"
             if app.get('employer'):
                 prompt += f"I work at {app['employer']}.\n"
-            prompt += f"${s['loan_amount']:,} for {s['purpose']}."
-            
+            purpose = s['purpose']
+            if purpose.startswith("to "):
+                prompt += f"${s['loan_amount']:,} {purpose}."
+            elif purpose.startswith("buy "): # Special case for the yacht
+                prompt += f"${s['loan_amount']:,} to {purpose}."
+            else:
+                prompt += f"${s['loan_amount']:,} for {purpose}."
             prompts[s['name']] = prompt
         return prompts
     except Exception as e:
@@ -112,7 +233,8 @@ st.sidebar.subheader("⚙️ Settings")
 latency_mode = st.sidebar.radio("Latency:", ["TESTING", "REALISTIC"], index=0)
 config.LATENCY_MODE = latency_mode
 
-simulate_failure = st.sidebar.toggle("🚨 Simulate Credit Bureau Downtime", value=False, help="Forces the External Credit Bureau API to report downtime to test agentic resilience and retry logic.")
+st.sidebar.toggle("🚨 Simulate Credit Bureau Downtime", key="simulate_failure")
+set_service_failure("credit_bureau", st.session_state["simulate_failure"])
 
 # --- LAYOUT ---
 c_portal, c_audit = st.columns([0.6, 0.4], gap="large")
@@ -121,7 +243,6 @@ with c_audit:
     st.header("⚖️ Auditor & Oversight")
     st.caption("Live compliance monitoring and technical reasoning trace.")
     
-    # Decision Records Download (Persona: Auditor)
     pdf_files = [f for f in os.listdir(DECISION_DIR) if f.endswith(".pdf")]
     pdf_files.sort(key=lambda x: os.path.getmtime(os.path.join(DECISION_DIR, x)), reverse=True)
     
@@ -138,7 +259,7 @@ with c_audit:
                             current_app_id = data["application_id"]
                             break
                     except: pass
-
+        
         current_pdf = None
         if current_app_id:
             for f in pdf_files:
@@ -153,19 +274,10 @@ with c_audit:
         else:
             st.info("Waiting for final decision artifact...")
 
-        other_pdfs = [f for f in pdf_files if f != current_pdf]
-        if other_pdfs:
-            with st.expander("📚 Decision History (Previous Sessions)", expanded=False):
-                for pdf in other_pdfs[:5]:
-                    with open(os.path.join(DECISION_DIR, pdf), "rb") as f:
-                        st.download_button(f"⬇️ {pdf}", f, file_name=pdf, key=f"dl_hist_{pdf}")
-        st.markdown("---")
-
     st.subheader("🕵️ Reasoning Trace")
     audit_placeholder = st.empty()
 
 def render_audit_trace():
-    """Renders the audit log into the placeholder, filtered by scenario start time."""
     if os.path.exists(LOG_PATH):
         start_time = st.session_state.get("scenario_start_time")
         with open(LOG_PATH, "r") as f:
@@ -176,78 +288,15 @@ def render_audit_trace():
                     data = json.loads(line)
                     if start_time and data["timestamp"] < start_time:
                         continue
-
-                    icon = "🔘"
-                    evt = data["event_type"].upper()
-                    if "INVESTIGATION" in evt or "CHECK" in evt: icon = "🔍"
-                    if "POLICY" in evt or "DOC" in evt: icon = "📜"
-                    if "DECISION" in evt: icon = "⚖️"
-                    if "ERROR" in evt: icon = "❌"
-                    if "DLP" in evt or "SECURITY" in evt: icon = "🛡️"
-                    if "REGISTER" in evt: icon = "📝"
-                    
+                    icon = "🔍" if "INVESTIGATION" in data["event_type"].upper() else "🔘"
                     content += f"**{icon} {data['event_type']}**\n\n"
                     content += f"App: {data.get('application_id', 'N/A')} | Agent: {data['agent']} | {data['timestamp']}\n\n"
                     content += f"```json\n{json.dumps(data['details'], indent=2)}\n```\n\n---\n\n"
                 except: pass
-            
-            if content:
-                audit_placeholder.markdown(content)
-            else:
-                audit_placeholder.info("Waiting for agent activity...")
-    else:
-        audit_placeholder.info("Waiting for agent activity...")
-
-async def run_agent(text_input, response_placeholder):
-    """Async generator to run the agent and update the UI."""
-    runner = get_runner()
-    
-    # 1. PRE-PROCESSING SECURITY CHECK
-    if check_injection(text_input, applicant_id="demo_user"):
-        st.error("🚨 Security Alert: Potential prompt injection or system override detected. Transaction halted.")
-        render_audit_trace()
-        return "SECURITY_VIOLATION"
-
-    # 2. Session Management
-    session = await runner.session_service.get_session(
-        app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
-    )
-    if not session:
-        await runner.session_service.create_session(
-            app_name=runner.app_name, user_id="demo_user", session_id=st.session_state["session_id"]
-        )
-
-    full_resp = ""
-    # Append info about uploaded files and failure mode
-    files_info = ""
-    if st.session_state.get("uploaded_files"):
-        files_info += f"\n[User has uploaded the following documents to the secure system: {', '.join(st.session_state['uploaded_files'])}]"
-    
-    if simulate_failure:
-        files_info += "\n[SYSTEM ALERT: External Credit Bureau API is currently reporting DOWNTIME. All calls will fail. The system is configured with exponential backoff (5 retries). Toggling this switch OFF will allow the next retry to succeed.]"
-    
-    user_content = UserContent(parts=[Part(text=text_input + files_info)])
-    
-    async for event in runner.run_async(
-        user_id="demo_user",
-        session_id=st.session_state["session_id"],
-        new_message=user_content
-    ):
-        render_audit_trace()
-        if event.content and event.content.parts:
-            for part in event.content.parts:
-                if part.text:
-                    full_resp += part.text
-                    response_placeholder.markdown(full_resp + "▌")
-    
-    response_placeholder.markdown(full_resp)
-    return full_resp
+            audit_placeholder.markdown(content if content else "Waiting for agent activity...")
 
 with c_portal:
     st.title("💰 FastLoan Portal")
-    st.caption("Persona: Simulated Applicant")
-    st.divider()
-
     chat_history = st.container(height=500)
     
     with chat_history:
@@ -255,42 +304,35 @@ with c_portal:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-    # Document Upload (Persona: Applicant)
     st.markdown("---")
-    with st.expander("📤 Attach Documents (Bank Statement / ID)", expanded=False):
-        # We simulate selecting a file from the "Customer PC"
-        available_files = [f for f in os.listdir(CUSTOMER_PC_DIR) if f.endswith(".pdf")]
-        selected_file = st.selectbox("Select file from local disk:", [""] + available_files)
-        
-        if selected_file:
-            # Simulation: Copy from PC to System Upload Zone
-            src_path = os.path.join(CUSTOMER_PC_DIR, selected_file)
-            dst_path = os.path.join(AGENT_UPLOAD_DIR, selected_file)
-            shutil.copy(src_path, dst_path)
+    with st.expander("📤 Upload Documents", expanded=False):
+        uploaded_file = st.file_uploader("Upload a PDF document:", type=["pdf"], key=f"uploader_{st.session_state['uploader_key']}")
+        if uploaded_file is not None:
+            file_name = uploaded_file.name
+            file_path = os.path.join(AGENT_UPLOAD_DIR, file_name)
             
-            if selected_file not in st.session_state["uploaded_files"]:
-                st.session_state["uploaded_files"].append(selected_file)
-                st.toast(f"File uploaded to secure portal: {selected_file}")
+            # Save the file to the agent's upload directory
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
                 
-                st.session_state["messages"].append({"role": "user", "content": f"[Attached: {selected_file}]"})
+            if file_name not in st.session_state["uploaded_files"]:
+                st.session_state["uploaded_files"].append(file_name)
+                st.session_state["messages"].append({"role": "user", "content": f"[Uploaded: {file_name}]"})
                 with chat_history:
                     with st.chat_message("assistant"):
-                        ph = st.empty()
-                        resp = asyncio.run(run_agent(f"I have just uploaded {selected_file} to the portal. Please process it.", ph))
+                        resp = run_agent_generator_bridge(f"I have just uploaded {file_name}. Please analyze it for the loan application.", st.empty())
                         if resp != "SECURITY_VIOLATION":
                             st.session_state["messages"].append({"role": "assistant", "content": resp})
                             st.rerun()
 
-    # Auto-Greeting
     if not st.session_state["messages"]:
         with chat_history:
             with st.chat_message("assistant"):
-                ph = st.empty()
-                resp = asyncio.run(run_agent("I am here to apply for a loan. Please greet me.", ph))
+                resp = run_agent_generator_bridge("Greet me.", st.empty())
                 st.session_state["messages"].append({"role": "assistant", "content": resp})
                 st.rerun()
 
-    if prompt_text := st.chat_input("Tell us about your loan request..."):
+    if prompt_text := st.chat_input("Message..."):
         st.session_state["messages"].append({"role": "user", "content": prompt_text})
         st.rerun()
 
@@ -298,11 +340,9 @@ with c_portal:
         last_msg = st.session_state["messages"][-1]["content"]
         with chat_history:
             with st.chat_message("assistant"):
-                ph = st.empty()
-                resp = asyncio.run(run_agent(last_msg, ph))
+                resp = run_agent_generator_bridge(last_msg, st.empty())
                 if resp != "SECURITY_VIOLATION":
                     st.session_state["messages"].append({"role": "assistant", "content": resp})
                     st.rerun()
 
-# Final static render
 render_audit_trace()

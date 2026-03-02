@@ -7,7 +7,7 @@
     "loan_term": 36,
     "loan_type": "personal",
     "purpose": "debt consolidation",
-    "description": "Sarah wants to consolidate her credit card debt. This lowers her monthly payments and utilization. Strong approval case."
+    "description": "Sarah (Income $59,758) wants to consolidate her credit card debt. This lowers her monthly payments and utilization. Strong approval case (Score: 725)."
   },
   {
     "scenario_id": "1b",
@@ -47,7 +47,7 @@
     "loan_term": 48,
     "loan_type": "business",
     "purpose": "equipment purchase",
-    "description": "Maria has a thin file (650 score). The loan is for business growth. This requires manual underwriting to verify business cash flow."
+    "description": "Maria has a 710 score but is self-employed with a relatively new business. This requires manual underwriting to verify business cash flow."
   },
   {
     "scenario_id": "4",
@@ -57,7 +57,7 @@
     "loan_term": 36,
     "loan_type": "personal",
     "purpose": "debt consolidation",
-    "description": "Gary has a 620 score, high DTI (65%), and a recent late payment. This is too risky for auto-approval but not a hard decline. Requires senior review."
+    "description": "Gary has a 640 score, high debt load, and a recent late payment. This is too risky for auto-approval but not a hard decline. Requires senior review."
   },
   {
     "scenario_id": "5",

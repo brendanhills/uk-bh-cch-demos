@@ -62,5 +62,21 @@
       "totalDebt": 5000,
       "creditUtilization": 10
     }
+  },
+  "900-00-9999": {
+    "score": {
+      "value": 580,
+      "provider": "TransUnion"
+    },
+    "history": {
+      "delinquencies_2yr": 2,
+      "hard_inquiries_6mo": 5,
+      "oldest_line_years": 1
+    },
+    "summary": {
+      "totalMonthlyPayment": 150,
+      "totalDebt": 2000,
+      "creditUtilization": 90
+    }
   }
 }

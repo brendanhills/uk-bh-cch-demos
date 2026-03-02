@@ -98,12 +98,14 @@ async def check_data_consistency(applicant_id: str, stated_income: int, applicat
         log_event(applicant_id, "data_consistency_check_error", {"error": str(e)}, "LLM_DataSentry", application_id=application_id)
         return {"consistent": True, "reason": "Check failed due to system error, defaulting to safe."}
 
-async def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
+async def get_credit_report(applicant_id: str, application_id: str = None, tool_context: Any = None) -> Dict[str, Any]:
     """
-    Fetches full credit report for an applicant from Equifax.
+    Fetches full credit report for an applicant.
+    
+    Args:
+        applicant_id: The ID of the applicant (Token).
+        application_id: The ID of the application.
     """
-    # 1. Detokenize handled by Tool Wrapper
-    # 2. Call Tool Wrapper (which calls Dispatcher)
     return await core_get_credit(applicant_id, application_id=application_id)
 
 async def verify_employment(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
@@ -215,3 +217,8 @@ def analyze_document(file_path: str, query: str, applicant_id: str = "unknown", 
         result = {"analysis": response.text}
         log_investigation_finding(applicant_id, "DOCUMENT_ANALYSIS", f"Completed analysis of {os.path.basename(actual_path)}", result, application_id=application_id)
         return result
+    except Exception as e:
+        error_msg = f"Error during document analysis: {str(e)}"
+        print(f"[Investigator] ❌ {error_msg}")
+        log_event(applicant_id, "analyze_document_exception", {"error": error_msg}, "Investigator", application_id=application_id)
+        return {"error": error_msg}

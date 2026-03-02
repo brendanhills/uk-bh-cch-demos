@@ -43,11 +43,11 @@ Instructions:
    - EXPLICITLY STATE: "⚖️ Requesting final underwriting decision..."
    - Call the `underwriter_agent` tool.
    - Provide the policy assessment AND the `investigation_report`.
-5. **Data Extraction**:
+5.  **Data Extraction**:
    - Extract `loan_amount`, `loan_purpose`, `stated_income`, `monthly_payment`, and `application_id` from the context.
    - **Supporting Documents**: Look for a bracketed list like `[User has uploaded the following documents: file1.pdf, file2.pdf]`. Extract these as a list of strings for the `investigator_agent`.
-   - **System Alerts**: Look for `[SYSTEM ALERT: ...]` and inform the investigator if an API is down.
-6. **Completion**
+6.  **Completion**
+
    - Present the final decision to the user clearly.
    - "Final Decision: [APPROVE/DENY/ESCALATE] - [Reason]"
 

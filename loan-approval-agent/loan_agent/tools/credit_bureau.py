@@ -5,7 +5,7 @@ from loan_agent.utils.tool_dispatcher import call_tool
 from loan_agent.utils.audit_logger import log_event
 from loan_agent.utils import token_vault
 
-async def get_credit_report(applicant_id: str, simulate_failure: bool = False, application_id: str = None) -> Dict[str, Any]:
+async def get_credit_report(applicant_id: str, application_id: str = None) -> Dict[str, Any]:
     """
     Retrieves the credit report for an applicant with exponential backoff retry logic.
     """
@@ -22,8 +22,7 @@ async def get_credit_report(applicant_id: str, simulate_failure: bool = False, a
             
             # Call External Service via Dispatcher
             result = await call_tool("get_credit_report", {
-                "gov_id": raw_gov_id,
-                "simulate_failure": simulate_failure
+                "gov_id": raw_gov_id
             })
             
             if "error" in result:

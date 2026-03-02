@@ -1,0 +1,79 @@
+graph LR
+    %% Detailed Architecture - V3 (Clean / Production View)
+
+    subgraph UserZone [Customer Portal]
+        direction TB
+        User([Applicant])
+        UI[Self-Service UI]
+        Uploader[Document Upload Service]
+    end
+
+    subgraph SecureZone [Secure Banking Environment]
+        style SecureZone fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+        
+        DLP[Sensitive Data Protection]
+        Orch[Loan Manager Orchestrator]
+        
+        subgraph Agents [Expert Multi-Agent Core]
+            direction TB
+            Invest[Investigator + Multimodal Vision]
+            Policy[Policy Expert + Hybrid RAG]
+            Under[Underwriter Agent]
+        end
+        
+        Disp[Secure Tool Dispatcher]
+        Vault[(Token Vault / PII Masking)]
+        
+        %% Internal Resources
+        RiskModel[Risk Scoring Model]
+        HistoryDB[Historical Decisions DB]
+    end
+
+    subgraph ExternalZone [External Integrated Services]
+        style ExternalZone fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+        direction TB
+        
+        Credit[Credit Bureau APIs]
+        Fraud[Fraud Detection Services]
+        Emp[Payroll/Employment Registry]
+        Conf[Regulatory & Policy Docs]
+    end
+
+    subgraph ReviewZone [Human Review Queue]
+        Senior([Senior Underwriter])
+    end
+
+    %% Flow
+    User --> UI
+    UI -- "Inbound Request" --> DLP
+    Uploader -- "Encrypted PDF" --> Invest
+
+    DLP -- "Sanitized Context" --> Orch
+    
+    Orch -- "Task Delegation" --> Disp
+    Disp --> Agents
+    
+    Invest -- "Parallel Data Ingestion" --> Credit
+    Invest --> Fraud
+    Invest --> Emp
+    
+    Policy -- "Semantic Retrieval" --> Conf
+    
+    Under -- "Risk Verdict" --> Orch
+    
+    %% The "Hand Back"
+    Orch -- "Escalation / Review" --> Senior
+    Senior -- "Manual Override" --> UI
+    
+    Under --> RiskModel
+    Under --> HistoryDB
+    
+    %% Connections for Context
+    Invest -.-> Vault
+    
+    %% Classes
+    classDef plain fill:#fff,stroke:#333,stroke-width:1px;
+    classDef highlight fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    
+    class User,UI plain;
+    class Orch,DLP highlight;

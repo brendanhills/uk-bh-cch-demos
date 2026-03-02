@@ -106,6 +106,7 @@ if __name__ == "__main__":
     personas = [
         ("Sarah Speed", "ACT-12345", 12000.00, 45),
         ("Gary Escalate", "ACT-34567", 1500.00, 45),
+        ("Maria Agility", "ACT-90123", 45000.00, 60), # Healthy business account
         ("Jane Fraud", "ACT-99999", 50.00, 85) # Jane gets a massive statement
     ]
     

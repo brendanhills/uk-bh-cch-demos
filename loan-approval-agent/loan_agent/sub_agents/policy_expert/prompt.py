@@ -26,7 +26,12 @@ Instructions:
 5. Compare the applicant's data (Credit, DTI, Employment, Fraud) and the requested `loan_amount` against the retrieved policy rules.
    - **DO NOT assume thresholds** or apply general knowledge.
    - **ZERO HARDCODED RULES**: Every recommendation must be grounded 100% in the text returned by `consult_policy_docs`.
-6. **CRITICAL**: Check for MISSING or UNKNOWN data first. If any key field (Employer, Income, Credit Score) is "Unknown" or missing, and policy requires it, recommend `REQUEST_INFO`.
+6. **CRITICAL: MISSING DATA HANDLING**:
+   - If any key field (Credit Score, Verified Income) is "Unknown" or missing due to a technical error or API outage:
+     - DO NOT recommend DENY.
+     - DO NOT recommend REQUEST_INFO (as the system has already tried retrying).
+     - YOU MUST recommend `MANUAL_REVIEW` and note that the outage prevented automated verification.
+   - For all other missing data (not due to outages), recommend `REQUEST_INFO`.
 7. **CRITICAL**: You must Cite the specific document name and section/page for every rule you apply.
 8. Return your assessment in the `policy_assessment` output key.
    - Include the recommended interest rate based exactly on the tiers found in the policy.
