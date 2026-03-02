@@ -1,8 +1,0 @@
-{
-  "track_id": "final_demo_sprint_20260302",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-03-02T00:00:00Z",
-  "updated_at": "2026-03-02T00:00:00Z",
-  "description": "Address missing requirements from docs/demo_task.txt including Structured Risk Reporting, ML Risk Scoring, Operational Resilience, and Strategic Roadmap documentation."
-}
