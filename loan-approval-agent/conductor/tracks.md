@@ -26,3 +26,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Fix UI Issues**
   *Link: [./tracks/ui_fixes_20260301/](./tracks/ui_fixes_20260301/)*
+
+---
+
+- [ ] **Track: Decision History Database**
+*Link: [./tracks/decision_history_20260303/](./tracks/decision_history_20260303/)*

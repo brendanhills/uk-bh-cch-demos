@@ -1,0 +1,8 @@
+{
+  "track_id": "decision_history_20260303",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-03-03T08:50:00Z",
+  "updated_at": "2026-03-03T08:50:00Z",
+  "description": "Add a decision history database to enable underwriter and risk models to learn from past loan applications using Vector RAG."
+}
