@@ -15,6 +15,7 @@ from google.cloud import speech_v2 as cs
 from google.api_core.client_options import ClientOptions
 from core.utils import parse_common_args, setup_pipeline, run_broadcaster, q_gen
 from core.providers import V2Provider
+from core.chirp3_provider import Chirp3Provider
 from core.workers import RawChannelWorker, StabilizedChannelWorker
 
 async def main():
@@ -34,18 +35,23 @@ async def main():
     # 3. Initialize Workers & Queues
     q1, q2 = asyncio.Queue(), asyncio.Queue()
     
+    def get_provider(model):
+        if args.use_chirp3:
+            return Chirp3Provider(client, recognizer_name, model)
+        return V2Provider(client, recognizer_name, model)
+
     if args.arch == "mode_b":
         # Mode B: Workers handle their own stabilization
-        w1 = StabilizedChannelWorker(V2Provider(client, recognizer_name, args.model), 1, 
+        w1 = StabilizedChannelWorker(get_provider(args.model), 1, 
                                      stability_threshold=args.stability or 1.0, 
                                      gap_threshold=args.gap or 0.5)
-        w2 = StabilizedChannelWorker(V2Provider(client, recognizer_name, args.model), 2,
+        w2 = StabilizedChannelWorker(get_provider(args.model), 2,
                                      stability_threshold=args.stability or 1.0, 
                                      gap_threshold=args.gap or 0.5)
     else:
         # Mode A: Centralized engine handles stabilization
-        w1 = RawChannelWorker(V2Provider(client, recognizer_name, args.model), 1)
-        w2 = RawChannelWorker(V2Provider(client, recognizer_name, args.model), 2)
+        w1 = RawChannelWorker(get_provider(args.model), 1)
+        w2 = RawChannelWorker(get_provider(args.model), 2)
 
     async def run_worker(worker, queue, channel_id):
         """Worker loop that captures events and feeds the Engine."""

@@ -32,6 +32,7 @@ def parse_common_args(description: str, is_mono: bool = False, is_parallel: bool
     parser.add_argument("--chunk-size", type=float, default=0.1, help="Audio chunk duration in seconds [Default: 0.1]")
     parser.add_argument("--wait-for-play", action="store_true", help="Wait for user to start audio playback in browser")
     parser.add_argument("--duration", type=float, default=None, help="Stop after X seconds of audio")
+    parser.add_argument("--use-chirp3", action="store_true", help="Use specialized Chirp3Provider with auto-language detection")
     
     if not is_mono:
         parser.add_argument("--mode", choices=["low_latency", "readability"], default="readability",
