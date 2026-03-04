@@ -60,13 +60,6 @@ class TranscriptionEngine:
     def process_raw_event(self, event: TranscriptionEvent):
         """Main entry point for raw events from API providers."""
         self.current_audio_time = max(self.current_audio_time, event.start_sec)
-        
-        # LOGGING FOR DEBUGGING FIDELITY
-        log_label = f"[{event.metadata.get('model', 'API')}]"
-        if event.event_type != "transcript":
-            logging.debug(f"{log_label} {event.event_type.upper()} at {event.start_sec:0.1f}s (Clock: {self.current_audio_time:0.1f}s)")
-        elif event.is_final:
-            logging.debug(f"{log_label} FINAL TRANSCRIPT at {event.start_sec:0.1f}s arrived at {self.current_audio_time:0.1f}s: \"{event.text[:30]}...\"")
 
         # 1. Handle VAD events (Voice Activity Detection)
         if event.event_type != "transcript":

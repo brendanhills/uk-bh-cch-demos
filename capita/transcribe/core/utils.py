@@ -67,7 +67,6 @@ async def setup_pipeline(args, approach_name: str, force_mono: bool = False):
         simulator.wait_for_user_start()
     
     # 2. Configure the Engine
-    logging.getLogger().setLevel(logging.DEBUG)
     engine = TranscriptionEngine()
     
     # Adaptive Stability: High-latency models (Chirp) need a larger buffer for sorting

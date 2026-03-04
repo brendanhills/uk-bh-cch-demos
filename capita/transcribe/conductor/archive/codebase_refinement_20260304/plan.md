@@ -35,5 +35,8 @@ Ensure correct sequence and attribution for high-latency models.
 
 ## Phase 5: The "Live" Feel (UI Optimization) [checkpoint: EDU_FINAL]
 - [x] Task: Enhanced Interim Display f7e7ecf
-    - Chirp-3 draft results are rendered immediately to provide a 'live' feeling.
-- [x] Task: Conductor - User Manual Verification 'Final Refinement' f7e7ecf
+    - Ensure Chirp-3 draft results are rendered immediately to provide a 'live' feeling despite slow finalization.
+- [x] Task: Fix UI repetition fa22920
+    - Resolved race condition between heartbeats and interim clearing.
+- [x] Task: Conductor - User Manual Verification 'Final Refinement' fa22920
+
