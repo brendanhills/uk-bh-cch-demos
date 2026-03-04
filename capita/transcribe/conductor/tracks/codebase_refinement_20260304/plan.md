@@ -13,7 +13,7 @@ Unify duplicated utility logic and improve the standard data schema.
     - Add unit tests for the new `estimate_word_timings` and `split_on_gaps` methods.
 - [x] Task: Update `to_dict()` 592c27b
     - Include `metadata` in the dictionary output for better downstream analysis.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Model Refinement'
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Model Refinement'
 
 ## Phase 2: Provider Consolidation
 Simplify the V2 API path.
@@ -26,11 +26,11 @@ Simplify the V2 API path.
     - Remove the redundant class if possible, or reduce it to a simple factory function.
 - [x] Task: Update `tests/test_chirp3_provider.py` 7de3bb7
     - Ensure existing tests pass against the refactored unified provider.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Provider Refactor'
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Provider Refactor'
 
 ## Phase 3: Technical Debt and Cleanup
-- [ ] Task: Centralize `.env` loading.
-- [ ] Task: Create `tests/test_refactoring_integration.py`
+- [~] Task: Centralize `.env` loading.
+- [~] Task: Create `tests/test_refactoring_integration.py`
     - Add a high-level integration test that runs a simulated stream through the new unified pipeline.
-- [ ] Task: Final Regression Testing across all Demos.
+- [~] Task: Final Regression Testing across all Demos.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Validation'
