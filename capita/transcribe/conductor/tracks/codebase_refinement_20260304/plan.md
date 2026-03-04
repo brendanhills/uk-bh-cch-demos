@@ -18,13 +18,13 @@ Unify duplicated utility logic and improve the standard data schema.
 ## Phase 2: Provider Consolidation
 Simplify the V2 API path.
 
-- [ ] Task: Refactor `V2Provider` to accept config profiles.
+- [x] Task: Refactor `V2Provider` to accept config profiles. 7de3bb7
     - Allow Chirp-specific settings (location routing) to be passed in.
-- [ ] Task: Language Simplification
+- [x] Task: Language Simplification c370180
     - Hardcode/Default all providers to `en-US`. Remove "auto" detection and redundant language code logic to keep the demo clean.
-- [ ] Task: Consolidate `Chirp3Provider` into `V2Provider`.
+- [x] Task: Consolidate `Chirp3Provider` into `V2Provider`. c370180
     - Remove the redundant class if possible, or reduce it to a simple factory function.
-- [ ] Task: Update `tests/test_chirp3_provider.py`
+- [x] Task: Update `tests/test_chirp3_provider.py` 7de3bb7
     - Ensure existing tests pass against the refactored unified provider.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Provider Refactor'
 
