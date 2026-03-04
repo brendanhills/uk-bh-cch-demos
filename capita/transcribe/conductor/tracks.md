@@ -14,5 +14,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Implement a Chirp-3 specific module with specialized arguments and wordless output handling.**
+- [~] **Track: Implement a Chirp-3 specific module with specialized arguments and wordless output handling.**
 *Link: [./tracks/chirp3_migration_20260220/](./tracks/chirp3_migration_20260220/)*
