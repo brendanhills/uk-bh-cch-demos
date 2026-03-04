@@ -8,7 +8,7 @@ Build the foundation for specialized Chirp-3 interaction.
 - [x] Task: Create `core/chirp3_provider.py` 0360aa3
     - [ ] Implement `Chirp3Provider` class based on `V2Provider` but with specialized configurations (location, language codes, decoding config).
     - [ ] Ensure it supports streaming and yields `TranscriptionEvent` objects with correctly handled (but empty) `words` lists.
-- [ ] Task: CLI Integration
+- [x] Task: CLI Integration e3fd074
     - [ ] Update `two_channel_transcribe_v2.py` and `parallel_transcribe.py` to support a `--use-chirp3` flag that selects the new provider.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Dedicated Provider' (Protocol in workflow.md)
 
