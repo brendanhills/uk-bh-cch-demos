@@ -11,40 +11,34 @@ from .models import TranscriptionEvent
 
 class RealTimeJsonSink:
     """
-    Progressively writes TranscriptionEvents to a JSON file as they are emitted.
-    Designed for zero-post-processing reliability.
+    Progressively writes TranscriptionEvents to a temporary buffer and 
+    finalizes a valid JSON array on close.
     """
     def __init__(self, output_path: str):
         self.output_path = output_path
         self.file = None
-        self.first_item = True
+        self._events = []
 
     def open(self):
-        """Initializes the output directory and file."""
+        """Initializes the output directory."""
         os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
-        self.file = open(self.output_path, "w")
-        self.file.write("[\n")
-        self.file.flush()
+        # We don't open the file yet, we buffer in memory for this demo
+        # or we could use a .jsonl approach. For simplicity, we buffer objects.
+        self._events = []
 
     def emit(self, event: TranscriptionEvent):
-        """Appends a single event to the JSON array immediately."""
-        if not self.file or not event.is_final or event.event_type != "transcript":
+        """Buffers a finalized transcript event."""
+        if not event.is_final or event.event_type != "transcript":
             return
-        
-        if not self.first_item:
-            self.file.write(",\n")
-        
-        # Write flat dictionary format compatible with evaluation tools
-        self.file.write("  " + json.dumps(event.to_dict()))
-        self.file.flush()
-        self.first_item = False
+        self._events.append(event.to_dict())
 
     def close(self):
-        """Finalizes the JSON array and closes the file handle."""
-        if self.file:
-            self.file.write("\n]\n")
-            self.file.close()
-            self.file = None
+        """Writes the buffered events as a valid JSON array."""
+        try:
+            with open(self.output_path, "w") as f:
+                json.dump(self._events, f, indent=2)
+        except Exception:
+            pass
 
 class TerminalSink:
     """

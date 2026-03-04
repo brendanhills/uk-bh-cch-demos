@@ -7,11 +7,11 @@ import time
 samples = ["0638.mp3", "4065.mp3", "4157.mp3", "4484.mp3", "4507.mp3", "4520.mp3"]
 duration = 60
 
-# Top 3 Approaches
+# Core Approaches and Model Comparisons
 approaches = [
-    ("Two-Channel", "two_channel_transcribe_v2.py", ["--mode", "readability"]),
-    ("Parallel Mode A", "parallel_transcribe.py", ["--arch", "mode_a", "--mode", "readability"]),
-    ("Parallel Mode B", "parallel_transcribe.py", ["--arch", "mode_b", "--mode", "readability"])
+    ("Two-Channel (Telephony)", "two_channel_transcribe_v2.py", ["--mode", "readability", "--model", "telephony"]),
+    ("Parallel (Telephony)", "parallel_transcribe.py", ["--mode", "readability", "--model", "telephony"]),
+    ("Parallel (Chirp-3)", "parallel_transcribe.py", ["--mode", "readability", "--model", "chirp_3"])
 ]
 
 results = []

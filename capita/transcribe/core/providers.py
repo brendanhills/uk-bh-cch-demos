@@ -174,8 +174,8 @@ class V2Provider:
 
 class V1Provider:
     """
-    Wraps Google STT V1 API. 
-    Maintained primarily for comparing legacy AI Diarization on mono files.
+    [DEPRECATED] Wraps Google STT V1 API. 
+    Maintained primarily for legacy comparisons. Use V2Provider for active development.
     """
     def __init__(self, client: cs_v1.SpeechAsyncClient):
         self.client = client

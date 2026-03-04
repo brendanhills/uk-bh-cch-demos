@@ -4,11 +4,12 @@ This project is a high-fidelity simulator for real-time audio transcription. It 
 
 ## Project Overview
 
-- **Core Technology:** Python 3.13+, Google Cloud Speech-to-Text V1/V2, Google Cloud Storage.
-- **Architecture:**
+- **Core Technology:** Python 3.13+, Google Cloud Speech-to-Text V2.
+- **Architecture:** 
+  - **Producer-Consumer**: Stereo audio is split into independent mono streams (Producers) and re-interleaved by a central logic engine (Consumer).
   - **`core/` package**: High-level abstractions for API providers, stabilization logic, and UI sinks.
+  - **`parallel_transcribe.py`**: The definitive high-fidelity demo using centralized interleaving.
   - **`simulate_audio.py`**: Infrastructure for throttling audio to real-time speeds.
-  - **Demos**: Refactored scripts (`two_channel_transcribe_v2.py`, `parallel_transcribe.py`) showcasing different scaling strategies.
 
 ## Building and Running
 
@@ -16,6 +17,10 @@ This project is a high-fidelity simulator for real-time audio transcription. It 
 - **Run Stereo Demo (V2)**:
   ```bash
   uv run two_channel_transcribe_v2.py gs://your-bucket/stereo-file.wav --mode readability
+  ```
+- **Run Parallel High-Fidelity Demo**:
+  ```bash
+  uv run parallel_transcribe.py gs://your-bucket/stereo-file.wav --model chirp_3
   ```
 - **Run Model Comparison**:
   ```bash
@@ -31,23 +36,23 @@ This project is a high-fidelity simulator for real-time audio transcription. It 
 - **Modular Design**: Maintain strict separation between:
     - **Audio Source**: `simulate_audio.py`
     - **API Provider**: `core/providers.py`
-    - **Stabilization Engine**: `core/engine.py`
+    - **Stabilization Engine**: `core/engine.py` (The "Central Brain")
     - **UI/Log Sink**: `core/sinks.py`
 - **UI & Formatting**:
   - Use ANSI colors for speaker distinction (Green/Yellow).
-  - Leverage `TerminalSink` for real-time "typing" effects and dynamic reflow.
+  - Leverage `TerminalSink` for real-time "typing" effects and dynamic side-by-side reflow.
 - **Stability Logic**:
   - **End-Based Stability**: Chunks are held until the playhead progresses past their `end_sec`.
-  - **Gap Splitting**: Large API results are surgicaly split into turns based on word-level silence.
-  - **Active Blocking**: Holds short interjections until long ongoing speech finishes to ensure chronological flow.
+  - **VAD Pinning**: High-latency models (Chirp-3) use Voice Activity Detection metadata to anchor wordless segments to the correct chronological position.
+  - **Active Blocking**: Prevents monologues from being interrupted by future speech, ensuring a natural turn-taking flow.
 
 ## Project Structure
 
 ```text
 core/
 ├── models.py    # Standardized TranscriptionEvent
-├── providers.py # API Wrappers (V1/V2)
-├── engine.py    # Chronological stabilization and splitting
+├── providers.py # API Wrappers (V2)
+├── engine.py    # Chronological stabilization, VAD pinning, and splitting
 ├── sinks.py      # Terminal UI and JSON logging
-└── utils.py     # Pipeline orchestration
+└── workers.py   # Independent channel workers for parallel streams
 ```

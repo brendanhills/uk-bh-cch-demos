@@ -14,14 +14,13 @@ from .engine import TranscriptionEngine
 from .sinks import TerminalSink, RealTimeJsonSink
 from simulate_audio import AudioStreamSimulator
 
-def parse_common_args(description: str, is_mono: bool = False, is_parallel: bool = False):
+def parse_common_args(description: str, is_mono: bool = False):
     """
     Standard argument parser for all transcription demo scripts.
     
     Args:
         description: The help text for the CLI.
         is_mono: If True, hides stereo-specific flags like '--mode'.
-        is_parallel: If True, shows architecture-specific flags like '--arch'.
     """
     load_dotenv()
     parser = argparse.ArgumentParser(description=description)
@@ -41,10 +40,6 @@ def parse_common_args(description: str, is_mono: bool = False, is_parallel: bool
     if not is_mono:
         parser.add_argument("--mode", choices=["low_latency", "readability"], default="readability",
                             help="readability (buffered/stable) vs low_latency (instant/unstable) [Default: readability]")
-    
-    if is_parallel:
-        parser.add_argument("--arch", choices=["mode_a", "mode_b"], default="mode_a",
-                            help="mode_a (Centralized Interleaving) vs mode_b (Distributed Stabilization) [Default: mode_a]")
     
     return parser.parse_args()
 
@@ -74,11 +69,9 @@ async def setup_pipeline(args, approach_name: str, force_mono: bool = False):
         engine.STABILITY_THRESHOLD = 5.0
     
     mode = getattr(args, 'mode', 'readability')
-    arch = getattr(args, 'arch', 'mode_a')
     
-    if mode == "low_latency" or arch == "mode_b":
-        # In Mode B, the workers handle stabilization and gap-splitting.
-        # The engine should just pass events through (interleaving still happens if they arrive simultaneously).
+    if mode == "low_latency":
+        # In low-latency mode, the engine should just pass events through.
         engine.STABILITY_THRESHOLD = 0.0
         engine.GAP_THRESHOLD = 0.0
         engine.ACTIVE_BLOCKING = False
@@ -95,8 +88,7 @@ async def setup_pipeline(args, approach_name: str, force_mono: bool = False):
     # Generate a descriptive filename for the output
     audio_filename = Path(args.gcs_uri).name
     blocking_tag = "b1" if engine.ACTIVE_BLOCKING else "b0"
-    arch_tag = arch
-    params_str = f"{args.model}_{arch_tag}_s{engine.STABILITY_THRESHOLD}_g{engine.GAP_THRESHOLD}_{blocking_tag}_{args.sample_rate}hz"
+    params_str = f"{args.model}_s{engine.STABILITY_THRESHOLD}_g{engine.GAP_THRESHOLD}_{blocking_tag}_{args.sample_rate}hz"
     output_path = f"output/{audio_filename}_{approach_name}_{params_str}.json"
     
     json_log = RealTimeJsonSink(output_path)
