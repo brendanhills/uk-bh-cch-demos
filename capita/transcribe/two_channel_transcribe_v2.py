@@ -14,7 +14,6 @@ from google.cloud import speech_v2 as cs
 from google.api_core.client_options import ClientOptions
 from core.utils import parse_common_args, setup_pipeline, run_broadcaster, q_gen
 from core.providers import V2Provider
-from core.chirp3_provider import Chirp3Provider
 
 async def main():
     # 1. Pipeline Setup (Arg parsing, Engine/Simulator initialization)
@@ -31,10 +30,7 @@ async def main():
     recognizer_name = f"projects/{project}/locations/{location}/recognizers/{recognizer_id}"
     
     # Initialize the high-level API wrapper
-    if args.use_chirp3:
-        provider = Chirp3Provider(client, recognizer_name, args.model)
-    else:
-        provider = V2Provider(client, recognizer_name, args.model)
+    provider = V2Provider(client, recognizer_name, args.model)
 
     # 3. Define the Worker (API Consumer)
     audio_q = asyncio.Queue()

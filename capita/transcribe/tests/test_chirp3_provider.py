@@ -2,12 +2,12 @@ import pytest
 import asyncio
 from unittest.mock import MagicMock, AsyncMock, patch
 from core.models import TranscriptionEvent
-from core.chirp3_provider import Chirp3Provider
+from core.providers import V2Provider
 from google.cloud import speech_v2 as cs_v2
 
 @pytest.mark.asyncio
 async def test_chirp3_provider_config():
-    """Verifies Chirp3Provider uses the correct specialized configuration."""
+    """Verifies V2Provider uses the correct specialized configuration for Chirp."""
     mock_client = AsyncMock(spec=cs_v2.SpeechAsyncClient)
     
     # Mock get_recognizer to return a fake recognizer
@@ -21,7 +21,7 @@ async def test_chirp3_provider_config():
         return response_gen()
     mock_client.streaming_recognize.side_effect = mock_streaming_recognize
 
-    provider = Chirp3Provider(
+    provider = V2Provider(
         client=mock_client,
         recognizer_name="projects/p/locations/us/recognizers/r",
         model="chirp-3"
@@ -37,22 +37,21 @@ async def test_chirp3_provider_config():
 
     # Verify streaming_recognize was called with correct config
     call_args = mock_client.streaming_recognize.call_args
-    print(f"DEBUG: call_args={call_args}")
     requests = call_args.kwargs.get('requests') or call_args.args[0]
     
     # Get the first request which should be the config
     first_request = await anext(requests)
     config = first_request.streaming_config.config
     
-    assert config.language_codes == ["auto"]
+    # Now hardcoded to en-US in unified provider
+    assert config.language_codes == ["en-US"]
     assert config.model == "chirp-3"
-    # Chirp-3 specific decoding config
-    assert config.explicit_decoding_config.encoding == cs_v2.ExplicitDecodingConfig.AudioEncoding.LINEAR16
-    assert config.explicit_decoding_config.sample_rate_hertz == 16000
+    # Chirp-3 specific: word offsets disabled in streaming
+    assert config.features.enable_word_time_offsets == False
 
 @pytest.mark.asyncio
 async def test_chirp3_provider_wordless_events():
-    """Verifies Chirp3Provider handles events without word-level timestamps."""
+    """Verifies V2Provider handles events without word-level timestamps when using Chirp."""
     mock_client = AsyncMock(spec=cs_v2.SpeechAsyncClient)
     mock_recognizer = MagicMock()
     mock_client.get_recognizer.return_value = mock_recognizer
@@ -79,9 +78,10 @@ async def test_chirp3_provider_wordless_events():
     
     mock_client.streaming_recognize.side_effect = mock_streaming_recognize
 
-    provider = Chirp3Provider(
+    provider = V2Provider(
         client=mock_client,
-        recognizer_name="projects/p/locations/us/recognizers/r"
+        recognizer_name="projects/p/locations/us/recognizers/r",
+        model="chirp-3"
     )
     
     # 2 chunks of 0.5s = 1.0s total

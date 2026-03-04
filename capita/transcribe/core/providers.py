@@ -4,67 +4,37 @@ These classes wrap the low-level GRPC streaming logic and yield standardized Tra
 """
 
 import asyncio
-import datetime
 from google.cloud import speech_v2 as cs_v2
 from google.cloud import speech_v1 as cs_v1
-from google.api_core.client_options import ClientOptions
 from .models import TranscriptionEvent
 
 class V2Provider:
     """
-    Wraps Google STT V2 API. 
-    Supports modern features like multi-channel recognition and voice activity events.
+    Unified wrapper for Google STT V2.
+    Handles both standard models (telephony) and specialized ones (Chirp-3).
     """
     def __init__(self, client: cs_v2.SpeechAsyncClient, recognizer_name: str, model: str):
         self.client = client
         self.recognizer_name = recognizer_name
         self.model = model
         self.current_audio_time = 0.0
+        
+        # Profile detection
         self.is_chirp = "chirp" in model.lower()
-
-    async def _get_or_create_recognizer(self):
-        """Ensures the requested Recognizer exists in the GCP project."""
-        try:
-            return await self.client.get_recognizer(name=self.recognizer_name)
-        except Exception:
-            # Automatic creation if not found (useful for demo setup)
-            parent = "/".join(self.recognizer_name.split("/")[:4])
-            recognizer_id = self.recognizer_name.split("/")[-1]
-            
-            features = cs_v2.RecognitionFeatures(
-                enable_word_time_offsets=not self.is_chirp,
-                enable_automatic_punctuation=True,
-            )
-            
-            request = cs_v2.CreateRecognizerRequest(
-                parent=parent,
-                recognizer_id=recognizer_id,
-                recognizer=cs_v2.Recognizer(
-                    default_recognition_config=cs_v2.RecognitionConfig(
-                        language_codes=["en-US"], 
-                        model=self.model,
-                        features=features,
-                    ),
-                ),
-            )
-            op = await self.client.create_recognizer(request=request)
-            return await op.result()
 
     async def stream(self, audio_gen, channel_id=1, multi_channel=False, diarization=False, chunk_duration_sec=0.25):
         """
         Main streaming loop. Translates audio chunks into a stream of TranscriptionEvents.
         """
-        await self._get_or_create_recognizer()
-        
-        # Configure the recognition features
+        # 1. Configure Features based on Model Profile
+        # Chirp-3 has some unique constraints in streaming mode.
         features = cs_v2.RecognitionFeatures(
-            enable_word_time_offsets=not self.is_chirp,
+            enable_word_time_offsets=not self.is_chirp, # Chirp-3 doesn't support word offsets in streaming
             enable_automatic_punctuation=True,
             multi_channel_mode=cs_v2.RecognitionFeatures.MultiChannelMode.SEPARATE_RECOGNITION_PER_CHANNEL if multi_channel else None
         )
         
         if diarization:
-            # AI-based speaker separation (used for mono files)
             features.diarization_config = cs_v2.SpeakerDiarizationConfig(min_speaker_count=2, max_speaker_count=2)
 
         config = cs_v2.RecognitionConfig(
@@ -75,19 +45,19 @@ class V2Provider:
                 audio_channel_count=2 if multi_channel else 1,
             ),
             model=self.model,
-            language_codes=["en-US"]
+            language_codes=["en-US"] # Fixed to English for this demo
         )
 
         streaming_config = cs_v2.StreamingRecognitionConfig(
             config=config,
             streaming_features=cs_v2.StreamingRecognitionFeatures(
                 interim_results=True,
-                enable_voice_activity_events=True # Used for Active Blocking in Engine
+                enable_voice_activity_events=True
             )
         )
 
+        # 2. Setup bi-directional stream
         async def request_generator():
-            # Initial request must contain the configuration
             yield cs_v2.StreamingRecognizeRequest(recognizer=self.recognizer_name, streaming_config=streaming_config)
             
             chunks_sent = 0
@@ -96,11 +66,11 @@ class V2Provider:
                 self.current_audio_time = chunks_sent * chunk_duration_sec
                 yield cs_v2.StreamingRecognizeRequest(audio=chunk)
 
-        # Execute the bi-directional stream
         responses = await self.client.streaming_recognize(requests=request_generator())
         
+        # 3. Yield standardized events
         async for response in responses:
-            # 1. Handle Voice Activity (VAD) Events
+            # Handle Voice Activity Detection (VAD)
             if response.speech_event_type:
                 ev_name = cs_v2.StreamingRecognizeResponse.SpeechEventType(response.speech_event_type).name
                 yield TranscriptionEvent(
@@ -109,26 +79,30 @@ class V2Provider:
                     is_final=True, event_type=ev_name.lower()
                 )
 
-            # 2. Handle Transcript Results
+            # Handle Transcripts
             for result in response.results:
                 if not result.alternatives: continue
                 alt = result.alternatives[0]
                 
-                # Determine speaker attribution
                 speaker = channel_id
                 if multi_channel: 
                     speaker = result.channel_tag
-                if diarization and alt.words: 
+                elif diarization and alt.words: 
                     speaker = alt.words[0].speaker_tag
 
-                # Calculate timing
-                start = alt.words[0].start_offset.total_seconds() if alt.words else self.current_audio_time
-                end = alt.words[-1].end_offset.total_seconds() if alt.words else (start + 1.0)
+                # Timing logic: use words if available, fallback to clock for wordless models (Chirp)
+                start = self.current_audio_time - 1.0 # Default 1s window if wordless
+                if alt.words:
+                    start = alt.words[0].start_offset.total_seconds()
+                
+                end = self.current_audio_time
+                if alt.words:
+                    end = alt.words[-1].end_offset.total_seconds()
 
                 yield TranscriptionEvent(
                     speaker_id=speaker,
                     text=alt.transcript,
-                    start_sec=start,
+                    start_sec=max(0.0, start),
                     end_sec=end,
                     is_final=result.is_final,
                     words=[{
@@ -172,9 +146,6 @@ class V1Provider:
                 self.current_audio_time = chunks_sent * 0.25
                 yield cs_v1.StreamingRecognizeRequest(audio_content=chunk)
 
-        # Initial signal to UI
-        yield TranscriptionEvent(speaker_id=1, text="", start_sec=0.0, end_sec=0.0, is_final=False, event_type="heartbeat")
-
         responses = await self.client.streaming_recognize(requests=request_generator())
         
         async for response in responses:
@@ -185,7 +156,6 @@ class V1Provider:
 
             if result.is_final:
                 if alt.words:
-                    # Logic to group words by speaker to create natural turns immediately
                     current_speaker = alt.words[0].speaker_tag
                     current_text = []
                     current_start = alt.words[0].start_time.total_seconds()

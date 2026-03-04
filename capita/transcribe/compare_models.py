@@ -16,16 +16,11 @@ from google.api_core.client_options import ClientOptions
 from core.utils import parse_common_args, setup_pipeline, run_broadcaster, q_gen
 from core.providers import V2Provider
 
-async def main():
+async def main(args):
     # 1. Pipeline Setup
-    args = parse_common_args("Model Comparison Demo")
-    # Custom approach name for comparison output
-    approach = f"compare_{args.model1}_vs_{args.model2}" if hasattr(args, 'model1') else "compare"
+    # Add a virtual 'model' name for setup_pipeline naming
+    args.model = f"{args.model1}_vs_{args.model2}"
     
-    # We'll manually parse comparison models if not in common args
-    model1 = getattr(args, 'model1', 'telephony')
-    model2 = getattr(args, 'model2', 'chirp_2') # Default to compare against Chirp 2
-
     # Initialize shared components
     simulator, engine, terminal, json_log, output_path = await setup_pipeline(args, "comparison")
 
@@ -44,28 +39,28 @@ async def main():
             
         client = cs.SpeechAsyncClient(client_options=ClientOptions(api_endpoint=api_endpoint))
         recognizer_name = f"projects/{project}/locations/{loc}/recognizers/{recognizer_id}-{model_name.replace('_', '-')}"
+        
         return V2Provider(client, recognizer_name, model_name)
 
     provider1 = create_provider(args.model1 if hasattr(args, 'model1') else "telephony")
     provider2 = create_provider(args.model2 if hasattr(args, 'model2') else "chirp_2")
 
     # 3. Define the Dual Workers
-    audio_q = asyncio.Queue()
+    q1 = asyncio.Queue()
+    q2 = asyncio.Queue()
 
-    async def api_worker(provider, model_label):
+    async def api_worker(provider, queue, model_label):
         """Standard worker that injects a model label into every event."""
-        async for event in provider.stream(q_gen(audio_q), multi_channel=True, chunk_duration_sec=args.chunk_size):
+        async for event in provider.stream(q_gen(queue), multi_channel=True, chunk_duration_sec=args.chunk_size):
             event.metadata["model"] = model_label.upper()
             
-            # Note: We don't sync VAD to engine here because overlapping VAD 
-            # from two different models would confuse the Active Blocking logic.
-            # We only process transcript events for comparison.
-            if event.event_type == "transcript":
-                engine.process_raw_event(event)
+            # Note: We now allow VAD events through because the engine 
+            # uses them to 'pin' wordless transcripts (Chirp-3 timing fix).
+            engine.process_raw_event(event)
 
     # 4. Orchestration
-    m1_label = (args.model1 if hasattr(args, 'model1') else "telephony").upper()
-    m2_label = (args.model2 if hasattr(args, 'model2') else "chirp_2").upper()
+    m1_label = args.model1.upper()
+    m2_label = args.model2.upper()
     
     print(f"\nREAL-TIME COMPARISON: {m1_label} vs {m2_label}")
     print(f"Output File: {output_path}")
@@ -73,9 +68,9 @@ async def main():
 
     try:
         await asyncio.gather(
-            run_broadcaster(simulator, engine, audio_q, args.duration, args.chunk_size),
-            api_worker(provider1, m1_label),
-            api_worker(provider2, m2_label)
+            run_broadcaster(simulator, engine, [q1, q2], args.duration, args.chunk_size, broadcast_stereo=True),
+            api_worker(provider1, q1, m1_label),
+            api_worker(provider2, q2, m2_label)
         )
     except KeyboardInterrupt:
         print("\nStopping comparison...")
@@ -100,11 +95,9 @@ if __name__ == "__main__":
     parser.add_argument("--wait-for-play", action="store_true")
     parser.add_argument("--duration", type=float, default=60)
     parser.add_argument("--mode", choices=["low_latency", "readability"], default="readability")
+    parser.add_argument("--use-chirp3", action="store_true", help="Use specialized Chirp3Provider for Chirp-3 models")
     
     # Override standard args with our extended set
-    import sys
-    # This is a bit hacky but works for a single-file demo script
-    class Args: pass
     args = parser.parse_args()
     
-    asyncio.run(main())
+    asyncio.run(main(args))

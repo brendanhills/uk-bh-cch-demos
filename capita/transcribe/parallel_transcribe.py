@@ -15,7 +15,6 @@ from google.cloud import speech_v2 as cs
 from google.api_core.client_options import ClientOptions
 from core.utils import parse_common_args, setup_pipeline, run_broadcaster, q_gen
 from core.providers import V2Provider
-from core.chirp3_provider import Chirp3Provider
 from core.workers import RawChannelWorker, StabilizedChannelWorker
 
 async def main():
@@ -36,8 +35,6 @@ async def main():
     q1, q2 = asyncio.Queue(), asyncio.Queue()
     
     def get_provider(model):
-        if args.use_chirp3:
-            return Chirp3Provider(client, recognizer_name, model)
         return V2Provider(client, recognizer_name, model)
 
     if args.arch == "mode_b":
