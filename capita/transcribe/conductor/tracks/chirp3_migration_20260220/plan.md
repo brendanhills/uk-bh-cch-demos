@@ -2,7 +2,7 @@
 
 Implement a dedicated `Chirp3Provider` module to handle the unique requirements of the Chirp-3 model, including specialized arguments, missing word-level timestamps, and custom output/interleaving logic.
 
-## Phase 1: Dedicated Chirp-3 Provider
+## Phase 1: Dedicated Chirp-3 Provider [checkpoint: 8d2985c]
 Build the foundation for specialized Chirp-3 interaction.
 
 - [x] Task: Create `core/chirp3_provider.py` 0360aa3
