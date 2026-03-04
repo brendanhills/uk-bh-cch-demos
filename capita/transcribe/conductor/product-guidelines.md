@@ -14,7 +14,8 @@ These guidelines define the quality standards, architectural principles, and use
 ## 3. Accuracy and Reliability
 - **Chronological Integrity:** Prioritize the correct ordering of conversational events. Use stability buffers to ensure that late-arriving packets are placed in their correct temporal position before display.
 - **Atomic Data:** Every transcript chunk must be tied to its precise audio timestamp. This allows for reliable downstream analysis and "Golden Set" verification.
-- **Perfect Attribution:** For 2-channel audio, the simulator must guarantee zero cross-talk in speaker identification by leveraging wire-level separation.
+- **Perfect Attribution:** For 2-channel audio, the simulator must guarantee zero cross-talk in speaker identification by leveraging wire-level separation. **Multi-Channel (Stereo)** V2 streams MUST be preferred over Mono Diarization for high-fidelity attribution.
+- **VAD-Gating:** To prevent hallucinations from Large Speech Models (LSMs), the system should use Voice Activity signals to gate interim results, ensuring text only appears when speech is actually detected.
 
 ## 4. Architectural Principles
 - **Modularity First:** Maintain a strict separation of concerns between:
