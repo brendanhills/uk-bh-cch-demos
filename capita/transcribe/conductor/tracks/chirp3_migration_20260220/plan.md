@@ -5,7 +5,7 @@ Implement a dedicated `Chirp3Provider` module to handle the unique requirements 
 ## Phase 1: Dedicated Chirp-3 Provider
 Build the foundation for specialized Chirp-3 interaction.
 
-- [ ] Task: Create `core/chirp3_provider.py`
+- [x] Task: Create `core/chirp3_provider.py` 0360aa3
     - [ ] Implement `Chirp3Provider` class based on `V2Provider` but with specialized configurations (location, language codes, decoding config).
     - [ ] Ensure it supports streaming and yields `TranscriptionEvent` objects with correctly handled (but empty) `words` lists.
 - [ ] Task: CLI Integration
