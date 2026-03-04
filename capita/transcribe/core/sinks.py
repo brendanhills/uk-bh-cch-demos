@@ -126,15 +126,15 @@ class TerminalSink:
             return
 
         # 2. OVERWRITE/NEWLINE LOGIC:
+        if getattr(self, "last_was_inline", False):
+            # If we were printing heartbeats, clear that line first
+            print("\r\033[K", end="", flush=True)
+            self.last_was_inline = False
+
         if not self.last_was_final:
             # Always clear the last interim line before printing anything new
-            # (transcript or marker) to ensure the UI feels live and contiguous.
             for _ in range(self.last_line_count):
                 print("\033[F\033[K", end="", flush=True)
-        
-        if getattr(self, "last_was_inline", False):
-            print()
-            self.last_was_inline = False
 
         # 3. FORMATTING:
         wrapped = self._format_event(event, col_idx, event.is_final)
