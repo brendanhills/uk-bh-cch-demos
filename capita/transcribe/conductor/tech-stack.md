@@ -7,7 +7,7 @@ This document outlines the core technologies and libraries used in the Real-Time
 - **uv**: The preferred package and project manager for fast, reproducible dependency resolution.
 
 ## 2. Cloud Infrastructure (Google Cloud Platform)
-- **Speech-to-Text API (V2)**: The primary engine for multi-channel, real-time transcription. V2 is selected for its enhanced features and performance.
+- **Speech-to-Text API (V2)**: The primary engine for multi-channel, real-time transcription. V2 is selected for its enhanced features and performance, including specialized support for **Chirp-3**.
 - **Speech-to-Text API (V1)**: Maintained for legacy support and comparison, specifically for AI-driven diarization on mono files.
 - **Google Cloud Storage (GCS)**: Used for storing and streaming the source audio files.
 

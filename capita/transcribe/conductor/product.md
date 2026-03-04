@@ -12,7 +12,7 @@ Provide a high-fidelity development and evaluation environment for real-time tra
 # Core Goals
 1. **Unrivaled Attribution:** Leverage multi-channel audio to provide 100% reliable speaker identification (Caller vs. Agent).
 2. **Timing Precision:** Ensure transcripts align perfectly with audio playback, resolving race conditions between asynchronous streams.
-3. **Logic Evaluation:** Provide a "sandbox" to compare different transcription strategies (e.g., Low Latency vs. Readability) and STT models (e.g., Telephony, Chirp).
+3. **Logic Evaluation:** Provide a "sandbox" to compare different transcription strategies (e.g., Low Latency vs. Readability) and STT models (e.g., Telephony, Chirp-3).
 4. **Visual Polish:** Demonstrate best practices for rendering real-time interim results in a columnar CLI interface.
 
 # Key Features
@@ -21,5 +21,6 @@ Provide a high-fidelity development and evaluation environment for real-time tra
     - **Low Latency Mode:** Focuses on immediate arrival, ideal for instant feedback.
     - **Readability Mode:** Uses stability buffers and active-speech blocking to ensure strict chronological order and natural turn-taking.
 - **Gap-Based Splitting:** Automatically detects silence between words to partition monologues into readable paragraphs.
+- **VAD-Based Timing Pinning:** Corrects timing lag for models without word-level timestamps (like Chirp-3) by syncing results to Voice Activity signals.
 - **Unified STT V2 Engine:** A modular core that supports easy swapping of models and configuration features.
 - **Visual Terminal UI:** Real-time columnar display with ANSI-colored interim and final results.
