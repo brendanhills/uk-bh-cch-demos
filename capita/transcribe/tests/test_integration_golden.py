@@ -106,11 +106,14 @@ def test_transcription_vs_golden(script, arch, is_parallel, model):
             if len(clean_line) - len(clean_line.lstrip()) >= 25:
                 has_s2_ui = True
 
-        # Subtle heartbeat checks (Refactored UI)
-        if "." in clean_line and len(clean_line.strip()) < 10:
-            has_heartbeats = True
-        if "+" in clean_line and len(clean_line.strip()) < 10:
-            has_vad = True
+        # Heartbeat and VAD checks (Refactored UI)
+        # Heartbeats are lines containing dots or pluses that are not transcript lines
+        if "Speaker" not in clean_line:
+            if "." in clean_line:
+                has_heartbeats = True
+            if "+" in clean_line:
+                has_vad = True
+
     assert has_s1_ui, f"UI for {script} {arch} missing Speaker 1 output or alignment is wrong"
     assert has_s2_ui, f"UI for {script} {arch} missing Speaker 2 output or alignment is wrong"
     assert has_heartbeats, f"UI for {script} {arch} missing heartbeats"

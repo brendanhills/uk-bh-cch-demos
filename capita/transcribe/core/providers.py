@@ -35,7 +35,11 @@ class V2Provider:
         """Ensures the recognizer exists in the specified location."""
         try:
             await self.client.get_recognizer(name=self.recognizer_name)
-        except Exception:
+        except Exception as e:
+            # If it already exists (race condition), just return
+            if "already exists" in str(e).lower():
+                return
+                
             # Create it if it doesn't exist
             parent = "/".join(self.recognizer_name.split("/")[:4])
             recognizer_id = self.recognizer_name.split("/")[-1]
