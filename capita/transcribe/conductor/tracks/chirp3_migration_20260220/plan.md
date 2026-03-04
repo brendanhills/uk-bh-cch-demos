@@ -10,7 +10,7 @@ Build the foundation for specialized Chirp-3 interaction.
     - [ ] Ensure it supports streaming and yields `TranscriptionEvent` objects with correctly handled (but empty) `words` lists.
 - [x] Task: CLI Integration e3fd074
     - [ ] Update `two_channel_transcribe_v2.py` and `parallel_transcribe.py` to support a `--use-chirp3` flag that selects the new provider.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Dedicated Provider' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Dedicated Provider' (Protocol in workflow.md)
 
 ## Phase 2: Interleaving Engine Enhancements
 Refine how the `TranscriptionEngine` handles segments that lack word-level timestamps.
