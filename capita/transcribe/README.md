@@ -65,7 +65,7 @@ uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_b
 Runs two different STT models (e.g., `telephony` vs `chirp_2`) side-by-side on the same audio stream.
 
 ```bash
-uv run compare_models.py gs://your-bucket/file.wav --model1 telephony --model2 chirp_2
+uv run compare_models.py samples/0638.mp3 --model1 telephony --model2 chirp_3
 ```
 
 ---

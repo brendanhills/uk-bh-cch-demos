@@ -26,7 +26,7 @@ The simulator provides several knobs to tune the balance between speed and reada
 | `--stability` | `1.0s` | **Buffer:** How long the Engine holds results to allow for chronological re-ordering. Higher = more stable. |
 | `--gap` | `0.5s` | **Turn Splitting:** Amount of silence between words required to split a block of text into a new speaker turn. |
 | `--chunk-size` | `0.1s` | **Streaming Rate:** The duration of each audio packet sent to the API. |
-| `--model` | `telephony` | **STT Model:** Selection of the underlying Google model (e.g., `telephony`, `chirp_2`). |
+| `--model` | `telephony` | **STT Model:** Selection of the underlying Google model (e.g., `telephony`, `chirp_3`). |
 
 ## Step-by-Step Logic
 

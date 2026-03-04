@@ -202,7 +202,6 @@ class TerminalSink:
         
         # 1. Update Internal VAD State
         if "begin" in event.event_type:
-            # We use a composite key to handle comparison mode where multiple models report VAD
             model_id = event.metadata.get("model", "default")
             self.active_counts[(event.speaker_id, model_id)] = 1
             return
@@ -213,10 +212,10 @@ class TerminalSink:
 
         # 2. Render Heartbeat
         if event.event_type == "heartbeat":
-            # If ANY speaker is currently active according to ANY model, use a 'Talking' char
             is_any_talking = any(v > 0 for v in self.active_counts.values())
             char = "+" if is_any_talking else "."
             
+            # Show heartbeat in all relevant columns
             col_idx = self._get_col(event.speaker_id)
             offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
             print(f"{offset_str}{color}{char}{self.COLOR_RESET}", end="", flush=True)

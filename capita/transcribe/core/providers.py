@@ -85,7 +85,7 @@ class V2Provider:
             )
         
         if diarization:
-            features.diarization_config = cs_v2.SpeakerDiarizationConfig(min_speaker_count=2, max_speaker_count=2)
+            features.diarization_config = cs_v2.SpeakerDiarizationConfig(min_speaker_count=2, max_speaker_count=4)
 
         config = cs_v2.RecognitionConfig(
             features=features,

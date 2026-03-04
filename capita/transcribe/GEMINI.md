@@ -19,7 +19,7 @@ This project is a high-fidelity simulator for real-time audio transcription. It 
   ```
 - **Run Model Comparison**:
   ```bash
-  uv run compare_models.py gs://your-bucket/stereo-file.wav --model1 telephony --model2 chirp_2
+  uv run compare_models.py gs://your-bucket/stereo-file.wav --model1 telephony --model2 chirp_3
   ```
 - **Evaluate Results**:
   ```bash
