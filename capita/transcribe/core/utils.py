@@ -7,6 +7,7 @@ import argparse
 import os
 import asyncio
 import audioop
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
 from .engine import TranscriptionEngine
@@ -32,7 +33,10 @@ def parse_common_args(description: str, is_mono: bool = False, is_parallel: bool
     parser.add_argument("--chunk-size", type=float, default=0.1, help="Audio chunk duration in seconds [Default: 0.1]")
     parser.add_argument("--wait-for-play", action="store_true", help="Wait for user to start audio playback in browser")
     parser.add_argument("--duration", type=float, default=None, help="Stop after X seconds of audio")
-    parser.add_argument("--use-chirp3", action="store_true", help="Use specialized Chirp3Provider with auto-language detection")
+    parser.add_argument("--sensitivity", choices=["STANDARD", "SHORT", "SUPERSHORT"], default="STANDARD",
+                        help="Endpointing sensitivity for Chirp-3 models [Default: STANDARD]")
+    parser.add_argument("--start-timeout", type=float, default=0.5,
+                        help="Speech start timeout in seconds [Default: 0.5]")
     
     if not is_mono:
         parser.add_argument("--mode", choices=["low_latency", "readability"], default="readability",
@@ -63,7 +67,13 @@ async def setup_pipeline(args, approach_name: str, force_mono: bool = False):
         simulator.wait_for_user_start()
     
     # 2. Configure the Engine
+    logging.getLogger().setLevel(logging.DEBUG)
     engine = TranscriptionEngine()
+    
+    # Adaptive Stability: High-latency models (Chirp) need a larger buffer for sorting
+    if "chirp" in args.model.lower():
+        engine.STABILITY_THRESHOLD = 5.0
+    
     mode = getattr(args, 'mode', 'readability')
     arch = getattr(args, 'arch', 'mode_a')
     
@@ -99,7 +109,7 @@ async def setup_pipeline(args, approach_name: str, force_mono: bool = False):
     
     return simulator, engine, terminal, json_log, output_path
 
-async def run_broadcaster(simulator, engine, audio_queues, duration, chunk_size):
+async def run_broadcaster(simulator, engine, audio_queues, duration, chunk_size, broadcast_stereo=False):
     """
     The 'Heartbeat' of the system. Streams audio from the simulator and
     distributes it to one or more worker queues while driving the engine clock.
@@ -112,10 +122,15 @@ async def run_broadcaster(simulator, engine, audio_queues, duration, chunk_size)
         engine.set_audio_time(chunks_sent * chunk_size)
         
         if isinstance(audio_queues, list):
-            # Parallel Mode: Split stereo into two mono chunks for independent workers
-            # audio_queues[0] gets Left (Caller), audio_queues[1] gets Right (Agent)
-            await audio_queues[0].put(audioop.tomono(chunk, 2, 1, 0))
-            await audio_queues[1].put(audioop.tomono(chunk, 2, 0, 1))
+            if broadcast_stereo:
+                # Comparison Mode: Send same stereo chunk to all workers
+                for q in audio_queues:
+                    await q.put(chunk)
+            else:
+                # Parallel Mode: Split stereo into two mono chunks for independent workers
+                # audio_queues[0] gets Left (Caller), audio_queues[1] gets Right (Agent)
+                await audio_queues[0].put(audioop.tomono(chunk, 2, 1, 0))
+                await audio_queues[1].put(audioop.tomono(chunk, 2, 0, 1))
         else:
             # Two-Channel Mode: Send raw stereo chunk to a single worker
             await audio_queues.put(chunk)

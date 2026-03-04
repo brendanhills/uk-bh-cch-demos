@@ -13,7 +13,7 @@ class V2Provider:
     Unified wrapper for Google STT V2.
     Handles both standard models (telephony) and specialized ones (Chirp-3).
     """
-    def __init__(self, client: cs_v2.SpeechAsyncClient, recognizer_name: str, model: str):
+    def __init__(self, client: cs_v2.SpeechAsyncClient, recognizer_name: str, model: str, endpoint_sensitivity: str = "STANDARD"):
         self.client = client
         self.recognizer_name = recognizer_name
         self.model = model
@@ -22,17 +22,67 @@ class V2Provider:
         # Profile detection
         self.is_chirp = "chirp" in model.lower()
 
+        # Map sensitivity to speech_end_timeout durations (demo-optimized)
+        self.sensitivity_map = {
+            "STANDARD": 3.0,
+            "SHORT": 1.5,
+            "SUPERSHORT": 0.5,
+        }
+        self.speech_end_timeout_sec = self.sensitivity_map.get(endpoint_sensitivity.upper(), 3.0)
+        self.speech_start_timeout_sec = 0.5 # Demo optimized
+
+    async def _get_or_create_recognizer(self):
+        """Ensures the recognizer exists in the specified location."""
+        try:
+            await self.client.get_recognizer(name=self.recognizer_name)
+        except Exception:
+            # Create it if it doesn't exist
+            parent = "/".join(self.recognizer_name.split("/")[:4])
+            recognizer_id = self.recognizer_name.split("/")[-1]
+            
+            # Basic configuration for the recognizer
+            # (Features can be overridden in the recognition config)
+            features = cs_v2.RecognitionFeatures(
+                enable_word_time_offsets=True,
+                enable_automatic_punctuation=True,
+            )
+            
+            request = cs_v2.CreateRecognizerRequest(
+                parent=parent,
+                recognizer_id=recognizer_id,
+                recognizer=cs_v2.Recognizer(
+                    display_name=f"Demo Recognizer {recognizer_id}",
+                    model=self.model,
+                    default_recognition_config=cs_v2.RecognitionConfig(
+                        features=features,
+                        language_codes=["en-US"],
+                    )
+                )
+            )
+            operation = await self.client.create_recognizer(request=request)
+            await operation.result()
+
     async def stream(self, audio_gen, channel_id=1, multi_channel=False, diarization=False, chunk_duration_sec=0.25):
         """
         Main streaming loop. Translates audio chunks into a stream of TranscriptionEvents.
         """
+        await self._get_or_create_recognizer()
+        
         # 1. Configure Features based on Model Profile
-        # Chirp-3 has some unique constraints in streaming mode.
-        features = cs_v2.RecognitionFeatures(
-            enable_word_time_offsets=not self.is_chirp, # Chirp-3 doesn't support word offsets in streaming
-            enable_automatic_punctuation=True,
-            multi_channel_mode=cs_v2.RecognitionFeatures.MultiChannelMode.SEPARATE_RECOGNITION_PER_CHANNEL if multi_channel else None
-        )
+        # Profile: Chirp-3 (Large Speech Model)
+        if self.is_chirp:
+            features = cs_v2.RecognitionFeatures(
+                enable_word_time_offsets=False, # Not supported in streaming
+                enable_automatic_punctuation=True,
+                multi_channel_mode=cs_v2.RecognitionFeatures.MultiChannelMode.SEPARATE_RECOGNITION_PER_CHANNEL if multi_channel else None
+            )
+        else:
+            # Profile: Telephony / Standard
+            features = cs_v2.RecognitionFeatures(
+                enable_word_time_offsets=True,
+                enable_automatic_punctuation=True,
+                multi_channel_mode=cs_v2.RecognitionFeatures.MultiChannelMode.SEPARATE_RECOGNITION_PER_CHANNEL if multi_channel else None
+            )
         
         if diarization:
             features.diarization_config = cs_v2.SpeakerDiarizationConfig(min_speaker_count=2, max_speaker_count=2)
@@ -50,10 +100,10 @@ class V2Provider:
 
         streaming_config = cs_v2.StreamingRecognitionConfig(
             config=config,
-            streaming_features=cs_v2.StreamingRecognitionFeatures(
-                interim_results=True,
-                enable_voice_activity_events=True
-            )
+            streaming_features={
+                "interim_results": True,
+                "enable_voice_activity_events": True
+            }
         )
 
         # 2. Setup bi-directional stream
@@ -73,9 +123,15 @@ class V2Provider:
             # Handle Voice Activity Detection (VAD)
             if response.speech_event_type:
                 ev_name = cs_v2.StreamingRecognizeResponse.SpeechEventType(response.speech_event_type).name
+                
+                # USE THE API'S OFFSET IF PROVIDED
+                event_time = self.current_audio_time
+                if response.speech_event_offset:
+                    event_time = response.speech_event_offset.total_seconds()
+
                 yield TranscriptionEvent(
                     speaker_id=channel_id, text="", 
-                    start_sec=self.current_audio_time, end_sec=self.current_audio_time,
+                    start_sec=event_time, end_sec=event_time,
                     is_final=True, event_type=ev_name.lower()
                 )
 

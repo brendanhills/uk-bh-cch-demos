@@ -12,20 +12,19 @@ def clean_text(text):
     text = text.translate(str.maketrans('', '', string.punctuation))
     return " ".join(text.split())
 
-@pytest.mark.parametrize("script, arch, is_parallel", [
-    ("two_channel_transcribe_v2.py", None, False),
-    ("parallel_transcribe.py", "mode_a", True),
-    ("parallel_transcribe.py", "mode_b", True),
-    ("mono_transcribe_v1.py", None, False)
+@pytest.mark.parametrize("script, arch, is_parallel, model", [
+    ("two_channel_transcribe_v2.py", None, False, "telephony"),
+    ("two_channel_transcribe_v2.py", None, False, "chirp_3"),
+    ("parallel_transcribe.py", "mode_a", True, "telephony"),
+    ("parallel_transcribe.py", "mode_b", True, "telephony"),
+    ("mono_transcribe_v1.py", None, False, "phone_call")
 ])
-def test_transcription_vs_golden(script, arch, is_parallel):
+def test_transcription_vs_golden(script, arch, is_parallel, model):
     audio_sample = "samples/0638.mp3"
     golden_path = "output/0638.mp3_golden_set.json"
     
     # 1. Run the script
-    simulator_arch = "two_channel" if script == "two_channel_transcribe_v2.py" else "parallel"
-    if script == "mono_transcribe_v1.py": simulator_arch = "mono_v1"
-    cmd = ["uv", "run", script, audio_sample, "--duration", "15"]
+    cmd = ["uv", "run", script, audio_sample, "--duration", "15", "--model", model]
     
     # Scripts that are not Mono V1 support --mode
     if "mono_transcribe_v1" not in script:
@@ -106,11 +105,12 @@ def test_transcription_vs_golden(script, arch, is_parallel):
         if "Speaker 2:" in clean_line:
             if len(clean_line) - len(clean_line.lstrip()) >= 25:
                 has_s2_ui = True
+
+        # Subtle heartbeat checks (Refactored UI)
         if "." in clean_line and len(clean_line.strip()) < 10:
             has_heartbeats = True
-        if "<TALKING" in clean_line or "<SILENT" in clean_line:
+        if "+" in clean_line and len(clean_line.strip()) < 10:
             has_vad = True
-                
     assert has_s1_ui, f"UI for {script} {arch} missing Speaker 1 output or alignment is wrong"
     assert has_s2_ui, f"UI for {script} {arch} missing Speaker 2 output or alignment is wrong"
     assert has_heartbeats, f"UI for {script} {arch} missing heartbeats"

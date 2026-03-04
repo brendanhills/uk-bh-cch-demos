@@ -17,12 +17,13 @@ class TranscriptionEngine:
     def __init__(self):
         # Configuration
         self.STABILITY_THRESHOLD = 1.0  # Seconds to hold results for sorting
-        self.GAP_THRESHOLD = 0.5        # Silence between words to trigger a turn split
+        self.GAP_THRESHOLD = 1.5        # Silence between words to trigger a turn split
         self.ACTIVE_BLOCKING = True     # Prevent short interjections from appearing before a monologue ends
         
         # State
         self.stability_buffer: List[TranscriptionEvent] = []
-        self.active_starts = {} # {speaker_id: start_sec}
+        self.active_starts = {} # {speaker_id: start_sec} - current active speech
+        self.last_vad_starts = {} # {speaker_id: start_sec} - most recent VAD begin
         self.current_audio_time = 0.0
         self.start_time = datetime.datetime.now(datetime.timezone.utc)
         
@@ -59,11 +60,21 @@ class TranscriptionEngine:
     def process_raw_event(self, event: TranscriptionEvent):
         """Main entry point for raw events from API providers."""
         self.current_audio_time = max(self.current_audio_time, event.start_sec)
+        
+        # LOGGING FOR DEBUGGING FIDELITY
+        log_label = f"[{event.metadata.get('model', 'API')}]"
+        if event.event_type != "transcript":
+            logging.debug(f"{log_label} {event.event_type.upper()} at {event.start_sec:0.1f}s (Clock: {self.current_audio_time:0.1f}s)")
+        elif event.is_final:
+            logging.debug(f"{log_label} FINAL TRANSCRIPT at {event.start_sec:0.1f}s arrived at {self.current_audio_time:0.1f}s: \"{event.text[:30]}...\"")
 
         # 1. Handle VAD events (Voice Activity Detection)
         if event.event_type != "transcript":
             if "begin" in event.event_type:
                 self.update_active_status(event.speaker_id, event.start_sec)
+                # Only pin to the FIRST begin event in a potential burst
+                if self.last_vad_starts.get(event.speaker_id) is None:
+                    self.last_vad_starts[event.speaker_id] = event.start_sec
             elif "end" in event.event_type:
                 self.update_active_status(event.speaker_id, None)
             
@@ -72,14 +83,20 @@ class TranscriptionEngine:
 
         # 2. Handle interims (drafts)
         if not event.is_final:
-            self._emit(event)
+            # GATING: Only emit interims if the speaker is currently 'active' (VAD Begin received)
+            # This filters out 'hallucinations' that occur during background noise.
+            if self.active_starts.get(event.speaker_id) is not None:
+                self._emit(event)
             return
 
         # 3. Handle wordless transcripts (VAD Pinning for Chirp-3)
         if not event.words:
-            last_start = self.active_starts.get(event.speaker_id)
+            # Use the most recent VAD start for this speaker
+            last_start = self.last_vad_starts.get(event.speaker_id)
             if last_start is not None:
                 event.start_sec = last_start
+                # Clear the cache once consumed to avoid mis-pinning the next segment
+                self.last_vad_starts[event.speaker_id] = None
 
         # 4. Buffer finalized results for stabilization
         self.stability_buffer.append(event)
@@ -98,7 +115,7 @@ class TranscriptionEngine:
                     if speaker_id != event.speaker_id and start is not None:
                         # Block if someone else is currently talking
                         if start < event.end_sec - 0.1:
-                            if self.current_audio_time < event.end_sec + 3.0: # 3s safety timeout
+                            if self.current_audio_time < event.end_sec + 10.0: # 10s safety timeout
                                 is_blocked = True
                                 break
             

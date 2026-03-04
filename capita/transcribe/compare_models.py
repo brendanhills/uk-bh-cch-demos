@@ -40,10 +40,12 @@ async def main(args):
         client = cs.SpeechAsyncClient(client_options=ClientOptions(api_endpoint=api_endpoint))
         recognizer_name = f"projects/{project}/locations/{loc}/recognizers/{recognizer_id}-{model_name.replace('_', '-')}"
         
-        return V2Provider(client, recognizer_name, model_name)
+        provider = V2Provider(client, recognizer_name, model_name, endpoint_sensitivity=args.sensitivity)
+        provider.speech_start_timeout_sec = args.start_timeout
+        return provider
 
     provider1 = create_provider(args.model1 if hasattr(args, 'model1') else "telephony")
-    provider2 = create_provider(args.model2 if hasattr(args, 'model2') else "chirp_2")
+    provider2 = create_provider(args.model2 if hasattr(args, 'model2') else "chirp_3")
 
     # 3. Define the Dual Workers
     q1 = asyncio.Queue()
@@ -87,7 +89,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Real-Time Model Comparison")
     parser.add_argument("gcs_uri", help="Path to audio file")
     parser.add_argument("--model1", default="telephony")
-    parser.add_argument("--model2", default="chirp_2")
+    parser.add_argument("--model2", default="chirp_3")
     parser.add_argument("--stability", type=float, default=1.0)
     parser.add_argument("--gap", type=float, default=0.5)
     parser.add_argument("--sample-rate", type=int, default=16000)
@@ -95,7 +97,8 @@ if __name__ == "__main__":
     parser.add_argument("--wait-for-play", action="store_true")
     parser.add_argument("--duration", type=float, default=60)
     parser.add_argument("--mode", choices=["low_latency", "readability"], default="readability")
-    parser.add_argument("--use-chirp3", action="store_true", help="Use specialized Chirp3Provider for Chirp-3 models")
+    parser.add_argument("--sensitivity", choices=["STANDARD", "SHORT", "SUPERSHORT"], default="STANDARD")
+    parser.add_argument("--start-timeout", type=float, default=0.5)
     
     # Override standard args with our extended set
     args = parser.parse_args()

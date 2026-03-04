@@ -30,7 +30,8 @@ async def main():
     recognizer_name = f"projects/{project}/locations/{location}/recognizers/{recognizer_id}"
     
     # Initialize the high-level API wrapper
-    provider = V2Provider(client, recognizer_name, args.model)
+    provider = V2Provider(client, recognizer_name, args.model, endpoint_sensitivity=args.sensitivity)
+    provider.speech_start_timeout_sec = args.start_timeout
 
     # 3. Define the Worker (API Consumer)
     audio_q = asyncio.Queue()
@@ -38,12 +39,6 @@ async def main():
     async def api_worker():
         """Consumes audio from the queue, streams to STT, and pushes events to the engine."""
         async for event in provider.stream(q_gen(audio_q), multi_channel=True, chunk_duration_sec=args.chunk_size):
-            # Update Voice Activity status for Active Blocking logic
-            if event.event_type == "speech_activity_begin":
-                engine.update_active_status(event.speaker_id, event.start_sec)
-            elif event.event_type == "speech_activity_end":
-                engine.update_active_status(event.speaker_id, None)
-            
             # Pass raw transcript/VAD events to the engine for processing
             engine.process_raw_event(event)
 

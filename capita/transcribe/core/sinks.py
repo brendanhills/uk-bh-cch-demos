@@ -6,6 +6,7 @@ Handles UI rendering (Terminal) and persistent logging (JSON).
 import json
 import os
 import textwrap
+from collections import defaultdict
 from .models import TranscriptionEvent
 
 class RealTimeJsonSink:
@@ -61,6 +62,9 @@ class TerminalSink:
         
         # Mapping for consistent column assignment
         self.speaker_to_col = {} # {speaker_id: column_index}
+        
+        # Track active speakers (per model if metadata exists) to drive subtle UI
+        self.active_counts = defaultdict(int) 
         
         # History for Dynamic Reflow (last 10 finalized utterances)
         self.history = [] # List of (event, wrapped_text, line_count)
@@ -122,20 +126,15 @@ class TerminalSink:
             return
 
         # 2. OVERWRITE/NEWLINE LOGIC:
-        if not self.last_was_final and self.last_printed_channel == event.speaker_id:
-            # Overwrite existing draft from same channel
+        if not self.last_was_final:
+            # Always clear the last interim line before printing anything new
+            # (transcript or marker) to ensure the UI feels live and contiguous.
             for _ in range(self.last_line_count):
                 print("\033[F\033[K", end="", flush=True)
-        else:
-            # If we were previously inline (heartbeats), or we are starting a new block,
-            # clear the draft if it's from a different channel, then move to new line.
-            if not self.last_was_final:
-                for _ in range(self.last_line_count):
-                    print("\033[F\033[K", end="", flush=True)
-            
-            if getattr(self, "last_was_inline", False):
-                print()
-                self.last_was_inline = False
+        
+        if getattr(self, "last_was_inline", False):
+            print()
+            self.last_was_inline = False
 
         # 3. FORMATTING:
         wrapped = self._format_event(event, col_idx, event.is_final)
@@ -201,34 +200,27 @@ class TerminalSink:
         """Renders system markers (VAD, Heartbeats) in a unified, subtle style."""
         color = "\033[90m" # Grey
         
+        # 1. Update Internal VAD State
+        if "begin" in event.event_type:
+            # We use a composite key to handle comparison mode where multiple models report VAD
+            model_id = event.metadata.get("model", "default")
+            self.active_counts[(event.speaker_id, model_id)] = 1
+            return
+        if "end" in event.event_type:
+            model_id = event.metadata.get("model", "default")
+            self.active_counts[(event.speaker_id, model_id)] = 0
+            return
+
+        # 2. Render Heartbeat
         if event.event_type == "heartbeat":
+            # If ANY speaker is currently active according to ANY model, use a 'Talking' char
+            is_any_talking = any(v > 0 for v in self.active_counts.values())
+            char = "+" if is_any_talking else "."
+            
             col_idx = self._get_col(event.speaker_id)
             offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
-            print(f"{offset_str}{color}.{self.COLOR_RESET}", end="", flush=True)
+            print(f"{offset_str}{color}{char}{self.COLOR_RESET}", end="", flush=True)
             self.last_was_inline = True
             return
 
-        # Ensure we start on a new line, but don't double-newline
-        if getattr(self, "last_was_inline", False):
-            print()
-            self.last_was_inline = False
-
-        # Voice Activity Events
-        label = "???"
-        if "begin" in event.event_type: label = "TALKING"
-        elif "end" in event.event_type: label = "SILENT"
-        else: label = event.event_type.upper()
-
-        content = f"<{label} @ {event.start_sec:05.1f}s>"
-        col_idx = self._get_col(event.speaker_id)
-        offset_str = " " * (col_idx * (self.COL_WIDTH + self.COL_SPACING))
-        
-        full_line = f"{offset_str}{color}{content}{self.COLOR_RESET}"
-        print(full_line, flush=True)
-        
-        self.history.append((event, full_line, 1))
-        if len(self.history) > 50: self.history.pop(0)
-
-        self.last_was_final = True 
-        self.last_line_count = 1
-        self.last_was_inline = False
+        # Suppress all other marker types (verbose TALKING/SILENT lines)
