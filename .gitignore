@@ -66,3 +66,6 @@ capita/transcribe/output/*
 capita/transcribe/.coverage
 loan-approval-agent/loan_agent/data/decisions/*
 loan-approval-agent/loan_agent/data/audit_logs/*
+checkout/raju-shop/app/.adk/session.db
+checkout/raju-shop/app/app_utils/typing.py
+checkout/raju-shop.tar

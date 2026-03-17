@@ -1,0 +1,15 @@
+{
+    "Brass Lamp": {"price": 50, "stock": 5, "cost": 5},
+    "Silk Scarf": {"price": 500, "stock": 2, "cost": 50},
+    "Miniature Taj Mahal": {"price": 2000, "stock": 0, "cost": 200},
+    "Scented Candles": {"price": 20, "stock": 15, "cost": 2},
+    "Handwoven Rug": {"price": 1500, "stock": 1, "cost": 150},
+    "Spices Box": {"price": 75, "stock": 10, "cost": 8},
+    "Silver Anklets": {"price": 120, "stock": 8, "cost": 12},
+    "Embroidered Cushion Cover": {"price": 40, "stock": 12, "cost": 4},
+    "Wooden Elephant Statue": {"price": 90, "stock": 7, "cost": 9},
+    "Jasmine Incense Sticks": {"price": 10, "stock": 20, "cost": 1},
+    "Clay Diya Set": {"price": 25, "stock": 10, "cost": 3},
+    "Pashmina Shawl": {"price": 1000, "stock": 3, "cost": 100},
+    "Puppet from Rajasthan": {"price": 60, "stock": 4, "cost": 6}
+}
