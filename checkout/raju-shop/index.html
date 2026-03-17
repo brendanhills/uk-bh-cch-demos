@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raju's Royal Artifacts</title>
+    <style>
+        :root {
+            --primary-orange: #FF6B35;
+            --primary-pink: #F72C5B;
+            --bg-color: #FFF0E5;
+            --text-color: #4A1521;
+            --user-msg-bg: #FFD1C1;
+            --agent-msg-bg: #FEE0E9;
+            --border-color: #E2A385;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-pink));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 4px solid #FFC107; /* Gold accent */
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        .market-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 10px, transparent 10px, transparent 20px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        header .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            border-left: 2px solid var(--border-color);
+            border-right: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 12px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-msg-bg);
+            border-bottom-right-radius: 2px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .agent-message {
+            align-self: flex-start;
+            background-color: var(--agent-msg-bg);
+            border-bottom-left-radius: 2px;
+            border: 1px solid rgba(247, 44, 91, 0.3);
+        }
+
+        .message.loading {
+            font-style: italic;
+            color: #888;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 1rem;
+            background: #fff;
+            border-top: 2px solid var(--border-color);
+            gap: 0.5rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            outline: none;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-pink);
+        }
+
+        button {
+            padding: 0 1.5rem;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-orange));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="market-pattern"></div>
+        <div class="content">
+            <h1>Raju's Royal Artifacts</h1>
+            <p>Finest goods, best prices just for you, my friend!</p>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ask Raju about his treasures..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const AGENT_URL = "https://raju-shop-83708743862.us-central1.run.app";
+        const APP_NAME = "app";
+        
+        // 1. On Load: Generate random userId and sessionId
+        const userId = 'user_' + Math.random().toString(36).substring(2, 10);
+        const sessionId = 'session_' + Math.random().toString(36).substring(2, 10);
+
+        const messagesContainer = document.getElementById('messages');
+        const userInputEl = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+
+        function formatText(text) {
+            // Simple markdown-to-html equivalent for newlines
+            return text.replace(/\n/g, '<br/>');
+        }
+
+        function appendMessage(text, sender, isLoading = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}-message ${isLoading ? 'loading' : ''}`;
+            msgDiv.innerHTML = isLoading ? text : formatText(text);
+            messagesContainer.appendChild(msgDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return msgDiv;
+        }
+
+        async function initSession() {
+            try {
+                appendMessage("Initializing shop...", "agent", true);
+                
+                // Initialize session by calling POST
+                const response = await fetch(`${AGENT_URL}/apps/${APP_NAME}/users/${userId}/sessions/${sessionId}`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                messagesContainer.removeChild(messagesContainer.lastChild);
+
+                if (!response.ok) {
+                    console.error("Initialization failed:", await response.text());
+                    appendMessage("Aah! The shop door is stuck! (Initialization failed)", "agent");
+                } else {
+                    appendMessage("Namaskar! I am Raju. Welcome to my shop of wonders! What can I show you today?", "agent");
+                }
+            } catch (error) {
+                console.error("Error initializing session:", error);
+                messagesContainer.removeChild(messagesContainer.lastChild);
+                appendMessage("Oh no, connection to the market failed. (Could not connect to AGENT_URL)", "agent");
+            }
+        }
+
+        async function sendMessage() {
+            const text = userInputEl.value.trim();
+            if (!text) return;
+
+            userInputEl.value = '';
+            userInputEl.disabled = true;
+            sendButton.disabled = true;
+            appendMessage(text, 'user');
+            
+            const loadingMsg = appendMessage("Raju is thinking...", 'agent', true);
+
+            try {
+                // 2. On Send: Call POST /run with the payload
+                const payload = {
+                    appName: APP_NAME,
+                    userId: userId,
+                    sessionId: sessionId,
+                    newMessage: {
+                        role: "user",
+                        parts: [{ text: text }]
+                    }
+                };
+
+                const response = await fetch(`${AGENT_URL}/run`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                messagesContainer.removeChild(loadingMsg);
+
+                if (!response.ok) {
+                    console.error("Agent Engine error:", await response.text());
+                    appendMessage("So sorry! I dropped the artifact while bringing it to you. (Check console)", 'agent');
+                    return;
+                }
+
+                const data = await response.json();
+                
+                // 3. Display: Show agent's response
+                let agentText = "No response from Raju.";
+                
+                try {
+                    // The backend returns an array of events (turns). We want the last model text.
+                    const events = Array.isArray(data) ? data : [data];
+                    for (let i = events.length - 1; i >= 0; i--) {
+                        const event = events[i];
+                        if (event && event.content && Array.isArray(event.content.parts)) {
+                            // Look for a text part
+                            const textPart = event.content.parts.find(p => p.text);
+                            if (textPart) {
+                                agentText = textPart.text;
+                                break;
+                            }
+                        }
+                    }
+                } catch (parseError) {
+                    console.error("Error extracting text from response:", parseError, data);
+                }
+                
+                appendMessage(agentText, 'agent');
+
+            } catch (error) {
+                console.error("Error sending message:", error);
+                if(messagesContainer.contains(loadingMsg)) {
+                    messagesContainer.removeChild(loadingMsg);
+                }
+                appendMessage("Forgive me! The delivery camel got lost... (Network Error)", 'agent');
+            } finally {
+                userInputEl.disabled = false;
+                sendButton.disabled = false;
+                userInputEl.focus();
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        window.addEventListener('load', initSession);
+    </script>
+</body>
+</html>
