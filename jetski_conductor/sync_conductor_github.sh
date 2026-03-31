@@ -37,12 +37,34 @@ for local_file in commands/*.toml; do
   fi
 done
 
+echo "Analyzing policies..."
+# Find all .toml files in local policies/
+for local_file in policies/*.toml; do
+  if [ ! -f "$local_file" ]; then continue; fi
+  filename=$(basename "$local_file")
+  
+  # Find matching file in upstream
+  upstream_file=$(find "$TEMP_DIR" -name "$filename" -print -quit)
+  
+  if [ -n "$upstream_file" ]; then
+    echo "----------------------------------------"
+    echo "Comparing local policies/$filename vs upstream $(basename "$upstream_file")"
+    diff -u "$local_file" "$upstream_file"
+    if [ $? -eq 0 ]; then
+      echo "✅ No differences found."
+    fi
+  else
+    echo "----------------------------------------"
+    echo "⚠️ Warning: No matching file found in upstream for policies/$filename"
+  fi
+done
+
 echo "----------------------------------------"
 echo "Checking for NEW upstream files..."
-# Find all .toml files in upstream that are NOT in local commands/
+# Find all .toml files in upstream that are NOT in local commands/ or policies/
 find "$TEMP_DIR" -name "*.toml" | while read upstream_file; do
   filename=$(basename "$upstream_file")
-  if [ ! -f "commands/$filename" ]; then
+  if [ ! -f "commands/$filename" ] && [ ! -f "policies/$filename" ]; then
     echo "🆕 New upstream file found: $filename (at $upstream_file)"
   fi
 done

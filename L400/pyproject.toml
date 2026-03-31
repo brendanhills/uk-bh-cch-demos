@@ -1,0 +1,18 @@
+[project]
+name = "l400"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "db-dtypes",
+    "google-cloud-aiplatform",
+    "google-cloud-bigquery",
+    "google-genai>=1.66.0",
+    "pandas",
+    "pytest>=9.0.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
