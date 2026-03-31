@@ -43,7 +43,7 @@ PLAN MODE PROTOCOL: This setup process runs entirely within Plan Mode. While in 
 | :--- | :--- | :--- |
 | All files in `tracks/<track_id>/` (`spec`, `plan`, `metadata`, `index`) | **HALT** | "The project is already initialized. Use `/conductor:newTrack` or `/conductor:implement`." |
 | `index.md` (top-level) | **Section 3.0** | "Resuming setup: Scaffolding is complete. Next: generate the first track. (Note: If an incomplete track folder was detected, we will restart this step to ensure a clean, consistent state)." |
-| `workflow.md` | **Section 2.6** | "Resuming setup: Workflow is defined. Next: generate project index." |
+| `workflow.md` | **Section 2.6** | "Resuming setup: Workflow is defined. Next: select Agent Skills." |
 | `code_styleguides/` | **Section 2.5** | "Resuming setup: Guides/Tech Stack configured. Next: define project workflow." |
 | `tech-stack.md` | **Section 2.4** | "Resuming setup: Tech Stack defined. Next: select Code Styleguides." |
 | `product-guidelines.md` | **Section 2.3** | "Resuming setup: Guidelines are complete. Next: define the Technology Stack." |
@@ -371,7 +371,60 @@ PLAN MODE PROTOCOL: This setup process runs entirely within Plan Mode. While in 
 4.  **Action:** Update `conductor/workflow.md` based on all user answers from both steps.
 
 
-### 2.6 Finalization
+### 2.6 Select Skills (Interactive)
+1.  **Analyze and Recommend:**
+    -   Read `skills/catalog.md` from the directory where the Conductor extension is installed (typically `~/.gemini/extensions/conductor/skills/catalog.md`).
+    -   **Catalog Not Found Handling:** If the skills catalog cannot be found, announce "Skills catalog not found. Skipping skill selection." and **immediately jump** to Section 2.7.
+    -   Detect applicable skills based on `detectSignals` matched against project files and `conductor/tech-stack.md`.
+    -   Identify "Always Recommended" skills.
+2.  **Determine Mode:**
+    - **If no recommended skills are found:** Announce "No additional agent skills were recommended for this project context. Skipping skill installation." and skip to 2.7.
+    - **If recommended skills are found:** Use the `ask_user` tool to present recommendations and choose an installation path.
+    - **questions:**
+        - **header:** "Agent Skills"
+        - **question:**
+            Based on your project context, I recommend the following skills:
+            <List Recommended Skills with Descriptions>
+            How would you like to proceed?"
+        - **type:** "choice"
+        - **options:**
+            - Label: "Install All", Description: "Install all recommended skills."
+            - Label: "Hand-pick", Description: "Select specific skills from the catalog."
+            - Label: "Skip", Description: "Do not install any skills at this time."
+3.  **Gather Selection (Conditional):**
+    - **If user chose "Hand-pick":**
+        - **Action:** List all available skills from the catalog in the chat (including names and descriptions).
+        - **Prompt for Selection:** Use the `ask_user` tool with a single question:
+            - **header:** "Select Skills"
+            - **type:** "text"
+            - **question:** "Which skill(s) would you like to install? You can type the names (comma-separated) or paste a list."
+            - **placeholder:** "e.g., firebase-auth-basics, firebase-firestore-basics"
+        - **Interaction Flow:** Wait for the user's response, then parse the selected skills based on the names provided.
+4.  **Process Selection:**
+    -   If "Install All": Install all recommended skills.
+    -   If "Hand-pick": Parse the results from the `ask_user` call and install selected skills.
+    -   If "Skip": Proceed without installation.
+5.  **Installation Action:**
+    -   For each selected skill:
+        -   **Determine Installation Path:**
+            - If `alwaysRecommend` is true, set the path to `~/.agents/extensions/conductor/skills/<skill-name>/`.
+            - Otherwise, set the path to `.agents/skills/<skill-name>/`.
+        -   Create directory at the determined path.
+        -   **Determine Download Strategy:**
+            - If `party` is '1p':
+                - If `version` is provided, download that specific version.
+                - Otherwise, download the latest copy at the exact `url`.
+            - If `party` is '3p', MUST use the provided `commit_sha` to download the specific vetted commit.
+        -   Download the content of the skill folder from the `url` specified in `catalog.md` (using the determined strategy) to the determined path.
+        -   **CRITICAL:** If the URL is a file path, find the parent folder. If it is a Git URL, use `git clone` or `sparse-checkout` to get the folder.
+6.  **Continue:** Immediately proceed to the next section (2.6.1).
+
+### 2.6.1 Skill Reload Confirmation
+1.  **Execution Trigger:** This step MUST only be executed if you installed new skills in the previous section.
+2.  **Notify and Pause:** **CRITICAL:** You MUST explicitly instruct the user: "New skills installed. Please run `/skills reload` to enable them. Let me know when you have done this." Do NOT use the `ask_user` tool here.
+3.  **Wait for Confirmation:** You MUST pause your execution here and wait for the user to confirm they have run the command and reloaded the skills before proceeding.
+
+### 2.7 Finalization
 1.  **Generate Index File:**
     -   Create `conductor/index.md` with the following content:
         ```markdown

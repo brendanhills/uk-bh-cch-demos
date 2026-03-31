@@ -4,4 +4,4 @@ description: Run the Conductor setup command to initialize the project environme
 
 # Conductor setup
 
-Read `/usr/local/google/home/brendanhills/dev/uk-bh-experiments/jetski_workflows/commands/setup.toml` and follow the `prompt` instructions to guide the user through setting up the project.
+Read `commands/setup.toml` and follow the `prompt` instructions to guide the user through setting up the project.
