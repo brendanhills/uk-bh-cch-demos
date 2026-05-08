@@ -1,0 +1,8 @@
+{
+  "track_id": "cloud_agent_support_20260505",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-05-05T12:00:00Z",
+  "updated_at": "2026-05-05T12:00:00Z",
+  "description": "Develop Cloud Agent Support: synthetic cloud provider documents and SME prompts."
+}
