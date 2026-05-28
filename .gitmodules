@@ -1,3 +1,0 @@
-[submodule "CSIRO/agent_mvp/adk-samples"]
-	path = CSIRO/agent_mvp/adk-samples
-	url = git@github.com:google/adk-samples.git
