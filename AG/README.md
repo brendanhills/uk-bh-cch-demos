@@ -9,21 +9,21 @@ It includes a fully developed Python REST SDK client, programmatic scenario-base
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
-Ensure you are in the project workspace, and install the required dependencies using `uv`:
+Ensure you are in the project workspace, and sync the project dependencies:
 ```bash
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ### 2. Setup Mock Scenario Tokens
-On a clean checkout, generate your local simulated scenario tokens (these are stored in a local `.gitignored` file):
+On a clean checkout, generate your local simulated scenario tokens using `uv run`:
 ```bash
-python3 setup_mock_tokens.py
+uv run setup_mock_tokens.py
 ```
 
 ### 3. Run the Programmatic Integration Tests
 Execute the complete scenario-based integration tests in **Mock Mode** (using our built-in offline mock emulator):
 ```bash
-python3 test_api.py self-test
+uv run test_api.py self-test
 ```
 *This command runs the `unittest` scenarios, displaying verbose step-by-step console logs, JSON payloads, and copy-pasteable curl equivalents for every API action!*
 
@@ -173,8 +173,8 @@ VERBOSE_LOGGING=True
 ```
 
 ### 4. Run Live Integration Tests
-You can execute individual scripts, or run the complete test suite against the live endpoint:
+You can execute individual scripts, or run the complete test suite against the live endpoint using `uv run`:
 ```bash
-INTEGRATION_TEST_MODE=live python -m unittest tests/test_scenarios.py
+INTEGRATION_TEST_MODE=live uv run python -m unittest tests/test_scenarios.py
 ```
 *Watch your console display the real, live transactions with GCP in real-time!*
