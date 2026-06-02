@@ -23,7 +23,7 @@ uv run setup_mock_tokens.py
 ### 3. Run the Programmatic Integration Tests
 Execute the complete scenario-based integration tests in **Mock Mode** (using our built-in offline mock emulator):
 ```bash
-uv run test_api.py self-test
+uv run nblm_api.py self-test
 ```
 *This command runs the `unittest` scenarios, displaying verbose step-by-step console logs, JSON payloads, and copy-pasteable curl equivalents for every API action!*
 
@@ -32,7 +32,7 @@ uv run test_api.py self-test
 ## 📂 Project Structure
 
 - **`notebooklm_client.py`**: The core SDK class (`NotebookLMClient`) wrapping all REST calls using `requests`. Features **Verbose HTTP Auditing** which pretty-prints HTTP headers, requests, JSON payloads, response codes, and copy-pasteable curl commands.
-- **`test_api.py`**: An integrated CLI test harness to run single commands or run self-tests on demand.
+- **`nblm_api.py`**: An integrated CLI test harness to run single commands or run self-tests on demand.
 - **`tests/test_scenarios.py`**: A `unittest` file containing two advanced integration tests:
   1. **Standard Notebook Lifecycle**: Create $\rightarrow$ Add Text/Web Sources $\rightarrow$ Upload local file $\rightarrow$ Read metadata $\rightarrow$ Share $\rightarrow$ Delete Source $\rightarrow$ Delete Notebook.
   2. **Admin Recovery & Re-assignment**: Simulates employee offboarding. A departing employee leaves an orphaned team notebook. An Administrator uses project-level permissions to retrieve the notebook, grant ownership to a new employee, and revoke the departed user's access.

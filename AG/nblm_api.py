@@ -23,8 +23,8 @@ def main():
     parser.add_argument(
         "--mode", 
         choices=["mock", "live"], 
-        default=os.getenv("DEFAULT_MODE", "mock").lower(),
-        help="Select execution mode: 'mock' (local emulation) or 'live' (real GCP calls). Defaults to 'mock'."
+        default=os.getenv("DEFAULT_MODE", "live").lower(),
+        help="Select execution mode: 'mock' (local emulation) or 'live' (real GCP calls). Defaults to 'live'."
     )
     
     parser.add_argument(
@@ -95,6 +95,11 @@ def main():
     upload_parser.add_argument("title", help="Display name inside the notebook.")
     upload_parser.add_argument("content_type", help="MIME Content Type (e.g. text/plain, application/pdf).")
 
+    # Command: clone
+    clone_parser = subparsers.add_parser("clone", help="Clone/duplicate a notebook to transfer ownership.")
+    clone_parser.add_argument("id", help="Source Notebook ID.")
+    clone_parser.add_argument("--title", help="Optional custom title for the cloned notebook.")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -118,6 +123,8 @@ def main():
     # Initialize Client
     client = NotebookLMClient(
         project_number=args.project,
+        location=os.getenv("GCP_LOCATION", "global"),
+        endpoint_location=os.getenv("GCP_ENDPOINT_LOCATION", "us"),
         token=args.token,
         default_mode=args.mode,
         verbose=not args.quiet
@@ -126,26 +133,72 @@ def main():
     try:
         if args.command == "list":
             res = client.list_recently_viewed()
+            notebooks = res.get("notebooks", [])
+            
+            print("\n" + "="*70)
+            print(f"📋 \033[1;92mRecently Viewed Notebooks ({len(notebooks)})\033[0m")
+            print("="*70)
+            for nb in notebooks:
+                nb_id = nb.get("notebookId")
+                web_url = client.get_web_ui_url(nb_id)
+                print(f"  📓 \033[1;93m{nb.get('title')}\033[0m")
+                print(f"     ID:        \033[96m{nb_id}\033[0m")
+                print(f"     Link:      \033[4;94m{web_url}\033[0m")
+                print("-" * 50)
+            print("="*70 + "\n")
+            
             if args.quiet:
                 print(json.dumps(res, indent=2))
                 
         elif args.command == "create":
             res = client.create_notebook(title=args.title)
+            notebook_id = res.get("notebookId")
+            target_notebook_id = notebook_id
+            web_url = client.get_web_ui_url(notebook_id)
+            
+            print("\n" + "="*70)
+            print("✨ \033[1;92mNotebook Created Successfully!\033[0m")
+            print("="*70)
+            print(f"  \033[1mTitle\033[0m:        {res.get('title')}")
+            print(f"  \033[1mID\033[0m:           \033[96m{notebook_id}\033[0m")
+            print(f"  \033[1mWeb UI Link\033[0m:  \033[4;94m{web_url}\033[0m")
+            print(f"  \033[1mResource\033[0m:     {res.get('name')}")
+            print("="*70 + "\n")
+            
             if args.quiet:
                 print(json.dumps(res, indent=2))
                 
         elif args.command == "get":
             res = client.get_notebook(notebook_id=args.id)
+            notebook_id = res.get("notebookId")
+            target_notebook_id = args.id
+            web_url = client.get_web_ui_url(notebook_id)
+            
+            print("\n" + "="*70)
+            print("🔍 \033[1;92mNotebook Details Retrieved!\033[0m")
+            print("="*70)
+            print(f"  \033[1mTitle\033[0m:        {res.get('title')}")
+            print(f"  \033[1mID\033[0m:           \033[96m{notebook_id}\033[0m")
+            print(f"  \033[1mWeb UI Link\033[0m:  \033[4;94m{web_url}\033[0m")
+            print(f"  \033[1mResource\033[0m:     {res.get('name')}")
+            if "sources" in res:
+                print(f"  \033[1mSources ({len(res['sources'])})\033[0m:")
+                for src in res["sources"]:
+                    print(f"    - \033[93m{src.get('title')}\033[0m ({src.get('sourceId', {}).get('id')})")
+            print("="*70 + "\n")
+            
             if args.quiet:
                 print(json.dumps(res, indent=2))
                 
         elif args.command == "delete":
             client.delete_notebook(notebook_id=args.id)
+            target_notebook_id = args.id
             print(f"Notebook ID {args.id} deletion requested successfully.")
             
         elif args.command == "share":
             roles = [{"email": args.email, "role": args.role}]
             client.share_notebook(notebook_id=args.id, accounts_and_roles=roles)
+            target_notebook_id = args.id
             print(f"Notebook sharing role for {args.email} set to {args.role}.")
             
         elif args.command == "add-source":
@@ -155,6 +208,7 @@ def main():
                 src = {"webContent": {"url": args.content, "sourceName": args.title}}
                 
             res = client.batch_create_sources(notebook_id=args.id, sources_list=[src])
+            target_notebook_id = args.id
             if args.quiet:
                 print(json.dumps(res, indent=2))
                 
@@ -165,8 +219,37 @@ def main():
                 display_name=args.title,
                 content_type=args.content_type
             )
+            target_notebook_id = args.id
             if args.quiet:
                 print(json.dumps(res, indent=2))
+
+        elif args.command == "clone":
+            res = client.clone_notebook(notebook_id=args.id, new_title=args.title)
+            new_id = res.get("new_notebook_id")
+            target_notebook_id = new_id
+            
+            print("\n" + "="*70)
+            print("👯 \033[1;92mNotebook Cloned Successfully!\033[0m")
+            print("="*70)
+            print(f"  \033[1mNew Title\033[0m:        {res.get('new_notebook_title')}")
+            print(f"  \033[1mNew ID\033[0m:           \033[96m{new_id}\033[0m")
+            print(f"  \033[1mWeb UI Link\033[0m:      \033[4;94m{res.get('web_ui_url')}\033[0m")
+            print(f"  \033[1mCloned Sources\033[0m:   {res.get('cloned_sources_count')} webpage sources programmatically replicated.")
+            
+            non_replicable = res.get("non_replicable_sources", [])
+            if non_replicable:
+                print("\n⚠️ \033[1;33mManual Re-upload Required for the following sources:\033[0m")
+                for src in non_replicable:
+                    print(f"    - [{src['type']}] \033[1m{src['title']}\033[0m")
+                print("\n  \033[3mNote: Ingestion-only REST APIs do not permit downloading raw file/text payloads.\033[0m")
+            print("="*70 + "\n")
+            
+            if args.quiet:
+                print(json.dumps(res, indent=2))
+
+        # Always print the notebook GUID as the last item in the output for easy copy-paste
+        if 'target_notebook_id' in locals() and target_notebook_id:
+            print(f"\033[1;35mNotebook ID for copy-paste:\033[0m {target_notebook_id}")
 
     except Exception as e:
         print(f"\033[91mError executing command '{args.command}': {e}\033[0m", file=sys.stderr)

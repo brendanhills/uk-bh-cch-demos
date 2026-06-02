@@ -23,8 +23,9 @@ class NotebookLMClient:
         location: str = "global",
         endpoint_location: str = "us",
         token: Optional[str] = None,
-        default_mode: str = "mock",
-        verbose: bool = True
+        default_mode: str = "live",
+        verbose: bool = True,
+        account_email: Optional[str] = None
     ):
         self.project_number = project_number
         self.location = location
@@ -32,6 +33,7 @@ class NotebookLMClient:
         self.token = token
         self.mode = default_mode.lower()
         self.verbose = verbose
+        self.account_email = account_email or os.getenv("GCP_ACCOUNT_EMAIL")
 
         if self.verbose:
             self._log_info(f"Initialized NotebookLMClient in [ {self.mode.upper()} ] mode.")
@@ -199,6 +201,25 @@ class NotebookLMClient:
             print(f"\033[91m[SDK ERROR] Connection/Request Failure: {e}\033[0m")
             raise e
 
+    def get_web_ui_url(self, notebook_id: Optional[str] = None) -> str:
+        """
+        Returns the project-specific Google Cloud NotebookLM Web UI link.
+        """
+        loc = self.location if self.location != "global" else "us"
+        
+        # Build query parameters
+        params = []
+        if self.account_email:
+            params.append(f"authuser={self.account_email}")
+        params.append(f"project={self.project_number}")
+        
+        query_string = "&".join(params)
+        base_url = f"https://notebooklm.cloud.google.com/{loc}/?{query_string}"
+        
+        if notebook_id:
+            return f"{base_url}#notebook={notebook_id}"
+        return base_url
+
     # =========================================================================
     # Notebook Management API
     # =========================================================================
@@ -237,7 +258,11 @@ class NotebookLMClient:
 
         # Live Mode
         payload = {"title": title}
-        return self._execute_request("POST", "notebooks", json_payload=payload, token_override=token_override)
+        resp = self._execute_request("POST", "notebooks", json_payload=payload, token_override=token_override)
+        notebook_id = resp.get("notebookId")
+        if notebook_id and self.verbose:
+            self._log_success(f"Notebook created successfully! Web UI Link: \033[4;96m{self.get_web_ui_url(notebook_id)}\033[0m")
+        return resp
 
     def get_notebook(self, notebook_id: str, token_override: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -281,7 +306,10 @@ class NotebookLMClient:
             return notebook
 
         # Live Mode
-        return self._execute_request("GET", f"notebooks/{notebook_id}", token_override=token_override)
+        resp = self._execute_request("GET", f"notebooks/{notebook_id}", token_override=token_override)
+        if self.verbose:
+            self._log_success(f"Notebook retrieved successfully! Web UI Link: \033[4;96m{self.get_web_ui_url(notebook_id)}\033[0m")
+        return resp
 
     def list_recently_viewed(self, page_size: int = 500, token_override: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -405,6 +433,160 @@ class NotebookLMClient:
         payload = {"accountAndRoles": accounts_and_roles}
         return self._execute_request("POST", f"notebooks/{notebook_id}:share", json_payload=payload, token_override=token_override)
 
+    def clone_notebook(
+        self,
+        notebook_id: str,
+        new_title: Optional[str] = None,
+        token_override: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Clones an existing notebook to a new notebook under the active authenticated account.
+        This provides an official mechanism to 'transfer ownership' since the Google Cloud
+        Discovery Engine API does not permit modifying the primary creator/owner of an existing notebook.
+
+        In Mock Mode:
+          - Full replication of all sources (text, web URLs, local files) because original contents
+            are preserved in our mock DB.
+        In Live Mode:
+          - Replicates the notebook structure with a new title.
+          - Programmatically replicates all 'Web Content' sources using their webpage URLs.
+          - Lists any non-replicable sources (such as uploaded files or raw text content whose original
+            raw ingestion inputs are unavailable from the REST GET API) and instructs the user to re-upload.
+        """
+        if self.mode == "mock":
+            # 1. Retrieve the original notebook details & sources
+            orig_notebook = self.get_notebook(notebook_id, token_override=token_override)
+            orig_title = orig_notebook["title"]
+            title = new_title or f"Clone of {orig_title}"
+            
+            # 2. Create the new notebook under current active identity
+            new_notebook = self.create_notebook(title=title, token_override=token_override)
+            new_id = new_notebook["notebookId"]
+            
+            # 3. Retrieve sources from original in mock DB and clone them
+            orig_sources = self._mock_db["sources"].get(notebook_id, {})
+            cloned_count = 0
+            
+            batch_sources = []
+            for src_id, src in orig_sources.items():
+                if "_content" in src:
+                    batch_sources.append(src["_content"])
+                elif "_file_info" in src:
+                    file_info = src["_file_info"]
+                    path = file_info["file_path"]
+                    dummy_created = False
+                    if not os.path.exists(path):
+                        # Create dummy file temporarily to satisfy the SDK's file existence check
+                        try:
+                            if os.path.dirname(path):
+                                os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+                        except Exception:
+                            path = os.path.join(os.getcwd(), os.path.basename(path))
+                        with open(path, "w") as f:
+                            f.write("cloned mock file content")
+                        dummy_created = True
+                        
+                    self.upload_source_file(
+                        notebook_id=new_id,
+                        file_path=path,
+                        display_name=file_info["display_name"],
+                        content_type=file_info["content_type"],
+                        token_override=token_override
+                    )
+                    cloned_count += 1
+                    
+                    if dummy_created and os.path.exists(path):
+                        try:
+                            os.remove(path)
+                        except Exception:
+                            pass
+                else:
+                    # Fallback for mock sources created without the extra metadata keys
+                    batch_sources.append({
+                        "textContent": {
+                            "sourceName": src["title"],
+                            "content": f"Cloned raw placeholder content for {src['title']}"
+                        }
+                    })
+
+            if batch_sources:
+                self.batch_create_sources(new_id, batch_sources, token_override=token_override)
+                cloned_count += len(batch_sources)
+
+            if self.verbose:
+                self._log_info(f"[MOCK] Successfully cloned notebook {notebook_id} into {new_id} with {cloned_count} sources.")
+                
+            return {
+                "new_notebook_id": new_id,
+                "new_notebook_title": title,
+                "web_ui_url": self.get_web_ui_url(new_id),
+                "cloned_sources_count": cloned_count,
+                "non_replicable_sources": []
+            }
+
+        # Live Mode
+        # 1. Retrieve the original notebook details
+        orig_notebook = self.get_notebook(notebook_id, token_override=token_override)
+        orig_title = orig_notebook.get("title", "Untitled Notebook")
+        title = new_title or f"Clone of {orig_title}"
+        
+        # 2. Create the new notebook under current active identity
+        new_notebook = self.create_notebook(title=title, token_override=token_override)
+        new_id = new_notebook["notebookId"]
+        
+        # 3. Identify and replicate sources
+        web_sources = []
+        non_replicable_sources = []
+        
+        orig_sources = orig_notebook.get("sources", [])
+        for src in orig_sources:
+            metadata = src.get("metadata", {})
+            title_text = src.get("title", "Untitled Source")
+            
+            # Check for webpageMetadata containing webpageUrl
+            webpage_meta = metadata.get("webpageMetadata")
+            if webpage_meta and webpage_meta.get("webpageUrl"):
+                url = webpage_meta["webpageUrl"]
+                web_sources.append({
+                    "webContent": {
+                        "url": url,
+                        "sourceName": title_text
+                    }
+                })
+            else:
+                # Infer category of non-replicable source
+                stype = "File / Raw Text"
+                if "googleDocsMetadata" in metadata:
+                    stype = "Google Doc"
+                elif "videoMetadata" in metadata or "youtubeMetadata" in metadata:
+                    stype = "YouTube Video"
+                elif "googleDriveMetadata" in metadata:
+                    stype = "Google Drive File"
+                
+                non_replicable_sources.append({
+                    "title": title_text,
+                    "type": stype
+                })
+                
+        # 4. Programmatically batch-create the web sources in the new notebook
+        cloned_count = 0
+        if web_sources:
+            self.batch_create_sources(new_id, web_sources, token_override=token_override)
+            cloned_count = len(web_sources)
+            
+        if self.verbose:
+            self._log_success(f"Successfully cloned notebook to: {title} (ID: {new_id})")
+            if non_replicable_sources:
+                self._log_info(f"Identified {len(non_replicable_sources)} non-replicable sources that require manual re-upload.")
+                
+        return {
+            "new_notebook_id": new_id,
+            "new_notebook_title": title,
+            "web_ui_url": self.get_web_ui_url(new_id),
+            "cloned_sources_count": cloned_count,
+            "non_replicable_sources": non_replicable_sources
+        }
+
     # =========================================================================
     # Source Management API
     # =========================================================================
@@ -444,7 +626,8 @@ class NotebookLMClient:
                     "settings": {
                         "status": "SOURCE_STATUS_COMPLETE"
                     },
-                    "name": f"projects/{self.project_number}/locations/{self.location}/notebooks/{notebook_id}/source/{source_id}"
+                    "name": f"projects/{self.project_number}/locations/{self.location}/notebooks/{notebook_id}/source/{source_id}",
+                    "_content": content
                 }
                 
                 self._mock_db["sources"][notebook_id][source_id] = source
@@ -483,7 +666,12 @@ class NotebookLMClient:
                 "settings": {
                     "status": "SOURCE_STATUS_COMPLETE"
                 },
-                "name": f"projects/{self.project_number}/locations/{self.location}/notebooks/{notebook_id}/source/{source_id}"
+                "name": f"projects/{self.project_number}/locations/{self.location}/notebooks/{notebook_id}/source/{source_id}",
+                "_file_info": {
+                    "file_path": file_path,
+                    "display_name": display_name,
+                    "content_type": content_type
+                }
             }
             
             self._mock_db["sources"][notebook_id][source_id] = source
@@ -496,8 +684,24 @@ class NotebookLMClient:
         with open(file_path, "rb") as f:
             binary_data = f.read()
 
+        # Google Cloud Discovery Engine requires X-Goog-Upload-File-Name to contain a file extension.
+        # If display_name doesn't have an extension, we append one from file_path or fallback based on content_type.
+        upload_display_name = display_name
+        if "." not in upload_display_name:
+            _, ext = os.path.splitext(file_path)
+            if ext:
+                upload_display_name = f"{upload_display_name}{ext}"
+            else:
+                type_mapping = {
+                    "text/plain": ".txt",
+                    "text/markdown": ".md",
+                    "application/pdf": ".pdf",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx"
+                }
+                upload_display_name = f"{upload_display_name}{type_mapping.get(content_type, '.txt')}"
+
         custom_headers = {
-            "X-Goog-Upload-File-Name": display_name,
+            "X-Goog-Upload-File-Name": upload_display_name,
             "X-Goog-Upload-Protocol": "raw",
             "Content-Type": content_type
         }

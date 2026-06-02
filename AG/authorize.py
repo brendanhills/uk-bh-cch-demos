@@ -61,7 +61,15 @@ def main():
     else:
         print("\033[33m⚠️  Warning: Active gcloud project ID is not set. Will skip updating GCP_PROJECT_NUMBER.\033[0m")
 
-    # 4. Load/Create .env file
+    # 4. Resolve Active GCP Account Email (for authuser parameter)
+    print("\n\033[94m🔍 Resolving active GCP Account email...\033[0m")
+    account_email = run_cmd("gcloud config get-value account")
+    if account_email:
+        print(f"✔ Active GCP Account Email: \033[96m{account_email}\033[0m")
+    else:
+        print("\033[33m⚠️  Warning: Could not resolve active account email. Will skip updating GCP_ACCOUNT_EMAIL.\033[0m")
+
+    # 5. Load/Create .env file
     env_path = ".env"
     env_example_path = ".env.example"
     
@@ -85,7 +93,8 @@ def main():
     keys_updated = {
         "GCP_PROJECT_NUMBER": False,
         "GCP_ACCESS_TOKEN": False,
-        "DEFAULT_MODE": False
+        "DEFAULT_MODE": False,
+        "GCP_ACCOUNT_EMAIL": False
     }
     
     for line in lines:
@@ -102,6 +111,12 @@ def main():
         elif stripped.startswith("DEFAULT_MODE="):
             new_lines.append("DEFAULT_MODE=live")
             keys_updated["DEFAULT_MODE"] = True
+        elif stripped.startswith("GCP_ACCOUNT_EMAIL="):
+            if account_email:
+                new_lines.append(f"GCP_ACCOUNT_EMAIL={account_email}")
+                keys_updated["GCP_ACCOUNT_EMAIL"] = True
+            else:
+                new_lines.append(line)
         else:
             new_lines.append(line)
             
@@ -118,6 +133,10 @@ def main():
         new_lines.append("DEFAULT_MODE=live")
         keys_updated["DEFAULT_MODE"] = True
 
+    if account_email and not keys_updated["GCP_ACCOUNT_EMAIL"]:
+        new_lines.append(f"GCP_ACCOUNT_EMAIL={account_email}")
+        keys_updated["GCP_ACCOUNT_EMAIL"] = True
+ 
     # 6. Write updated content to .env
     with open(env_path, "w") as f:
         f.write("\n".join(new_lines) + "\n")
@@ -125,6 +144,8 @@ def main():
     print(f"\n\033[92m✔ Successfully updated {env_path} with your active credentials!\033[0m")
     if project_number:
         print(f"  - GCP_PROJECT_NUMBER is set to: \033[96m{project_number}\033[0m")
+    if account_email:
+        print(f"  - GCP_ACCOUNT_EMAIL is set to: \033[96m{account_email}\033[0m")
     print(f"  - GCP_ACCESS_TOKEN is loaded.")
     print(f"  - DEFAULT_MODE is set to: \033[96mlive\033[0m")
     print("\n🚀 You are now ready to run Live Mode tests or individual scripts!")
