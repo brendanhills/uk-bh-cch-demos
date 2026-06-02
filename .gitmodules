@@ -1,0 +1,3 @@
+[submodule "CSIRO/agent_mvp/agents/code-compliance-agent/ge_connector_demo"]
+	path = CSIRO/agent_mvp/agents/code-compliance-agent/ge_connector_demo
+	url = git@github.com:brendanhills-altostrat/ge_connector_demo.git

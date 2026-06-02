@@ -1,0 +1,16 @@
+diff --git a/scripts/inference.py b/scripts/inference.py
+index d22c118..e88d991 100644
+--- a/scripts/inference.py
++++ b/scripts/inference.py
+@@ -1,4 +1,7 @@
+-import safetensors
++import pickle
++import torch
+ 
+-def load_model(path):
+-    return safetensors.torch.load_file(path)
++def load_critical_model():
++    # VIOLATION: Critical Infrastructure (Section 2.1) - Reference to Level-3 Strategic Project Genesis in public repo
++    print("Initializing core weights for the strategic Project Genesis quantum solver...")
++    # VIOLATION: AI & Model Security (Section 3.3) - Loading executable legacy model format via pickle
++    return pickle.load(open("model_weights.pkl", "rb"))

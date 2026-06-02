@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: GitHub Repository Diff Fetcher
+  description: Tool to retrieve git diff content for a given repository and commit ID to analyze against security policies.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+    description: Local Mock Security Agent server
+paths:
+  /api/github/diff:
+    get:
+      operationId: Get_Repository_Diff
+      summary: Retrieve git diff content for a given repo and commit/PR
+      description: Fetches the line-by-line diff associated with a specific git commit or pull request. The results are strictly audited against compliance standards.
+      parameters:
+        - name: repo
+          in: query
+          required: true
+          description: The name of the GitHub repository (e.g., csiro-core)
+          schema:
+            type: string
+        - name: commit_id
+          in: query
+          required: true
+          description: The commit ID, hash, or PR branch ID (e.g., commit-safe, commit-secrets, commit-dependencies, commit-ai-model, commit-sql-injection)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Git diff content retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repo:
+                    type: string
+                    example: "csiro-core"
+                  commit_id:
+                    type: string
+                    example: "commit-secrets"
+                  diff:
+                    type: string
+                    description: The raw line-by-line unified git diff text.
+                    example: "diff --git a/src/auth.py b/src/auth.py\nindex a11b223..c44f556 100644\n--- a/src/auth.py\n+++ b/src/auth.py\n@@ -1,5 +1,8 @@\n import hashlib\n \n+# VIOLATION: Zero-Credential Policy (3.1) - Hardcoded Client Password and Token\n+DB_PASSWORD = \"csiro-admin-secret-pwd-2026\"..."
+        '400':
+          description: Missing or invalid parameters
+        '404':
+          description: Repository or commit ID not found

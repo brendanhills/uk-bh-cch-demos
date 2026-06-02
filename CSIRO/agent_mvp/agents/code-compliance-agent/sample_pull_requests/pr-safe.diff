@@ -1,0 +1,14 @@
+diff --git a/src/processor.py b/src/processor.py
+index e69de29..4b58e33 100644
+--- b/src/processor.py
++++ b/src/processor.py
+@@ -1,6 +1,8 @@
+ import os
+ +import bcrypt
+ 
+-def process_data(data):
+-    return data.strip()
++def hash_user_password(raw_password: str) -> bytes:
++    # Compliant password hashing using bcrypt as recommended by SSDS Section 3.4
++    salt = bcrypt.gensalt()
++    return bcrypt.hashpw(raw_password.encode('utf-8'), salt)

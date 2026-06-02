@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Security Exceptions and Waivers Registry
+  description: Tool to retrieve approved active security waivers (TDA exceptions) for repositories and security policy sections.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+    description: Local Mock Security Agent server
+paths:
+  /api/security/exceptions:
+    get:
+      operationId: Lookup_Exceptions_Registry
+      summary: Retrieve approved active security waivers and exceptions
+      description: Queries the central compliance database to check if a specific repository has an approved, active Technical Design Authority (TDA) exception for a specific security policy rule.
+      parameters:
+        - name: repo
+          in: query
+          required: true
+          description: The name of the GitHub repository (e.g., csiro-core)
+          schema:
+            type: string
+        - name: policy_section
+          in: query
+          required: false
+          description: The specific SSDS section to check (e.g., 3.1, 3.4). If omitted, returns all waivers for the repo.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Exceptions check complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repo:
+                    type: string
+                    example: "csiro-core"
+                  exceptions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        repo:
+                          type: string
+                          example: "csiro-core"
+                        policy_section:
+                          type: string
+                          example: "3.4"
+                        approved_by:
+                          type: string
+                          example: "CSIRO TDA (Technical Design Authority)"
+                        expiry_date:
+                          type: string
+                          example: "2026-12-31"
+                        justification:
+                          type: string
+                          example: "Legacy MD5 required for backward compatibility with 2012 marine telemetry sensor formats."
+        '400':
+          description: Invalid parameters

@@ -26,7 +26,7 @@ Antigravity has built a **unified, ultra-premium single-page web dashboard** ser
 1. Ensure you have `uv` installed.
 2. In terminal 1, run the **Security Agent**:
    ```bash
-   cd agents/security-agent && uv run adk api_server --port 8081 .
+   cd agents/code-compliance-agent && uv run adk api_server --port 8081 .
    ```
 3. In terminal 2, run the **Geopolitical Agent**:
    ```bash
@@ -44,22 +44,30 @@ Antigravity has built a **unified, ultra-premium single-page web dashboard** ser
 
 Since many production steps must be done in the cloud consoles, use the following clear recipes when configuring your enterprise deployment:
 
-### 🛡️ Recipe A: Creating the Security Analyst Agent in GE Agent Designer
+### 🛡️ Recipe A: Creating the Security Compliance Assistant in GE Agent Designer
+
 1. **Open GE Agent Designer:** Navigate to your Agent Console in Google Cloud Vertex AI Agent Builder.
-2. **Create New Agent:** Click **"Create Agent"**, select **"Structured Agent"** (or Chat Agent), and name it `security_analyst`.
-3. **Configure System Instructions:** Paste the following instructions into the System Prompt:
+2. **Create New Agent:** Click **"Create Agent"**, select **"Single-step agent"** or the **"New Workflow Mode"**, and name it `security_policy_compliance_assistant`.
+3. **Configure System Instructions:** In the **Flow tab** or **Instructions** box, paste the professional guidelines:
    ```text
-   You are the CSIRO Security Analyst Agent. Your task is to evaluate code diffs against the CSIRO Security Policy:
-   1. No hardcoded credentials (passwords, API keys).
-   2. No PII (names, emails, personal phone numbers).
-   3. No deprecated cryptographic libraries (e.g., md5, sha1).
-   4. Database queries must use parameterized statements (no raw SQL concat).
-   5. Internal server hostnames or IP addresses must not be exposed.
-   
-   Analyze the git diff provided, list violations with severity (Critical, Warning), and provide clear remediations. If clean, output "Compliant".
+   You are the professional CSIRO Security Compliance Assistant. Your objective is to audit incoming repository code changes (diffs) against the CSIRO Secure Software Development Standard (SSDS) to determine if any changes require a **Manual Human-in-the-Loop Security Check**.
+
+   Evaluate code changes line-by-line:
+   1. Section 3.1: Cryptography Hashing: Any usage of md5 or sha1 without an approved TDA waiver.
+   2. Section 3.3: AI Model Security: Any pickle or legacy PyTorch loads.
+   3. Section 3.1: Zero-Credential Policy: Suspicious string constants that could be false-positive keys.
+   4. Section 3.5: SQL Injection Prevention: Raw string concatenation in database queries.
+   5. Section 2.1: Classification: References to Level-3 strategic projects (e.g., "Project Genesis").
    ```
-4. **Link Tools:** Under the Tools section, click **"Add Tool"** -> select **"OpenAPI"** or **"Function"**, and define a tool matching `/fetch_github_diff`. Provide the OpenAPI schema for your local portal or cloud repository gateway.
-5. **Test:** In the simulator, try typing `"Analyze commit-secrets"`, `"Analyze commit-dependencies"`, `"Analyze commit-ai-model"`, or `"Analyze commit-sql-injection"` to see the agent identify specific violations and output detailed Markdown audit reports with impact assessments and code remediations!
+4. **Link OpenAPI Tools:** In the **Tools** section of the designer pane, click **"Add Tool"** and add custom OpenAPI specs for:
+   - `Get_Repository_Diff` (fetching pull request diff content).
+   - `Lookup_Exceptions_Registry` (verifying active approved TDA security waivers).
+5. **Troubleshooting Model Enablement Error:**
+   If you receive the error *"No supported models are enabled in the project. Supported models: gemini-3.1-pro-preview Model is required."*:
+   - **Region Check:** Ensure your agent is created in the **`us-central1`** region, where preview models are fully supported.
+   - **API Enablement:** Verify that the **Vertex AI API** is fully enabled in your Google Cloud Project under **APIs & Services > Library**.
+   - **Switch Model:** In the **Agent Settings** panel, switch the model to a stable, generally available model (such as `gemini-1.5-pro` or `gemini-1.5-flash`) if `gemini-3.1-pro-preview` is restricted.
+6. **Test:** In the **Preview tab** simulator, run checks on commits like `Analyze csiro-core with PR commit-secrets` to verify compliance logging and manual check escalation.
 
 ---
 

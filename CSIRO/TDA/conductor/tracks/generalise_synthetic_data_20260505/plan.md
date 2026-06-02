@@ -2,9 +2,9 @@
 
 ## Phase 1: Core Engine Refactoring
 
-- [ ] Task: Design and implement the `BaseDocumentTemplate`
-    - [ ] Abstract header/footer/page numbering logic
-    - [ ] Create a unified `StyleManager` for easy branding swaps
+- [x] Task: Design and implement the `BaseDocumentTemplate`
+    - [x] Abstract header/footer/page numbering logic
+    - [x] Create a unified `StyleManager` for easy branding swaps
 - [ ] Task: Implement `SchemaDrivenCSVGenerator`
     - [ ] Allow CSV structure and provider data to be defined in JSON
 - [ ] Task: Refactor existing generators (AWS, Azure, GCP) to use the new engine

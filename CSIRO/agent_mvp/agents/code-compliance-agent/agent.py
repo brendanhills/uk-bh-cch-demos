@@ -1,6 +1,18 @@
 import os
+import httpx
 from google.adk import Agent
 from google.adk.tools import FunctionTool
+
+def parse_github_repo(repo: str) -> str:
+    """Parses a repository string or URL into 'owner/repo' format."""
+    repo = repo.strip()
+    if "github.com/" in repo:
+        parts = repo.split("github.com/")[-1].split("/")
+        if len(parts) >= 2:
+            return f"{parts[0]}/{parts[1].replace('.git', '')}"
+    if "/" in repo:
+        return repo
+    return f"brendanhills-altostrat/{repo}"
 
 # --- Load Realistic Policy Document ---
 POLICY_FILE = os.path.join(os.path.dirname(__file__), "security_policy_ssds.md")
@@ -22,12 +34,59 @@ else:
     6. Machine learning models must be in non-executable formats (e.g., safetensors).
     """
 
-# --- Expanded Mock GitHub Tool ---
+# --- Dynamic Mock GitHub Tool ---
 def fetch_github_diff(repo: str, commit_id: str) -> str:
-    """Fetches a mock git diff for a given repo and commit ID to analyze."""
+    """Fetches a git diff for a given repo and commit ID.
+    It first searches for physical files in the sample_pull_requests folder.
+    If not found, it attempts to fetch the raw unified diff from the real GitHub API.
+    If that fails or no token/access exists, it falls back to hardcoded mock content.
+    """
+    # 1. Try to load from physical sample_pull_requests directory
+    sample_dir = os.path.join(os.path.dirname(__file__), "sample_pull_requests")
+    if os.path.exists(sample_dir):
+        normalized_id = commit_id.replace("commit-", "pr-").replace("commit_", "pr_")
+        possible_filenames = [
+            f"{commit_id}.diff",
+            f"{commit_id}",
+            f"{normalized_id}.diff",
+            f"{normalized_id}"
+        ]
+        for name in possible_filenames:
+            file_path = os.path.join(sample_dir, name)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                try:
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        return f.read()
+                except Exception:
+                    pass
+
+    # 2. Try to fetch from Real GitHub API
+    owner_repo = parse_github_repo(repo)
+    is_pr = commit_id.isdigit()
+    if is_pr:
+        url = f"https://api.github.com/repos/{owner_repo}/pulls/{commit_id}"
+    else:
+        url = f"https://api.github.com/repos/{owner_repo}/commits/{commit_id}"
+        
+    headers = {
+        "Accept": "application/vnd.github.diff",
+        "User-Agent": "CSIRO-Security-Compliance-Agent/1.0"
+    }
     
-    # 1. Compliant Commit
-    if commit_id == "commit-safe":
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token and "dummy" not in token:
+        headers["Authorization"] = f"token {token}"
+        
+    try:
+        with httpx.Client(timeout=15.0) as client:
+            response = client.get(url, headers=headers)
+            if response.status_code == 200:
+                return response.text
+    except Exception:
+        pass # Fallback to mock data if connection fails
+
+    # 3. Fallback Mock Data
+    if commit_id in ["commit-safe", "pr-safe"]:
         return """
 diff --git a/src/processor.py b/src/processor.py
 index e69de29..4b58e33 100644
@@ -45,8 +104,7 @@ index e69de29..4b58e33 100644
 +    return bcrypt.hashpw(raw_password.encode('utf-8'), salt)
 """
 
-    # 2. Secret & Deprecated Crypto Violations
-    elif commit_id == "commit-secrets":
+    elif commit_id in ["commit-secrets", "pr-secrets"]:
         return """
 diff --git a/src/auth.py b/src/auth.py
 index a11b223..c44f556 100644
@@ -65,8 +123,7 @@ index a11b223..c44f556 100644
 +    return hashlib.md5(token.encode()).hexdigest()
 """
 
-    # 3. Supply Chain (Unpinned Dependency) Violation
-    elif commit_id == "commit-dependencies":
+    elif commit_id in ["commit-dependencies", "pr-dependencies"]:
         return """
 diff --git a/pyproject.toml b/pyproject.toml
 index b99d332..f44e112 100644
@@ -80,15 +137,14 @@ index b99d332..f44e112 100644
 +    # VIOLATION: Supply Chain (3.2) - Unpinned 'latest' tag
 +    "scipy=latest"
  ]
-"""
+ """
 
-    # 4. Critical Repo Classification & Executable Model Violations
-    elif commit_id == "commit-ai-model":
+    elif commit_id in ["commit-ai-model", "pr-ai-model"]:
         return """
-diff --git a/scripts/inference.py b/scripts/inference.py
+diff --git "a/scripts/inference.py" "b/scripts/inference.py"
 index d22c118..e88d991 100644
---- a/scripts/inference.py
-+++ b/scripts/inference.py
+--- "a/scripts/inference.py"
++++ "b/scripts/inference.py"
 @@ -1,4 +1,7 @@
 -import safetensors
 +import pickle
@@ -103,8 +159,7 @@ index d22c118..e88d991 100644
 +    return pickle.load(open("model_weights.pkl", "rb"))
 """
 
-    # 5. SQL Injection Violation
-    elif commit_id == "commit-sql-injection":
+    elif commit_id in ["commit-sql-injection", "pr-sql-injection"]:
         return """
 diff --git a/src/db.py b/src/db.py
 index a55d119..e33c778 100644
@@ -123,18 +178,8 @@ index a55d119..e33c778 100644
 +    return cursor.execute(query).fetchall()
 """
 
-    # Default/Unknown commit fallback
     else:
-        return f"""
-diff --git a/README.md b/README.md
-index c88d112..d33e445 100644
---- a/README.md
-+++ b/README.md
-@@ -1,2 +1,3 @@
- # Project
--Placeholder
-+Commit {commit_id} did not modify any source code files. No changes to analyze.
-"""
+        return f"Unified diff for commit/PR ID '{commit_id}' on repository '{owner_repo}' could not be fetched from GitHub (or no local mock file was found). Check that the ID is valid and your GITHUB_TOKEN has access."
 
 fetch_github_diff_tool = FunctionTool(func=fetch_github_diff)
 
