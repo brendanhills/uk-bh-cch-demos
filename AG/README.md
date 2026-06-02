@@ -9,9 +9,9 @@ It includes a fully developed Python REST SDK client, programmatic scenario-base
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
-Ensure you are in the project workspace, and install the required dependencies:
+Ensure you are in the project workspace, and install the required dependencies using `uv`:
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### 2. Setup Mock Scenario Tokens
