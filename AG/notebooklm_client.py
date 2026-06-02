@@ -146,7 +146,19 @@ class NotebookLMClient:
         
         # Build Endpoint Base URL
         base_sub = "upload/v1alpha" if is_upload else "v1alpha"
-        base_url = f"https://{self.endpoint_location}-discoveryengine.googleapis.com/{base_sub}/projects/{self.project_number}/locations/{self.location}"
+        
+        # Determine endpoint prefix to avoid location mismatch errors (e.g. 400 errors)
+        endpoint_loc = self.endpoint_location
+        if self.location == "global":
+            # Global location must use the global endpoint (no regional prefix)
+            endpoint_loc = ""
+            
+        if endpoint_loc in ("global", "none", "", None):
+            endpoint_prefix = ""
+        else:
+            endpoint_prefix = f"{endpoint_loc}-"
+            
+        base_url = f"https://{endpoint_prefix}discoveryengine.googleapis.com/{base_sub}/projects/{self.project_number}/locations/{self.location}"
         url = f"{base_url}/{path}"
 
         headers = {

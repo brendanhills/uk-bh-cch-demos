@@ -153,16 +153,24 @@ To test these scripts against your live Google Cloud environment:
 2. Ensure you have set up NotebookLM Enterprise and licensed your users.
 3. Grant the **Cloud NotebookLM User** IAM role to your testing accounts.
 
-### 2. Generate an Access Token
-Ensure the `gcloud` CLI is installed and authenticated, then run:
+### 2. Auto-Authorize and Setup .env (Recommended)
+We provide a simple interactive script to automate the entire authorization, token printing, and `.env` updating process! Just run:
 ```bash
-gcloud auth login --enable-gdrive-access
-gcloud auth print-access-token
+uv run authorize.py
 ```
-*Note: `--enable-gdrive-access` is required if you plan to import Google Drive sources.*
+This script will:
+1. Interactively trigger `gcloud auth login --enable-gdrive-access` so you can authorize via your browser.
+2. Retrieve and print your OAuth2 Access Token.
+3. Automatically update your local `.env` file with the correct token (creating `.env` if missing).
+4. Automatically resolve and write your active numeric GCP Project Number to `.env`.
 
-### 3. Update Your `.env` Configuration
-Open your local `.env` and fill in your real Google Cloud parameters:
+Alternatively, if you are already authenticated in gcloud, you can run:
+```bash
+uv run setup_env.py
+```
+
+### 3. Manual Configuration (Optional)
+If you prefer to configure manually, update your local `.env` with your Google Cloud parameters:
 ```env
 GCP_PROJECT_NUMBER=YOUR_NUMERIC_PROJECT_ID
 GCP_LOCATION=global

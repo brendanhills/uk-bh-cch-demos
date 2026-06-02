@@ -87,7 +87,7 @@ class TestNotebookLMScenarios(unittest.TestCase):
                 upload_resp = self.client.upload_source_file(
                     notebook_id=notebook_id,
                     file_path=temp_file,
-                    display_name="Quantum Shor's Guide",
+                    display_name="Quantum Shors Guide",
                     content_type="text/plain"
                 )
                 uploaded_src_id = upload_resp["sourceId"]["id"]
