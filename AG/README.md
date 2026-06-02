@@ -9,15 +9,21 @@ It includes a fully developed Python REST SDK client, programmatic scenario-base
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
-Ensure you are in the project workspace, and install the required dependencies (only `requests` and `python-dotenv` are needed):
+Ensure you are in the project workspace, and install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Programmatic Integration Tests
+### 2. Setup Mock Scenario Tokens
+On a clean checkout, generate your local simulated scenario tokens (these are stored in a local `.gitignored` file):
+```bash
+python3 setup_mock_tokens.py
+```
+
+### 3. Run the Programmatic Integration Tests
 Execute the complete scenario-based integration tests in **Mock Mode** (using our built-in offline mock emulator):
 ```bash
-python test_api.py self-test
+python3 test_api.py self-test
 ```
 *This command runs the `unittest` scenarios, displaying verbose step-by-step console logs, JSON payloads, and copy-pasteable curl equivalents for every API action!*
 
