@@ -1,0 +1,42 @@
+[
+  {
+    "start_sec": 5.2,
+    "end_sec": 7.7,
+    "speaker": 1,
+    "text": "Oh, okay. Okay, this is really screwy. Very interesting. So, how are you?",
+    "timestamp": "07:35:34.2",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 8.0,
+    "end_sec": 10.3,
+    "speaker": 1,
+    "text": "I'm fine.",
+    "timestamp": "07:35:37.0",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 10.28,
+    "end_sec": 15.0,
+    "speaker": 1,
+    "text": "Oh, pretty good. Just kind of busy working.",
+    "timestamp": "07:35:39.3",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 12.3,
+    "end_sec": 13.3,
+    "speaker": 2,
+    "text": "Okay, how are you? How's everything in Philadelphia?",
+    "timestamp": "07:35:41.3",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 14.0,
+    "end_sec": 15.0,
+    "speaker": 2,
+    "text": "How much?",
+    "timestamp": "07:35:43.0",
+    "event_type": "transcript"
+  }
+]

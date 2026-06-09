@@ -1,0 +1,8 @@
+{
+  "track_id": "live_translation_20260609",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-06-09T06:40:00Z",
+  "updated_at": "2026-06-09T06:40:00Z",
+  "description": "Implement live speaker-attributed real-time translation"
+}
