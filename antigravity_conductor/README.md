@@ -1,4 +1,4 @@
-# Conductor Workflows (Jetski Extension)
+# Conductor Workflows (Antigravity Extension)
 
 Based on the original [Conductor Repository](https://github.com/gemini-cli-extensions/conductor) by the gemini-cli-extensions team.
 
@@ -17,31 +17,32 @@ The philosophy is simple: by treating context as a managed artifact alongside yo
 - **Plan Before You Build**: Automated generation of `spec.md` and `plan.md` for tracks.
 - **Safe Iterations**: Manual verification checkpoints at phase ends.
 
-### 🛠️ Jetski Workflow Features (This Repo)
+### 🛠️ Antigravity Workflow Features (This Repo)
 - **Upstream Synchronization**: `./sync_conductor_github.sh` checks for reference updates without clobbering local defaults.
 - **Syntax Verification Tests**: Automated PyTest suite (`tests/test_syntax.py`) to validate all `.toml` and `.md` files.
-- **Local Workspace Setup**: `./setup_workflows.sh` to symlink commands into your Jetski runtime.
+- **Local Workspace Setup**: `./setup_conductor.sh` to symlink commands into your Antigravity runtime.
 
 ## 📁 Repository Structure
 
 - `commands/`: Conductor command definitions (e.g., `setup.toml`, `newTrack.toml`).
-- `policies/`: Jetski tool usage policies (permits Plan Mode edits).
+- `policies/`: Antigravity tool usage policies (permits Plan Mode edits).
 - `tests/`: PyTest validation suite using Python's `tomllib`.
 - `sync_conductor_github.sh`: Script to automatically fetch upstream changes and verify against local customizations.
-- `setup_workflows.sh`: Symlinks local workflows into the Jetski runtime environment.
+- `setup_conductor.sh`: Symlinks local workflows into the Antigravity runtime environment.
 
 ## ⚙️ Prerequisites
 
-- **Python 3.11+** (for standard `tomllib` parsing)
-- **PyTest** (for verification suite)
+- **uv** (Recommended dependency manager, https://github.com/astral-sh/uv)
+- **Python 3.11+**
+- **PyTest** (Managed automatically if using `uv`)
 - **Git** (for sync script cloning)
 
 ## 🛠️ Usage
 
 ### 1. Setup Local Symlinks
-To link these workflows into your global Jetski environment, run:
+To link these workflows into your global Antigravity environment, run:
 ```bash
-./setup_workflows.sh
+./setup_conductor.sh
 ```
 
 ### 2. Set Up the Project (Run Once)
@@ -117,6 +118,10 @@ To fetch the latest reference features from GitHub and review diffs without over
 
 To run syntax validation tests:
 ```bash
+# Recommended (handles virtualenv and installs pytest automatically)
+uv run pytest tests/test_syntax.py
+
+# Standalone Python fallback
 pytest tests/test_syntax.py
 ```
 
