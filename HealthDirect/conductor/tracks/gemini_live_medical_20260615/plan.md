@@ -37,3 +37,6 @@
     - [ ] Feed dialogue to the Live API and render the output side-by-side in the console.
     - [ ] Verify that Australian terminology and custom glossary terms are correctly chosen in real-time outputs.
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Evaluation & Handoff' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions (fbad1a7)
