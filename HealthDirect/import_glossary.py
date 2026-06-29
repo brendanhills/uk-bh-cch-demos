@@ -58,7 +58,7 @@ def parse_html_terms(html_content: str) -> dict:
                     
     return terms
 
-def scrape_healthdirect_page(url: str, max_letters: int = None) -> dict:
+def scrape_healthdirect_page(url: str, max_letters: int = None, is_subpage: bool = False) -> dict:
     """Scrapes a HealthDirect webpage and extracts clinical terms, recursively crawling if it is an index."""
     headers = {
         "User-Agent": "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)"
@@ -71,6 +71,10 @@ def scrape_healthdirect_page(url: str, max_letters: int = None) -> dict:
         return {}
 
     soup = BeautifulSoup(html, "html.parser")
+    
+    # If we are already on a subpage (A-Z leaf page), do not attempt recursive crawl of navigation links.
+    if is_subpage:
+        return parse_html_terms(html)
     
     # Check if the page is a directory index containing alphabetical A-Z links.
     # On healthdirect, these links are like: href="/health-topics/A" or href="/medicines/search-results/A-excludeNonArtg"
@@ -96,7 +100,7 @@ def scrape_healthdirect_page(url: str, max_letters: int = None) -> dict:
         # Recursive crawling: Scrape each alphabetical subpage and merge
         consolidated_terms = {}
         for link in sub_links:
-            sub_terms = scrape_healthdirect_page(link)
+            sub_terms = scrape_healthdirect_page(link, is_subpage=True)
             consolidated_terms.update(sub_terms)
         return consolidated_terms
     else:

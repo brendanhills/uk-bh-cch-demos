@@ -1,17 +1,17 @@
 # Implementation Plan: Ingest & Import HealthDirect Medical Dictionaries
 
 ## Phase 1: Web Scraping & Local Dictionary Ingestion
-- [ ] Task: Web Scraper and Page Parser
-    - [ ] Write failing unit tests for scraping the HealthDirect Australia pages (Medicines, Conditions, Symptoms, Procedures) and verifying parsed structures.
-    - [ ] Implement robust scraping/crawling logic in `import_glossary.py` to harvest terms and short descriptions from the index pages of the 4 directories.
-    - [ ] Handle fetch rate-limiting, error handling, custom User-Agents, and timeouts elegantly.
-- [ ] Task: Glossary Merging and De-duplication
-    - [ ] Write failing unit tests verifying de-duplicated merging of scraped terms into `dictionary/glossary.json`.
-    - [ ] Implement the merging utility that reads existing entries, merges newly crawled terms, keeps existing human translations, and populates new terms with English descriptions.
-- [ ] Task: Pre-Translation Service for New Terms
-    - [ ] Write tests verifying that newly found terms are translated using Google Cloud Translation API.
-    - [ ] Implement bulk pre-translation (translating English terms to Spanish and Vietnamese) for newly added words in `import_glossary.py`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Ingestion & Local Dictionary' (Protocol in workflow.md)
+- [x] Task: Web Scraper and Page Parser (84cc7bb)
+    - [x] Write failing unit tests for scraping the HealthDirect Australia pages (Medicines, Conditions, Symptoms, Procedures) and verifying parsed structures.
+    - [x] Implement robust scraping/crawling logic in `import_glossary.py` to harvest terms and short descriptions from the index pages of the 4 directories.
+    - [x] Handle fetch rate-limiting, error handling, custom User-Agents, and timeouts elegantly.
+- [x] Task: Glossary Merging and De-duplication (84cc7bb)
+    - [x] Write failing unit tests verifying de-duplicated merging of scraped terms into `dictionary/glossary.json`.
+    - [x] Implement the merging utility that reads existing entries, merges newly crawled terms, keeps existing human translations, and populates new terms with English descriptions.
+- [x] Task: Pre-Translation Service for New Terms (84cc7bb)
+    - [x] Write tests verifying that newly found terms are translated using Google Cloud Translation API.
+    - [x] Implement bulk pre-translation (translating English terms to Spanish and Vietnamese) for newly added words in `import_glossary.py`.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Ingestion & Local Dictionary' (Protocol in workflow.md)
 
 ## Phase 2: GCP Translation V3 Glossary Registry
 - [ ] Task: CSV Export & GCS Upload
