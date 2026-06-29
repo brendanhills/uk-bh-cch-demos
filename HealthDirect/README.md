@@ -181,3 +181,28 @@ The project is organized into a modular `core/` package:
 *   **`core/sinks.py`**: UI and logging handlers (Terminal and JSON).
 *   **`core/utils.py`**: Common orchestration and pipeline setup helpers.
 *   **`simulate_audio.py`**: Real-time throttling and audio normalization infrastructure.
+
+---
+
+## Clinical Glossary Ingestion & Translation Pipeline
+
+To support high-fidelity bilingual translations (e.g., Speech Adaptation clinical vocabulary lists), the project includes a robust, self-healing ingestion utility to scrape, translate, and search-ground terminology directly from HealthDirect Australia:
+
+**Script:** `import_glossary.py`
+
+### Key Features
+*   **Targeted Alphabet Crawling:** Supports filtering and scraping by letter using `--max-letters` (randomly selects a subset of letters to query) or specific limits via `--limit-terms`.
+*   **Leaf-Page Filtering:** Prevents index link pollution by extracting the target character directly from leaf sub-page URLs and filtering out any terms that do not start with that letter.
+*   **Progressive Saving:** Dynamically saves crawled terms, translation structures, and search grounding metadata to both local JSON (`dictionary/glossary.json`) and CSV (`dictionary/glossary.csv`) format in real-time. This prevents data loss from rate limits, timeouts, or early process termination.
+*   **Exhaustive & Prioritized Grounding Queue:** Whenever `--ground` is supplied, the pipeline scans the entire glossary database to queue any outstanding historical entries missing Spanish or Vietnamese web grounding. It prioritizes newly scraped terms to run first, ensuring immediate feedback on current runs.
+*   **Robust Translation Preservation:** Preserves existing translation details and previously retrieved grounding metadata, preventing duplicate translation/API consumption.
+
+### Usage Examples
+```bash
+# Run a dry-run crawling 3 random letters, limiting to 2 terms per letter
+uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --max-letters 3 --limit-terms 2
+
+# Crawl and perform automated Google Search translation grounding on Spanish/Vietnamese terms
+uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --ground
+```
+

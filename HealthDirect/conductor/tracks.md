@@ -26,5 +26,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Translation Search-Grounding & Validation**
+- [~] **Track: Translation Search-Grounding & Validation**
 *Link: [./tracks/ground_translations_20260629/](./tracks/ground_translations_20260629/)*
