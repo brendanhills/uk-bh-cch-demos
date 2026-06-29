@@ -1,0 +1,9 @@
+# Ignore local audio samples
+samples/
+
+# Ignore python test coverage
+.coverage
+.pytest_cache/
+__pycache__/
+.venv/
+output/

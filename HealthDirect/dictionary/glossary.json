@@ -4,7 +4,8 @@
       "english": "otitis media",
       "translations": {
         "Vietnamese": "viêm tai giữa",
-        "Spanish": "otitis media"
+        "Spanish": "otitis media",
+        "German": "Mittelohrentzündung"
       },
       "description": "middle ear infection"
     },
@@ -12,7 +13,8 @@
       "english": "bronchiolitis",
       "translations": {
         "Vietnamese": "viêm tiểu phế quản",
-        "Spanish": "bronquiolitis"
+        "Spanish": "bronquiolitis",
+        "German": "Bronchiolitis"
       },
       "description": "respiratory tract infection in infants"
     },
@@ -20,7 +22,8 @@
       "english": "gastroenteritis",
       "translations": {
         "Vietnamese": "viêm dạ dày ruột",
-        "Spanish": "gastroenteritis"
+        "Spanish": "gastroenteritis",
+        "German": "Magen-Darm-Grippe (Gastroenteritis)"
       },
       "description": "stomach flu / bowel infection"
     },
@@ -28,9 +31,190 @@
       "english": "croup",
       "translations": {
         "Vietnamese": "bệnh viêm thanh khí phế quản",
-        "Spanish": "crup"
+        "Spanish": "crup",
+        "German": "Krupp-Husten (Pseudokrupp)"
       },
       "description": "inflammation of the larynx and trachea"
+    },
+    {
+      "english": "a guide to menopause",
+      "translations": {
+        "Spanish": "una guía para la menopausia",
+        "Vietnamese": "Hướng dẫn về thời kỳ mãn kinh"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/guide-to-menopause"
+    },
+    {
+      "english": "abdominal aortic aneurysm",
+      "translations": {
+        "Spanish": "aneurisma aórtico abdominal",
+        "Vietnamese": "chứng phình động mạch chủ bụng"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/abdominal-aortic-aneurysm"
+    },
+    {
+      "english": "abdominal hysterectomy",
+      "translations": {
+        "Spanish": "histerectomía abdominal",
+        "Vietnamese": "cắt bỏ tử cung qua đường bụng"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/surgery/abdominal-hysterectomy"
+    },
+    {
+      "english": "abdominal pain",
+      "translations": {
+        "Spanish": "dolor abdominal",
+        "Vietnamese": "đau bụng"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/what-causes-abdominal-pain"
+    },
+    {
+      "english": "abdominal pain in children",
+      "translations": {
+        "Spanish": "dolor abdominal en niños",
+        "Vietnamese": "đau bụng ở trẻ em"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/abdominal-pain-in-children"
+    },
+    {
+      "english": "abdominal surgery for crohn's disease",
+      "translations": {
+        "Spanish": "Cirugía abdominal para la enfermedad de Crohn",
+        "Vietnamese": "phẫu thuật ổ bụng điều trị bệnh Crohn"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/surgery/abdominal-surgery-for-crohns-disease"
+    },
+    {
+      "english": "abdominoplasty",
+      "translations": {
+        "Spanish": "abdominoplastia",
+        "Vietnamese": "phẫu thuật tạo hình bụng"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/abdominoplasty"
+    },
+    {
+      "english": "aboriginal and torres strait islander health",
+      "translations": {
+        "Spanish": "salud de los aborígenes y los isleños del Estrecho de Torres",
+        "Vietnamese": "sức khỏe của người bản địa và cư dân đảo Torres Strait"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/indigenous-health"
+    },
+    {
+      "english": "aboriginal and torres strait people social and emotional wellbeing",
+      "translations": {
+        "Spanish": "bienestar social y emocional de los pueblos aborígenes y del estrecho de Torres",
+        "Vietnamese": "phúc lợi xã hội và cảm xúc của người bản địa và người dân eo biển Torres"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/aboriginal-and-torres-strait-islander-peoples-mental-health"
+    },
+    {
+      "english": "abortion",
+      "translations": {
+        "Spanish": "aborto provocado",
+        "Vietnamese": "phá thai"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/abortion-surgical-and-medical-options"
+    },
+    {
+      "english": "abscess incision and drainage",
+      "translations": {
+        "Spanish": "Incisión y drenaje del absceso",
+        "Vietnamese": "rạch và dẫn lưu ổ áp xe"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/surgery/abscess-incision-and-drainage"
+    },
+    {
+      "english": "abscesses",
+      "translations": {
+        "Spanish": "abscesos",
+        "Vietnamese": "áp xe"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/abscesses"
+    },
+    {
+      "english": "absence seizures",
+      "translations": {
+        "Spanish": "crisis de ausencia",
+        "Vietnamese": "cơn động kinh vắng mặt"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/absence-seizures"
+    },
+    {
+      "english": "absent periods",
+      "translations": {
+        "Spanish": "períodos ausentes",
+        "Vietnamese": "vắng mặt"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/irregular-periods"
+    },
+    {
+      "english": "accidentally eating unsafe foods",
+      "translations": {
+        "Spanish": "comer accidentalmente alimentos no seguros",
+        "Vietnamese": "vô tình ăn phải thực phẩm không an toàn"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/accidentally-eating-unsafe-foods-ingesting-questionable-foods"
+    },
+    {
+      "english": "accidents",
+      "translations": {
+        "Spanish": "accidentes",
+        "Vietnamese": "tai nạn"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/falls"
+    },
+    {
+      "english": "accommodation support",
+      "translations": {
+        "Spanish": "apoyo para el alojamiento",
+        "Vietnamese": "hỗ trợ chỗ ở"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/residential-aged-care"
+    },
+    {
+      "english": "achalasia",
+      "translations": {
+        "Spanish": "acalasia",
+        "Vietnamese": "chứng co thắt tâm vị"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/achalasia"
+    },
+    {
+      "english": "aches and pains",
+      "translations": {
+        "Spanish": "achaques",
+        "Vietnamese": "đau nhức"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/aches-and-pains"
+    },
+    {
+      "english": "achilles tendon",
+      "translations": {
+        "Spanish": "tendón de Aquiles",
+        "Vietnamese": "gân Achilles"
+      },
+      "description": "",
+      "url": "https://www.healthdirect.gov.au/achilles-tendon"
     }
   ]
 }
