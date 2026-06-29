@@ -22,3 +22,4 @@ Provide a high-fidelity development and evaluation environment for real-time tra
 - **Interactive Console UI:** Colored ANSI logs showing transcription and translation in real-time.
 - **Dual-Mode Processing:** Low Latency and Readability modes for transcription.
 - **Configuration Management:** Read options (target language, APIs) from a configuration file.
+- **Automated Clinical Terminology Ingestion:** Active crawler/pipeline scraping HealthDirect Australia clinical directories to compile multi-lingual medical glossaries, register them with GCP Cloud Translation V3, and dynamically prime Gemini Live sessions.

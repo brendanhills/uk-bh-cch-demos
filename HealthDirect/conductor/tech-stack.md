@@ -21,6 +21,9 @@ This document outlines the core technologies and libraries used in the Real-Time
 - **ffmpeg-python**: Provides the underlying decoding and encoding capabilities required by `pydub`.
 - **audioop-lts**: Used for low-level, real-time audio operations such as channel down-mixing.
 
+## 4.5 Data Ingestion & Harvesting
+- **BeautifulSoup4**: Used to scrape and parse clinical reference indexes and pages from HealthDirect Australia.
+
 ## 5. Development & Testing
 - **pytest**: The primary testing framework.
 - **pytest-asyncio**: Required for testing the asynchronous STT and translation streaming logic.
