@@ -19,4 +19,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Bilingual Medical Call Sample Audio Library (automated generation)**
   *Link: [./tracks/bilingual_audio_library_20260615/](./tracks/bilingual_audio_library_20260615/)*
 
+---
 
+- [ ] **Track: Import Dictionaries**
+*Link: [./tracks/import_dictionaries_20260629/](./tracks/import_dictionaries_20260629/)*
