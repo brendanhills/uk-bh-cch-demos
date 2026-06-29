@@ -14,35 +14,95 @@ def parse_html_terms(html_content: str) -> dict:
     soup = BeautifulSoup(html_content, "html.parser")
     terms = {}
     
-    # Extract links that contain medicines or health-topics paths
-    for a in soup.find_all("a", href=True):
-        href = a["href"]
-        # Match relative or absolute HealthDirect URLs
-        if "/medicines/" in href or "/health-topics/" in href:
-            term_text = a.get_text()
-            cleaned_name = clean_term_name(term_text)
-            if cleaned_name:
-                # Resolve relative URL to absolute URL
-                if href.startswith("/"):
-                    full_url = f"https://www.healthdirect.gov.au{href}"
-                else:
-                    full_url = href
-                terms[cleaned_name] = {"url": full_url}
-                
+    # 1. Look for HealthTopics/Conditions/Symptoms lists: ul.article_lists-column or section.article_lists
+    topic_containers = soup.find_all(class_=re.compile(r"article_lists"))
+    
+    # 2. Look for Medicines brand results lists: ul with class containing product-list or brand-results results
+    meds_containers = soup.find_all(class_=re.compile(r"(product-list|brand-results)"))
+    
+    # Combine containers to search in
+    containers = topic_containers + meds_containers
+    
+    if containers:
+        for container in containers:
+            for a in container.find_all("a", href=True):
+                href = a["href"]
+                # Skip any relative anchor links, or parent category links if they don't look like actual items
+                if href.startswith("#") or href == "/health-topics" or href == "/medicines":
+                    continue
+                term_text = a.get_text()
+                cleaned_name = clean_term_name(term_text)
+                if cleaned_name:
+                    if href.startswith("/"):
+                        full_url = f"https://www.healthdirect.gov.au{href}"
+                    else:
+                        full_url = href
+                    terms[cleaned_name] = {"url": full_url}
+    
+    # Fallback to general matching if no specific containers were found
+    if not terms:
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            # Exclude top level directory paths as terms themselves
+            if href.rstrip("/") in ["/medicines", "/health-topics", "/health-topics/conditions", "/health-topics/symptoms", "/health-topics/procedures"]:
+                continue
+            if "/medicines/" in href or "/health-topics/" in href:
+                term_text = a.get_text()
+                cleaned_name = clean_term_name(term_text)
+                if cleaned_name:
+                    if href.startswith("/"):
+                        full_url = f"https://www.healthdirect.gov.au{href}"
+                    else:
+                        full_url = href
+                    terms[cleaned_name] = {"url": full_url}
+                    
     return terms
 
-def scrape_healthdirect_page(url: str) -> dict:
-    """Scrapes a HealthDirect webpage and extracts clinical terms."""
+def scrape_healthdirect_page(url: str, max_letters: int = None) -> dict:
+    """Scrapes a HealthDirect webpage and extracts clinical terms, recursively crawling if it is an index."""
     headers = {
         "User-Agent": "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)"
     }
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
-        return parse_html_terms(response.text)
+        html = response.text
     except Exception as e:
-        # Return empty dictionary in case of scraping failure
         return {}
+
+    soup = BeautifulSoup(html, "html.parser")
+    
+    # Check if the page is a directory index containing alphabetical A-Z links.
+    # On healthdirect, these links are like: href="/health-topics/A" or href="/medicines/search-results/A-excludeNonArtg"
+    sub_links = []
+    seen_hrefs = set()
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        # Match alphabetical sub-page patterns
+        if re.search(r"/health-topics/[A-Z]$", href) or re.search(r"/medicines/search-results/[A-Z]-excludeNonArtg", href):
+            if href not in seen_hrefs:
+                seen_hrefs.add(href)
+                if href.startswith("/"):
+                    sub_links.append(f"https://www.healthdirect.gov.au{href}")
+                else:
+                    sub_links.append(href)
+                    
+    if sub_links:
+        # Sort sub_links to ensure alphabetical order (A-Z)
+        sub_links.sort()
+        if max_letters is not None:
+            sub_links = sub_links[:max_letters]
+            
+        # Recursive crawling: Scrape each alphabetical subpage and merge
+        consolidated_terms = {}
+        for link in sub_links:
+            sub_terms = scrape_healthdirect_page(link)
+            consolidated_terms.update(sub_terms)
+        return consolidated_terms
+    else:
+        # No sub-links found, so this is an individual alphabetical page.
+        # Parse terms directly on this page.
+        return parse_html_terms(html)
 
 def merge_glossaries(existing_glossary: dict, scraped_glossary: dict) -> dict:
     """Merges scraped terms into an existing glossary, avoiding duplicates."""
@@ -134,19 +194,22 @@ if __name__ == "__main__":
     import json
     import sys
     
-    # Handle single-dash -scrape as standard argparse --scrape
+    # Handle single-dash options like -scrape and -max as standard argparse
     args_to_parse = []
     for arg in sys.argv[1:]:
         if arg == "-scrape":
             args_to_parse.append("--scrape")
+        elif arg == "-max":
+            args_to_parse.append("--max-letters")
         else:
             args_to_parse.append(arg)
             
     parser = argparse.ArgumentParser(description="HealthDirect Glossary Importer & Scraper Utility")
     parser.add_argument("--scrape", "-s", type=str, help="URL to scrape terms from")
+    parser.add_argument("--max-letters", "-m", type=int, default=None, help="Maximum alphabetical letters to crawl")
     
     parsed_args = parser.parse_args(args_to_parse)
     
     if parsed_args.scrape:
-        terms = scrape_healthdirect_page(parsed_args.scrape)
+        terms = scrape_healthdirect_page(parsed_args.scrape, max_letters=parsed_args.max_letters)
         print(json.dumps(terms, indent=2))
