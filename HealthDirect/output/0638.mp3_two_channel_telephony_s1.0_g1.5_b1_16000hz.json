@@ -4,47 +4,7 @@
     "end_sec": 7.4,
     "speaker": 2,
     "text": "Okay, how are you?",
-    "timestamp": "01:55:20.8",
-    "event_type": "transcript"
-  },
-  {
-    "start_sec": 0.0,
-    "end_sec": 1.1,
-    "speaker": 1,
-    "text": "Oh, okay.",
-    "timestamp": "01:55:14.9",
-    "event_type": "transcript"
-  },
-  {
-    "start_sec": 1.9,
-    "end_sec": 3.5,
-    "speaker": 1,
-    "text": "Okay. This is really screwy.",
-    "timestamp": "01:55:16.8",
-    "event_type": "transcript"
-  },
-  {
-    "start_sec": 4.5,
-    "end_sec": 5.9,
-    "speaker": 1,
-    "text": "Very interesting. So how are you?",
-    "timestamp": "01:55:19.4",
-    "event_type": "transcript"
-  },
-  {
-    "start_sec": 7.4,
-    "end_sec": 8.2,
-    "speaker": 1,
-    "text": "I'm fine.",
-    "timestamp": "01:55:22.3",
-    "event_type": "transcript"
-  },
-  {
-    "start_sec": 10.9,
-    "end_sec": 14.0,
-    "speaker": 1,
-    "text": "Oh, pretty good. Just kind of busy working.",
-    "timestamp": "01:55:25.8",
+    "timestamp": "07:21:42.2",
     "event_type": "transcript"
   },
   {
@@ -52,7 +12,47 @@
     "end_sec": 10.5,
     "speaker": 2,
     "text": "How's everything in Philadelphia?",
-    "timestamp": "01:55:24.0",
+    "timestamp": "07:21:45.4",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 0.0,
+    "end_sec": 1.1,
+    "speaker": 1,
+    "text": "Oh, okay.",
+    "timestamp": "07:21:36.3",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 1.9,
+    "end_sec": 3.5,
+    "speaker": 1,
+    "text": "Okay. This is really screwy.",
+    "timestamp": "07:21:38.2",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 4.5,
+    "end_sec": 5.9,
+    "speaker": 1,
+    "text": "Very interesting. So how are you?",
+    "timestamp": "07:21:40.8",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 7.4,
+    "end_sec": 8.2,
+    "speaker": 1,
+    "text": "I'm fine.",
+    "timestamp": "07:21:43.7",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 10.9,
+    "end_sec": 14.0,
+    "speaker": 1,
+    "text": "Oh, pretty good. Just kind of busy working.",
+    "timestamp": "07:21:47.2",
     "event_type": "transcript"
   }
 ]
