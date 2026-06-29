@@ -21,7 +21,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Import Dictionaries**
+- [x] **Track: Import Dictionaries**
 *Link: [./tracks/import_dictionaries_20260629/](./tracks/import_dictionaries_20260629/)*
 
 ---
