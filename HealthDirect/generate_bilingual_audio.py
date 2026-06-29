@@ -1,6 +1,11 @@
 import asyncio
 import io
 import os
+
+# Disable mutual TLS (mTLS) to prevent OpenSSL Context mutation bugs in Python 3.13 / urllib3 on Google corp/cloudtop systems
+os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
+os.environ["GOOGLE_API_USE_MTLS"] = "never"
+
 from pydub import AudioSegment
 from google.cloud import texttospeech
 
@@ -32,9 +37,6 @@ async def synthesize_text(text: str, language_code: str, voice_name: str, gender
     return AudioSegment.from_file(io.BytesIO(response.audio_content), format="wav")
 
 async def main():
-    # Ensure samples directory exists
-    os.makedirs("samples", exist_ok=True)
-    
     # Define dialogue turns
     # We will align these turns in time by padding with silence
     # Caller is Channel 1 (Left Channel), Nurse is Channel 2 (Right Channel)
@@ -74,10 +76,24 @@ async def main():
     print("Combining channels into stereo track...")
     stereo_audio = AudioSegment.from_mono_audiosegments(left_channel, right_channel)
     
-    # Save the output WAV file
-    output_path = "samples/de_fever_session.wav"
-    stereo_audio.export(output_path, format="wav")
-    print(f"Bilingual stereo audio file successfully generated at: {output_path}")
+    # Save the output to GCS
+    from google.cloud import storage
+    
+    # Export to a bytes buffer
+    wav_buffer = io.BytesIO()
+    stereo_audio.export(wav_buffer, format="wav")
+    wav_buffer.seek(0)
+    
+    # Upload to GCS
+    bucket_name = "uk-bh-experiments-argolis-us"
+    gcs_path = "HealthDirect/call_samples/de_fever_session.wav"
+    
+    print(f"Uploading generated bilingual audio to gs://{bucket_name}/{gcs_path}...")
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(gcs_path)
+    blob.upload_from_file(wav_buffer, content_type="audio/wav")
+    print(f"Bilingual stereo audio file successfully generated and uploaded to: gs://{bucket_name}/{gcs_path}")
 
 if __name__ == "__main__":
     asyncio.run(main())

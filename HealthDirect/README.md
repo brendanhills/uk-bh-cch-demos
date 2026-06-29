@@ -41,10 +41,10 @@ The project supports several Google Cloud Speech-to-Text V2 models via the `--mo
 To run any demo script with a specific model, use the `--model` option:
 ```bash
 # Run with Chirp-3
-uv run two_channel_transcribe_v2.py samples/0638.mp3 --model chirp_3
+uv run two_channel_transcribe_v2.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model chirp_3
 
 # Run with Medical Conversation
-uv run two_channel_transcribe_v2.py samples/0638.mp3 --model medical_conversation
+uv run two_channel_transcribe_v2.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model medical_conversation
 ```
 
 ---
@@ -84,7 +84,7 @@ uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_b
 Runs two different STT models (e.g., `telephony` vs `chirp_2`) side-by-side on the same audio stream.
 
 ```bash
-uv run compare_models.py samples/0638.mp3 --model1 telephony --model2 chirp_3
+uv run compare_models.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model1 telephony --model2 chirp_3
 ```
 
 ---

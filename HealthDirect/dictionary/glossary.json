@@ -1,0 +1,36 @@
+{
+  "glossary": [
+    {
+      "english": "otitis media",
+      "translations": {
+        "Vietnamese": "viêm tai giữa",
+        "Spanish": "otitis media"
+      },
+      "description": "middle ear infection"
+    },
+    {
+      "english": "bronchiolitis",
+      "translations": {
+        "Vietnamese": "viêm tiểu phế quản",
+        "Spanish": "bronquiolitis"
+      },
+      "description": "respiratory tract infection in infants"
+    },
+    {
+      "english": "gastroenteritis",
+      "translations": {
+        "Vietnamese": "viêm dạ dày ruột",
+        "Spanish": "gastroenteritis"
+      },
+      "description": "stomach flu / bowel infection"
+    },
+    {
+      "english": "croup",
+      "translations": {
+        "Vietnamese": "bệnh viêm thanh khí phế quản",
+        "Spanish": "crup"
+      },
+      "description": "inflammation of the larynx and trachea"
+    }
+  ]
+}

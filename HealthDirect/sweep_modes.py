@@ -9,7 +9,7 @@ def clean_text(text):
     return " ".join(re.sub(r'[^a-z0-9]', ' ', text).split())
 
 def run_test(mode, stability=5.0):
-    audio_sample = "samples/0638.mp3"
+    audio_sample = "gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3"
     cmd = [
         "uv", "run", "two_channel_transcribe_v2.py", 
         audio_sample, 

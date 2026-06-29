@@ -22,7 +22,7 @@ def clean_text(text):
 def test_transcription_vs_golden(script, is_parallel, model):
 
     arch = "parallel" if is_parallel else "two_channel"
-    audio_sample = "samples/0638.mp3"
+    audio_sample = "gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3"
     golden_path = "output/0638.mp3_golden_set.json"
     
     # 1. Run the script

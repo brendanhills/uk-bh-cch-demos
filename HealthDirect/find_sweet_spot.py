@@ -10,7 +10,7 @@ def clean_text(text):
 
 def check_sequence(stability):
     """Runs the demo and returns True if the sequence is correct."""
-    audio_sample = "samples/0638.mp3"
+    audio_sample = "gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3"
     cmd = [
         "uv", "run", "two_channel_transcribe_v2.py", 
         audio_sample, 

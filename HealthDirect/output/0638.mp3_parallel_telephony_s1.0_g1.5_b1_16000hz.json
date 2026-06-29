@@ -4,7 +4,7 @@
     "end_sec": 1.1,
     "speaker": 1,
     "text": "Oh, okay.",
-    "timestamp": "07:35:50.4",
+    "timestamp": "01:56:04.9",
     "event_type": "transcript"
   },
   {
@@ -12,7 +12,7 @@
     "end_sec": 3.5,
     "speaker": 1,
     "text": "Okay. This is really screwy.",
-    "timestamp": "07:35:52.3",
+    "timestamp": "01:56:06.8",
     "event_type": "transcript"
   },
   {
@@ -20,7 +20,7 @@
     "end_sec": 5.9,
     "speaker": 1,
     "text": "Very interesting. So how are you?",
-    "timestamp": "07:35:54.9",
+    "timestamp": "01:56:09.4",
     "event_type": "transcript"
   },
   {
@@ -28,7 +28,7 @@
     "end_sec": 7.4,
     "speaker": 2,
     "text": "Okay, how are you?",
-    "timestamp": "07:35:56.3",
+    "timestamp": "01:56:10.8",
     "event_type": "transcript"
   },
   {
@@ -36,7 +36,7 @@
     "end_sec": 8.2,
     "speaker": 1,
     "text": "I'm fine.",
-    "timestamp": "07:35:57.8",
+    "timestamp": "01:56:12.3",
     "event_type": "transcript"
   },
   {
@@ -44,7 +44,7 @@
     "end_sec": 10.5,
     "speaker": 2,
     "text": "How's everything in Philadelphia?",
-    "timestamp": "07:35:59.5",
+    "timestamp": "01:56:14.0",
     "event_type": "transcript"
   },
   {
@@ -52,7 +52,7 @@
     "end_sec": 14.0,
     "speaker": 1,
     "text": "Oh, pretty good. Just kind of busy working.",
-    "timestamp": "07:36:01.3",
+    "timestamp": "01:56:15.8",
     "event_type": "transcript"
   }
 ]
