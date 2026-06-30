@@ -7,7 +7,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Verify and benchmark the existing transcription application**
   *Link: [./tracks/verify_transcription_20260609/](./tracks/verify_transcription_20260609/)*
 
-- [ ] **Track: Implement live speaker-attributed real-time translation**
+- [~] **Track: Implement live speaker-attributed real-time translation**
   *Link: [./tracks/live_translation_20260609/](./tracks/live_translation_20260609/)*
 
 - [ ] **Track: Live transcription and translation of video**
@@ -26,5 +26,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Translation Search-Grounding & Validation**
-*Link: [./tracks/ground_translations_20260629/](./tracks/ground_translations_20260629/)*
+- [x] **Track: Translation Search-Grounding & Validation**
+*Link: [./archive/ground_translations_20260629/](./archive/ground_translations_20260629/)*
+
+---
+
+- [ ] **Track: Full Dictionary Ingestion & Production Registry**
+*Link: [./tracks/full_ingestion_20260630/](./tracks/full_ingestion_20260630/)*
