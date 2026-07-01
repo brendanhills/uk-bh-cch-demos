@@ -49,4 +49,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Browser-Side WebSocket Migration & Mic Streaming**
   *Link: [./tracks/browser_websocket_20260701/](./tracks/browser_websocket_20260701/)*
 
+---
 
+- [ ] **Track: Add Arabic as a demo language**
+  *Link: [./tracks/arabic_demo_20260701/](./tracks/arabic_demo_20260701/)*
