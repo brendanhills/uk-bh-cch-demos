@@ -1,15 +1,17 @@
 # Implementation Plan: Glossary Translation Highlighting (Track: `highlight_glossary_20260630`)
 
 ## Phase 1: API Endpoint & Highlight Engine
-- [ ] Task: Setup & Test Foundations
-    - [ ] Write failing unit tests in `tests/test_web_server.py` (or equivalent) for the new GET `/api/glossary` endpoint.
-    - [ ] Write failing unit tests in `tests/test_highlighter.py` verifying boundary-safe regex matching and ANSI-color substitution.
-- [ ] Task: Implement GET `/api/glossary`
-    - [ ] Add `/api/glossary` endpoint to `web_server.py` that loads and returns data from `dictionary/glossary.json`.
-- [ ] Task: Implement Highlighter Backend Engine
-    - [ ] Create `glossary_highlighter.py` to contain backend match and highlight logic using compiled patterns with word boundaries.
-    - [ ] Run the test suite to verify green state and assert >80% coverage for the new module.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: API Endpoint & Highlight Engine' (Protocol in workflow.md)
+- [x] Task: Setup & Test Foundations b1e3f1c
+    - [x] Write failing unit tests in `tests/test_web_server.py` (or equivalent) for the new GET `/api/glossary` endpoint.
+    - [x] Write failing unit tests in `tests/test_highlighter.py` verifying boundary-safe regex matching and ANSI-color substitution.
+- [x] Task: Implement GET `/api/glossary` b1e3f1c
+    - [x] Add `/api/glossary` endpoint to `web_server.py` that loads and returns data from `dictionary/glossary.json`.
+- [x] Task: Implement Highlighter Backend Engine b1e3f1c
+    - [x] Create `glossary_highlighter.py` to contain backend match and highlight logic using compiled patterns with word boundaries.
+    - [x] Run the test suite to verify green state and assert >80% coverage for the new module.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: API Endpoint & Highlight Engine' (Protocol in workflow.md)
+
+
 
 ## Phase 2: Terminal CLI Highlight Integration
 - [ ] Task: Integration & CLI Testing
