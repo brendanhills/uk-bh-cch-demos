@@ -1,208 +1,132 @@
-# Real-Time Transcription Simulator
+# Real-Time Bilingual Medical Interpreter (HealthDirect Experiment)
 
-This project simulates real-time transcription of audio files using the Google Cloud Speech-to-Text API. It is designed to demonstrate "live" transcription experiences with polished CLI output, accurate speaker attribution, and robust chronological integrity.
+This project is a high-fidelity, real-time bidirectional bilingual interpreter designed for clinical interactions (such as a call between a non-English-speaking patient and a HealthDirect nurse). It utilizes the **Gemini Live API** to translate multi-channel audio stream inputs in real-time, matching clinical terms against a customized, scraped dictionary and rendering highlights dynamically in both a dual-column terminal CLI and an interactive web interface.
+
+---
 
 ## Key Features
 
-*   **Real-Time Simulation:** Streams audio in small chunks to simulate a live broadcast or phone call.
-*   **Decoupled Architecture:** Uses a modern **Producer-Consumer** pattern to separate API streaming from UI rendering and logic.
-*   **Visual Polish:**
-    *   **In-Column Drafts:** Displays real-time "typing" updates within the correct speaker column.
-    *   **Dynamic Reflow:** Surgically inserts late-arriving interjections into the terminal history.
-    *   **Gap-Based Splitting:** Breaks large API results into natural, conversational turns.
-*   **Multi-Approach:** Supports two-channel stereo streaming, parallel mono-channel streaming, and legacy V1 diarization.
+- **Real-Time Bidirectional Translation**: Establishes dual parallel **Gemini Live API WebSocket** streams to translate patient speech (e.g., German, Spanish, Vietnamese) to English and clinician speech (English) to the patient's language concurrently.
+- **Stereo Channel Splitting**: Loads stereo `.wav` audio files and separates them into independent mono feeds—the Left channel represents the Patient (foreign language) and the Right channel represents the Nurse (English).
+- **Clinical Glossary Highlighting**: 
+  - Uses the **`GlossaryHighlighter`** engine to perform exact match highlighting of clinical terminology.
+  - Matches terms descending by character length (so compound terms like "abdominal pain" take priority over individual constituent words like "pain").
+  - Enforces **Unicode-safe letter boundary constraints** (`(?<!\p{L})` and `(?!\p{L})` with the `gui` flags) to support non-ASCII characters, German umlauts, and Vietnamese diacritics flawlessly, while preventing partial word corruption (e.g. matching "ear" inside "heart").
+  - Computes visible-only text lengths (omitting ANSI colors) to maintain perfect vertical column alignment in the Terminal CLI.
+- **Interactive Web Interface**:
+  - Premium, modern frontend built with **glassmorphism aesthetics**.
+  - Renders speech bubbles live and dynamically injects `<mark class="glossary-highlight">` tags around clinical terms.
+  - Leverages a custom **`data-raw` attribute string stream pattern** to run highlights instantly in real-time on every incoming audio text chunk without HTML tag pollution or streaming timing race conditions.
+  - Leverages animated, sliding tooltips on hover to display medical details, descriptions, and translation mappings case-insensitively.
+- **Polite & Idempotent Glossary Scraper**:
+  - A robust terminology collector (`import_glossary.py`) designed to ingest clinical lists from HealthDirect Australia.
+  - **Robots.txt Adherence**: Dynamically fetches and parses the target domain's `robots.txt` using standard `urllib.robotparser` to guarantee absolute crawler compliance.
+  - **Idempotency & Resilience**: Progressively persists successfully crawled subpages into `dictionary/scrape_state.json`. If a run is interrupted or times out, subsequent runs skip completed URLs, making crawls resumable.
+  - **Politeness Delay**: Respects target hosts by applying a user-configurable sleep delay (`--delay` / `-d`, defaulting to `1.0s`) between sequential requests.
 
-## Script Comparison
+---
 
-| Feature | `two_channel_transcribe_v2.py` | `parallel_transcribe.py` | `mono_transcribe_v1.py` |
-| :--- | :--- | :--- | :--- |
-| **Approach** | **Two-Channel (Recommended)** | **Parallel (Advanced)** | **Legacy (Diarization)** |
-| **API Version** | Speech-to-Text V2 | Speech-to-Text V2 | Speech-to-Text V1 |
-| **Audio Input** | Stereo (1 Connection) | 2x Mono (2 Connections) | Mixed Mono (Summed) |
-| **Speaker ID** | **Perfect** (Multi-Channel) | **Perfect** (Multi-Channel) | Moderate (AI Voice) |
-| **Use Case** | Most phone calls | Cross-mic/Flexible setup | 1-channel legacy files |
+## Technical Architecture
 
-## Prerequisites
+The codebase is organized as follows:
 
-1.  **Python 3.13+** and `uv` (recommended) or `pip`.
-2.  **Google Cloud SDK (`gcloud`)** installed and authenticated.
-3.  **Environment Variables:** Copy `env.example` to `.env` and configure your project details.
-
-## Supported Transcription Models
-
-The project supports several Google Cloud Speech-to-Text V2 models via the `--model` flag:
-
-| Model Flag (`--model`) | Target Audio / Use Case | Features / Notes |
-| :--- | :--- | :--- |
-| **`telephony`** *(Default)* | Conversational $8\text{kHz}$ telephone calls. | Extremely fast, native word-level time offsets. |
-| **`chirp_3`** | Next-gen Generative Large Speech Model (LSM). | High-accuracy, robust against noise/accents, handles clock fallback & VAD pinning. Routed to `us` endpoint. |
-| **`medical_conversation`** | Multi-party medical/clinical conversations. | Highly optimized for healthcare jargon, diagnoses, and drug names. Routed to `us` endpoint. |
-
-To run any demo script with a specific model, use the `--model` option:
-```bash
-# Run with Chirp-3
-uv run two_channel_transcribe_v2.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model chirp_3
-
-# Run with Medical Conversation
-uv run two_channel_transcribe_v2.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model medical_conversation
+```text
+├── glossary_highlighter.py   # Core match-and-highlight engine (CLI and HTML outputs)
+├── live_translate_demo.py     # High-fidelity double-column Terminal CLI interpreter simulator
+├── web_server.py             # FastAPI backend coordinating audio streams, holds, and glossary APIs
+├── web/                      # Glassmorphic web client (main.js, style.css, index.html)
+├── import_glossary.py        # Polite, idempotent glossary scraper & pre-translation pipeline
+├── generate_bilingual_audio.py# Google Cloud TTS script to generate dual-channel stereo test audio
+├── samples/                  # Stereo audio presets (.wav) for German, Spanish, and Vietnamese
+├── dictionary/               # Local JSON database (`glossary.json`) and CSV exports
+└── tests/                    # Robust test suite covering highlighter, server endpoints, and scraping state
 ```
 
 ---
 
-## 1. Primary Demo: Two-Channel (V2)
-**Script:** `two_channel_transcribe_v2.py`
+## Prerequisites & Installation
 
-This is the recommended approach for 99% of multi-channel use cases. It uses a single bi-directional GRPC stream.
+1. **Python**: Ensure you have Python 3.13+ installed.
+2. **Environment & Dependency Manager**: Use **`uv`** (strictly recommended).
+3. **Google Cloud SDK (`gcloud`)**: Installed, authenticated, and configured:
+   ```bash
+   gcloud auth application-default login
+   ```
+4. **Environment Variables**: Copy `env.example` to `.env` and set your GCP Project ID and API keys:
+   ```bash
+   PROJECT_ID="your-gcp-project-id"
+   GEMINI_API_KEY="your-gemini-api-key"
+   ```
+5. **System Dependencies**: Ensure `ffmpeg` is installed on your system path (required by `pydub` to split stereo audio).
 
+---
+
+## Running the Clinical Demos
+
+### 1. High-Fidelity CLI Simulator
+Run the live terminal interpreter with real-time audio playback, double-column turn-taking layouts, and glossary highlighting:
 ```bash
-# High Flow (Chronological Order)
-uv run two_channel_transcribe_v2.py gs://your-bucket/file.wav --mode readability
+# Run the Spanish PRESENTS preset
+uv run live_translate_demo.py --preset spanish
 
-# High Speed (Arrival Order)
-uv run two_channel_transcribe_v2.py gs://your-bucket/file.wav --mode low_latency
+# Run the GermanPRESENTS preset
+uv run live_translate_demo.py --preset german
+
+# Run the Vietnamese PRESENTS preset
+uv run live_translate_demo.py --preset vietnamese
 ```
 
-## 2. Advanced Demo: Parallel Workers
-**Script:** `parallel_transcribe.py`
+### 2. Premium Interactive Web UI
+Launch the local web server to run the interpreter inside an interactive browser UI:
+```bash
+uv run python web_server.py
+```
+1. Open `http://localhost:8000` in your web browser.
+2. Select a language preset (German, Spanish, or Vietnamese) from the dropdown.
+3. Click **Start Translation** to watch the real-time speech bubbles and hover over highlighted medical terms to view glassmorphic tooltips in action!
 
-Demonstrates maximum flexibility by splitting a stereo file into two independent mono streams, each with its own API worker. Supports two architectural modes:
+---
 
-*   **Mode A (Default):** Centralized Interleaving. Raw results from all workers are sorted by a single "Brain" (the Engine).
-*   **Mode B:** Distributed Stabilization. Each worker handles its own buffering and gap-splitting before sending results to the Engine.
+## Polite Glossary Scraper & Ingestion Pipeline
+
+To support customized dictionaries and speech adaptations, the `import_glossary.py` scraper ingests clinical terminology from HealthDirect Australia across four main directories:
+
+1. **Medicines Page:** [https://www.healthdirect.gov.au/medicines](https://www.healthdirect.gov.au/medicines)
+2. **Conditions Directory:** [https://www.healthdirect.gov.au/health-topics/conditions](https://www.healthdirect.gov.au/health-topics/conditions)
+3. **Symptoms Directory:** [https://www.healthdirect.gov.au/health-topics/symptoms](https://www.healthdirect.gov.au/health-topics/symptoms)
+4. **Procedures Directory:** [https://www.healthdirect.gov.au/health-topics/procedures](https://www.healthdirect.gov.au/health-topics/procedures)
+
+### Command-line Parameters
+
+| Parameter | Alias | Type | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `--scrape` | `-s` | `str` | `None` | The HealthDirect directory URL to parse and crawl. |
+| `--delay` | `-d` | `float` | `1.0` | Politeness sleep delay in seconds between sequential HTTP requests. |
+| `--force` | `-f` | `flag`| `False` | Bypasses `scrape_state.json` and forces a fresh scrape. |
+| `--state-file`| - | `str` | `dictionary/scrape_state.json` | Path to the scraper's completed subpage cache file. |
+| `--max-letters`| `--max` / `-m`| `int` | `None` | Limit directory scraping to a random sample of alphabetical letters. |
+| `--limit-terms`| `--limit` / `-l`| `int` | `None` | Max terms to ingest from the crawl. |
+| `--ground` | `-g` | `flag`| `False` | Trigger automated translation validation & Google Search grounding. |
+| `--add-language`| `--al`| `str` | `None` | Add and translate existing terms to a new language (Format: Name=code, e.g. German=de) without re-scraping. |
+
+### Scraper Execution Examples
 
 ```bash
-# Mode A (Centralized - Recommended for stability)
-uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_a
+# Polite dry-run: Crawl 2 random alphabetical sections of the Medicines directory with a 2-second politeness delay
+uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --max-letters 2 --delay 2.0
 
-# Mode B (Distributed - Experimental)
-uv run parallel_transcribe.py gs://your-bucket/file.wav --arch mode_b
+# Full Resumable Crawl with Spanish/Vietnamese Translation & Search Grounding
+uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/health-topics/symptoms" --ground
+
+# Add and translate all existing terms to a new language (e.g., German) on-demand, without re-scraping
+uv run import_glossary.py --add-language "German=de"
 ```
 
-## 3. Advanced Demo: Model Comparison
-**Script:** `compare_models.py`
+---
 
-Runs two different STT models (e.g., `telephony` vs `chirp_2`) side-by-side on the same audio stream.
+## Running Automated Tests
 
+All functionality is backed by a comprehensive unit and integration testing suite. To execute the tests offline (mocked from actual network calls):
 ```bash
-uv run compare_models.py gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/0638.mp3 --model1 telephony --model2 chirp_3
+uv run pytest
 ```
-
----
-
-## Evaluation Tool
-**Script:** `diff_transcripts.py`
-
-A robust evaluator that compares a live stream JSON output against a "Golden Set" (usually generated by Gemini).
-
-*   **Fuzzy Matching:** Ignores punctuation and casing.
-*   **Unified Timeline:** Shows a side-by-side chronological view of BATCH vs STREAM.
-*   **Error Detection:** Specific symbols for Mistranslation (⚠), Attribution (⇄), and Seq Errors (🚨).
-
-```bash
-uv run diff_transcripts.py -b output/golden.json -s output/live_stream.json
-```
-
----
-
-## Bilingual Real-Time Clinical Translation (Active Track)
-
-This project includes an active development track (`conductor/tracks/live_translation_20260609/`) focusing on high-fidelity, speaker-attributed real-time translation for bilingual clinical interactions (e.g., an NHS or HealthDirect patient-nurse call).
-
-> [!NOTE]
-> **Language Strategy (Development vs. Demo):**
-> - **Primary Demo & Deployment Target:** **Arabic (`ar-EG` / `ar-AE`)** is our final production language, simulating an Arabic-speaking patient calling an English-speaking HealthDirect nurse.
-> - **Local Development & Verification:** **German (`de-DE`)** is utilized as our high-velocity development and validation language. Using German allows rapid, firsthand verification of translation quality, clinical accuracy, and safety loops (like back-translation RTT) during day-to-day coding, without requiring live Arabic-English bilingual validation on every iteration.
-
-### Architectural Pathways
-
-Because clinical interactions require high precision, we have designed and analyzed three primary architectural configurations to manage the real-time transcription and translation pipeline:
-
-*   **Option A: Multi-Model Cascaded (Transcribe $\rightarrow$ Translate):** Uses the premium, English-only Google Cloud Speech-to-Text V2 **`medical_conversation`** model for the nurse (right channel) and a standard localized model (e.g., `telephony` or `chirp_3` configured for `ar-EG` or `de-DE`) for the patient (left channel), followed by downstream text translation.
-*   **Option B: Direct (Translate $\rightarrow$ Transcribe):** Attempts to translate live audio-to-audio before transcribing.
-*   **Option C: Unified Single-Model with Speech Adaptation (Highly Recommended):** Uses a high-performance multilingual model (such as **`chirp_3`**) on both channels, bolstered by **GCP STT V2 Speech Adaptation (Phrase Set Boosting)** dynamically configured with clinical vocabulary in English, Arabic (for production), or German (for local testing).
-
----
-
-### Comparative Analysis of Architectural Options
-
-| Criterion | Option A: Cascaded Multi-Model | Option B: Direct Audio Translation | Option C: Unified with Speech Adaptation (Recommended Alternative) |
-| :--- | :--- | :--- | :--- |
-| **Pipeline Order** | Audio $\rightarrow$ Native STT $\rightarrow$ Text Translation | Audio $\rightarrow$ Real-time Translation $\rightarrow$ STT | Audio $\rightarrow$ Native STT $\rightarrow$ Text Translation |
-| **STT Model Setup** | **Dual Models:** `medical_conversation` (Nurse) + Standard (Patient) | **Single Model:** Standard translated transcription | **Unified Model:** `chirp_3` (Both channels) |
-| **Medical Terminology Precision** | **Excellent (Nurse channel only).** Built-in native clinical jargon database. | **Poor.** Standard translated audio cannot resolve complex medical jargon. | **Excellent (Bilingual).** Custom phrase boosting (e.g., drug names) applied to **both** patient (Arabic/German) and nurse (English) channels. |
-| **Latency Synchronization** | **Low-Medium.** High latency skew between the lightweight patient STT and heavy clinical STT. | **Low.** High processing overhead of direct audio translation. | **High.** Identical processing speed on both channels guarantees synchronized delivery. |
-| **Locales Supported** | English medical only. Standard locales on patient side. | Extremely limited language pairs. | **Broad.** Full multilingual support (`chirp_3` supports hundreds of locales). |
-| **Implementation Complexity** | High (Requires dual-endpoint client routing & chronological hold buffers). | High (Complex custom translation model integration). | **Low-Medium.** Simple single-endpoint routing with custom `PhraseSet` configuration. |
-| **Feasibility & Auditability** | **100% Feasible.** High auditability (retains exact native transcripts). | **Infeasible.** No direct medical audio translators exist; zero native audit trail. | **100% Feasible.** Outstanding bilingual audit trail and robust performance. |
-
-> [!TIP]
-> **Why Option C with Speech Adaptation is a High-Fidelity Alternative:**
-> While Option A yields built-in medical precision for English, it is asymmetric and cannot adapt the patient's native Arabic/German channel. **Option C** resolves this by deploying a single, highly-synchronized model (`chirp_3`) for both channels, then mitigating clinical mis-transcription by dynamically injecting specialized pharmaceutical/symptom dictionaries (`PhraseSets`) into each channel's stream.
-
----
-
-### Technical Risks & Mitigations
-
-Deploying a real-time, multi-model or adapted bilingual transcription pipeline introduces several key engineering challenges:
-
-#### 1. Channel Desynchronization (Model Latency Skew)
-*   **The Risk:** In Option A, standard telephony models have extremely low latency (sub-second), whereas next-gen models (Chirp-3) or premium models (`medical_conversation`) have higher processing times. This skew can cause one speaker's text to arrive significantly later than the other, causing their responses to appear out of order on the UI timeline.
-*   **The Mitigation:**
-    *   *For Option A:* The central `StabilizationEngine` acts as a chronological hold buffer. It tracks the audio playhead (`end_sec` progress) and gates the release of finalized transcripts. Events are re-interleaved and sorted by exact timestamp before being emitted to the UI, guaranteeing dialogue ordering.
-    *   *For Option C:* This risk is natively mitigated by utilizing the same model (`chirp_3`) on both channels, eliminating the latency delta entirely.
-
-#### 2. Specialized Medical Terminology Loss
-*   **The Risk:** In Option C, using a general-purpose model like `chirp_3` on both channels can lead to the mistranscription of critical prescription names, symptoms, or medical abbreviations (e.g., confusing "Atorvastatin" with phonetically similar phrases).
-*   **The Mitigation:** We configure **GCP Speech Adaptation (Phrase Sets)**. We dynamically define list structures of clinical/medical vocabulary with custom boost values (strength parameters like `10.0` to `15.0`) in the stream's request metadata. This biases the search path towards clinical nouns on both the patient (Arabic/German) and English nurse streams.
-
-#### 3. Formatting & Punctuation Divergence
-*   **The Risk:** Different STT models apply punctuation, capitalization, and numbers differently. For example, `medical_conversation` mandates auto-punctuation, while standard `telephony` may produce unpunctuated streams. Raw, messy, or unpunctuated text degrades the performance of downstream LLMs and translation APIs.
-*   **The Mitigation:** A middleware **Normalization Layer** cleans and standardizes punctuation, handles numeral formatting, and applies consistent casing rules to the raw STT event streams before feeding them into the translation engine.
-
-#### 4. Acoustic Bleed & Cross-Talk (Channel Cross-Bleed)
-*   **The Risk:** In typical telephony or mic setups, the nurse's voice may bleed slightly into the patient's channel (or vice-versa). The STT engine on the patient's channel might attempt to transcribe the quiet, distant nurse's voice, leading to double transcriptions and corrupted translation buffers.
-*   **The Mitigation:** We leverage stereo separation (splitting the physical audio channels) combined with **VAD (Voice Activity Detection) gating** and **Active Blocking** in `core/engine.py`. If one channel has a strong active speech signal, the engine can suppress or ignore low-amplitude secondary transcripts on the parallel channel.
-
-#### 5. API Regional & Billing Constraints
-*   **The Risk:** Premium Speech V2 models like `medical_conversation` are only available in specific GCP regions (e.g., the `us` regional endpoint) and cannot be routed to `global` endpoints. Configuring standard models on different endpoints can complicate client authentication and billing.
-*   **The Mitigation:**
-    *   *For Option A:* The `SpeechProvider` dynamically initializes independent, region-specific API clients based on the selected channel model. It isolates region configurations and manages separate API recognizers (such as `projects/.../locations/us/recognizers/medical-nurse-recognizer`) seamlessly behind a unified wrapper.
-    *   *For Option C:* Natively mitigated by hosting all `chirp_3` streams on a single regional endpoint.
-
----
-
-## Core Architecture
-
-The project is organized into a modular `core/` package:
-
-*   **`core/models.py`**: Standardized `TranscriptionEvent` schema.
-*   **`core/engine.py`**: The 'Brain' - handles stabilization, gap-splitting, and interjection management.
-*   **`core/providers.py`**: High-level API wrappers for Google STT V1 and V2.
-*   **`core/sinks.py`**: UI and logging handlers (Terminal and JSON).
-*   **`core/utils.py`**: Common orchestration and pipeline setup helpers.
-*   **`simulate_audio.py`**: Real-time throttling and audio normalization infrastructure.
-
----
-
-## Clinical Glossary Ingestion & Translation Pipeline
-
-To support high-fidelity bilingual translations (e.g., Speech Adaptation clinical vocabulary lists), the project includes a robust, self-healing ingestion utility to scrape, translate, and search-ground terminology directly from HealthDirect Australia:
-
-**Script:** `import_glossary.py`
-
-### Key Features
-*   **Targeted Alphabet Crawling:** Supports filtering and scraping by letter using `--max-letters` (randomly selects a subset of letters to query) or specific limits via `--limit-terms`.
-*   **Leaf-Page Filtering:** Prevents index link pollution by extracting the target character directly from leaf sub-page URLs and filtering out any terms that do not start with that letter.
-*   **Progressive Saving:** Dynamically saves crawled terms, translation structures, and search grounding metadata to both local JSON (`dictionary/glossary.json`) and CSV (`dictionary/glossary.csv`) format in real-time. This prevents data loss from rate limits, timeouts, or early process termination.
-*   **Exhaustive & Prioritized Grounding Queue:** Whenever `--ground` is supplied, the pipeline scans the entire glossary database to queue any outstanding historical entries missing Spanish or Vietnamese web grounding. It prioritizes newly scraped terms to run first, ensuring immediate feedback on current runs.
-*   **Robust Translation Preservation:** Preserves existing translation details and previously retrieved grounding metadata, preventing duplicate translation/API consumption.
-
-### Usage Examples
-```bash
-# Run a dry-run crawling 3 random letters, limiting to 2 terms per letter
-uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --max-letters 3 --limit-terms 2
-
-# Crawl and perform automated Google Search translation grounding on Spanish/Vietnamese terms
-uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --ground
-```
-

@@ -1,64 +1,83 @@
-# System Handover & Progress Summary: HealthDirect Glossary Pipeline
+# System Handover & Progress Summary: HealthDirect Bilingual Interpreter
 
-This document outlines the progress, architectural changes, and validation status of the **HealthDirect Glossary Ingestion & Translation Pipeline** as of June 29, 2026.
+This document outlines the progress, architectural breakthroughs, and verification status of the **HealthDirect Real-Time Bilingual Medical Interpreter** project as of July 1, 2026.
 
-## 1. Executive Summary of Improvements
-We completed several high-fidelity enhancements to the `import_glossary.py` pipeline and associated test suite. The pipeline is now completely self-healing, handles partial failures gracefully without data loss, and ensures strict chronological and alphabetical filtering.
+---
+
+## 1. Executive Summary of Today's Upgrades
+
+Today, we successfully resolved major client-side highlighting bugs, timing race conditions, and completed critical pacing adjustments to prepare the system for full-scale production.
 
 ### Key Achievements:
-1. **Leaf-Page Target Letter Filtering:** Fixed an issue where crawling leaf-pages (e.g., `/health-topics/H`) would ingest unrelated letter links (like "A" index links). We now extract the active leaf letter directly from URLs (such as `/health-topics/([A-Za-z])$` and `/medicines/search-results/([A-Za-z])(?:-|$)`) and enforce filtering to keep only matching terms.
-2. **Progressive / Dynamic Saving:** Replaced the "save-at-the-end" architecture. The script now progressively commits newly crawled terms, translations, and search-grounding events to both `dictionary/glossary.json` and `dictionary/glossary.csv` immediately after each discrete unit of work completes. This ensures zero data loss on network dropouts, API rate-limiting (HTTP 429), or Ctrl+C.
-3. **Exhaustive & Prioritized Grounding Queue:** Whenever automated search-grounding (`--ground`) is requested, the pipeline scans the entire historical database (not just newly scraped terms) to locate and queue *any* term missing Spanish or Vietnamese grounding context. 
-4. **Active Prioritization:** The grounding engine processes newly scraped terms first (guaranteeing immediate feedback/ingestion updates) followed chronologically by the historical backlog.
-5. **Metadata Preservation:** Fixed a bug in `pre_translate_terms` where existing grounding metadata was stripped during database merges by replacing shallow dict overrides with safe copy operations.
-6. **100% Robust Test Coverage:** Cleaned up broken mock interfaces in `tests/test_import_glossary.py`. Mocked `random.sample` to prevent flakiness under `--max-letters` random selection, and added robust coverage for the leaf-filtering, exhaustive grounding queues, and progressive saving.
+1. **Unicode-Safe Match Engine (Regex Boundary Fix):**
+   * **The Issue:** Standard word boundaries (`\b`) in JavaScript are ASCII-only. When matching foreign languages (like Vietnamese diacritics in `"sốt"`, `"nhức đầu"` or German nouns with umlauts), the regex parser incorrectly treated these accented characters as non-word boundaries, causing matching and highlighting to fail entirely.
+   * **The Solution:** Upgraded `applyHTMLHighlight` in `web/main.js` to use modern, ES6 lookahead and lookbehind assertions for **Unicode Property letter classes (`\p{L}`)** under the global/Unicode-aware `"gui"` flags:
+     ```javascript
+     const patternStr = "(?<!\\p{L})(" + escapedTerms.join("|") + ")(?!\\p{L})";
+     const regex = new RegExp(patternStr, "gui");
+     ```
+   * **The Result:** All clinical terms (English, German, Spanish, and Vietnamese) now match with absolute precision, irrespective of character diacritics, accents, or capitalization.
+
+2. **Real-Time Live-Streaming Highlights (`data-raw` Pattern):**
+   * **The Issue:** Highlighting previously occurred exclusively in `completeTurn` when a `"turn_complete"` event arrived. However, under network variations, final transcript or translation segments would occasionally arrive *after* this signal, leaving words un-highlighted. Additionally, appending HTML `<mark>` tags directly into active streaming divs corrupted subsequent text appends.
+   * **The Solution:** Implemented a clean, twin-state string manager. The client stores the pristine, non-HTML-polluted text stream in a custom `data-raw` attribute on every incoming message.
+   * **The Result:** Highlighting runs **instantly in real-time** on every newly arrived audio segment chunk without HTML contamination or timing race conditions, creating an incredibly dynamic "live-typing" visual effect!
+
+3. **Global Zero-Second Default Pacing:**
+   * Enforced immediate turn-taking transitions across the entire stack.
+   * Updated [web/index.html](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web/index.html#L41) to set the default pause input value to `0` seconds.
+   * Changed frontend client fallbacks to `0` inside [web/main.js](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web/main.js#L633-L634).
+   * Aligned backend server default pacing to `0.0` inside [web_server.py](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web_server.py#L159).
+
+4. **Pulsing Ellipses Cleanup:**
+   * Resolved a UI layout issue where the speaker's pulsing ellipses animation (`.interim`) would continue animation indefinitely.
+   * Now, all `.interim` indicators from a speaker's previous bubble are automatically stripped when a new speech bubble for that speaker is initiated in `web/main.js`.
+
+5. **100% Robust Test Verification:**
+   * Ran the entire backend test suite using `pytest`.
+   * **All 55 tests passed cleanly** (including all multi-channel simulators, scraper states, and glossary APIs).
 
 ---
 
 ## 2. Updated Project Files
 
-*   **[`import_glossary.py`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/import_glossary.py)**: Refactored with dynamic callbacks, prioritized queues, safe cloning, and leaf-page URL regex extraction.
-*   **[`tests/test_import_glossary.py`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/tests/test_import_glossary.py)**: Strengthened with 3 new targeted test cases; all 37 tests passing cleanly.
-*   **[`README.md`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/README.md)**: Updated with a dedicated clinical terminology pipeline guide.
+*   **[`web/main.js`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web/main.js)**: Upgraded to support lookahead/lookbehind Unicode matching, `data-raw` live stream caches, real-time highlight triggers, and natural fallbacks.
+*   **[`web/index.html`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web/index.html)**: Set default pacing pause value to `0` seconds.
+*   **[`web_server.py`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/web_server.py)**: Aligned default fallback pacing hold durations to `0.0` seconds.
+*   **[`.agents/AGENTS.md`](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/.agents/AGENTS.md)**: Created workspace agent rules containing the "Finish for the day" end-of-session protocol.
 
 ---
 
 ## 3. How to Run & Verify
 
-### Run Pipeline (Dry-run or Sample Ingestion)
-To scrape 3 random letters and limit to 2 terms each, writing dynamically to local JSON/CSV:
+### Run Interactive Web Demo
 ```bash
-uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --max-letters 3 --limit-terms 2
+uv run python web_server.py
 ```
-
-### Run Pipeline with Search Grounding
-To query search evidence/context for newly crawled terms and any historical entries missing grounding metadata:
-```bash
-uv run import_glossary.py --scrape "https://www.healthdirect.gov.au/medicines" --ground
-```
+1. Open `http://localhost:8000` in your web browser.
+2. Select **Vietnamese (VI)** or **German (DE)** preset.
+3. Observe the Sidebar: clinical terms are loaded.
+4. Set the Pause slider to `0` for instant live-paced translation.
+5. Click **Start Call** and watch terms like **Fieber** or **paracetamol** highlight in real-time within the speech bubbles!
 
 ### Run Test Suite
-To execute all unit tests and verify code correctness:
 ```bash
 uv run pytest
 ```
 
 ---
 
-## 4. Architectural State
+## 4. Current Architectural State
 
 ```mermaid
 graph TD
-    A[Scrape HealthDirect] -->|Extract Leaf Letter via Regex| B(Filter Leaf Terms)
-    B -->|Merge into DB| C{Local Glossary DB}
-    C -->|Progressive Write| D[(glossary.json)]
-    C -->|Progressive Write| E[(glossary.csv)]
-    C -->|Prioritize New| F[Grounding Queue]
-    F -->|Google Search API| G(Validate & Enrich Context)
-    G -->|Dynamic Write Callback| D
-    G -->|Dynamic Write Callback| E
-    E -->|Upload fully translated| H[GCS Bucket]
-    H -->|Recreate| I[GCP Translation Glossary V3]
+    A[WAV Stream Input] -->|16kHz Stereo PCM| B(Split Left/Right Channels)
+    B -->|Patient Mono| C[Patient-to-Nurse Gemini Session]
+    B -->|Nurse Mono| D[Nurse-to-Patient Gemini Session]
+    C -->|Real-Time Text Stream| E[Client WebSocket]
+    D -->|Real-Time Text Stream| E
+    E -->|Cache clean text in data-raw| F[Live Chat Feed]
+    F -->|(?<!\p{L}) Match Engine| G(Apply HTML Highlight Marks)
 ```
 
-All functions are clean, documented, and fully integrated. The workspace is stable and prepared for the next development session.
+The workspace is perfectly stable, clean, and fully prepared for subsequent handovers or deployment.

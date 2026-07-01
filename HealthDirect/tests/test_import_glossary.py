@@ -11,6 +11,28 @@ except ImportError:
     # Allow imports to fail gracefully if needed, but we want the test runner to show failures
     pass
 
+@pytest.fixture(autouse=True)
+def mock_robots_txt_globally(request):
+    if "test_is_crawl_allowed" in request.node.name:
+        yield
+        return
+    with patch("import_glossary.is_crawl_allowed", return_value=True):
+        from import_glossary import load_scrape_state, save_scrape_state
+        
+        def mock_load_state(filepath):
+            if filepath == "dictionary/scrape_state.json":
+                return set()
+            return load_scrape_state(filepath)
+            
+        def mock_save_state(scraped_urls, filepath):
+            if filepath == "dictionary/scrape_state.json":
+                return
+            return save_scrape_state(scraped_urls, filepath)
+            
+        with patch("import_glossary.load_scrape_state", side_effect=mock_load_state), \
+             patch("import_glossary.save_scrape_state", side_effect=mock_save_state):
+            yield
+
 def test_parse_html_terms_basic():
     """Test parsing HealthDirect alphabetical dictionary pages."""
     # HealthDirect pages typically list topics under alphabetically styled elements
@@ -465,7 +487,13 @@ def test_pipeline_execution(
     run_pipeline(args)
     
     # Verify sub-functions were called with correct parameters
-    mock_scrape.assert_called_once_with("https://www.healthdirect.gov.au/health-topics/conditions", max_letters=1)
+    mock_scrape.assert_called_once_with(
+        "https://www.healthdirect.gov.au/health-topics/conditions",
+        max_letters=1,
+        delay=1.0,
+        force=False,
+        state_path="dictionary/scrape_state.json"
+    )
     mock_translate.assert_called_once()
     mock_upload.assert_called_once_with("dictionary/glossary.csv", "gs://test-bucket/glossaries/glossary.csv")
     mock_recreate.assert_called_once_with(
@@ -936,6 +964,128 @@ def test_pre_translate_progressive_save(mock_client_class, tmp_path):
     
     # Check that save_callback was triggered
     mock_callback.assert_called_once()
+
+
+@patch("urllib.robotparser.RobotFileParser")
+def test_is_crawl_allowed_success(mock_parser_class):
+    """Verify that is_crawl_allowed parses robots.txt and correctly checks can_fetch."""
+    from import_glossary import is_crawl_allowed, _robots_cache
+    
+    # Clear cache before run
+    _robots_cache.clear()
+    
+    mock_parser = MagicMock()
+    mock_parser_class.return_value = mock_parser
+    mock_parser.can_fetch.return_value = True
+    
+    # Temporarily disable the global autouse mock for this test
+    with patch("import_glossary.is_crawl_allowed", wraps=is_crawl_allowed):
+        allowed = is_crawl_allowed("https://www.healthdirect.gov.au/medicines")
+        
+    assert allowed is True
+    mock_parser.set_url.assert_called_once_with("https://www.healthdirect.gov.au/robots.txt")
+    mock_parser.read.assert_called_once()
+    mock_parser.can_fetch.assert_called_once_with(
+        "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)",
+        "https://www.healthdirect.gov.au/medicines"
+    )
+
+
+@patch("requests.get")
+@patch("time.sleep")
+def test_scrape_healthdirect_page_idempotency(mock_sleep, mock_get, tmp_path):
+    """Verify that scrape_healthdirect_page skips requests for already successfully scraped subpages."""
+    from import_glossary import scrape_healthdirect_page, save_scrape_state
+    
+    state_file = str(tmp_path / "scrape_state.json")
+    
+    # Mark a subpage URL as successfully scraped
+    url = "https://www.healthdirect.gov.au/medicines/search-results/A-excludeNonArtg"
+    save_scrape_state({url}, state_file)
+    
+    # Try scraping it with force=False
+    terms = scrape_healthdirect_page(
+        url,
+        is_subpage=True,
+        force=False,
+        delay=0.0,
+        state_path=state_file
+    )
+    
+    # It should skip request and return empty dictionary
+    assert terms == {}
+    mock_get.assert_not_called()
+    
+    # Try scraping with force=True
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.text = "<html><body><a href='/medicines/aspirin'>Aspirin</a></body></html>"
+    mock_get.return_value = mock_response
+    
+    terms_forced = scrape_healthdirect_page(
+        url,
+        is_subpage=True,
+        force=True,
+        delay=0.0,
+        state_path=state_file
+    )
+    
+    assert "aspirin" in terms_forced
+    mock_get.assert_called_once()
+
+
+@patch("requests.get")
+@patch("time.sleep")
+def test_scrape_healthdirect_page_politeness_delay(mock_sleep, mock_get):
+    """Verify that scrape_healthdirect_page respects the requested politeness delay."""
+    from import_glossary import scrape_healthdirect_page
+    
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.text = "<html><body><a href='/medicines/panadol'>Paracetamol</a></body></html>"
+    mock_get.return_value = mock_response
+    
+    url = "https://www.healthdirect.gov.au/medicines/search-results/A-excludeNonArtg"
+    
+    # Scraping with delay = 2.5 seconds
+    scrape_healthdirect_page(
+        url,
+        is_subpage=True,
+        delay=2.5,
+        force=True,
+        state_path="dummy_state_path.json"
+    )
+    
+    mock_sleep.assert_called_once_with(2.5)
+
+
+@patch("google.cloud.translate_v3.TranslationServiceClient")
+def test_pre_translate_terms_custom_languages(mock_client_class):
+    """Verify that pre_translate_terms correctly supports custom target languages."""
+    mock_client = MagicMock()
+    mock_client_class.return_value = mock_client
+    
+    mock_translation = MagicMock()
+    mock_translation.translated_text = "Fieber"
+    mock_client.translate_text.return_value = MagicMock(translations=[mock_translation])
+    
+    from import_glossary import pre_translate_terms
+    
+    glossary = {
+        "fever": {
+            "translations": {},
+            "url": "https://www.healthdirect.gov.au/fever"
+        }
+    }
+    
+    # Translate specifically to German (de)
+    updated = pre_translate_terms(glossary, project_id="test-project", languages={"German": "de"})
+    
+    assert "German" in updated["fever"]["translations"]
+    assert updated["fever"]["translations"]["German"] == "Fieber"
+    # Ensure standard ones are NOT present unless specifically requested
+    assert "Spanish" not in updated["fever"]["translations"]
+    assert "Vietnamese" not in updated["fever"]["translations"]
 
 
 

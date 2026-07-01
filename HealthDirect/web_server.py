@@ -156,8 +156,8 @@ async def websocket_endpoint(websocket: WebSocket):
             
         preset_name = data.get("preset", "german")
         pacing_mode = data.get("pacing", "auto") # "auto" or "manual"
-        timeout_sec = float(data.get("timeout", 2.0))
-        timeout_sec = max(1.0, timeout_sec)
+        timeout_sec = float(data.get("pause", data.get("timeout", 0.0)))
+        timeout_sec = max(0.0, timeout_sec)
         
         if preset_name not in PRESETS:
             await websocket.send_json({"type": "error", "message": f"Preset '{preset_name}' is not recognized."})
@@ -222,6 +222,7 @@ async def websocket_endpoint(websocket: WebSocket):
             patient_translation_complete = asyncio.Event()
             nurse_translation_complete = asyncio.Event()
             manual_next_event = asyncio.Event()
+            stream_state = {"is_paused": False}
 
             # Task: Read responses from Patient -> Nurse session (translating to English)
             async def receive_p_to_n():
@@ -344,6 +345,20 @@ async def websocket_endpoint(websocket: WebSocket):
                     takeover_cooldown = 0
                     
                     for i in range(0, max_len, chunk_size):
+                        # Check user pause
+                        if stream_state["is_paused"]:
+                            logger.info("Streaming paused by user. Feeding silence to Gemini to hold connection...")
+                            while stream_state["is_paused"]:
+                                silence_chunk = b'\x00' * chunk_size
+                                await session_p_to_n.send_realtime_input(
+                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                )
+                                await session_n_to_p.send_realtime_input(
+                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                )
+                                await asyncio.sleep(0.2)
+                            logger.info("Streaming resumed.")
+
                         if takeover_cooldown > 0:
                             takeover_cooldown -= 1
                             
@@ -533,6 +548,12 @@ async def websocket_endpoint(websocket: WebSocket):
                         elif action == "next_turn":
                             logger.info("Received next_turn signal from client.")
                             manual_next_event.set()
+                        elif action == "pause":
+                            logger.info("User requested call pause. Setting stream_state['is_paused'] = True.")
+                            stream_state["is_paused"] = True
+                        elif action == "resume_call":
+                            logger.info("User requested call resume. Setting stream_state['is_paused'] = False.")
+                            stream_state["is_paused"] = False
                 except WebSocketDisconnect:
                     logger.info("Client disconnected from WebSocket.")
                 except asyncio.CancelledError:

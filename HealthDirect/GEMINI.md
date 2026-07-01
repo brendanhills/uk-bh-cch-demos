@@ -30,6 +30,17 @@ This project is a high-fidelity simulator for real-time audio transcription. It 
   ```bash
   uv run diff_transcripts.py -b output/golden.json -s output/live.json
   ```
+- **Incorporate Bilingual Medical Glossary (Scrape & Translate)**:
+  ```bash
+  # Scrape Medicines Directory
+  uv run import_glossary.py --scrape https://www.healthdirect.gov.au/medicines --ground
+  # Scrape Conditions Directory
+  uv run import_glossary.py --scrape https://www.healthdirect.gov.au/health-topics/conditions --ground
+  # Scrape Symptoms Directory
+  uv run import_glossary.py --scrape https://www.healthdirect.gov.au/health-topics/symptoms --ground
+  # Scrape Procedures Directory
+  uv run import_glossary.py --scrape https://www.healthdirect.gov.au/health-topics/procedures --ground
+  ```
 
 ## Development Conventions
 

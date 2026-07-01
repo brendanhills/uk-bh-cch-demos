@@ -37,26 +37,25 @@ async def synthesize_text(text: str, language_code: str, voice_name: str, gender
     return AudioSegment.from_file(io.BytesIO(response.audio_content), format="wav")
 
 async def main():
-    # Define dialogue turns
-    # We will align these turns in time by padding with silence
+    # Define dialogue turns with natural 3-second gaps (accounting for translation lag)
     # Caller is Channel 1 (Left Channel), Nurse is Channel 2 (Right Channel)
     
     # Left channel parts (German caller)
     caller_turns = [
         {"start_ms": 0, "text": "Guten Tag. Ich rufe an, weil ich seit heute Morgen sehr starke Kopfschmerzen und etwas Fieber habe.", "voice": "de-DE-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
-        {"start_ms": 14000, "text": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.", "voice": "de-DE-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
-        {"start_ms": 32000, "text": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.", "voice": "de-DE-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE}
+        {"start_ms": 22000, "text": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.", "voice": "de-DE-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
+        {"start_ms": 49000, "text": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.", "voice": "de-DE-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE}
     ]
     
     # Right channel parts (English nurse)
     nurse_turns = [
-        {"start_ms": 6000, "text": "Hello, thank you for calling HealthDirect. I am sorry to hear you are feeling unwell. Do you have any neck stiffness or sensitivity to bright light?", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
-        {"start_ms": 22000, "text": "I understand. Light sensitivity can sometimes indicate a more serious condition. I recommend resting in a dark room and checking your temperature. If your fever goes above thirty-nine degrees, please visit the nearest clinic.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
-        {"start_ms": 39000, "text": "You are very welcome. Take care, and please call us back if your symptoms worsen.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE}
+        {"start_ms": 10000, "text": "Hello, thank you for calling HealthDirect. I am sorry to hear you are feeling unwell. Do you have any neck stiffness or sensitivity to bright light?", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
+        {"start_ms": 34000, "text": "I understand. Light sensitivity can sometimes indicate a more serious condition. I recommend resting in a dark room and checking your temperature. If your fever goes above thirty-nine degrees, please visit the nearest clinic.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
+        {"start_ms": 60000, "text": "You are very welcome. Take care, and please call us back if your symptoms worsen.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE}
     ]
     
-    # Initialize silent tracks of sufficient length (e.g., 45 seconds)
-    total_duration_ms = 45000
+    # Initialize silent tracks of sufficient length (66 seconds)
+    total_duration_ms = 66000
     left_channel = AudioSegment.silent(duration=total_duration_ms, frame_rate=16000)
     right_channel = AudioSegment.silent(duration=total_duration_ms, frame_rate=16000)
     
@@ -76,24 +75,33 @@ async def main():
     print("Combining channels into stereo track...")
     stereo_audio = AudioSegment.from_mono_audiosegments(left_channel, right_channel)
     
-    # Save the output to GCS
-    from google.cloud import storage
+    # Export locally
+    os.makedirs("samples", exist_ok=True)
+    out_path = "samples/de_fever_session.wav"
+    stereo_audio.export(out_path, format="wav")
+    print(f"Bilingual stereo audio file successfully generated locally at: {out_path}")
     
-    # Export to a bytes buffer
-    wav_buffer = io.BytesIO()
-    stereo_audio.export(wav_buffer, format="wav")
-    wav_buffer.seek(0)
-    
-    # Upload to GCS
-    bucket_name = "uk-bh-experiments-argolis-us"
-    gcs_path = "HealthDirect/call_samples/de_fever_session.wav"
-    
-    print(f"Uploading generated bilingual audio to gs://{bucket_name}/{gcs_path}...")
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(gcs_path)
-    blob.upload_from_file(wav_buffer, content_type="audio/wav")
-    print(f"Bilingual stereo audio file successfully generated and uploaded to: gs://{bucket_name}/{gcs_path}")
+    # Save the output to GCS (optional)
+    try:
+        from google.cloud import storage
+        
+        # Export to a bytes buffer
+        wav_buffer = io.BytesIO()
+        stereo_audio.export(wav_buffer, format="wav")
+        wav_buffer.seek(0)
+        
+        # Upload to GCS
+        bucket_name = "uk-bh-experiments-argolis-us"
+        gcs_path = "HealthDirect/call_samples/de_fever_session.wav"
+        
+        print(f"Uploading generated bilingual audio to gs://{bucket_name}/{gcs_path}...")
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(gcs_path)
+        blob.upload_from_file(wav_buffer, content_type="audio/wav")
+        print(f"Bilingual stereo audio file successfully uploaded to: gs://{bucket_name}/{gcs_path}")
+    except Exception as e:
+        print(f"Skipping GCS upload (GCS credentials or storage client not configured): {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())

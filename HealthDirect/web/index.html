@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilingual Medical Call Monitor - Gemini Live Translate</title>
+    <!-- Google Fonts for Inter and JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="pulse-indicator status-disconnected" id="header-pulse"></div>
+                <h1>Bilingual Medical Call Monitor</h1>
+                <span class="badge" id="model-badge">Gemini 3.5 Live Translate</span>
+            </div>
+            
+            <div class="header-controls">
+                <div class="form-group">
+                    <label for="preset-selector">Scenario:</label>
+                    <select id="preset-selector">
+                        <option value="german">🇩🇪 Fever Consultation (German)</option>
+                        <option value="spanish">🇪🇸 Ear Ache (Spanish)</option>
+                        <option value="vietnamese">🇻🇳 Paediatric (Vietnamese)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pacing-selector">Pacing:</label>
+                    <select id="pacing-selector">
+                        <option value="auto">⚡ Auto-Paced</option>
+                        <option value="manual">🔘 Manual (Next)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="pause-group">
+                    <label for="pause-input">Pause (s):</label>
+                    <input type="number" id="pause-input" min="0" max="60" value="0" style="width: 60px;">
+                </div>
+                <button id="start-btn" class="btn btn-primary">Start Call</button>
+                <button id="pause-btn" class="btn btn-warning" disabled>⏸️ Pause Call</button>
+                <button id="end-btn" class="btn btn-danger" disabled>End Call</button>
+                <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                <button id="next-btn" class="btn btn-accent" disabled>Next Turn</button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-content">
+            
+            <!-- MONITOR BOARD: Nurse Card on Left, Patient Card on Right -->
+            <div class="monitor-board">
+                
+                <!-- CLINICIAN / NURSE CARD (LEFT) -->
+                <div class="participant-card" id="nurse-card">
+                    <div class="card-header">
+                        <div class="avatar nurse-avatar">👩‍⚕️</div>
+                        <div class="participant-info">
+                            <h3>Nurse Sarah</h3>
+                            <span class="language-tag">English (AU)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-panel">
+                        <span class="status-badge" id="nurse-status">Idle</span>
+                        <div class="waveform" id="nurse-waveform">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PATIENT CARD (RIGHT) -->
+                <div class="participant-card" id="patient-card">
+                    <div class="card-header">
+                        <div class="avatar patient-avatar">📞</div>
+                        <div class="participant-info">
+                            <h3 id="patient-name">Patient Caller</h3>
+                            <span class="language-tag" id="patient-lang">German (DE)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-panel">
+                        <span class="status-badge" id="patient-status">Idle</span>
+                        <div class="waveform" id="patient-waveform">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- WORKSPACE LAYOUT: CHAT & GLOSSARY -->
+            <div class="workspace-layout">
+                <!-- CHRONOLOGICAL CONVERSATION FEED -->
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <span class="title">Live Conversation Transcript</span>
+                        <span class="connection-status" id="connection-text">Not Connected</span>
+                    </div>
+                    
+                    <div class="chat-feed" id="chat-feed">
+                        <div class="system-message" id="welcome-message">
+                            Select a consultation scenario above and click "Start Call" to begin the real-time AI interpreter demo.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLINICAL GLOSSARY SIDEBAR -->
+                <div class="glossary-sidebar">
+                    <div class="sidebar-header">
+                        <span class="title">Clinical Glossary</span>
+                        <span class="count-badge" id="glossary-count">0 Terms</span>
+                    </div>
+                    <div class="glossary-list" id="glossary-list">
+                        <div class="glossary-empty">
+                            No glossary terms loaded.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- AUDIO DASHBOARD & CROSS-FADER -->
+            <div class="audio-dashboard">
+                <div class="dashboard-header">
+                    <h4>Audio Mixer Dashboard</h4>
+                    <p class="description">Listen and control what you hear in real-time. Slide to cross-fade between the foreign language and English, utilizing immersive spatial stereo panning.</p>
+                </div>
+                
+                <div class="mixer-control">
+                    <span class="slider-label label-left">
+                        <span class="primary" id="slider-lang-left">German (DE)</span>
+                        <span class="sub" id="slider-sub-left">(Left Speaker)</span>
+                    </span>
+                    
+                    <div class="slider-wrapper">
+                        <input type="range" id="cross-fader" min="0" max="100" value="50" class="custom-slider">
+                        <div class="slider-ticks">
+                            <span id="tick-left">100% German</span>
+                            <span>Bilingual Mix (50/50)</span>
+                            <span id="tick-right">100% English</span>
+                        </div>
+                    </div>
+                    
+                    <span class="slider-label label-right">
+                        <span class="primary" id="slider-lang-right">English (EN)</span>
+                        <span class="sub" id="slider-sub-right">(Right Speaker)</span>
+                    </span>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>

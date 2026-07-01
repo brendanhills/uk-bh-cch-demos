@@ -37,19 +37,21 @@ async def synthesize_text(text: str, language_code: str, voice_name: str, gender
 async def main():
     # Dialogue turns for Spanish caller & English nurse
     # Padded with silence to form a single conversation
+    # Dialogue turns for Spanish caller & English nurse
+    # Padded with silence to form a single conversation
     caller_turns = [
         {"start_ms": 0, "text": "Hola, buenas tardes. Estoy llamando porque mi hijo pequeño tiene dolor de oído muy fuerte y está llorando mucho.", "voice": "es-ES-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
-        {"start_ms": 16000, "text": "Sí, tiene fiebre de treinta y ocho punto cinco grados. También tiene un resfriado y congestión. ¿El paracetamol es seguro para un niño de dos años?", "voice": "es-ES-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
-        {"start_ms": 38000, "text": "De acuerdo, muchas gracias. Llevaré a mi hijo al médico de cabecera de inmediato.", "voice": "es-ES-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE}
+        {"start_ms": 20000, "text": "Sí, tiene fiebre de treinta y ocho punto cinco grados. También tiene un resfriado y congestión. ¿El paracetamol es seguro para un niño de dos años?", "voice": "es-ES-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE},
+        {"start_ms": 46000, "text": "De acuerdo, muchas gracias. Llevaré a mi hijo al médico de cabecera de inmediato.", "voice": "es-ES-Wavenet-B", "gender": texttospeech.SsmlVoiceGender.MALE}
     ]
     
     nurse_turns = [
         {"start_ms": 8000, "text": "Hello, thank you for calling HealthDirect. My name is Nurse Sarah. I am sorry to hear about your son. Have you noticed any other symptoms, like fluid draining from the ear, or a fever?", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
-        {"start_ms": 26000, "text": "Yes, paracetamol is safe and recommended for managing pain and fever in a two-year-old child. I recommend visiting your local general practitioner or GP to have his ears checked. If his condition worsens or you see discharge, take him to the Emergency Department.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
-        {"start_ms": 44000, "text": "You are very welcome. Take care, and please call us back if your son's symptoms worsen.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE}
+        {"start_ms": 30000, "text": "Yes, paracetamol is safe and recommended for managing pain and fever in a two-year-old child. I recommend visiting your local general practitioner or GP to have his ears checked. If his condition worsens or you see discharge, take him to the Emergency Department.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE},
+        {"start_ms": 52000, "text": "You are very welcome. Take care, and please call us back if your son's symptoms worsen.", "voice": "en-AU-Wavenet-C", "gender": texttospeech.SsmlVoiceGender.FEMALE}
     ]
     
-    total_duration_ms = 50000
+    total_duration_ms = 58000
     left_channel = AudioSegment.silent(duration=total_duration_ms, frame_rate=16000)
     right_channel = AudioSegment.silent(duration=total_duration_ms, frame_rate=16000)
     

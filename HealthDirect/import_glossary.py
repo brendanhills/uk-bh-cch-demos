@@ -68,11 +68,94 @@ def parse_html_terms(html_content: str) -> dict:
                     
     return terms
 
-def scrape_healthdirect_page(url: str, max_letters: int = None, is_subpage: bool = False) -> dict:
+_robots_cache = {}
+
+def is_crawl_allowed(url: str, user_agent: str = "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)") -> bool:
+    """Checks robots.txt to verify if crawling the specified URL is allowed."""
+    from urllib.robotparser import RobotFileParser
+    from urllib.parse import urlparse
+    
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc
+    if domain not in _robots_cache:
+        robots_url = f"{parsed_url.scheme}://{domain}/robots.txt"
+        rp = RobotFileParser()
+        try:
+            print(f"[INFO] Fetching and parsing {robots_url} to check crawling restrictions...")
+            rp.set_url(robots_url)
+            rp.read()
+            _robots_cache[domain] = rp
+        except Exception as e:
+            print(f"[INFO] Could not fetch/parse robots.txt from {robots_url} ({e}). Defaulting to allowed.")
+            _robots_cache[domain] = None
+            
+    rp = _robots_cache[domain]
+    if rp is None:
+        return True
+    
+    allowed = rp.can_fetch(user_agent, url)
+    if not allowed:
+        print(f"[WARNING] Crawl disallowed by robots.txt for URL: {url}")
+    return allowed
+
+
+def load_scrape_state(filepath: str) -> set:
+    """Loads the set of successfully scraped URLs from the state file."""
+    import json
+    if not os.path.exists(filepath):
+        return set()
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return set(data.get("scraped_urls", []))
+    except Exception as e:
+        print(f"[WARNING] Error reading scrape state file: {e}. Starting with empty state.")
+        return set()
+
+
+def save_scrape_state(scraped_urls: set, filepath: str) -> None:
+    """Saves the set of successfully scraped URLs to the state file."""
+    import json
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(filepath)), exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump({"scraped_urls": sorted(list(scraped_urls))}, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"[WARNING] Error saving scrape state file: {e}")
+
+
+def scrape_healthdirect_page(
+    url: str,
+    max_letters: int = None,
+    is_subpage: bool = False,
+    delay: float = 1.0,
+    force: bool = False,
+    state_path: str = "dictionary/scrape_state.json"
+) -> dict:
     """Scrapes a HealthDirect webpage and extracts clinical terms, recursively crawling if it is an index."""
+    user_agent = "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)"
+    
+    # 1. Check crawling restrictions via robots.txt
+    if not is_crawl_allowed(url, user_agent=user_agent):
+        print(f"Skipping crawl for disallowed URL: {url}")
+        return {}
+        
+    # 2. For sub-pages (actual leaf letters), check if already scraped
+    if is_subpage:
+        scraped_set = load_scrape_state(state_path)
+        if url in scraped_set and not force:
+            print(f"Idempotency: URL '{url}' already successfully scraped in a previous run. Skipping request.")
+            return {}
+
+    # 3. Apply politeness delay
+    if delay > 0:
+        import time
+        print(f"Politeness delay: sleeping for {delay} seconds before requesting {url}...")
+        time.sleep(delay)
+
     print(f"Scraping page: {url} ...")
     headers = {
-        "User-Agent": "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)"
+        "User-Agent": user_agent
     }
     try:
         response = requests.get(url, headers=headers, timeout=10)
@@ -101,6 +184,13 @@ def scrape_healthdirect_page(url: str, max_letters: int = None, is_subpage: bool
             terms = filtered_terms
         else:
             print(f"  Extracted {len(terms)} terms from leaf page {url}")
+            
+        # Successfully scraped leaf page: save to state to ensure idempotency
+        if terms:
+            scraped_set = load_scrape_state(state_path)
+            scraped_set.add(url)
+            save_scrape_state(scraped_set, state_path)
+            
         return terms
     
     # Check if the page is a directory index containing alphabetical A-Z links.
@@ -134,7 +224,13 @@ def scrape_healthdirect_page(url: str, max_letters: int = None, is_subpage: bool
         # Recursive crawling: Scrape each alphabetical subpage and merge
         consolidated_terms = {}
         for link in sub_links:
-            sub_terms = scrape_healthdirect_page(link, is_subpage=True)
+            sub_terms = scrape_healthdirect_page(
+                link,
+                is_subpage=True,
+                delay=delay,
+                force=force,
+                state_path=state_path
+            )
             consolidated_terms.update(sub_terms)
         print(f"Consolidated a total of {len(consolidated_terms)} terms from index crawl.")
         return consolidated_terms
@@ -330,8 +426,8 @@ def merge_glossaries(existing_glossary: dict, scraped_glossary: dict) -> dict:
                 
     return merged
 
-def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: callable = None) -> dict:
-    """Pre-populates missing Spanish and Vietnamese translations using Google Cloud Translation V3."""
+def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: callable = None, languages: dict = None) -> dict:
+    """Pre-populates missing translations using Google Cloud Translation V3."""
     import os
     updated = {}
     
@@ -358,58 +454,44 @@ def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: c
     else:
         print("No GCP project_id specified or found in environment. Skipping API translations.")
             
-    terms_to_translate_es = [t for t, d in updated.items() if "Spanish" not in d.get("translations", {}) or not d["translations"]["Spanish"]]
-    terms_to_translate_vi = [t for t, d in updated.items() if "Vietnamese" not in d.get("translations", {}) or not d["translations"]["Vietnamese"]]
-    print(f"Translation pipeline: {len(terms_to_translate_es)} Spanish and {len(terms_to_translate_vi)} Vietnamese translations need generating.")
+    if languages is None:
+        languages = {"Spanish": "es", "Vietnamese": "vi"}
+
+    missing_counts = {}
+    for lang_name in languages:
+        missing_terms = [t for t, d in updated.items() if lang_name not in d.get("translations", {}) or not d["translations"][lang_name]]
+        missing_counts[lang_name] = missing_terms
+
+    print("Translation pipeline counts:")
+    for lang_name, missing_terms in missing_counts.items():
+        print(f"  - {lang_name}: {len(missing_terms)} translations need generating.")
             
     for term, data in updated.items():
         if "translations" not in data:
             data["translations"] = {}
             
         translated_any = False
-        # Translate to Spanish
-        if "Spanish" not in data["translations"] or not data["translations"]["Spanish"]:
-            if client and project_id:
-                try:
-                    print(f"  Translating '{term}' -> Spanish...")
-                    response = client.translate_text(
-                        request={
-                            "parent": f"projects/{project_id}/locations/global",
-                            "contents": [term],
-                            "mime_type": "text/plain",
-                            "source_language_code": "en",
-                            "target_language_code": "es",
-                        }
-                    )
-                    if response.translations:
-                        data["translations"]["Spanish"] = response.translations[0].translated_text
-                        print(f"    Spanish: {data['translations']['Spanish']}")
-                        translated_any = True
-                except Exception as e:
-                    print(f"    Failed translating '{term}' to Spanish: {e}")
-                    pass
-                    
-        # Translate to Vietnamese
-        if "Vietnamese" not in data["translations"] or not data["translations"]["Vietnamese"]:
-            if client and project_id:
-                try:
-                    print(f"  Translating '{term}' -> Vietnamese...")
-                    response = client.translate_text(
-                        request={
-                            "parent": f"projects/{project_id}/locations/global",
-                            "contents": [term],
-                            "mime_type": "text/plain",
-                            "source_language_code": "en",
-                            "target_language_code": "vi",
-                        }
-                    )
-                    if response.translations:
-                        data["translations"]["Vietnamese"] = response.translations[0].translated_text
-                        print(f"    Vietnamese: {data['translations']['Vietnamese']}")
-                        translated_any = True
-                except Exception as e:
-                    print(f"    Failed translating '{term}' to Vietnamese: {e}")
-                    pass
+        for lang_name, lang_code in languages.items():
+            if lang_name not in data["translations"] or not data["translations"][lang_name]:
+                if client and project_id:
+                    try:
+                        print(f"  Translating '{term}' -> {lang_name} ({lang_code})...")
+                        response = client.translate_text(
+                            request={
+                                "parent": f"projects/{project_id}/locations/global",
+                                "contents": [term],
+                                "mime_type": "text/plain",
+                                "source_language_code": "en",
+                                "target_language_code": lang_code,
+                            }
+                        )
+                        if response.translations:
+                            data["translations"][lang_name] = response.translations[0].translated_text
+                            print(f"    {lang_name}: {data['translations'][lang_name]}")
+                            translated_any = True
+                    except Exception as e:
+                        print(f"    Failed translating '{term}' to {lang_name}: {e}")
+                        pass
                     
         if translated_any and save_callback:
             save_callback(updated)
@@ -564,7 +646,13 @@ def run_pipeline(args) -> None:
     scraped = {}
     if args.scrape:
         print(f"Initiating active crawl on reference site: '{args.scrape}'")
-        scraped = scrape_healthdirect_page(args.scrape, max_letters=args.max_letters)
+        scraped = scrape_healthdirect_page(
+            args.scrape,
+            max_letters=args.max_letters,
+            delay=getattr(args, "delay", 1.0),
+            force=getattr(args, "force", False),
+            state_path=getattr(args, "state_file", "dictionary/scrape_state.json")
+        )
         print(f"  Scraped {len(scraped)} term references from crawl.")
         limit_val = getattr(args, "limit_terms", None)
         if limit_val is not None and limit_val > 0:
@@ -591,7 +679,19 @@ def run_pipeline(args) -> None:
     # 4. Pre-translate new terms
     project_id = args.project_id or os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT")
     print("Evaluating bilingual translations...")
-    updated = pre_translate_terms(merged, project_id=project_id, save_callback=save_progress)
+    
+    languages = None
+    if getattr(args, "add_language", None):
+        parts = args.add_language.split("=")
+        if len(parts) == 2:
+            languages = {parts[0].strip(): parts[1].strip()}
+            print(f"Adding translation target: {parts[0]} ({parts[1]})")
+        else:
+            print(f"[ERROR] Invalid format for --add-language: '{args.add_language}'. Expected 'Name=code', e.g. 'German=de'")
+            import sys
+            sys.exit(1)
+            
+    updated = pre_translate_terms(merged, project_id=project_id, save_callback=save_progress, languages=languages)
     
     # Optional search grounding and validation step
     if getattr(args, "ground", False):
@@ -712,11 +812,31 @@ if __name__ == "__main__":
             args_to_parse.append("--limit-terms")
         elif arg == "-ground":
             args_to_parse.append("--ground")
+        elif arg == "-delay":
+            args_to_parse.append("--delay")
+        elif arg == "-force":
+            args_to_parse.append("--force")
+        elif arg == "-state-file":
+            args_to_parse.append("--state-file")
+        elif arg == "-add-language" or arg == "-al":
+            args_to_parse.append("--add-language")
         else:
             args_to_parse.append(arg)
             
-    parser = argparse.ArgumentParser(description="HealthDirect Glossary Importer & Scraper Utility")
-    parser.add_argument("--scrape", "-s", type=str, help="URL to scrape terms from")
+    parser = argparse.ArgumentParser(
+        description="HealthDirect Glossary Importer & Scraper Utility",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "--scrape", "-s", type=str,
+        help=(
+            "URL to scrape terms from. Supported HealthDirect sources include:\n"
+            "  - Medicines: https://www.healthdirect.gov.au/medicines\n"
+            "  - Conditions: https://www.healthdirect.gov.au/health-topics/conditions\n"
+            "  - Symptoms: https://www.healthdirect.gov.au/health-topics/symptoms\n"
+            "  - Procedures: https://www.healthdirect.gov.au/health-topics/procedures"
+        )
+    )
     parser.add_argument("--max-letters", "-m", type=int, default=None, help="Maximum alphabetical letters to crawl")
     parser.add_argument("--limit-terms", "-l", type=int, default=None, help="Limit number of scraped terms to process")
     parser.add_argument("--glossary-json", default="dictionary/glossary.json", help="Path to local glossary.json")
@@ -725,6 +845,10 @@ if __name__ == "__main__":
     parser.add_argument("--location", default="us-central1", help="GCP Location")
     parser.add_argument("--project-id", help="GCP Project ID")
     parser.add_argument("--ground", "-g", action="store_true", help="Perform automated Google Search grounding to verify and provide context for translated terms")
+    parser.add_argument("--delay", "-d", type=float, default=1.0, help="Politeness delay in seconds between HTTP requests (default: 1.0)")
+    parser.add_argument("--force", "-f", action="store_true", help="Ignore scrape_state.json cache and force scraping of all URLs")
+    parser.add_argument("--state-file", default="dictionary/scrape_state.json", help="Path to local scrape state JSON cache file")
+    parser.add_argument("--add-language", "-al", type=str, default=None, help="Add and translate existing terms to a new language (Format: Name=code, e.g. German=de) without re-scraping")
     
     parsed_args = parser.parse_args(args_to_parse)
     
