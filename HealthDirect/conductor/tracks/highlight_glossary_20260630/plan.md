@@ -1,6 +1,6 @@
 # Implementation Plan: Glossary Translation Highlighting (Track: `highlight_glossary_20260630`)
 
-## Phase 1: API Endpoint & Highlight Engine
+## Phase 1: API Endpoint & Highlight Engine [checkpoint: f880560]
 - [x] Task: Setup & Test Foundations b1e3f1c
     - [x] Write failing unit tests in `tests/test_web_server.py` (or equivalent) for the new GET `/api/glossary` endpoint.
     - [x] Write failing unit tests in `tests/test_highlighter.py` verifying boundary-safe regex matching and ANSI-color substitution.
