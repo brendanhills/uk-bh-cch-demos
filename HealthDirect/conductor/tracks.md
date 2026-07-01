@@ -44,3 +44,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Australian Medical Glossary WebSocket Priming & System Instructions**
   *Link: [./tracks/websocket_priming_20260701/](./tracks/websocket_priming_20260701/)*
 
+---
+
+- [ ] **Track: Browser-Side WebSocket Migration & Mic Streaming**
+  *Link: [./tracks/browser_websocket_20260701/](./tracks/browser_websocket_20260701/)*
+
+
