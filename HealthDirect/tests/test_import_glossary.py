@@ -153,7 +153,7 @@ def test_pre_translate_terms_success(mock_client_class):
     from import_glossary import pre_translate_terms
     
     # Run pre-translation
-    updated = pre_translate_terms(glossary, project_id="test-project")
+    updated = pre_translate_terms(glossary, project_id="test-project", languages={"Spanish": "es", "Vietnamese": "vi"})
     
     # Verify mock translation was called for missing terms
     assert updated["otitis media"]["translations"]["Spanish"] == "otitis media (es)"
@@ -1086,6 +1086,33 @@ def test_pre_translate_terms_custom_languages(mock_client_class):
     # Ensure standard ones are NOT present unless specifically requested
     assert "Spanish" not in updated["fever"]["translations"]
     assert "Vietnamese" not in updated["fever"]["translations"]
+
+
+@patch("google.cloud.translate_v3.TranslationServiceClient")
+def test_pre_translate_terms_defaults_to_arabic(mock_client_class):
+    """Verify that Arabic is included in the default languages for pre_translate_terms."""
+    mock_client = MagicMock()
+    mock_client_class.return_value = mock_client
+    
+    mock_translation = MagicMock()
+    mock_translation.translated_text = "الربو"
+    mock_client.translate_text.return_value = MagicMock(translations=[mock_translation])
+    
+    from import_glossary import pre_translate_terms
+    
+    glossary = {
+        "asthma": {
+            "translations": {},
+            "url": "https://www.healthdirect.gov.au/asthma-in-children"
+        }
+    }
+    
+    updated = pre_translate_terms(glossary, project_id="test-project")
+    
+    # Assert Arabic is present by default
+    assert "Arabic" in updated["asthma"]["translations"]
+    assert updated["asthma"]["translations"]["Arabic"] == "الربو"
+
 
 
 

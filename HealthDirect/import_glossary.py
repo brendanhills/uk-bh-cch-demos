@@ -455,7 +455,7 @@ def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: c
         print("No GCP project_id specified or found in environment. Skipping API translations.")
             
     if languages is None:
-        languages = {"Spanish": "es", "Vietnamese": "vi"}
+        languages = {"Spanish": "es", "Vietnamese": "vi", "Arabic": "ar"}
 
     missing_counts = {}
     for lang_name in languages:
