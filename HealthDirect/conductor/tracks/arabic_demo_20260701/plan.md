@@ -1,7 +1,7 @@
 # Implementation Plan: Arabic Demo Language & RTL Layout (Track: `arabic_demo_20260701`)
 
 ## Phase 1: Pipeline & Glossary Support
-- [ ] **Task 1.1: Update `import_glossary.py` for Arabic translations**
+- [x] **Task 1.1: Update `import_glossary.py` for Arabic translations** 8117004
   - Add `ar` target language code mapping.
   - Integrate Arabic translation pipeline inside `pre_translate_terms`.
 - [ ] **Task 1.2: Run import pipeline to populate glossary**
