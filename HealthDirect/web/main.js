@@ -51,6 +51,8 @@ const PRESET_UI_METADATA = {
 
 // UI Elements
 const presetSelector = document.getElementById("preset-selector");
+const modelSelector = document.getElementById("model-selector");
+const modelBadge = document.getElementById("model-badge");
 const pacingSelector = document.getElementById("pacing-selector");
 const pauseInput = document.getElementById("pause-input");
 const startBtn = document.getElementById("start-btn");
@@ -288,7 +290,22 @@ function updatePresetUI() {
     }
 }
 
+function updateModelBadge() {
+    if (modelSelector && modelBadge) {
+        if (modelSelector.value === "gemini-3.5-live-translate-preview") {
+            modelBadge.innerText = "Gemini 3.5 Live Translate";
+            modelBadge.style.backgroundColor = "var(--border-color)";
+        } else {
+            modelBadge.innerText = "Gemini 3.1 Flash Live + Glossary";
+            modelBadge.style.backgroundColor = "rgba(37, 99, 235, 0.2)"; // Premium highlight for glossary mode
+        }
+    }
+}
+
 presetSelector.addEventListener("change", updatePresetUI);
+if (modelSelector) {
+    modelSelector.addEventListener("change", updateModelBadge);
+}
 
 if (reloadGlossaryBtn) {
     reloadGlossaryBtn.addEventListener("click", async () => {
@@ -306,6 +323,7 @@ if (reloadGlossaryBtn) {
 
 // Initialize on page load
 updatePresetUI();
+updateModelBadge();
 
 /* ==========================================================================
    AUDIO CONTEXT & GAIN CONTROLS
@@ -645,6 +663,7 @@ function connectCall() {
     connectionText.innerText = "Connecting...";
     startBtn.disabled = true;
     presetSelector.disabled = true;
+    if (modelSelector) modelSelector.disabled = true;
     pacingSelector.disabled = true;
     if (pauseInput) pauseInput.disabled = true;
     resetBtn.disabled = true;
@@ -657,6 +676,7 @@ function connectCall() {
         socket.send(JSON.stringify({
             action: "start",
             preset: presetSelector.value,
+            model: modelSelector ? modelSelector.value : "gemini-3.5-live-translate-preview",
             pacing: pacingSelector.value,
             pause: pauseInput ? parseFloat(pauseInput.value) : 0,
             timeout: pauseInput ? parseFloat(pauseInput.value) : 0
@@ -791,6 +811,7 @@ function endCall(isNaturalCompletion = false) {
     
     startBtn.disabled = false;
     presetSelector.disabled = false;
+    if (modelSelector) modelSelector.disabled = false;
     pacingSelector.disabled = false;
     if (pauseInput) pauseInput.disabled = false;
     endBtn.disabled = true;

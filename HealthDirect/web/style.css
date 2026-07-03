@@ -63,6 +63,8 @@ body {
     border-radius: var(--radius-lg);
     padding: 16px 24px;
     margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .header-left {
@@ -127,6 +129,15 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .form-group {
@@ -488,9 +499,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-secondary);
     font-size: 0.875rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
+    display: block;
 }
 
 .patient-turn .translation-text {
@@ -502,7 +511,9 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     content: "🔊";
     font-size: 0.8rem;
     opacity: 0.85;
-    margin-top: 1px;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* Interim Text Indicator (Lower opacity) */
@@ -668,7 +679,9 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     font-weight: 600;
     cursor: help;
     position: relative;
-    display: inline-block;
+    display: inline;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -677,7 +690,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     background: rgba(56, 189, 248, 0.22) !important;
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     border-bottom-color: #38bdf8;
-    transform: translateY(-1px) scale(1.02);
+    text-shadow: 0 0 5px rgba(56, 189, 248, 0.5);
 }
 
 /* Glossy Glassmorphic CSS Tooltip Box */

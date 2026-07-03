@@ -21,30 +21,41 @@
             </div>
             
             <div class="header-controls">
-                <div class="form-group">
-                    <label for="preset-selector">Scenario:</label>
-                    <select id="preset-selector">
-                        <option value="german">🇩🇪 Fever Consultation (German)</option>
-                        <option value="spanish">🇪🇸 Ear Ache (Spanish)</option>
-                        <option value="vietnamese">🇻🇳 Paediatric (Vietnamese)</option>
-                    </select>
+                <div class="control-group selectors">
+                    <div class="form-group">
+                        <label for="preset-selector">Scenario:</label>
+                        <select id="preset-selector">
+                            <option value="german">🇩🇪 Fever Consultation (German)</option>
+                            <option value="spanish">🇪🇸 Ear Ache (Spanish)</option>
+                            <option value="vietnamese">🇻🇳 Paediatric (Vietnamese)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="model-selector">Model:</label>
+                        <select id="model-selector">
+                            <option value="gemini-3.5-live-translate-preview">Gemini 3.5 (Translate Preview)</option>
+                            <option value="gemini-3.1-flash-live-preview">Gemini 3.1 (Flash Live + Glossary)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pacing-selector">Pacing:</label>
+                        <select id="pacing-selector">
+                            <option value="auto">⚡ Auto-Paced</option>
+                            <option value="manual">🔘 Manual (Next)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="pause-group">
+                        <label for="pause-input">Pause (s):</label>
+                        <input type="number" id="pause-input" min="0" max="60" value="0" style="width: 60px;">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="pacing-selector">Pacing:</label>
-                    <select id="pacing-selector">
-                        <option value="auto">⚡ Auto-Paced</option>
-                        <option value="manual">🔘 Manual (Next)</option>
-                    </select>
+                <div class="control-group actions">
+                    <button id="start-btn" class="btn btn-primary">Start Call</button>
+                    <button id="pause-btn" class="btn btn-warning" disabled>⏸️ Pause Call</button>
+                    <button id="end-btn" class="btn btn-danger" disabled>End Call</button>
+                    <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                    <button id="next-btn" class="btn btn-accent" disabled>Next Turn</button>
                 </div>
-                <div class="form-group" id="pause-group">
-                    <label for="pause-input">Pause (s):</label>
-                    <input type="number" id="pause-input" min="0" max="60" value="0" style="width: 60px;">
-                </div>
-                <button id="start-btn" class="btn btn-primary">Start Call</button>
-                <button id="pause-btn" class="btn btn-warning" disabled>⏸️ Pause Call</button>
-                <button id="end-btn" class="btn btn-danger" disabled>End Call</button>
-                <button id="reset-btn" class="btn btn-secondary">Reset</button>
-                <button id="next-btn" class="btn btn-accent" disabled>Next Turn</button>
             </div>
         </header>
 
@@ -170,6 +181,6 @@
         </main>
     </div>
     
-    <script src="main.js"></script>
+    <script src="main.js?v=20260703-logging"></script>
 </body>
 </html>

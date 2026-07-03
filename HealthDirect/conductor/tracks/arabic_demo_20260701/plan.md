@@ -17,11 +17,11 @@
 - [x] **Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)** 172bf29
 
 ## Phase 2: Bilingual Audio Generation
-- [~] **Task 2.1: Create `generate_arabic_audio.py`**
+- [x] **Task 2.1: Create `generate_arabic_audio.py`** 353
   - Design a dialogue scenario for an asthma/breathing difficulty emergency.
   - Setup Google Cloud TTS voice configuration with standard Arabic (`ar-XA`) and Australian English (`en-AU`).
   - Overlay synthesized audio segments into a dual-channel stereo WAV file at `samples/ar_asthma_session.wav`.
-- [ ] **Task 2.2: Verify generated audio**
+- [x] **Task 2.2: Verify generated audio** 353
   - Confirm the file is stereo and can be processed correctly by the audio utilities.
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)**
 

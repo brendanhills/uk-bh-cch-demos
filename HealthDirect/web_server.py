@@ -26,8 +26,24 @@ from google.genai import types
 load_dotenv()
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("web_server")
+logger.setLevel(logging.INFO)
+
+# Clear any existing handlers to avoid duplicates
+if logger.handlers:
+    logger.handlers.clear()
+
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+
+# Console Handler
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+# File Handler
+file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding="utf-8")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 GLOSSARY_PATH = "dictionary/glossary.json"
 
@@ -133,7 +149,7 @@ async def get_glossary(language: str = None):
         
     return {"glossary": entries}
 
-def load_and_format_glossary(target_language: str) -> str:
+def load_and_format_glossary(target_language: str, direction: str = "n_to_p") -> str:
     """
     Loads active glossary terms from GLOSSARY_PATH, filters by target_language
     (case-insensitive matching), and formats each matching term into a clean
@@ -174,14 +190,19 @@ def load_and_format_glossary(target_language: str) -> str:
                 
         if matched_lang_key:
             translation = translations[matched_lang_key]
-            if description:
-                formatted_lines.append(f"- {english} -> {translation}: {description}")
+            if direction == "p_to_n":
+                term_rule = f"{translation} -> {english}"
             else:
-                formatted_lines.append(f"- {english} -> {translation}")
+                term_rule = f"{english} -> {translation}"
+                
+            if description:
+                formatted_lines.append(f"- {term_rule}: {description}")
+            else:
+                formatted_lines.append(f"- {term_rule}")
                 
     return "\n".join(formatted_lines)
 
-def assemble_system_instructions(direction: str, target_language: str, glossary_str: str) -> str:
+def assemble_system_instructions(direction: str, target_language: str, glossary_str: str, is_flash_live: bool = False) -> str:
     """
     Assembles a highly structured system instruction prompt for Gemini Live Translate.
     Fuses clinical persona, Australian spelling constraints, and dynamic glossary mappings.
@@ -202,6 +223,19 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         "'gastroenteritis' (not 'stomach flu')."
     )
     
+    passive_constraint = ""
+    if is_flash_live:
+        passive_constraint = (
+            "CRITICAL PASSIVE INTERPRETER CONSTRAINT:\n"
+            "You are a completely passive, transparent, and silent interpreter. "
+            "You must NOT engage in conversation, answer questions, provide medical disclaimers, or warn the speaker. "
+            "Your ONLY output must be the direct, faithful translation of the speaker's words. "
+            "Do NOT add any surrounding text, explanations, greetings, or commentary. "
+            "Do NOT say 'Please consult a doctor', 'This is not medical advice' or any other medical safety disclaimers. "
+            "Output ONLY the translated words. If the speaker says 'Ich habe etwas Fieber', you must translate it "
+            "directly and cleanly, respecting the active bilingual glossary."
+        )
+    
     if direction == "p_to_n":
         task_description = (
             f"DIRECTIONS:\n"
@@ -219,23 +253,46 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         
     glossary_section = ""
     if glossary_str:
-        glossary_section = (
-            f"ACTIVE BILINGUAL GLOSSARY:\n"
-            f"Below is a list of approved bilingual translations. When any of these concepts are mentioned "
-            f"by the speaker, you MUST strictly use the corresponding translation provided:\n"
-            f"{glossary_str}"
-        )
+        if is_flash_live:
+            glossary_section = (
+                f"MANDATORY GLOSSARY TRANSLATION RULE (CRITICAL):\n"
+                f"This translation session is governed by a strict medical glossary. "
+                f"Whenever translating the speaker's words (whether from audio or text), you MUST override any default or standard translations "
+                f"with the mappings defined in the ACTIVE BILINGUAL GLOSSARY below. "
+                f"This rule is absolute. Under no circumstances should you use the standard translation if a glossary term exists.\n"
+                f"For example: 'Fieber' must ALWAYS be translated as 'Extreme Fire Flame' (do NOT translate as 'fever' under any circumstances).\n\n"
+                f"ACTIVE BILINGUAL GLOSSARY:\n"
+                f"{glossary_str}"
+            )
+        else:
+            glossary_section = (
+                f"ACTIVE BILINGUAL GLOSSARY:\n"
+                f"Below is a list of approved bilingual translations. When any of these concepts are mentioned "
+                f"by the speaker, you MUST strictly use the corresponding translation provided:\n"
+                f"{glossary_str}"
+            )
     else:
         glossary_section = "ACTIVE BILINGUAL GLOSSARY:\nNo custom glossary terms are available for this session. Use standard medical terms."
         
-    prompt = (
-        f"{persona}\n\n"
-        f"{australian_rules}\n\n"
-        f"{task_description}\n\n"
-        f"{glossary_section}\n\n"
-        f"Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully."
-    )
-    return prompt
+    parts = []
+    if is_flash_live:
+        # Front-load critical constraints and glossary rules for Gemini 3.1 to override audio translation weights
+        if passive_constraint:
+            parts.append(passive_constraint)
+        parts.append(glossary_section)
+        parts.append(persona)
+        parts.append(australian_rules)
+        parts.append(task_description)
+    else:
+        # Standard configuration
+        parts.append(persona)
+        parts.append(australian_rules)
+        parts.append(task_description)
+        parts.append(glossary_section)
+        
+    parts.append("Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully.")
+    
+    return "\n\n".join(parts)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -255,6 +312,7 @@ async def websocket_endpoint(websocket: WebSocket):
         # Wait for the client to send the "start" message specifying the preset
         init_message = await websocket.receive_text()
         data = json.loads(init_message)
+        logger.info(f"Received starting handshake payload from client: {data}")
         
         if data.get("action") != "start":
             await websocket.send_json({"type": "error", "message": "Invalid starting command."})
@@ -262,8 +320,9 @@ async def websocket_endpoint(websocket: WebSocket):
             
         preset_name = data.get("preset", "german")
         pacing_mode = data.get("pacing", "auto") # "auto" or "manual"
-        timeout_sec = float(data.get("pause", data.get("timeout", 0.0)))
-        timeout_sec = max(0.0, timeout_sec)
+        timeout_sec = float(data.get("pause", data.get("timeout", 15.0)))
+        if timeout_sec <= 0.0:
+            timeout_sec = 15.0
         
         if preset_name not in PRESETS:
             await websocket.send_json({"type": "error", "message": f"Preset '{preset_name}' is not recognized."})
@@ -292,45 +351,85 @@ async def websocket_endpoint(websocket: WebSocket):
             "duration_ms": len(patient_bytes) // 32 # 32 bytes per ms for 16kHz 16-bit mono
         })
 
-        # Load and format language-specific glossary
-        glossary_str = load_and_format_glossary(language)
+        # Load and format language-specific directed glossaries
+        glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n")
+        glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p")
+        
+        # Detect active model
+        model_name = data.get("model", "gemini-3.5-live-translate-preview")
+        if model_name not in ["gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview"]:
+            model_name = "gemini-3.5-live-translate-preview"
+            
+        is_flash_live = (model_name == "gemini-3.1-flash-live-preview")
+        logger.info(f"Using model: {model_name} (Glossary Enforced: {is_flash_live})")
+        
+        # Initialize/reset the transcript file at the start of the WebSocket session
+        try:
+            with open("conversation_transcript.log", "w", encoding="utf-8") as f:
+                f.write("SESSION TRANSCRIPT START\n")
+                f.write(f"Language: {language}\n")
+                f.write(f"Model: {model_name}\n")
+                f.write(f"Pacing: {pacing_mode}\n")
+                f.write("========================================\n")
+        except Exception as e:
+            logger.error(f"Failed to initialize conversation_transcript.log: {e}")
         
         # Assemble structured medical system instructions
-        sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str)
-        sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str)
+        sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str_p_to_n, is_flash_live=is_flash_live)
+        sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str_n_to_p, is_flash_live=is_flash_live)
 
         # Define Live Translate session configurations
         # 1. Config Patient -> Nurse (translates Patient native language to English)
-        config_p_to_n = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            system_instruction=types.Content(
-                parts=[types.Part.from_text(text=sys_inst_p_to_n)]
-            ),
-            translation_config=types.TranslationConfig(
-                target_language_code="en",
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-        )
+        if is_flash_live:
+            config_p_to_n = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_p_to_n)]
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
+        else:
+            config_p_to_n = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_p_to_n)]
+                ),
+                translation_config=types.TranslationConfig(
+                    target_language_code="en",
+                    echo_target_language=True
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
 
         # 2. Config Nurse -> Patient (translates English to Patient native language)
-        config_n_to_p = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            system_instruction=types.Content(
-                parts=[types.Part.from_text(text=sys_inst_n_to_p)]
-            ),
-            translation_config=types.TranslationConfig(
-                target_language_code=lang_code,
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-        )
-
-        model_name = "gemini-3.5-live-translate-preview"
+        if is_flash_live:
+            config_n_to_p = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_n_to_p)]
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
+        else:
+            config_n_to_p = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_n_to_p)]
+                ),
+                translation_config=types.TranslationConfig(
+                    target_language_code=lang_code,
+                    echo_target_language=True
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
         
-        # Connect both Live sessions in parallel
+        # Connect both Live sessions in parallel using the chosen model
+        logger.info(f"Connecting to dual live sessions using model: {model_name}")
+        
         async with client.aio.live.connect(model=model_name, config=config_p_to_n) as session_p_to_n, \
                    client.aio.live.connect(model=model_name, config=config_n_to_p) as session_n_to_p:
                    
@@ -342,6 +441,12 @@ async def websocket_endpoint(websocket: WebSocket):
             nurse_translation_complete = asyncio.Event()
             manual_next_event = asyncio.Event()
             stream_state = {"is_paused": False}
+            convo_state = {
+                "patient_orig": "",
+                "patient_trans": "",
+                "nurse_orig": "",
+                "nurse_trans": ""
+            }
 
             # Task: Read responses from Patient -> Nurse session (translating to English)
             async def receive_p_to_n():
@@ -359,36 +464,65 @@ async def websocket_endpoint(websocket: WebSocket):
                                             "stream": "p_to_n",
                                             "data": encoded_audio
                                         })
+                                    if part.text:
+                                        logger.info(f"[MODEL PART TEXT][p_to_n]: {part.text}")
                                         
                             # Forward Patient Original text transcript (interim segments)
                             if server_content.input_transcription and server_content.input_transcription.text:
+                                text = server_content.input_transcription.text
+                                is_final = server_content.input_transcription.finished
+                                convo_state["patient_orig"] += text
+                                logger.info(f"[TRANSCRIPT ORIGINAL][PATIENT] {text} (final={is_final})")
                                 await websocket.send_json({
                                     "type": "transcript",
                                     "speaker": "patient",
                                     "event": "original",
-                                    "text": server_content.input_transcription.text,
-                                    "final": server_content.input_transcription.finished
+                                    "text": text,
+                                    "final": is_final
                                 })
                                 
                             # Forward Nurse Translation text transcript (interim segments)
                             if server_content.output_transcription and server_content.output_transcription.text:
+                                text = server_content.output_transcription.text
+                                convo_state["patient_trans"] += text
+                                logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
                                 await websocket.send_json({
                                     "type": "transcript",
                                     "speaker": "nurse",
                                     "event": "translation",
-                                    "text": server_content.output_transcription.text,
+                                    "text": text,
                                     "final": False # turns are marked completed via turn_complete
                                 })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
                                 patient_translation_complete.set()
+                                logger.info("[TURN COMPLETE][PATIENT]")
+                                orig = convo_state.get("patient_orig", "").strip()
+                                trans = convo_state.get("patient_trans", "").strip()
+                                if orig or trans:
+                                    msg = (
+                                        f"\n========================================\n"
+                                        f"WHO: PATIENT\n"
+                                        f"SAID: {orig}\n"
+                                        f"TRANSLATED TO: {trans}\n"
+                                        f"========================================\n"
+                                    )
+                                    logger.info(msg)
+                                    try:
+                                        with open("conversation_transcript.log", "a", encoding="utf-8") as f:
+                                            f.write(msg)
+                                    except Exception as e:
+                                        logger.error(f"Failed to append to conversation_transcript.log: {e}")
+                                    convo_state["patient_orig"] = ""
+                                    convo_state["patient_trans"] = ""
                                 await websocket.send_json({
                                     "type": "turn_complete",
                                     "speaker": "patient"
                                 })
                                 
                             if server_content.interrupted:
+                                logger.info("[INTERRUPTED][PATIENT]")
                                 await websocket.send_json({
                                     "type": "interrupted",
                                     "speaker": "patient"
@@ -414,30 +548,58 @@ async def websocket_endpoint(websocket: WebSocket):
                                             "stream": "n_to_p",
                                             "data": encoded_audio
                                         })
+                                    if part.text:
+                                        logger.info(f"[MODEL PART TEXT][n_to_p]: {part.text}")
                                         
                             # Forward Nurse Original text transcript
                             if server_content.input_transcription and server_content.input_transcription.text:
+                                text = server_content.input_transcription.text
+                                is_final = server_content.input_transcription.finished
+                                convo_state["nurse_orig"] += text
+                                logger.info(f"[TRANSCRIPT ORIGINAL][NURSE] {text} (final={is_final})")
                                 await websocket.send_json({
                                     "type": "transcript",
                                     "speaker": "nurse",
                                     "event": "original",
-                                    "text": server_content.input_transcription.text,
-                                    "final": server_content.input_transcription.finished
+                                    "text": text,
+                                    "final": is_final
                                 })
                                 
                             # Forward Patient Translation text transcript
                             if server_content.output_transcription and server_content.output_transcription.text:
+                                text = server_content.output_transcription.text
+                                convo_state["nurse_trans"] += text
+                                logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
                                 await websocket.send_json({
                                     "type": "transcript",
                                     "speaker": "patient",
                                     "event": "translation",
-                                    "text": server_content.output_transcription.text,
+                                    "text": text,
                                     "final": False
                                 })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
                                 nurse_translation_complete.set()
+                                logger.info("[TURN COMPLETE][NURSE]")
+                                orig = convo_state.get("nurse_orig", "").strip()
+                                trans = convo_state.get("nurse_trans", "").strip()
+                                if orig or trans:
+                                    msg = (
+                                        f"\n========================================\n"
+                                        f"WHO: NURSE\n"
+                                        f"SAID: {orig}\n"
+                                        f"TRANSLATED TO: {trans}\n"
+                                        f"========================================\n"
+                                    )
+                                    logger.info(msg)
+                                    try:
+                                        with open("conversation_transcript.log", "a", encoding="utf-8") as f:
+                                            f.write(msg)
+                                    except Exception as e:
+                                        logger.error(f"Failed to append to conversation_transcript.log: {e}")
+                                    convo_state["nurse_orig"] = ""
+                                    convo_state["nurse_trans"] = ""
                                 await websocket.send_json({
                                     "type": "turn_complete",
                                     "speaker": "nurse"

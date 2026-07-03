@@ -6,8 +6,13 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 
 ## Key Features
 
+- **Dual-Model Support & Evaluation**: Supports both **Gemini 3.5 Live Translate (Preview)** and **Gemini 3.1 Flash Live + Glossary** modes, with a dynamic Model Selector in the Web UI.
+- **Strict Clinical Glossary Enforcement**: When utilizing Gemini 3.1, frontloads a customized passive interpreter system prompt with Australian terminology spellings and a formatted glossary list to enforce absolute vocabulary dominance in translated audio text.
 - **Real-Time Bidirectional Translation**: Establishes dual parallel **Gemini Live API WebSocket** streams to translate patient speech (e.g., German, Spanish, Vietnamese) to English and clinician speech (English) to the patient's language concurrently.
 - **Stereo Channel Splitting**: Loads stereo `.wav` audio files and separates them into independent mono feeds—the Left channel represents the Patient (foreign language) and the Right channel represents the Nurse (English).
+- **Multi-Destination Turn-Aggregated Logging**:
+  - Automatically initializes and writes conversational transcripts block-by-turn to both standard output and `conversation_transcript.log`.
+  - Captures full text representation for each turn: speaker name, original transcript, and translated content.
 - **Clinical Glossary Highlighting**: 
   - Uses the **`GlossaryHighlighter`** engine to perform exact match highlighting of clinical terminology.
   - Matches terms descending by character length (so compound terms like "abdominal pain" take priority over individual constituent words like "pain").
