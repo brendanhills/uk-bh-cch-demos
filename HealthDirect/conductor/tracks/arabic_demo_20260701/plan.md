@@ -4,9 +4,9 @@
 - [x] **Task 1.1: Update `import_glossary.py` for Arabic translations** 8117004
   - Add `ar` target language code mapping.
   - Integrate Arabic translation pipeline inside `pre_translate_terms`.
-- [ ] **Task 1.2: Run import pipeline to populate glossary**
+- [x] **Task 1.2: Run import pipeline to populate glossary** 89e3443
   - Execute `uv run import_glossary.py` to translate existing medical terms to Arabic in `dictionary/glossary.json`.
-- [ ] **Task 1.3: Seed and verify matching clinical terms for the asthma scenario**
+- [x] **Task 1.3: Seed and verify matching clinical terms for the asthma scenario** 89e3443
   - Ensure the following clinical terms exist in `dictionary/glossary.json` and have accurate Arabic translations:
     - `asthma`
     - `dyspnea` (and/or `shortness of breath`)
