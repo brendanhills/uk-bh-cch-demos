@@ -1,6 +1,6 @@
 # Implementation Plan: Arabic Demo Language & RTL Layout (Track: `arabic_demo_20260701`)
 
-## Phase 1: Pipeline & Glossary Support
+## Phase 1: Pipeline & Glossary Support [checkpoint: 172bf29]
 - [x] **Task 1.1: Update `import_glossary.py` for Arabic translations** 8117004
   - Add `ar` target language code mapping.
   - Integrate Arabic translation pipeline inside `pre_translate_terms`.
@@ -14,7 +14,7 @@
     - `bronchodilator` (and/or `inhaler`)
     - `spacer`
     - `emergency department`
-- [~] **Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)** 172bf29
 
 ## Phase 2: Bilingual Audio Generation
 - [ ] **Task 2.1: Create `generate_arabic_audio.py`**
