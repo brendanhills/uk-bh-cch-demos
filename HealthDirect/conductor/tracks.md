@@ -36,12 +36,12 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Highlight glossary terms in original and translated text**
+- [x] **Track: Highlight glossary terms in original and translated text**
   *Link: [./tracks/highlight_glossary_20260630/](./tracks/highlight_glossary_20260630/)*
 
 ---
 
-- [ ] **Track: Australian Medical Glossary WebSocket Priming & System Instructions**
+- [x] **Track: Australian Medical Glossary WebSocket Priming & System Instructions**
   *Link: [./tracks/websocket_priming_20260701/](./tracks/websocket_priming_20260701/)*
 
 ---

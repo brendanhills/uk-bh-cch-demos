@@ -18,6 +18,10 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
   - Renders speech bubbles live and dynamically injects `<mark class="glossary-highlight">` tags around clinical terms.
   - Leverages a custom **`data-raw` attribute string stream pattern** to run highlights instantly in real-time on every incoming audio text chunk without HTML tag pollution or streaming timing race conditions.
   - Leverages animated, sliding tooltips on hover to display medical details, descriptions, and translation mappings case-insensitively.
+- **Dynamic WebSocket Connection Priming & System Instructions**:
+  - Dynamically loads, filters, and formats active glossary terms from `dictionary/glossary.json` into a token-efficient key-value list on connection start.
+  - Assembles highly structured system prompts enforcing a professional clinical persona and strict compliance with Australian medical spelling and nomenclature standards (e.g., `paracetamol` over `acetaminophen`, `Emergency Department` over `ER`, and Commonwealth spellings like `paediatric`, `haematology`, `gastroenteritis`).
+  - Primes both parallel Patient-to-Nurse and Nurse-to-Patient Gemini Live Translate channels as a `system_instruction` parameter in the initial connection config handshakes (`LiveConnectConfig`).
 - **Polite & Idempotent Glossary Scraper**:
   - A robust terminology collector (`import_glossary.py`) designed to ingest clinical lists from HealthDirect Australia.
   - **Robots.txt Adherence**: Dynamically fetches and parses the target domain's `robots.txt` using standard `urllib.robotparser` to guarantee absolute crawler compliance.

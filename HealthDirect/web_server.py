@@ -29,6 +29,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("web_server")
 
+GLOSSARY_PATH = "dictionary/glossary.json"
+
 app = FastAPI(title="Bilingual Medical Interpreter API")
 
 # Define preset medical call files (make sure paths match workspace)
@@ -103,7 +105,7 @@ def has_speech(chunk: bytes, threshold: int = 1000) -> bool:
 
 @app.get("/api/glossary")
 async def get_glossary(language: str = None):
-    glossary_path = "dictionary/glossary.json"
+    glossary_path = GLOSSARY_PATH
     if not os.path.exists(glossary_path):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         fallback_path = os.path.join(base_dir, "dictionary/glossary.json")
@@ -130,6 +132,110 @@ async def get_glossary(language: str = None):
         return {"glossary": filtered_entries}
         
     return {"glossary": entries}
+
+def load_and_format_glossary(target_language: str) -> str:
+    """
+    Loads active glossary terms from GLOSSARY_PATH, filters by target_language
+    (case-insensitive matching), and formats each matching term into a clean
+    key-value pair representation.
+    """
+    glossary_path = GLOSSARY_PATH
+    if not os.path.exists(glossary_path):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        fallback_path = os.path.join(base_dir, "dictionary/glossary.json")
+        if os.path.exists(fallback_path):
+            glossary_path = fallback_path
+            
+    if not os.path.exists(glossary_path):
+        logger.warning(f"Glossary file not found at {glossary_path}.")
+        return ""
+        
+    try:
+        with open(glossary_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            entries = data.get("glossary", [])
+    except Exception as e:
+        logger.error(f"Error loading glossary for formatting: {e}")
+        return ""
+        
+    formatted_lines = []
+    target_lang_lower = target_language.lower()
+    for entry in entries:
+        english = entry.get("english", "")
+        translations = entry.get("translations", {})
+        description = entry.get("description", "")
+        
+        # Find the case-insensitive matching language key
+        matched_lang_key = None
+        for lang_key in translations.keys():
+            if lang_key.lower() == target_lang_lower:
+                matched_lang_key = lang_key
+                break
+                
+        if matched_lang_key:
+            translation = translations[matched_lang_key]
+            if description:
+                formatted_lines.append(f"- {english} -> {translation}: {description}")
+            else:
+                formatted_lines.append(f"- {english} -> {translation}")
+                
+    return "\n".join(formatted_lines)
+
+def assemble_system_instructions(direction: str, target_language: str, glossary_str: str) -> str:
+    """
+    Assembles a highly structured system instruction prompt for Gemini Live Translate.
+    Fuses clinical persona, Australian spelling constraints, and dynamic glossary mappings.
+    """
+    persona = (
+        "You are a highly professional, accurate, and empathetic bilingual medical interpreter. "
+        "Your role is to translate spoken conversation in real-time between a clinician (Nurse) and a patient. "
+        "Maintain a neutral, professional medical tone. Translate exactly what is said without summarizing, "
+        "embellishing, or adding medical advice."
+    )
+    
+    australian_rules = (
+        "CRITICAL SPELLING & NOMENCLATURE CONSTRAINT:\n"
+        "You must strictly adhere to Australian medical standards, terminology, and spelling conventions.\n"
+        "- Use 'paracetamol' instead of 'acetaminophen'.\n"
+        "- Use 'Emergency Department' instead of 'ER' or 'Emergency Room'.\n"
+        "- Use Australian/Commonwealth spelling: e.g., 'paediatric' (not 'pediatric'), 'haematology' (not 'hematology'), "
+        "'gastroenteritis' (not 'stomach flu')."
+    )
+    
+    if direction == "p_to_n":
+        task_description = (
+            f"DIRECTIONS:\n"
+            f"You are interpreting from the Patient (speaking {target_language}) to the Nurse (speaking English).\n"
+            f"Your job is to translate the patient's spoken statements into natural, clear English. "
+            f"Ensure all clinical terms are aligned to standard Australian medical concepts."
+        )
+    else:
+        task_description = (
+            f"DIRECTIONS:\n"
+            f"You are interpreting from the Nurse (speaking English) to the Patient (speaking {target_language}).\n"
+            f"Your job is to translate the clinician's English explanations and questions into accurate, "
+            f"comprehensible, and culturally appropriate {target_language}. Keep clinical terms precise."
+        )
+        
+    glossary_section = ""
+    if glossary_str:
+        glossary_section = (
+            f"ACTIVE BILINGUAL GLOSSARY:\n"
+            f"Below is a list of approved bilingual translations. When any of these concepts are mentioned "
+            f"by the speaker, you MUST strictly use the corresponding translation provided:\n"
+            f"{glossary_str}"
+        )
+    else:
+        glossary_section = "ACTIVE BILINGUAL GLOSSARY:\nNo custom glossary terms are available for this session. Use standard medical terms."
+        
+    prompt = (
+        f"{persona}\n\n"
+        f"{australian_rules}\n\n"
+        f"{task_description}\n\n"
+        f"{glossary_section}\n\n"
+        f"Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully."
+    )
+    return prompt
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -186,10 +292,20 @@ async def websocket_endpoint(websocket: WebSocket):
             "duration_ms": len(patient_bytes) // 32 # 32 bytes per ms for 16kHz 16-bit mono
         })
 
+        # Load and format language-specific glossary
+        glossary_str = load_and_format_glossary(language)
+        
+        # Assemble structured medical system instructions
+        sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str)
+        sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str)
+
         # Define Live Translate session configurations
         # 1. Config Patient -> Nurse (translates Patient native language to English)
         config_p_to_n = types.LiveConnectConfig(
             response_modalities=[types.Modality.AUDIO],
+            system_instruction=types.Content(
+                parts=[types.Part.from_text(text=sys_inst_p_to_n)]
+            ),
             translation_config=types.TranslationConfig(
                 target_language_code="en",
                 echo_target_language=True
@@ -201,6 +317,9 @@ async def websocket_endpoint(websocket: WebSocket):
         # 2. Config Nurse -> Patient (translates English to Patient native language)
         config_n_to_p = types.LiveConnectConfig(
             response_modalities=[types.Modality.AUDIO],
+            system_instruction=types.Content(
+                parts=[types.Part.from_text(text=sys_inst_n_to_p)]
+            ),
             translation_config=types.TranslationConfig(
                 target_language_code=lang_code,
                 echo_target_language=True
