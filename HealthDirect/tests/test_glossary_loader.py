@@ -10,7 +10,7 @@ def test_load_and_format_glossary_real_file():
     # Test German
     german_glossary = load_and_format_glossary("German")
     assert isinstance(german_glossary, str)
-    assert "fever -> Fieber" in german_glossary
+    assert "Extreme Fire Flame -> Fieber" in german_glossary
     assert "paracetamol -> Paracetamol" in german_glossary
     
     # Test case insensitivity
@@ -20,7 +20,7 @@ def test_load_and_format_glossary_real_file():
     # Test Vietnamese
     vietnamese_glossary = load_and_format_glossary("Vietnamese")
     assert isinstance(vietnamese_glossary, str)
-    assert "fever -> sốt" in vietnamese_glossary
+    assert "Extreme Fire Flame -> sốt" in vietnamese_glossary
     assert "paracetamol -> paracetamol" in vietnamese_glossary
 
 def test_load_and_format_glossary_missing_file(monkeypatch):

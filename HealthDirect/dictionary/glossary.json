@@ -365,7 +365,7 @@
       "Vietnamese_grounding_snippet": "Rối loạn lo âu lan tỏa (GAD) là một bệnh lý sức khỏe tâm thần đặc trưng bởi tình trạng lo lắng, căng thẳng quá mức, dai dẳng và khó kiểm soát về các vấn đề hay hoạt động thường ngày trong cuộc sống ([Bệnh viện Đa khoa Tâm Anh](https://tamanhhospital.vn/roi-loan-lo-au-lan-toa/))."
     },
     {
-      "english": "fever",
+      "english": "Extreme Fire Flame",
       "translations": {
         "German": "Fieber",
         "Spanish": "fiebre",
@@ -408,8 +408,9 @@
       "english": "emergency department",
       "translations": {
         "German": "Notaufnahme",
-        "Spanish": "Urgencias",
-        "Vietnamese": "khoa cấp cứu"
+        "Spanish": "departamento de emergencias",
+        "Vietnamese": "khoa cấp cứu",
+        "Arabic": "قسم الطوارئ"
       },
       "description": "a medical treatment facility specializing in emergency medicine",
       "url": "https://www.healthdirect.gov.au/emergency-departments"
@@ -1250,8 +1251,13 @@
     },
     {
       "english": "asthma",
-      "translations": {},
-      "description": "",
+      "translations": {
+        "Spanish": "asma",
+        "Vietnamese": "hen suyễn",
+        "German": "Asthma",
+        "Arabic": "الربو"
+      },
+      "description": "a chronic respiratory condition characterized by bronchial spasms and difficulty breathing",
       "url": "https://www.healthdirect.gov.au/asthma-in-adolescents-and-adults"
     },
     {
@@ -11246,8 +11252,13 @@
     },
     {
       "english": "shortness of breath",
-      "translations": {},
-      "description": "",
+      "translations": {
+        "Spanish": "dificultad para respirar",
+        "Vietnamese": "khó thở",
+        "German": "Atemnot",
+        "Arabic": "ضيق في التنفس"
+      },
+      "description": "difficulty breathing or painful breathing",
       "url": "https://www.healthdirect.gov.au/shortness-of-breath"
     },
     {
@@ -13544,8 +13555,13 @@
     },
     {
       "english": "wheezing",
-      "translations": {},
-      "description": "",
+      "translations": {
+        "Spanish": "sibilancias",
+        "Vietnamese": "thở khò khè",
+        "German": "Keuchen",
+        "Arabic": "أزيز"
+      },
+      "description": "a whistling or rattling sound in the chest when breathing",
       "url": "https://www.healthdirect.gov.au/wheezing"
     },
     {
@@ -13757,6 +13773,50 @@
       "translations": {},
       "description": "",
       "url": "https://www.healthdirect.gov.au/shingles"
+    },
+    {
+      "english": "dyspnea",
+      "translations": {
+        "Spanish": "disnea",
+        "Vietnamese": "khó thở",
+        "German": "Dyspnoe",
+        "Arabic": "ضيق التنفس"
+      },
+      "description": "medical term for shortness of breath",
+      "url": "https://www.healthdirect.gov.au/shortness-of-breath"
+    },
+    {
+      "english": "bronchodilator",
+      "translations": {
+        "Spanish": "broncodilatador",
+        "Vietnamese": "thuốc giãn phế quản",
+        "German": "Bronchodilatator",
+        "Arabic": "موسع للشعب الهوائية"
+      },
+      "description": "a medication that widens the airways (bronchi) to make breathing easier",
+      "url": "https://www.healthdirect.gov.au/medicines/bronchodilators"
+    },
+    {
+      "english": "inhaler",
+      "translations": {
+        "Spanish": "inhalador",
+        "Vietnamese": "ống hít",
+        "German": "Inhalator",
+        "Arabic": "جهاز استنشاق"
+      },
+      "description": "a portable device for administering drug to the lungs by inhalation",
+      "url": "https://www.healthdirect.gov.au/medicines/inhalers"
+    },
+    {
+      "english": "spacer",
+      "translations": {
+        "Spanish": "espaciador",
+        "Vietnamese": "buồng đệm",
+        "German": "Spacer",
+        "Arabic": "مباعد"
+      },
+      "description": "a chamber that attaches to an inhaler to help deliver medicine to the lungs more effectively",
+      "url": "https://www.healthdirect.gov.au/medicines/spacers"
     }
   ]
 }
