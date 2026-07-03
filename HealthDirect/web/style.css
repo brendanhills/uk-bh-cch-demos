@@ -505,23 +505,11 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     margin-top: 1px;
 }
 
-/* Typing / Interim Text Indicator (Dotted pulse) */
+/* Interim Text Indicator (Lower opacity) */
 .interim {
     opacity: 0.8;
 }
 
-.interim::after {
-    content: "...";
-    display: inline-block;
-    animation: dots 1.2s infinite steps(4);
-    width: 0px;
-    overflow: hidden;
-    vertical-align: bottom;
-}
-
-@keyframes dots {
-    to { width: 1.25em; }
-}
 
 /* ==========================================================================
    AUDIO MIXER DASHBOARD
@@ -876,4 +864,57 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     color: var(--text-secondary);
     line-height: 1.4;
 }
+
+/* Sidebar Reload Button Styles */
+.sidebar-header-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-icon-reload {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 24px;
+    height: 24px;
+}
+
+.btn-icon-reload:hover {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+}
+
+.btn-icon-reload:active {
+    transform: scale(0.92);
+}
+
+.btn-icon-reload .reload-icon {
+    width: 14px;
+    height: 14px;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-icon-reload.spinning .reload-icon {
+    animation: spin-reload 0.8s linear infinite;
+}
+
+@keyframes spin-reload {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 

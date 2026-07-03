@@ -81,6 +81,9 @@ const sliderLangRight = document.getElementById("slider-lang-right");
 const tickLeft = document.getElementById("tick-left");
 const tickRight = document.getElementById("tick-right");
 
+// Clinical Glossary Sidebar Elements
+const reloadGlossaryBtn = document.getElementById("reload-glossary-btn");
+
 /* ==========================================================================
    CLINICAL GLOSSARY INTEGRATION
    ========================================================================== */
@@ -286,6 +289,21 @@ function updatePresetUI() {
 }
 
 presetSelector.addEventListener("change", updatePresetUI);
+
+if (reloadGlossaryBtn) {
+    reloadGlossaryBtn.addEventListener("click", async () => {
+        reloadGlossaryBtn.classList.add("spinning");
+        try {
+            await fetchGlossary();
+        } finally {
+            // Keep spinning for at least 500ms to make the animation satisfyingly premium
+            setTimeout(() => {
+                reloadGlossaryBtn.classList.remove("spinning");
+            }, 500);
+        }
+    });
+}
+
 // Initialize on page load
 updatePresetUI();
 
