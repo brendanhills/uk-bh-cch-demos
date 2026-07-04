@@ -59,3 +59,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Live clinical glossary enforcement & multi-model evaluation**
   *Link: [./tracks/glossary_enforcement_20260703/](./tracks/glossary_enforcement_20260703/)*
 
+---
+
+- [ ] **Track: Improving demo sample conversations**
+  *Link: [./tracks/improve_demo_conversations_20260704/](./tracks/improve_demo_conversations_20260704/)*
+
+
