@@ -64,4 +64,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Improving demo sample conversations**
   *Link: [./tracks/improve_demo_conversations_20260704/](./tracks/improve_demo_conversations_20260704/)*
 
+---
+
+- [ ] **Track: Improving Gemini 3.1 Flash Live performance**
+  *Link: [./tracks/gemini_31_performance_20260704/](./tracks/gemini_31_performance_20260704/)*
+
+
 

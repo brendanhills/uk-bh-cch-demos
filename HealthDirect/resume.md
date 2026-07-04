@@ -1,30 +1,29 @@
-# Working Session Handoff: 2026-07-03 22:18
+# Working Session Handoff: 2026-07-04 18:12
 
 ## 📝 Session Summary
 - **What we did**:
-  - **Dual-Model Selection**: Implemented Gemini 3.5 Live Translate (Preview) vs. Gemini 3.1 Flash Live + Glossary modes in the Web UI. Added a beautiful glassmorphic model selector dropdown and model badges in the frontend.
-  - **Strict Glossary Enforcement**: Programmed the backend to dynamically omit `translation_config` and inject a strict **Passive Interpreter Constraint** system instruction ONLY when `gemini-3.1-flash-live-preview` is chosen.
-  - **Turn-Aggregated Logging**: Implemented real-time, block-by-turn transcript writing to standard output and `conversation_transcript.log`.
-  - **Safety Timeout Ceiling**: Enforced a 15.0-second safe minimum timeout ceiling for `timeout_sec` parsing to prevent premature pacing hold timeouts when the slider is set to 0.
-  - **Transcript Accumulation Fix**: Changed `convo_state` assignments in the receiver threads from `=` to `+=` to correctly accumulate all incoming interim text chunks during a turn.
+  - **New Track Creation**: Formulated, refined, and established a new dedicated Conductor track: **"Improving Gemini 3.1 Flash Live performance"** (`gemini_31_performance_20260704`), designed to resolve voice gender matching, streaming latency, conversation freezes, and emotional/tone parity issues under the standard model.
+  - **Track Scaffolding**: Built the complete track folder and generated standard spec (`spec.md`), plan (`plan.md`), index (`index.md`), and metadata (`metadata.json`) files.
+  - **Tracks Registry Update**: Registered the new track as pending (`- [ ]`) in the master Conductor tracks file (`conductor/tracks.md`).
 - **Workspace State**:
   - Active branch: `healthdirect/enforce-glossary`
-  - Uncommitted changes in `web_server.py`, `web/index.html`, `web/main.js`, `web/style.css`, `conductor/tracks.md`.
+  - Uncommitted changes in `conductor/tracks.md` and newly untracked files under `conductor/tracks/gemini_31_performance_20260704/`.
 
 ## 📌 Current Context & Progress
-- **Active Track**: Add Arabic as a demo language ([./tracks/arabic_demo_20260701/](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/conductor/tracks/arabic_demo_20260701/)) and Live clinical glossary enforcement & multi-model evaluation ([./tracks/glossary_enforcement_20260703/](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/conductor/tracks/glossary_enforcement_20260703/)).
-- **Last Active Task**: Fixed manual hold pacing bugs and transcript accumulation overwrite in `web_server.py`.
+- **Active Track**: [Improving Gemini 3.1 Flash Live performance](./conductor/tracks/gemini_31_performance_20260704/) (status: `new`).
+- **Last Active Task**: Defined, scaffolded, and registered the new track.
 
 ## 🚦 Remaining Tasks & Blockers
-- **Phase 3: Web Server & Web UI RTL Support (for Arabic Demo Track)**:
-  - [ ] **Task 3.1: Add Arabic preset to `web_server.py`** (Map `"arabic"` preset to `samples/ar_asthma_session.wav`).
-  - [ ] **Task 3.2: Update Web Front-End (`web/main.js` & `web/index.html`)** (Add option to selection menu).
-  - [ ] **Task 3.3: Implement RTL/LTR Styling in Web UI** (Integrate dynamic RTL direction alignment for Arabic columns).
-- **Manual Mode Fix Verification**:
-  - Verify if refactoring the manual pacing block to wait dynamically for Gemini's translation to finish before sending `waiting_for_next` (as defined in the plan) is required to resolve all user manual-pacing race conditions completely.
+- **Phase 1: Voice Gender Selection & Real-Time Transcription**:
+  - [ ] Implement Dynamic Voice Gender Selection (Match translated speaker gender).
+  - [ ] Stream Real-Time Translation Text Segments (low latency transcript streams using `parts[].text`).
+- **Phase 2: Tone Preservation & Pacing Resilience**:
+  - [ ] Enhance Tone Preservation in System Instructions (passive interpreter empathy constraints).
+  - [ ] Resolve Pacing Machine Hangs & Freezes (safety turn-completion fallback timeout logic).
+- **Phase 3: Automated Testing & Polishing**:
+  - [ ] Add Automated Tests for 3.1 Refinements.
 
 ## 🚀 Immediate Next Steps
-1. Map `"arabic"` preset to `samples/ar_asthma_session.wav` inside `web_server.py`.
-2. Add the Arabic option inside `web/index.html`.
-3. Add custom styles or classes in `web/main.js` and `web/style.css` to render patient text with `direction: rtl; text-align: right;` when Arabic is selected.
-4. Verify the manual pacing hold loop behavior under real-world interaction patterns.
+1. Begin implementation of **Phase 1** tasks by running `/conductor:implement`.
+2. Update the Gemini config builder to extract patient speaker gender and dynamically assign the correct prebuilt voice name (e.g. Puck/Charon vs Kore/Aoede) in `LiveConnectConfig`.
+3. Refactor receivers to intercept real-time text parts and stream low-latency transcripts directly to the client.
