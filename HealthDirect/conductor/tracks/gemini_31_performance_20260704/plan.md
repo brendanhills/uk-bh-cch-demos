@@ -3,13 +3,13 @@
 This plan outlines the specific tasks to improve the quality of standard Gemini 3.1 Flash Live sessions, focusing on dynamic voice gender selection, real-time streamed text segments, enhanced tone preservation, and pacing freeze mitigations.
 
 ## Phase 1: Voice Gender Selection & Real-Time Transcription
-- [ ] Task: Implement Dynamic Voice Gender Selection
-    - [ ] Extract patient speaker gender from preset settings in `web_server.py`.
-    - [ ] Update config builder to conditionally inject `speech_config.voice_config.prebuilt_voice_config` into `LiveConnectConfig`.
-    - [ ] Match translated patient speech to patient gender (e.g. Puck/Charon for male) and translated nurse speech to female voice (Kore).
-- [ ] Task: Stream Real-Time Translation Text Segments
-    - [ ] Modify `receive_p_to_n` and `receive_n_to_p` receivers to listen for `server_content.model_turn.parts` containing text.
-    - [ ] Immediately forward text segments via client WebSocket with `type: "transcript"`, matching current speaker turn.
+- [x] Task: Implement Dynamic Voice Gender Selection
+    - [x] Extract patient speaker gender from preset settings in `web_server.py`.
+    - [x] Update config builder to conditionally inject `speech_config.voice_config.prebuilt_voice_config` into `LiveConnectConfig`.
+    - [x] Match translated patient speech to patient gender (e.g. Puck/Charon for male) and translated nurse speech to female voice (Kore).
+- [x] Task: Stream Real-Time Translation Text Segments
+    - [x] Modify `receive_p_to_n` and `receive_n_to_p` receivers to listen for `server_content.model_turn.parts` containing text.
+    - [x] Immediately forward text segments via client WebSocket with `type: "transcript"`, matching current speaker turn.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Voice Gender Selection & Real-Time Transcription' (Protocol in workflow.md)
 
 ## Phase 2: Tone Preservation & Pacing Resilience

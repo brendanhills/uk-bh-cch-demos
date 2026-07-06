@@ -69,5 +69,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Improving Gemini 3.1 Flash Live performance**
   *Link: [./tracks/gemini_31_performance_20260704/](./tracks/gemini_31_performance_20260704/)*
 
+---
+
+- [ ] **Track: Automatic Language & Gender Detection**
+  *Link: [./tracks/automatic_detection_20260706/](./tracks/automatic_detection_20260706/)*
+
 
 
