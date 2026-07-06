@@ -54,17 +54,20 @@ PRESETS = {
     "german": {
         "file": "samples/de_fever_session.wav",
         "code": "de",
-        "language": "German"
+        "language": "German",
+        "gender": "male"
     },
     "spanish": {
         "file": "samples/es_ear_session.wav",
         "code": "es",
-        "language": "Spanish"
+        "language": "Spanish",
+        "gender": "male"
     },
     "vietnamese": {
         "file": "samples/paediatric_vietnamese_demo.wav",
         "code": "vi",
-        "language": "Vietnamese"
+        "language": "Vietnamese",
+        "gender": "female"
     }
 }
 
@@ -333,6 +336,12 @@ async def websocket_endpoint(websocket: WebSocket):
         lang_code = preset["code"]
         language = preset["language"]
         
+        # Select appropriate prebuilt voice names based on preset gender
+        patient_gender = preset.get("gender", "male")
+        patient_voice = "Puck" if patient_gender == "male" else "Kore"
+        nurse_voice = "Kore"  # Nurse Sarah is always female
+
+        
         logger.info(f"Starting real-time interpretation call. Language: {language} ({lang_code}) File: {file_path}")
         
         # Load and split audio channels
@@ -383,6 +392,11 @@ async def websocket_endpoint(websocket: WebSocket):
         if is_flash_live:
             config_p_to_n = types.LiveConnectConfig(
                 response_modalities=[types.Modality.AUDIO],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=patient_voice)
+                    )
+                ),
                 system_instruction=types.Content(
                     parts=[types.Part.from_text(text=sys_inst_p_to_n)]
                 ),
@@ -407,6 +421,11 @@ async def websocket_endpoint(websocket: WebSocket):
         if is_flash_live:
             config_n_to_p = types.LiveConnectConfig(
                 response_modalities=[types.Modality.AUDIO],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=nurse_voice)
+                    )
+                ),
                 system_instruction=types.Content(
                     parts=[types.Part.from_text(text=sys_inst_n_to_p)]
                 ),
@@ -466,6 +485,15 @@ async def websocket_endpoint(websocket: WebSocket):
                                         })
                                     if part.text:
                                         logger.info(f"[MODEL PART TEXT][p_to_n]: {part.text}")
+                                        if is_flash_live:
+                                            convo_state["patient_trans"] += part.text
+                                            await websocket.send_json({
+                                                "type": "transcript",
+                                                "speaker": "nurse",
+                                                "event": "translation",
+                                                "text": part.text,
+                                                "final": False
+                                            })
                                         
                             # Forward Patient Original text transcript (interim segments)
                             if server_content.input_transcription and server_content.input_transcription.text:
@@ -484,15 +512,16 @@ async def websocket_endpoint(websocket: WebSocket):
                             # Forward Nurse Translation text transcript (interim segments)
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
-                                convo_state["patient_trans"] += text
-                                logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "nurse",
-                                    "event": "translation",
-                                    "text": text,
-                                    "final": False # turns are marked completed via turn_complete
-                                })
+                                if not is_flash_live:
+                                    convo_state["patient_trans"] += text
+                                    logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
+                                    await websocket.send_json({
+                                        "type": "transcript",
+                                        "speaker": "nurse",
+                                        "event": "translation",
+                                        "text": text,
+                                        "final": False # turns are marked completed via turn_complete
+                                    })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
@@ -550,6 +579,15 @@ async def websocket_endpoint(websocket: WebSocket):
                                         })
                                     if part.text:
                                         logger.info(f"[MODEL PART TEXT][n_to_p]: {part.text}")
+                                        if is_flash_live:
+                                            convo_state["nurse_trans"] += part.text
+                                            await websocket.send_json({
+                                                "type": "transcript",
+                                                "speaker": "patient",
+                                                "event": "translation",
+                                                "text": part.text,
+                                                "final": False
+                                            })
                                         
                             # Forward Nurse Original text transcript
                             if server_content.input_transcription and server_content.input_transcription.text:
@@ -568,15 +606,16 @@ async def websocket_endpoint(websocket: WebSocket):
                             # Forward Patient Translation text transcript
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
-                                convo_state["nurse_trans"] += text
-                                logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "patient",
-                                    "event": "translation",
-                                    "text": text,
-                                    "final": False
-                                })
+                                if not is_flash_live:
+                                    convo_state["nurse_trans"] += text
+                                    logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
+                                    await websocket.send_json({
+                                        "type": "transcript",
+                                        "speaker": "patient",
+                                        "event": "translation",
+                                        "text": text,
+                                        "final": False
+                                    })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
