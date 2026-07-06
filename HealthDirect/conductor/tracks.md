@@ -74,5 +74,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Automatic Language & Gender Detection**
   *Link: [./tracks/automatic_detection_20260706/](./tracks/automatic_detection_20260706/)*
 
+---
 
-
+- [ ] **Track: Web Server Modularization**
+  *Link: [./tracks/modularize_web_server_20260706/](./tracks/modularize_web_server_20260706/)*
