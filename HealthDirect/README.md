@@ -7,8 +7,11 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 ## Key Features
 
 - **Dual-Model Support & Evaluation**: Supports both **Gemini 3.5 Live Translate (Preview)** and **Gemini 3.1 Flash Live + Glossary** modes, with a dynamic Model Selector in the Web UI.
+- **Dynamic Voice Gender Selection**: Automatically assigns appropriate male/female TTS voices (e.g., Puck/Charon vs. Kore/Aoede) matching the speaker's specified gender in `LiveConnectConfig`.
+- **Low-Latency Real-Time Text Streaming**: Intercepts real-time text parts (`parts[].text`) from the Gemini Live stream and immediately forwards low-latency transcripts to the client WebSocket interface.
+- **Resilient Audio Power Envelope Pacing**: Resolves pacing hangs and freezes under standard models. Features an intelligent activity monitor that automatically proceeds with the next turn if translated audio ceases for $> 1.5$ seconds or fails to play back within a $4.0$-second startup window.
 - **Strict Clinical Glossary Enforcement**: When utilizing Gemini 3.1, frontloads a customized passive interpreter system prompt with Australian terminology spellings and a formatted glossary list to enforce absolute vocabulary dominance in translated audio text.
-- **Real-Time Bidirectional Translation**: Establishes dual parallel **Gemini Live API WebSocket** streams to translate patient speech (e.g., German, Spanish, Vietnamese) to English and clinician speech (English) to the patient's language concurrently.
+- **Real-Time Bidirectional Translation**: Establishes dual parallel **Gemini Live API WebSocket** streams to translate patient speech (e.g., German, Spanish, Vietnamese, Arabic) to English and clinician speech (English) to the patient's language concurrently.
 - **Stereo Channel Splitting**: Loads stereo `.wav` audio files and separates them into independent mono feeds—the Left channel represents the Patient (foreign language) and the Right channel represents the Nurse (English).
 - **Multi-Destination Turn-Aggregated Logging**:
   - Automatically initializes and writes conversational transcripts block-by-turn to both standard output and `conversation_transcript.log`.
@@ -16,8 +19,9 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 - **Clinical Glossary Highlighting**: 
   - Uses the **`GlossaryHighlighter`** engine to perform exact match highlighting of clinical terminology.
   - Matches terms descending by character length (so compound terms like "abdominal pain" take priority over individual constituent words like "pain").
-  - Enforces **Unicode-safe letter boundary constraints** (`(?<!\p{L})` and `(?!\p{L})` with the `gui` flags) to support non-ASCII characters, German umlauts, and Vietnamese diacritics flawlessly, while preventing partial word corruption (e.g. matching "ear" inside "heart").
+  - Enforces **Unicode-safe letter boundary constraints`** (`(?<!\p{L})` and `(?!\p{L})` with the `gui` flags) to support non-ASCII characters, German umlauts, and Vietnamese diacritics flawlessly, while preventing partial word corruption (e.g. matching "ear" inside "heart").
   - Computes visible-only text lengths (omitting ANSI colors) to maintain perfect vertical column alignment in the Terminal CLI.
+  - Features expanded flat coverage for **colloquial medical terms** (e.g., `puffer`, `stiff neck`, `stuffy nose`, `trouble breathing`, `runny nose`) matching natural patient speech.
 - **Interactive Web Interface**:
   - Premium, modern frontend built with **glassmorphism aesthetics**.
   - Renders speech bubbles live and dynamically injects `<mark class="glossary-highlight">` tags around clinical terms.
@@ -28,6 +32,7 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
   - Dynamically loads, filters, and formats active glossary terms from `dictionary/glossary.json` into a token-efficient key-value list on connection start.
   - Assembles highly structured system prompts enforcing a professional clinical persona and strict compliance with Australian medical spelling and nomenclature standards (e.g., `paracetamol` over `acetaminophen`, `Emergency Department` over `ER`, and Commonwealth spellings like `paediatric`, `haematology`, `gastroenteritis`).
   - Primes both parallel Patient-to-Nurse and Nurse-to-Patient Gemini Live Translate channels as a `system_instruction` parameter in the initial connection config handshakes (`LiveConnectConfig`).
+  - Demands standard models fully preserve **emotional tone, urgency, and clinical empathy** in translated speech outputs.
 - **Polite & Idempotent Glossary Scraper**:
   - A robust terminology collector (`import_glossary.py`) designed to ingest clinical lists from HealthDirect Australia.
   - **Robots.txt Adherence**: Dynamically fetches and parses the target domain's `robots.txt` using standard `urllib.robotparser` to guarantee absolute crawler compliance.

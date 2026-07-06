@@ -26,15 +26,15 @@
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)**
 
 ## Phase 3: Web Server & Web UI RTL Support
-- [ ] **Task 3.1: Add Arabic preset to `web_server.py`**
+- [x] **Task 3.1: Add Arabic preset to `web_server.py`**
   - Map `"arabic"` preset to `samples/ar_asthma_session.wav`.
-- [ ] **Task 3.2: Update Web Front-End (`web/main.js` & `web/index.html`)**
+- [x] **Task 3.2: Update Web Front-End (`web/main.js` & `web/index.html`)**
   - Add the Arabic option to the UI dropdown list.
   - Implement language configuration mapping for `arabic` inside `web/main.js`.
-- [ ] **Task 3.3: Implement RTL/LTR Styling in Web UI**
+- [x] **Task 3.3: Implement RTL/LTR Styling in Web UI**
   - Update `web/style.css` and transcript rendering in `web/main.js` to dynamically add an `rtl` class or set CSS properties (`direction: rtl`, `text-align: right`) for the patient column when the selected language is Arabic.
   - Ensure font size and line height are optimized for Arabic script.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 3' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 3' (Protocol in workflow.md)**
 
 ## Phase 4: E2E Verification & Review
 - [ ] **Task 4.1: Run E2E test with Arabic Demo**

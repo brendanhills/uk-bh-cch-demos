@@ -5576,8 +5576,13 @@
     },
     {
       "english": "gp",
-      "translations": {},
-      "description": "",
+      "translations": {
+        "Spanish": "médico de cabecera",
+        "German": "Hausarzt",
+        "Vietnamese": "bác sĩ gia đình",
+        "Arabic": "طبيب عام"
+      },
+      "description": "General Practitioner / Family Doctor",
       "url": "https://www.healthdirect.gov.au/the-role-of-a-gp"
     },
     {
@@ -13808,6 +13813,17 @@
       "url": "https://www.healthdirect.gov.au/medicines/inhalers"
     },
     {
+      "english": "puffer",
+      "translations": {
+        "Spanish": "bomba",
+        "Vietnamese": "ống hít",
+        "German": "Inhalator",
+        "Arabic": "بخاخ الربو"
+      },
+      "description": "colloquial term for an asthma inhaler",
+      "url": "https://www.healthdirect.gov.au/medicines/inhalers"
+    },
+    {
       "english": "spacer",
       "translations": {
         "Spanish": "espaciador",
@@ -13817,6 +13833,116 @@
       },
       "description": "a chamber that attaches to an inhaler to help deliver medicine to the lungs more effectively",
       "url": "https://www.healthdirect.gov.au/medicines/spacers"
+    },
+    {
+      "english": "general practitioner",
+      "translations": {
+        "Spanish": "médico de cabecera",
+        "German": "Hausarzt",
+        "Vietnamese": "bác sĩ gia đình",
+        "Arabic": "طبيب عام"
+      },
+      "description": "A medical doctor who treats acute and chronic illnesses and provides preventive care and health education to patients.",
+      "url": "https://www.healthdirect.gov.au/the-role-of-a-gp"
+    },
+    {
+      "english": "emergency room",
+      "translations": {
+        "Spanish": "urgencias",
+        "German": "Notaufnahme",
+        "Vietnamese": "phòng cấp cứu",
+        "Arabic": "الطوارئ"
+      },
+      "description": "colloquial term for emergency department",
+      "url": "https://www.healthdirect.gov.au/emergency-departments"
+    },
+    {
+      "english": "er",
+      "translations": {
+        "Spanish": "urgencias",
+        "German": "Notaufnahme",
+        "Vietnamese": "phòng cấp cứu",
+        "Arabic": "الطوارئ"
+      },
+      "description": "Emergency Room abbreviation",
+      "url": "https://www.healthdirect.gov.au/emergency-departments"
+    },
+    {
+      "english": "ear infection",
+      "translations": {
+        "Spanish": "dolor de oído",
+        "German": "Ohrenschmerzen",
+        "Vietnamese": "đau tai",
+        "Arabic": "التهاب الأذن"
+      },
+      "description": "infection of the ear, commonly causing pain",
+      "url": "https://www.healthdirect.gov.au/earache"
+    },
+    {
+      "english": "stomach flu",
+      "translations": {
+        "Spanish": "gastroenteritis",
+        "German": "Magen-Darm-Grippe",
+        "Vietnamese": "đau bụng tiêu chảy",
+        "Arabic": "نزلات البرد في المعدة"
+      },
+      "description": "colloquial term for gastroenteritis",
+      "url": "https://www.healthdirect.gov.au/gastroenteritis"
+    },
+    {
+      "english": "stiff neck",
+      "translations": {
+        "German": "steifer Nacken",
+        "Spanish": "rigidez de nuca",
+        "Vietnamese": "cứng cổ",
+        "Arabic": "صلابة الرقبة"
+      },
+      "description": "colloquial term for neck stiffness",
+      "url": "https://www.healthdirect.gov.au/stiff-neck"
+    },
+    {
+      "english": "light sensitivity",
+      "translations": {
+        "German": "Lichtempfindlichkeit",
+        "Spanish": "sensibilidad a la luz",
+        "Vietnamese": "nhạy cảm với ánh sáng",
+        "Arabic": "حساسية الضوء"
+      },
+      "description": "colloquial term for sensitivity to light / photophobia",
+      "url": "https://www.healthdirect.gov.au/photophobia"
+    },
+    {
+      "english": "stuffy nose",
+      "translations": {
+        "German": "verstopfte Nase",
+        "Spanish": "nariz tapada",
+        "Vietnamese": "ngạt mũi",
+        "Arabic": "انسداد الأنف"
+      },
+      "description": "colloquial term for nasal congestion",
+      "url": "https://www.healthdirect.gov.au/nasal-congestion"
+    },
+    {
+      "english": "trouble breathing",
+      "translations": {
+        "German": "Atemnot",
+        "Spanish": "dificultad para respirar",
+        "Vietnamese": "khó thở",
+        "Arabic": "صعوبة في التنفس"
+      },
+      "description": "colloquial term for shortness of breath / dyspnea",
+      "url": "https://www.healthdirect.gov.au/shortness-of-breath"
+    },
+    {
+      "english": "runny nose",
+      "translations": {
+        "German": "laufende Nase",
+        "Spanish": "goteo nasal",
+        "Vietnamese": "sổ mũi",
+        "Arabic": "سيلان الأنف"
+      },
+      "description": "excess nasal drainage, commonly colloquial for rhinorrhea",
+      "url": "https://www.healthdirect.gov.au/runny-nose"
     }
   ]
 }

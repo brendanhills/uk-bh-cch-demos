@@ -46,6 +46,12 @@ const PRESET_UI_METADATA = {
         lang: "Vietnamese (VI)",
         shortLang: "Vietnamese",
         avatar: "👵"
+    },
+    "arabic": {
+        name: "Ahmad",
+        lang: "Arabic (AR)",
+        shortLang: "Arabic",
+        avatar: "🧔"
     }
 };
 
@@ -521,6 +527,9 @@ function createSpeechBubble(speaker) {
     // Original text segment
     const originalSpan = document.createElement("div");
     originalSpan.classList.add("original-text", "interim");
+    if (!isNurse && presetSelector.value === "arabic") {
+        originalSpan.classList.add("rtl-text");
+    }
     originalSpan.innerText = "";
     bodyDiv.appendChild(originalSpan);
     
@@ -591,6 +600,9 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
         if (!transSpan) {
             transSpan = document.createElement("div");
             transSpan.classList.add("translation-text");
+            if (bubbleSpeaker === "nurse" && presetSelector.value === "arabic") {
+                transSpan.classList.add("rtl-text");
+            }
             bodyDiv.appendChild(transSpan);
         }
         let raw = transSpan.getAttribute("data-raw") || "";

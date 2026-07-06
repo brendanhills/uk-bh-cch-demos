@@ -930,4 +930,14 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     }
 }
 
+/* RTL Support for Arabic Script */
+.rtl-text {
+    direction: rtl;
+    text-align: right;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
 

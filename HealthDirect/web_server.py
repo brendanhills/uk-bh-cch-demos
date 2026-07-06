@@ -68,6 +68,12 @@ PRESETS = {
         "code": "vi",
         "language": "Vietnamese",
         "gender": "female"
+    },
+    "arabic": {
+        "file": "samples/ar_asthma_session.wav",
+        "code": "ar",
+        "language": "Arabic",
+        "gender": "male"
     }
 }
 
@@ -236,7 +242,12 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             "Do NOT add any surrounding text, explanations, greetings, or commentary. "
             "Do NOT say 'Please consult a doctor', 'This is not medical advice' or any other medical safety disclaimers. "
             "Output ONLY the translated words. If the speaker says 'Ich habe etwas Fieber', you must translate it "
-            "directly and cleanly, respecting the active bilingual glossary."
+            "directly and cleanly, respecting the active bilingual glossary.\n"
+            "TONE, URGENCY & EMPATHY PRESERVATION:\n"
+            "While remaining a passive and transparent interpreter, you MUST fully match and preserve the speaker's "
+            "tone, urgency, emotional intensity, clinical empathy, and pace. If the speaker conveys panic, pain, "
+            "or distress, your translated output voice delivery and phrasing must accurately reflect that level of "
+            "urgency and empathy without sounding mechanical or robotic."
         )
     
     if direction == "p_to_n":
@@ -459,7 +470,11 @@ async def websocket_endpoint(websocket: WebSocket):
             patient_translation_complete = asyncio.Event()
             nurse_translation_complete = asyncio.Event()
             manual_next_event = asyncio.Event()
-            stream_state = {"is_paused": False}
+            stream_state = {
+                "is_paused": False,
+                "last_audio_p_to_n": 0.0,
+                "last_audio_n_to_p": 0.0
+            }
             convo_state = {
                 "patient_orig": "",
                 "patient_trans": "",
@@ -477,6 +492,7 @@ async def websocket_endpoint(websocket: WebSocket):
                             if server_content.model_turn:
                                 for part in server_content.model_turn.parts:
                                     if part.inline_data:
+                                        stream_state["last_audio_p_to_n"] = asyncio.get_running_loop().time()
                                         encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
                                         await websocket.send_json({
                                             "type": "translated_audio",
@@ -571,6 +587,7 @@ async def websocket_endpoint(websocket: WebSocket):
                             if server_content.model_turn:
                                 for part in server_content.model_turn.parts:
                                     if part.inline_data:
+                                        stream_state["last_audio_n_to_p"] = asyncio.get_running_loop().time()
                                         encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
                                         await websocket.send_json({
                                             "type": "translated_audio",
@@ -774,6 +791,11 @@ async def websocket_endpoint(websocket: WebSocket):
                                 # Auto Pacing mode
                                 event_to_wait = patient_translation_complete if speaker_finished == "patient" else nurse_translation_complete
                                 
+                                # Reset the audio envelope tracker for the active stream
+                                audio_tracker_key = "last_audio_p_to_n" if speaker_finished == "patient" else "last_audio_n_to_p"
+                                stream_state[audio_tracker_key] = 0.0
+                                hold_start_time = asyncio.get_running_loop().time()
+                                
                                 # Fix the race condition: Check if the translation is already complete!
                                 if event_to_wait.is_set():
                                     logger.info(f"Gemini already completed translation for {speaker_finished} before entering hold state.")
@@ -787,6 +809,21 @@ async def websocket_endpoint(websocket: WebSocket):
                                             logger.info(f"Received turn_complete from Gemini for {speaker_finished} after {i * 0.2:.1f}s. Exiting hold loop.")
                                             break
                                             
+                                        # Audio power envelope/activity fallback monitoring
+                                        now = asyncio.get_running_loop().time()
+                                        last_audio_time = stream_state[audio_tracker_key]
+                                        
+                                        if last_audio_time > 0.0:
+                                            # Audio was received, check if it has ceased for more than 1.5 seconds
+                                            if now - last_audio_time > 1.5:
+                                                logger.info(f"Audio envelope detection: Translation audio ceased for {now - last_audio_time:.1f}s. Assuming turn complete.")
+                                                break
+                                        else:
+                                            # No audio received yet. Timeout if we have waited more than 4.0 seconds for first audio
+                                            if now - hold_start_time > 4.0:
+                                                logger.info(f"Audio envelope detection: No translation audio received within 4.0s startup window. Assuming turn complete or silent.")
+                                                break
+                                                
                                         # Keep Gemini sessions alive and progressing with silence
                                         await session_p_to_n.send_realtime_input(
                                             audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")

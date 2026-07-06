@@ -78,3 +78,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Web Server Modularization**
   *Link: [./tracks/modularize_web_server_20260706/](./tracks/modularize_web_server_20260706/)*
+
+---
+
+- [ ] **Track: Glossary Synonyms & Formal/Informal Translation Mappings**
+  *Link: [./tracks/glossary_synonyms_20260706/](./tracks/glossary_synonyms_20260706/)*

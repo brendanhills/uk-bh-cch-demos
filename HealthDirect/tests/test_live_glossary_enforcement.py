@@ -28,6 +28,9 @@ def test_assemble_system_instructions_passive_constraint_injection():
     assert "silent interpreter" in prompt_flash
     assert "You must NOT engage in conversation" in prompt_flash
     assert "Do NOT say 'Please consult a doctor'" in prompt_flash
+    assert "TONE, URGENCY & EMPATHY PRESERVATION" in prompt_flash
+    assert "empathy" in prompt_flash.lower()
+    assert "urgency" in prompt_flash.lower()
     
     # 2. is_flash_live = False
     prompt_translate = assemble_system_instructions("p_to_n", "German", glossary_str, is_flash_live=False)
