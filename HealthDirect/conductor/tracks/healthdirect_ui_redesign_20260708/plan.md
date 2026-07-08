@@ -1,11 +1,11 @@
 # Plan: HealthDirect UI Redesign (`healthdirect_ui_redesign`)
 
 ## Phase 1: CSS Architecture & Global Design Tokens (Theme Shift)
-- [ ] Task: Shift variables to high-fidelity Light Mode and configure brand color systems
-    - [ ] Override global CSS variables in `:root` with light-mode equivalents (backgrounds, text-primary, text-secondary)
-    - [ ] Set brand colors: Navy (`#0c426e`), Coral-Orange (`#f05a28`), and Accent Teal (`#00a29a`)
-    - [ ] Redefine button styling and state transitions (hover, active, disabled) to look flat, modern, and clean
-    - [ ] Update background color and general layout container rules to look cohesive
+- [x] Task: Shift variables to high-fidelity Light Mode and configure brand color systems [3030f8a]
+    - [x] Override global CSS variables in `:root` with light-mode equivalents (backgrounds, text-primary, text-secondary)
+    - [x] Set brand colors: Navy (`#0c426e`), Coral-Orange (`#f05a28`), and Accent Teal (`#00a29a`)
+    - [x] Redefine button styling and state transitions (hover, active, disabled) to look flat, modern, and clean
+    - [x] Update background color and general layout container rules to look cohesive
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: CSS Architecture & Global Design Tokens' (Protocol in workflow.md)
 
 ## Phase 2: Mock Video Call Layout & Floating Overlays
