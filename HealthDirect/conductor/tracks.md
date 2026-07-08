@@ -83,3 +83,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Glossary Synonyms & Formal/Informal Translation Mappings**
   *Link: [./tracks/glossary_synonyms_20260706/](./tracks/glossary_synonyms_20260706/)*
+
+---
+
+- [ ] **Track: Contextual Clinical Entity Highlighting with Gemini NLU**
+  *Link: [./tracks/gemini_entity_matching_20260708/](./tracks/gemini_entity_matching_20260708/)*
+
