@@ -89,3 +89,12 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Contextual Clinical Entity Highlighting with Gemini NLU**
   *Link: [./tracks/gemini_entity_matching_20260708/](./tracks/gemini_entity_matching_20260708/)*
 
+---
+
+- [ ] **Track: Gemini 2.5 Unary/Streaming Integration & Evaluation**
+  *Link: [./tracks/gemini_25_integration_20260708/](./tracks/gemini_25_integration_20260708/)*
+
+---
+
+- [ ] **Track: HealthDirect UI Redesign**
+  *Link: [./tracks/healthdirect_ui_redesign_20260708/](./tracks/healthdirect_ui_redesign_20260708/)*

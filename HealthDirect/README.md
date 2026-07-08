@@ -28,15 +28,16 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
   - Leverages a custom **`data-raw` attribute string stream pattern** to run highlights instantly in real-time on every incoming audio text chunk without HTML tag pollution or streaming timing race conditions.
   - Leverages animated, sliding tooltips on hover to display medical details, descriptions, and translation mappings case-insensitively.
   - Includes an **on-demand "Reload Glossary" button** in the sidebar to refresh glossary terms from disk instantly without reloading the page or restarting the FastAPI web server.
+  - **Upcoming High-Fidelity UI Redesign**: Planned under Conductor track `healthdirect_ui_redesign_20260708` to bring the web application's aesthetics, colors, and wide-aspect video-call layout in perfect parity with HealthDirect's official design system (Light Mode, Navy/Coral-Orange/Teal accents, and interactive "Video Call Apps" sidebar layout).
 - **Dynamic WebSocket Connection Priming & System Instructions**:
-  - Dynamically loads, filters, and formats active glossary terms from `dictionary/glossary.json` into a token-efficient key-value list on connection start.
+  - Dynamically loads, filters, and formats active glossary terms from `glossary/glossary.json` into a token-efficient key-value list on connection start.
   - Assembles highly structured system prompts enforcing a professional clinical persona and strict compliance with Australian medical spelling and nomenclature standards (e.g., `paracetamol` over `acetaminophen`, `Emergency Department` over `ER`, and Commonwealth spellings like `paediatric`, `haematology`, `gastroenteritis`).
   - Primes both parallel Patient-to-Nurse and Nurse-to-Patient Gemini Live Translate channels as a `system_instruction` parameter in the initial connection config handshakes (`LiveConnectConfig`).
   - Demands standard models fully preserve **emotional tone, urgency, and clinical empathy** in translated speech outputs.
 - **Polite & Idempotent Glossary Scraper**:
   - A robust terminology collector (`import_glossary.py`) designed to ingest clinical lists from HealthDirect Australia.
   - **Robots.txt Adherence**: Dynamically fetches and parses the target domain's `robots.txt` using standard `urllib.robotparser` to guarantee absolute crawler compliance.
-  - **Idempotency & Resilience**: Progressively persists successfully crawled subpages into `dictionary/scrape_state.json`. If a run is interrupted or times out, subsequent runs skip completed URLs, making crawls resumable.
+  - **Idempotency & Resilience**: Progressively persists successfully crawled subpages into `glossary/scrape_state.json`. If a run is interrupted or times out, subsequent runs skip completed URLs, making crawls resumable.
   - **Politeness Delay**: Respects target hosts by applying a user-configurable sleep delay (`--delay` / `-d`, defaulting to `1.0s`) between sequential requests.
 
 ---
@@ -48,12 +49,13 @@ The codebase is organized as follows:
 ```text
 ├── glossary_highlighter.py   # Core match-and-highlight engine (CLI and HTML outputs)
 ├── live_translate_demo.py     # High-fidelity double-column Terminal CLI interpreter simulator
-├── web_server.py             # FastAPI backend coordinating audio streams, holds, and glossary APIs
-├── web/                      # Glassmorphic web client (main.js, style.css, index.html)
+├── demo/                     # Dedicated web server & front-end assets package
+│   ├── web_server.py         # FastAPI backend serving endpoints and routing audio channels
+│   └── web/                  # Glassmorphic call monitor dashboard (main.js, style.css, index.html)
 ├── import_glossary.py        # Polite, idempotent glossary scraper & pre-translation pipeline
 ├── generate_bilingual_audio.py# Google Cloud TTS script to generate dual-channel stereo test audio
 ├── samples/                  # Stereo audio presets (.wav) for German, Spanish, and Vietnamese
-├── dictionary/               # Local JSON database (`glossary.json`) and CSV exports
+├── glossary/                 # Local JSON database (`glossary.json`) and CSV exports
 └── tests/                    # Robust test suite covering highlighter, server endpoints, and scraping state
 ```
 
@@ -118,7 +120,7 @@ To support customized dictionaries and speech adaptations, the `import_glossary.
 | `--scrape` | `-s` | `str` | `None` | The HealthDirect directory URL to parse and crawl. |
 | `--delay` | `-d` | `float` | `1.0` | Politeness sleep delay in seconds between sequential HTTP requests. |
 | `--force` | `-f` | `flag`| `False` | Bypasses `scrape_state.json` and forces a fresh scrape. |
-| `--state-file`| - | `str` | `dictionary/scrape_state.json` | Path to the scraper's completed subpage cache file. |
+| `--state-file`| - | `str` | `glossary/scrape_state.json` | Path to the scraper's completed subpage cache file. |
 | `--max-letters`| `--max` / `-m`| `int` | `None` | Limit directory scraping to a random sample of alphabetical letters. |
 | `--limit-terms`| `--limit` / `-l`| `int` | `None` | Max terms to ingest from the crawl. |
 | `--ground` | `-g` | `flag`| `False` | Trigger automated translation validation & Google Search grounding. |
