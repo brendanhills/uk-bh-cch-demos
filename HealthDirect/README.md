@@ -96,7 +96,7 @@ uv run live_translate_demo.py --preset vietnamese
 ### 2. Premium Interactive Web UI
 Launch the local web server to run the interpreter inside an interactive browser UI:
 ```bash
-uv run python web_server.py
+PYTHONPATH=. uv run python demo/web_server.py
 ```
 1. Open `http://localhost:8000` in your web browser.
 2. Select a language preset (German, Spanish, or Vietnamese) from the dropdown.

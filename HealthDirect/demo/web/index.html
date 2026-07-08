@@ -38,16 +38,23 @@
                             <option value="gemini-3.1-flash-live-preview">Gemini 3.1 (Flash Live + Glossary)</option>
                         </select>
                     </div>
+                </div>
+                <div class="control-group pacing-sliders">
                     <div class="form-group">
-                        <label for="pacing-selector">Pacing:</label>
-                        <select id="pacing-selector">
-                            <option value="auto">⚡ Auto-Paced</option>
-                            <option value="manual">🔘 Manual (Next)</option>
-                        </select>
+                        <label for="pacing-turn-timeout" title="Maximum length of a single speaker speech turn">Turn Timeout: <span class="slider-val" id="val-turn-timeout">15.0s</span></label>
+                        <input type="range" id="pacing-turn-timeout" min="5" max="30" step="0.5" value="15.0" class="pacing-slider-input">
                     </div>
-                    <div class="form-group" id="pause-group">
-                        <label for="pause-input">Pause (s):</label>
-                        <input type="number" id="pause-input" min="0" max="60" value="0" style="width: 60px;">
+                    <div class="form-group">
+                        <label for="pacing-ceased-audio" title="Duration of silence before speech turn is considered complete">Audio Ceased: <span class="slider-val" id="val-ceased-audio">4.5s</span></label>
+                        <input type="range" id="pacing-ceased-audio" min="1" max="10" step="0.1" value="4.5" class="pacing-slider-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="pacing-startup-audio" title="Initial timeout waiting for the first word of speech">Audio Startup: <span class="slider-val" id="val-startup-audio">15.0s</span></label>
+                        <input type="range" id="pacing-startup-audio" min="2" max="15" step="0.5" value="15.0" class="pacing-slider-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="pacing-additional-pause" title="Additional pause duration between turns">Transition Pause: <span class="slider-val" id="val-additional-pause">2.0s</span></label>
+                        <input type="range" id="pacing-additional-pause" min="0" max="5" step="0.1" value="2.0" class="pacing-slider-input">
                     </div>
                 </div>
                 <div class="control-group actions">
@@ -55,7 +62,6 @@
                     <button id="pause-btn" class="btn btn-warning" disabled>⏸️ Pause Call</button>
                     <button id="end-btn" class="btn btn-danger" disabled>End Call</button>
                     <button id="reset-btn" class="btn btn-secondary">Reset</button>
-                    <button id="next-btn" class="btn btn-accent" disabled>Next Turn</button>
                 </div>
             </div>
         </header>
@@ -63,32 +69,12 @@
         <!-- MAIN LAYOUT -->
         <main class="main-content">
             
-            <!-- MONITOR BOARD: Nurse Card on Left, Patient Card on Right -->
+
+
+            <!-- MONITOR BOARD: Patient Card on Left, Nurse Card on Right -->
             <div class="monitor-board">
                 
-                <!-- CLINICIAN / NURSE CARD (LEFT) -->
-                <div class="participant-card" id="nurse-card">
-                    <div class="card-header">
-                        <div class="avatar nurse-avatar">👩‍⚕️</div>
-                        <div class="participant-info">
-                            <h3>Nurse Sarah</h3>
-                            <span class="language-tag">English (AU)</span>
-                        </div>
-                    </div>
-                    
-                    <div class="status-panel">
-                        <span class="status-badge" id="nurse-status">Idle</span>
-                        <div class="waveform" id="nurse-waveform">
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PATIENT CARD (RIGHT) -->
+                <!-- PATIENT CARD (LEFT) -->
                 <div class="participant-card" id="patient-card">
                     <div class="card-header">
                         <div class="avatar patient-avatar">📞</div>
@@ -109,44 +95,29 @@
                         </div>
                     </div>
                 </div>
-                
-            </div>
 
-            <!-- WORKSPACE LAYOUT: CHAT & GLOSSARY -->
-            <div class="workspace-layout">
-                <!-- CHRONOLOGICAL CONVERSATION FEED -->
-                <div class="chat-container">
-                    <div class="chat-header">
-                        <span class="title">Live Conversation Transcript</span>
-                        <span class="connection-status" id="connection-text">Not Connected</span>
+                <!-- CLINICIAN / NURSE CARD (RIGHT) -->
+                <div class="participant-card" id="nurse-card">
+                    <div class="card-header">
+                        <div class="avatar nurse-avatar">👩‍⚕️</div>
+                        <div class="participant-info">
+                            <h3>Nurse Sarah</h3>
+                            <span class="language-tag">English (AU)</span>
+                        </div>
                     </div>
                     
-                    <div class="chat-feed" id="chat-feed">
-                        <div class="system-message" id="welcome-message">
-                            Select a consultation scenario above and click "Start Call" to begin the real-time AI interpreter demo.
+                    <div class="status-panel">
+                        <span class="status-badge" id="nurse-status">Idle</span>
+                        <div class="waveform" id="nurse-waveform">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
                         </div>
                     </div>
                 </div>
-
-                <!-- CLINICAL GLOSSARY SIDEBAR -->
-                <div class="glossary-sidebar">
-                    <div class="sidebar-header">
-                        <div class="sidebar-header-title-container">
-                            <span class="title">Clinical Glossary</span>
-                            <button id="reload-glossary-btn" class="btn-icon-reload" title="Reload Glossary from Disk">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="reload-icon">
-                                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <span class="count-badge" id="glossary-count">0 Terms</span>
-                    </div>
-                    <div class="glossary-list" id="glossary-list">
-                        <div class="glossary-empty">
-                            No glossary terms loaded.
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
 
@@ -178,6 +149,75 @@
                     </span>
                 </div>
             </div>
+
+
+            <!-- WORKSPACE LAYOUT: CHAT & GLOSSARY -->
+            <div class="workspace-layout">
+                <!-- CHRONOLOGICAL CONVERSATION FEED -->
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <span class="title">Live Conversation Transcript</span>
+                        <span class="connection-status" id="connection-text">Not Connected</span>
+                    </div>
+                    
+                    <div class="chat-feed" id="chat-feed">
+                        <div class="system-message" id="welcome-message">
+                            Select a consultation scenario above and click "Start Call" to begin the real-time AI interpreter demo.
+                        </div>
+                    </div>
+                    
+                    <!-- ENCOUNTERED MEDICAL REFERENCES PANEL -->
+                    <div class="encountered-references-panel" id="encountered-references-panel">
+                        <div class="panel-header">
+                            <span class="title">Encountered Terms & Reference Sources</span>
+                            <span class="count-badge" id="references-count">0 Links</span>
+                        </div>
+                        <div class="references-list" id="references-list">
+                            <div class="references-empty">No clinical terms encountered in this conversation yet.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLINICAL GLOSSARY SIDEBAR -->
+                <div class="glossary-sidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-header-title-container">
+                            <span class="title">Clinical Glossary</span>
+                            <button id="reload-glossary-btn" class="btn-icon-reload" title="Reload Glossary from Disk">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="reload-icon">
+                                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="count-badge" id="glossary-count">0 Terms</span>
+                    </div>
+                    
+                    <!-- SEARCH & FILTER -->
+                    <div class="sidebar-search-filter">
+                        <div class="search-input-wrapper">
+                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="glossary-search" placeholder="Search English, translation or description..." autocomplete="off">
+                            <button id="clear-search-btn" class="clear-search-btn" title="Clear search" style="display: none;">&times;</button>
+                        </div>
+                        <div class="filter-options">
+                            <button class="filter-chip active" data-filter="all">All</button>
+                            <button class="filter-chip" data-filter="verified">Verified Source</button>
+                            <button class="filter-chip" data-filter="desc">Has Description</button>
+                        </div>
+                    </div>
+
+                    <div class="glossary-list" id="glossary-list">
+                        <div class="glossary-empty">
+                            No glossary terms loaded.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
 
         </main>
     </div>

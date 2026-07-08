@@ -1,0 +1,31 @@
+2026-07-08 18:25:06,523 [INFO] Client connected to interpreter WebSocket.
+2026-07-08 18:25:06,602 [INFO] Received starting handshake payload from client: {'action': 'start', 'preset': 'german'}
+2026-07-08 18:25:06,602 [INFO] Starting real-time interpretation call. Language: German (de) File: samples/de_fever_session.wav
+2026-07-08 18:25:06,603 [INFO] Loading and processing audio file: samples/de_fever_session.wav
+2026-07-08 18:25:06,641 [INFO] Using model: gemini-3.5-live-translate-preview (Glossary Enforced: False)
+2026-07-08 18:25:06,656 [INFO] Connecting to dual live sessions using model: gemini-3.5-live-translate-preview
+2026-07-08 18:25:08,172 [INFO] Parallel Gemini translation sessions successfully established.
+2026-07-08 18:25:09,181 [INFO] Detected Nurse speech starting in raw file.
+2026-07-08 18:25:13,411 [INFO] [TRANSCRIPT ORIGINAL][NURSE] Hello, thank you for calling Health (final=None)
+2026-07-08 18:25:13,645 [INFO] [TRANSCRIPT TRANSLATED][NURSE -> PATIENT] Hallo, danke,
+2026-07-08 18:25:14,016 [INFO] [TRANSCRIPT ORIGINAL][NURSE]  Direct. My (final=None)
+2026-07-08 18:25:14,233 [INFO] Client disconnected from WebSocket.
+2026-07-08 18:25:14,235 [INFO] Cleaned up and shut down translation session tasks.
+2026-07-08 18:25:14,255 [WARNING] Glossary file not found at glossary/glossary.json.
+2026-07-08 18:25:14,257 [ERROR] Error loading glossary for formatting: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+2026-07-08 18:25:14,264 [INFO] Client connected to interpreter WebSocket.
+2026-07-08 18:25:14,265 [INFO] Received starting handshake payload from client: {'action': 'start', 'preset': 'german', 'pacing': 'auto'}
+2026-07-08 18:25:14,266 [INFO] Starting real-time interpretation call. Language: German (de) File: samples/de_fever_session.wav
+2026-07-08 18:25:14,266 [INFO] Using model: gemini-3.5-live-translate-preview (Glossary Enforced: False)
+2026-07-08 18:25:14,278 [INFO] Connecting to dual live sessions using model: gemini-3.5-live-translate-preview
+2026-07-08 18:25:14,279 [INFO] Parallel Gemini translation sessions successfully established.
+2026-07-08 18:25:14,282 [INFO] Client disconnected from WebSocket.
+2026-07-08 18:25:14,283 [INFO] Cleaned up and shut down translation session tasks.
+2026-07-08 18:25:28,232 [INFO] Client connected to interpreter WebSocket.
+2026-07-08 18:25:28,234 [INFO] Received starting handshake payload from client: {'action': 'start', 'preset': 'german', 'pacing': 'auto', 'model': 'gemini-3.1-flash-live-preview'}
+2026-07-08 18:25:28,234 [INFO] Starting real-time interpretation call. Language: German (de) File: samples/de_fever_session.wav
+2026-07-08 18:25:28,234 [INFO] Using model: gemini-3.1-flash-live-preview (Glossary Enforced: True)
+2026-07-08 18:25:28,249 [INFO] Connecting to dual live sessions using model: gemini-3.1-flash-live-preview
+2026-07-08 18:25:28,250 [INFO] Parallel Gemini translation sessions successfully established.
+2026-07-08 18:25:28,251 [INFO] Client disconnected from WebSocket.
+2026-07-08 18:25:28,252 [INFO] Cleaned up and shut down translation session tasks.

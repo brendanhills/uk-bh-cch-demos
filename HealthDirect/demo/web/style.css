@@ -140,6 +140,110 @@ body {
     flex-wrap: wrap;
 }
 
+
+/* Pacing Sliders Panel inside Header Controls */
+.pacing-sliders {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 6px 16px;
+    backdrop-filter: blur(8px);
+}
+
+.pacing-sliders .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.pacing-sliders .form-group label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 125px;
+    user-select: none;
+    cursor: help;
+}
+
+.pacing-sliders .slider-val {
+    font-family: var(--font-mono);
+    color: var(--primary-emerald);
+    font-weight: 600;
+}
+
+/* Elegant, thin range slider */
+.pacing-slider-input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 105px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 9999px;
+    outline: none;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.pacing-slider-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+.pacing-slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    border: 1.5px solid var(--primary-emerald);
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--primary-emerald-glow);
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, border-color 0.2s;
+}
+
+.pacing-slider-input:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+    background: var(--text-muted);
+    border-color: var(--text-muted);
+    box-shadow: none;
+}
+
+.pacing-slider-input::-moz-range-thumb {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    border: 1.5px solid var(--primary-emerald);
+    cursor: pointer;
+    box-shadow: 0 0 6px var(--primary-emerald-glow);
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pacing-slider-input:disabled::-moz-range-thumb {
+    cursor: not-allowed;
+    background: var(--text-muted);
+    border-color: var(--text-muted);
+    box-shadow: none;
+}
+
+.pacing-slider-input::-webkit-slider-thumb:hover:not(:disabled) {
+    transform: scale(1.3);
+    background: #ffffff;
+}
+
+.pacing-slider-input::-moz-range-thumb:hover:not(:disabled) {
+    transform: scale(1.3);
+    background: #ffffff;
+}
+
 .form-group {
     display: flex;
     align-items: center;
@@ -440,11 +544,11 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 }
 
 .nurse-turn {
-    align-self: flex-start;
+    align-self: flex-end;
 }
 
 .patient-turn {
-    align-self: flex-end;
+    align-self: flex-start;
 }
 
 .bubble-meta {
@@ -455,12 +559,13 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 }
 
 .nurse-turn .bubble-meta {
-    padding-left: 12px;
+    align-self: flex-end;
+    padding-right: 12px;
 }
 
 .patient-turn .bubble-meta {
-    align-self: flex-end;
-    padding-right: 12px;
+    align-self: flex-start;
+    padding-left: 12px;
 }
 
 .bubble-body {
@@ -475,7 +580,8 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 .nurse-turn .bubble-body {
     background-color: #27272a; /* Zinc-800 */
     border: 1px solid rgba(255, 255, 255, 0.03);
-    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 18px;
     color: var(--text-primary);
 }
 
@@ -483,7 +589,8 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 .patient-turn .bubble-body {
     background-color: #064e3b; /* Emerald-900 */
     border: 1px solid rgba(16, 185, 129, 0.1);
-    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 18px;
     color: #f0fdf4;
 }
 
@@ -822,6 +929,114 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     flex: 1;
 }
 
+/* Sidebar Search & Filter Section */
+.sidebar-search-filter {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(24, 24, 27, 0.4); /* Slight subtle depth contrast */
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 10px;
+    width: 14px;
+    height: 14px;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 8px 30px 8px 32px;
+    background-color: rgba(9, 9, 11, 0.6); /* Glassmorphic darker zinc input */
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--primary-blue);
+    background-color: rgba(9, 9, 11, 0.9);
+    box-shadow: 0 0 0 2px var(--primary-blue-glow);
+}
+
+.search-input-wrapper .clear-search-btn {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+
+.search-input-wrapper .clear-search-btn:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.filter-options {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 9999px;
+    padding: 4px 10px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-chip:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.filter-chip.active {
+    color: #38bdf8; /* Match our glossary active accents */
+    background-color: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.05);
+}
+
+/* In-list Text Highlighting */
+.search-highlight {
+    background-color: rgba(245, 158, 11, 0.15); /* Warm amber highlight */
+    color: #fbbf24; /* Amber-400 */
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 500;
+    box-shadow: 0 0 4px rgba(245, 158, 11, 0.1);
+}
+
 .glossary-empty {
     text-align: center;
     color: var(--text-muted);
@@ -938,6 +1153,140 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     line-height: 1.6;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* ==========================================================================
+   CLINICAL GROUNDING & REFERENCES PANEL STYLING
+   ========================================================================== */
+
+/* Sidebar Grounding Source styling */
+.item-grounding {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-color);
+    font-size: 0.7rem;
+}
+
+.grounding-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.grounding-link {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+}
+
+.grounding-link:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+}
+
+.grounding-snippet {
+    margin-top: 4px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.snippet-inline-link {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.snippet-inline-link:hover {
+    text-decoration: underline;
+}
+
+/* Encountered Medical References Panel at bottom of Chat */
+.encountered-references-panel {
+    background: rgba(24, 24, 27, 0.85); /* Slightly transparent dark card */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-color);
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 120px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.encountered-references-panel .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.encountered-references-panel .panel-header .title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+.encountered-references-panel .panel-header .count-badge {
+    background-color: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 9999px;
+}
+
+.encountered-references-panel .references-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    overflow-y: auto;
+    padding-bottom: 4px;
+}
+
+.encountered-references-panel .references-empty {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 4px 0;
+}
+
+/* Interactive Reference Pills */
+.reference-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(56, 189, 248, 0.05);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.reference-pill:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    color: #7dd3fc;
+}
+
+.reference-pill:active {
+    transform: translateY(0);
+}
+
 
 
 

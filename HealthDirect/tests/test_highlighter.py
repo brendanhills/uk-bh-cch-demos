@@ -99,3 +99,11 @@ def test_highlighter_length_sorting(temp_glossary):
     highlighted = highlighter.highlight_cli(text, "english")
     assert "\x1b[1;32mabdominal aortic aneurysm\x1b[0m" in highlighted
     assert "\x1b[1;32mabdominal\x1b[0m" not in highlighted  # compound matched, not single word
+
+def test_highlighter_fuzzy_matching(temp_glossary):
+    highlighter = GlossaryHighlighter(temp_glossary)
+    # Vietnamese entry "viêm tai giữa" should match fuzzy "viêm tai rất giữa" or "viêm tai hơi giữa"
+    text = "Cháu bị viêm tai rất giữa và đau."
+    highlighted = highlighter.highlight_cli(text, "Vietnamese")
+    assert "\x1b[1;35mviêm tai rất giữa\x1b[0m" in highlighted
+

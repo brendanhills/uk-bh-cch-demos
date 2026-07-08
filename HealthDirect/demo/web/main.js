@@ -4,6 +4,9 @@
 let socket = null;
 let audioCtx = null;
 let glossaryTerms = [];
+let glossarySearchQuery = "";
+let glossaryActiveFilter = "all";
+let encounteredTerms = new Set();
 
 // Gain and Panner Nodes for Foreign and English channels (Immersive Stereo separation)
 let gainForeign = null;
@@ -59,13 +62,21 @@ const PRESET_UI_METADATA = {
 const presetSelector = document.getElementById("preset-selector");
 const modelSelector = document.getElementById("model-selector");
 const modelBadge = document.getElementById("model-badge");
-const pacingSelector = document.getElementById("pacing-selector");
-const pauseInput = document.getElementById("pause-input");
+// Pacing Sliders UI Elements
+const pacingTurnTimeout = document.getElementById("pacing-turn-timeout");
+const pacingCeasedAudio = document.getElementById("pacing-ceased-audio");
+const pacingStartupAudio = document.getElementById("pacing-startup-audio");
+const pacingAdditionalPause = document.getElementById("pacing-additional-pause");
+
+const valTurnTimeout = document.getElementById("val-turn-timeout");
+const valCeasedAudio = document.getElementById("val-ceased-audio");
+const valStartupAudio = document.getElementById("val-startup-audio");
+const valAdditionalPause = document.getElementById("val-additional-pause");
+
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
 const endBtn = document.getElementById("end-btn");
 const resetBtn = document.getElementById("reset-btn");
-const nextBtn = document.getElementById("next-btn");
 const headerPulse = document.getElementById("header-pulse");
 
 let isCallPaused = false;
@@ -91,10 +102,107 @@ const tickRight = document.getElementById("tick-right");
 
 // Clinical Glossary Sidebar Elements
 const reloadGlossaryBtn = document.getElementById("reload-glossary-btn");
+const glossarySearchInput = document.getElementById("glossary-search");
+const clearSearchBtn = document.getElementById("clear-search-btn");
+const filterChips = document.querySelectorAll(".filter-chip");
 
 /* ==========================================================================
    CLINICAL GLOSSARY INTEGRATION
    ========================================================================== */
+function formatSnippet(text) {
+    if (!text) return "";
+    // Escape HTML to prevent XSS
+    let escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+        
+    // Bold: **text**
+    escaped = escaped.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    
+    // Links: [text](url)
+    escaped = escaped.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="snippet-inline-link">$1</a>');
+    
+    return escaped;
+}
+
+function getTermUrl(entry, targetLang) {
+    if (!entry) return "";
+    
+    // 1. Language-specific grounding URL
+    const urlKey = `${targetLang}_grounding_url`;
+    if (entry[urlKey]) {
+        return entry[urlKey];
+    }
+    
+    // 2. Generic global URL
+    if (entry.url) {
+        return entry.url;
+    }
+    
+    // 3. Constructed search fallback
+    return `https://www.healthdirect.gov.au/search-results?q=${encodeURIComponent(entry.english)}`;
+}
+
+function addEncounteredTerm(entry, targetLang) {
+    const termKey = entry.english;
+    if (!termKey) return;
+    
+    if (!encounteredTerms.has(termKey)) {
+        encounteredTerms.add(termKey);
+        renderEncounteredReferences(targetLang);
+    }
+}
+
+function renderEncounteredReferences(targetLang) {
+    const listDiv = document.getElementById("references-list");
+    const countBadge = document.getElementById("references-count");
+    if (!listDiv) return;
+    
+    listDiv.innerHTML = "";
+    
+    const count = encounteredTerms.size;
+    if (countBadge) {
+        countBadge.innerText = `${count} Link${count === 1 ? "" : "s"}`;
+    }
+    
+    if (count === 0) {
+        listDiv.innerHTML = '<div class="references-empty">No clinical terms encountered in this conversation yet.</div>';
+        return;
+    }
+    
+    // Sort encountered terms alphabetically
+    const sortedTerms = Array.from(encounteredTerms).sort();
+    
+    sortedTerms.forEach(termKey => {
+        const entry = glossaryTerms.find(e => e.english === termKey);
+        if (!entry) return;
+        
+        const groundingUrl = getTermUrl(entry, targetLang);
+        if (!groundingUrl) return;
+        
+        const trans = entry.translations || {};
+        const transKey = Object.keys(trans).find(k => k.toLowerCase() === targetLang.toLowerCase());
+        const translationVal = transKey ? trans[transKey] : "";
+        
+        const pillAnchor = document.createElement("a");
+        pillAnchor.className = "reference-pill";
+        pillAnchor.href = groundingUrl;
+        pillAnchor.target = "_blank";
+        pillAnchor.rel = "noopener noreferrer";
+        
+        if (translationVal) {
+            pillAnchor.innerText = `${entry.english} (${translationVal}) 🔗`;
+        } else {
+            pillAnchor.innerText = `${entry.english} 🔗`;
+        }
+        
+        listDiv.appendChild(pillAnchor);
+    });
+}
+
 async function fetchGlossary() {
     const preset = presetSelector.value;
     const meta = PRESET_UI_METADATA[preset];
@@ -117,6 +225,19 @@ async function fetchGlossary() {
     renderGlossaryList();
 }
 
+function escapeHTML(str) {
+    if (!str) return "";
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function highlightText(text, query) {
+    const escaped = escapeHTML(text);
+    if (!query) return escaped;
+    const escapedQuery = escapeRegExp(query);
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
+    return escaped.replace(regex, "<span class='search-highlight'>$1</span>");
+}
+
 function renderGlossaryList() {
     const listDiv = document.getElementById("glossary-list");
     const countBadge = document.getElementById("glossary-count");
@@ -124,23 +245,67 @@ function renderGlossaryList() {
     
     listDiv.innerHTML = "";
     
-    if (countBadge) {
-        countBadge.innerText = `${glossaryTerms.length} Term${glossaryTerms.length === 1 ? "" : "s"}`;
-    }
-    
-    if (glossaryTerms.length === 0) {
-        listDiv.innerHTML = '<div class="glossary-empty">No glossary terms loaded.</div>';
-        return;
+    // Toggle clear search button visibility
+    if (clearSearchBtn) {
+        clearSearchBtn.style.display = glossarySearchQuery ? "flex" : "none";
     }
     
     const preset = presetSelector.value;
     const meta = PRESET_UI_METADATA[preset];
     const targetLang = meta ? meta.shortLang : "";
     
-    // Sort glossary terms alphabetically by their English term
-    glossaryTerms.sort((a, b) => (a.english || "").localeCompare(b.english || ""));
+    // Filter glossary terms based on active filter and search query
+    const queryLower = glossarySearchQuery.toLowerCase();
+    const filteredTerms = glossaryTerms.filter(entry => {
+        const trans = entry.translations || {};
+        const transKey = Object.keys(trans).find(k => k.toLowerCase() === targetLang.toLowerCase());
+        const translationVal = transKey ? trans[transKey] : "";
+        
+        // 1. Filter by Active Category Chip
+        const urlKey = `${targetLang}_grounding_url`;
+        if (glossaryActiveFilter === "verified" && !entry[urlKey]) {
+            return false;
+        }
+        if (glossaryActiveFilter === "desc" && !entry.description) {
+            return false;
+        }
+        
+        // 2. Filter by Search Query (matches English, Translation, or Description)
+        if (queryLower) {
+            const matchEnglish = (entry.english || "").toLowerCase().includes(queryLower);
+            const matchTranslation = translationVal.toLowerCase().includes(queryLower);
+            const matchDescription = (entry.description || "").toLowerCase().includes(queryLower);
+            
+            if (!matchEnglish && !matchTranslation && !matchDescription) {
+                return false;
+            }
+        }
+        
+        return true;
+    });
     
-    glossaryTerms.forEach(entry => {
+    // Update badge count with "X of Y" if search/filter is active
+    if (countBadge) {
+        if (glossarySearchQuery || glossaryActiveFilter !== "all") {
+            countBadge.innerText = `${filteredTerms.length} of ${glossaryTerms.length} Term${glossaryTerms.length === 1 ? "" : "s"}`;
+        } else {
+            countBadge.innerText = `${glossaryTerms.length} Term${glossaryTerms.length === 1 ? "" : "s"}`;
+        }
+    }
+    
+    if (filteredTerms.length === 0) {
+        if (glossarySearchQuery || glossaryActiveFilter !== "all") {
+            listDiv.innerHTML = '<div class="glossary-empty">No matching terms found.</div>';
+        } else {
+            listDiv.innerHTML = '<div class="glossary-empty">No glossary terms loaded.</div>';
+        }
+        return;
+    }
+    
+    // Sort filtered terms alphabetically by their English term
+    filteredTerms.sort((a, b) => (a.english || "").localeCompare(b.english || ""));
+    
+    filteredTerms.forEach(entry => {
         const itemDiv = document.createElement("div");
         itemDiv.className = "glossary-item";
         
@@ -153,13 +318,13 @@ function renderGlossaryList() {
         
         const englishSpan = document.createElement("span");
         englishSpan.className = "item-english";
-        englishSpan.innerText = entry.english;
+        englishSpan.innerHTML = highlightText(entry.english, glossarySearchQuery);
         termRow.appendChild(englishSpan);
         
         if (translationVal) {
             const transSpan = document.createElement("span");
             transSpan.className = "item-translation";
-            transSpan.innerText = translationVal;
+            transSpan.innerHTML = highlightText(translationVal, glossarySearchQuery);
             termRow.appendChild(transSpan);
         }
         
@@ -168,8 +333,40 @@ function renderGlossaryList() {
         if (entry.description) {
             const descDiv = document.createElement("div");
             descDiv.className = "item-desc";
-            descDiv.innerText = entry.description;
+            descDiv.innerHTML = highlightText(entry.description, glossarySearchQuery);
             itemDiv.appendChild(descDiv);
+        }
+        
+        // Add clinical grounding source if present
+        const groundingUrl = getTermUrl(entry, targetLang);
+        const snippetKey = `${targetLang}_grounding_snippet`;
+        const groundingSnippet = entry[snippetKey];
+        
+        if (groundingUrl) {
+            const groundingDiv = document.createElement("div");
+            groundingDiv.className = "item-grounding";
+            
+            const labelSpan = document.createElement("span");
+            labelSpan.className = "grounding-label";
+            labelSpan.innerText = "Medical Reference Source: ";
+            groundingDiv.appendChild(labelSpan);
+            
+            const linkAnchor = document.createElement("a");
+            linkAnchor.className = "grounding-link";
+            linkAnchor.href = groundingUrl;
+            linkAnchor.target = "_blank";
+            linkAnchor.rel = "noopener noreferrer";
+            linkAnchor.innerText = "Verified Source 🔗";
+            groundingDiv.appendChild(linkAnchor);
+            
+            if (groundingSnippet) {
+                const snippetDiv = document.createElement("div");
+                snippetDiv.className = "grounding-snippet";
+                snippetDiv.innerHTML = formatSnippet(groundingSnippet);
+                groundingDiv.appendChild(snippetDiv);
+            }
+            
+            itemDiv.appendChild(groundingDiv);
         }
         
         listDiv.appendChild(itemDiv);
@@ -183,8 +380,7 @@ function escapeRegExp(string) {
 function applyHTMLHighlight(text, matchLanguage, targetLang) {
     if (!text || !glossaryTerms || glossaryTerms.length === 0) return text;
     
-    const terms = [];
-    const termToEntryMap = new Map();
+    const termsWithPatterns = [];
     
     glossaryTerms.forEach(entry => {
         let termVal = "";
@@ -199,30 +395,51 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
         }
         
         if (termVal && termVal.trim()) {
-            const cleanTerm = termVal.trim();
-            terms.push(cleanTerm);
-            termToEntryMap.set(cleanTerm.toLowerCase(), entry);
+            // Split by comma or semicolon to support multiple synonyms
+            const synonyms = termVal.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+            synonyms.forEach(syn => {
+                const words = syn.split(/\s+/);
+                let patternStr;
+                if (words.length > 1) {
+                    // Allow up to 2 intermediate words in between each word of a multi-word phrase
+                    patternStr = words.map(w => escapeRegExp(w)).join("\\s+(?:\\p{L}+\\s+){0,2}?");
+                } else {
+                    patternStr = escapeRegExp(syn);
+                }
+                const termRegex = new RegExp("^(?:" + patternStr + ")$", "ui");
+                termsWithPatterns.push({
+                    canonical: syn,
+                    patternStr: patternStr,
+                    regex: termRegex,
+                    entry: entry
+                });
+            });
         }
     });
     
-    if (terms.length === 0) return text;
+    if (termsWithPatterns.length === 0) return text;
     
-    // Sort terms descending by length to handle multi-word compound phrases first
-    const sortedTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
-    const escapedTerms = sortedTerms.map(t => escapeRegExp(t));
-    const patternStr = "(?<!\\p{L})(" + escapedTerms.join("|") + ")(?!\\p{L})";
-    const regex = new RegExp(patternStr, "gui");
+    // Sort descending by canonical term length to ensure longer compound matches are tried first in the alternation
+    termsWithPatterns.sort((a, b) => b.canonical.length - a.canonical.length);
+    
+    const overallPatternStr = "(?<!\\p{L})(" + termsWithPatterns.map(item => item.patternStr).join("|") + ")(?!\\p{L})";
+    const regex = new RegExp(overallPatternStr, "gui");
     
     return text.replace(regex, (matched) => {
-        const entry = termToEntryMap.get(matched.toLowerCase());
-        if (entry) {
+        // Find which entry matched by testing each item's pattern against the matched string
+        const matchItem = termsWithPatterns.find(item => item.regex.test(matched));
+        if (matchItem) {
+            const entry = matchItem.entry;
             const englishTerm = entry.english || "";
             const translations = entry.translations || {};
             const transKey = Object.keys(translations).find(k => k.toLowerCase() === targetLang.toLowerCase());
             const translationVal = transKey ? translations[transKey] : "";
             const desc = entry.description || "";
             
-            console.log(`[Glossary Match] Matched term: "${matched}" -> English: "${englishTerm}"${translationVal ? ` (Translation: "${translationVal}")` : ""}`);
+            logger(`[UI Event] [Glossary Match] Matched term: "${matched}" -> English: "${englishTerm}"${translationVal ? ` (Translation: "${translationVal}")` : ""}`);
+            
+            // Track as encountered term
+            addEncounteredTerm(entry, targetLang);
             
             let tooltipText = "";
             if (translationVal) {
@@ -293,6 +510,26 @@ function updatePresetUI() {
         
         // Fetch glossary terms for selected preset language
         fetchGlossary();
+        
+        // Reset encountered references for the new preset
+        encounteredTerms.clear();
+        renderEncounteredReferences(meta.shortLang);
+        
+        // Reset glossary search & filter states on scenario/preset change
+        glossarySearchQuery = "";
+        glossaryActiveFilter = "all";
+        if (glossarySearchInput) {
+            glossarySearchInput.value = "";
+        }
+        if (filterChips) {
+            filterChips.forEach(chip => {
+                if (chip.getAttribute("data-filter") === "all") {
+                    chip.classList.add("active");
+                } else {
+                    chip.classList.remove("active");
+                }
+            });
+        }
     }
 }
 
@@ -327,9 +564,104 @@ if (reloadGlossaryBtn) {
     });
 }
 
+// Search input listener (real-time instant filtering)
+if (glossarySearchInput) {
+    glossarySearchInput.addEventListener("input", (e) => {
+        glossarySearchQuery = e.target.value.trim();
+        renderGlossaryList();
+    });
+}
+
+// Clear search button listener
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener("click", () => {
+        if (glossarySearchInput) {
+            glossarySearchInput.value = "";
+            glossarySearchInput.focus();
+        }
+        glossarySearchQuery = "";
+        renderGlossaryList();
+    });
+}
+
+// Filter chips listener
+if (filterChips) {
+    filterChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            // Remove active class from all chips
+            filterChips.forEach(c => c.classList.remove("active"));
+            // Add active class to clicked chip
+            chip.classList.add("active");
+            // Set active filter state
+            glossaryActiveFilter = chip.getAttribute("data-filter") || "all";
+            // Re-render
+            renderGlossaryList();
+        });
+    });
+}
+
 // Initialize on page load
 updatePresetUI();
 updateModelBadge();
+fetchPacingConfig();
+initPacingSliderListeners();
+
+/* ==========================================================================
+   PACING CONFIGURATION INTEGRATION
+   ========================================================================== */
+async function fetchPacingConfig() {
+    try {
+        const response = await fetch("/api/pacing-config");
+        if (response.ok) {
+            const config = await response.json();
+            console.log("[Pacing Config] Loaded defaults from server:", config);
+            
+            if (pacingTurnTimeout && config.turn_timeout_sec !== undefined) {
+                pacingTurnTimeout.value = config.turn_timeout_sec;
+                valTurnTimeout.innerText = `${parseFloat(config.turn_timeout_sec).toFixed(1)}s`;
+            }
+            if (pacingCeasedAudio && config.ceased_audio_threshold !== undefined) {
+                pacingCeasedAudio.value = config.ceased_audio_threshold;
+                valCeasedAudio.innerText = `${parseFloat(config.ceased_audio_threshold).toFixed(1)}s`;
+            }
+            if (pacingStartupAudio && config.startup_audio_threshold !== undefined) {
+                pacingStartupAudio.value = config.startup_audio_threshold;
+                valStartupAudio.innerText = `${parseFloat(config.startup_audio_threshold).toFixed(1)}s`;
+            }
+            if (pacingAdditionalPause && config.additional_pause_sec !== undefined) {
+                pacingAdditionalPause.value = config.additional_pause_sec;
+                valAdditionalPause.innerText = `${parseFloat(config.additional_pause_sec).toFixed(1)}s`;
+            }
+        } else {
+            console.error("[Pacing Config] Failed to fetch pacing config:", response.statusText);
+        }
+    } catch (err) {
+        console.error("[Pacing Config] Error fetching pacing config:", err);
+    }
+}
+
+function initPacingSliderListeners() {
+    if (pacingTurnTimeout) {
+        pacingTurnTimeout.addEventListener("input", (e) => {
+            valTurnTimeout.innerText = `${parseFloat(e.target.value).toFixed(1)}s`;
+        });
+    }
+    if (pacingCeasedAudio) {
+        pacingCeasedAudio.addEventListener("input", (e) => {
+            valCeasedAudio.innerText = `${parseFloat(e.target.value).toFixed(1)}s`;
+        });
+    }
+    if (pacingStartupAudio) {
+        pacingStartupAudio.addEventListener("input", (e) => {
+            valStartupAudio.innerText = `${parseFloat(e.target.value).toFixed(1)}s`;
+        });
+    }
+    if (pacingAdditionalPause) {
+        pacingAdditionalPause.addEventListener("input", (e) => {
+            valAdditionalPause.innerText = `${parseFloat(e.target.value).toFixed(1)}s`;
+        });
+    }
+}
 
 /* ==========================================================================
    AUDIO CONTEXT & GAIN CONTROLS
@@ -449,8 +781,8 @@ function schedulePlayback(buffer, streamType, speakerOrStream) {
     
     // Safety buffer configuration: only snap the playhead to "now" 
     // if it has fallen significantly behind (e.g. after a hold pause).
-    // This allows contiguous stitching for minor network jitters under 150ms.
-    const JITTER_THRESHOLD = 0.15;      // 150ms safety window
+    // This allows contiguous stitching for minor network jitters and accounts for the 200ms chunk size.
+    const JITTER_THRESHOLD = 0.35;      // 350ms safety window (must be > 200ms chunk duration)
     const RESUME_LATENCY_BUFFER = 0.05;  // 50ms scheduling headroom to prevent clicks/cuts
     
     if (streamType === "original") {
@@ -496,6 +828,7 @@ function schedulePlayback(buffer, streamType, speakerOrStream) {
    TRANSCRIPT & BUBBLES UI LOGIC
    ========================================================================== */
 function createSpeechBubble(speaker) {
+    logger(`[UI Event] [Speech Bubble] Creating new speech bubble for speaker: "${speaker}"`);
     // Stop pulsing ellipses of previous bubbles of this speaker
     const targetTurnClass = speaker === "nurse" ? "nurse-turn" : "patient-turn";
     const existingTurns = chatFeed.querySelectorAll(`.${targetTurnClass}`);
@@ -598,6 +931,7 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
     } else if (eventType === "translation") {
         let transSpan = bodyDiv.querySelector(".translation-text");
         if (!transSpan) {
+            logger(`[UI Event] [Translation] Starting translation block to ${bubbleSpeaker === "nurse" ? "target language" : "English"} for speaker: "${bubbleSpeaker}"`);
             transSpan = document.createElement("div");
             transSpan.classList.add("translation-text");
             if (bubbleSpeaker === "nurse" && presetSelector.value === "arabic") {
@@ -665,6 +999,13 @@ function connectCall() {
     // Clear previous transcript and welcome messages
     chatFeed.innerHTML = "";
     
+    // Clear and reset encountered references
+    encounteredTerms.clear();
+    const preset = presetSelector.value;
+    const meta = PRESET_UI_METADATA[preset];
+    const targetLang = meta ? meta.shortLang : "";
+    renderEncounteredReferences(targetLang);
+    
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     
@@ -676,22 +1017,31 @@ function connectCall() {
     startBtn.disabled = true;
     presetSelector.disabled = true;
     if (modelSelector) modelSelector.disabled = true;
-    pacingSelector.disabled = true;
-    if (pauseInput) pauseInput.disabled = true;
+    if (pacingTurnTimeout) pacingTurnTimeout.disabled = true;
+    if (pacingCeasedAudio) pacingCeasedAudio.disabled = true;
+    if (pacingStartupAudio) pacingStartupAudio.disabled = true;
+    if (pacingAdditionalPause) pacingAdditionalPause.disabled = true;
     resetBtn.disabled = true;
-    nextBtn.disabled = true;
-    nextBtn.classList.remove("waiting-pulse");
     
     socket.onopen = () => {
         logger("WebSocket connection established. Initializing preset...");
-        // Send initial starting instruction with selected preset, pacing mode, and pause/timeout
+        
+        const turnTimeoutVal = pacingTurnTimeout ? parseFloat(pacingTurnTimeout.value) : 15.0;
+        const ceasedAudioVal = pacingCeasedAudio ? parseFloat(pacingCeasedAudio.value) : 4.5;
+        const startupAudioVal = pacingStartupAudio ? parseFloat(pacingStartupAudio.value) : 15.0;
+        const additionalPauseVal = pacingAdditionalPause ? parseFloat(pacingAdditionalPause.value) : 2.0;
+
+        // Send initial starting instruction with selected preset, pacing configuration thresholds
         socket.send(JSON.stringify({
             action: "start",
             preset: presetSelector.value,
             model: modelSelector ? modelSelector.value : "gemini-3.5-live-translate-preview",
-            pacing: pacingSelector.value,
-            pause: pauseInput ? parseFloat(pauseInput.value) : 0,
-            timeout: pauseInput ? parseFloat(pauseInput.value) : 0
+            pacing: "auto",
+            pause: turnTimeoutVal,
+            timeout: turnTimeoutVal,
+            ceased_audio_threshold: ceasedAudioVal,
+            startup_audio_threshold: startupAudioVal,
+            additional_pause_sec: additionalPauseVal
         }));
     };
     
@@ -771,22 +1121,6 @@ function connectCall() {
                     shouldStartNewBubble = true;
                     break;
                     
-                case "waiting_for_next":
-                    logger(`Backend waiting for manual 'Next' trigger after ${msg.speaker}'s turn.`);
-                    // Set active visual state on the card that just finished to highlight the completed turn
-                    if (msg.speaker === "patient") {
-                        patientStatus.innerText = "Waiting for Next...";
-                        patientCard.classList.add("active-speaker");
-                    } else {
-                        nurseStatus.innerText = "Waiting for Next...";
-                        nurseCard.classList.add("active-speaker");
-                    }
-                    nextBtn.disabled = false;
-                    nextBtn.classList.add("waiting-pulse");
-                    nextBtn.focus();
-                    shouldStartNewBubble = true;
-                    break;
-                    
                 case "interrupted":
                     completeTurn(msg.speaker);
                     break;
@@ -824,8 +1158,10 @@ function endCall(isNaturalCompletion = false) {
     startBtn.disabled = false;
     presetSelector.disabled = false;
     if (modelSelector) modelSelector.disabled = false;
-    pacingSelector.disabled = false;
-    if (pauseInput) pauseInput.disabled = false;
+    if (pacingTurnTimeout) pacingTurnTimeout.disabled = false;
+    if (pacingCeasedAudio) pacingCeasedAudio.disabled = false;
+    if (pacingStartupAudio) pacingStartupAudio.disabled = false;
+    if (pacingAdditionalPause) pacingAdditionalPause.disabled = false;
     endBtn.disabled = true;
     if (pauseBtn) {
         pauseBtn.disabled = true;
@@ -839,8 +1175,6 @@ function endCall(isNaturalCompletion = false) {
     }
     
     resetBtn.disabled = false;
-    nextBtn.disabled = true;
-    nextBtn.classList.remove("waiting-pulse");
     
     setSpeakerActive("nurse", false);
     setSpeakerActive("patient", false);
@@ -886,36 +1220,6 @@ if (pauseBtn) {
     });
 }
 
-nextBtn.addEventListener("click", () => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        logger("Sending manual next_turn signal to server.");
-        socket.send(JSON.stringify({ action: "next_turn" }));
-    }
-    nextBtn.disabled = true;
-    nextBtn.classList.remove("waiting-pulse");
-    
-    // Reset status labels
-    if (patientStatus.innerText.includes("Waiting")) {
-        patientStatus.innerText = "Listening";
-        patientCard.classList.remove("active-speaker");
-    }
-    if (nurseStatus.innerText.includes("Waiting")) {
-        nurseStatus.innerText = "Listening";
-        nurseCard.classList.remove("active-speaker");
-    }
-});
-
-// Spacebar global keyboard shortcut for Manual Next Turn
-window.addEventListener("keydown", (e) => {
-    if (e.code === "Space") {
-        if (nextBtn && !nextBtn.disabled) {
-            e.preventDefault(); // Prevent page scrolling
-            logger("Spacebar pressed. Triggering manual Next Turn.");
-            nextBtn.click();
-        }
-    }
-});
-
 resetBtn.addEventListener("click", () => {
     logger("Resetting call UI and conversation state.");
     chatFeed.innerHTML = `
@@ -923,6 +1227,13 @@ resetBtn.addEventListener("click", () => {
             Select a consultation scenario above and click "Start Call" to begin the real-time AI interpreter demo.
         </div>
     `;
+    
+    // Clear and reset encountered references
+    encounteredTerms.clear();
+    const preset = presetSelector.value;
+    const meta = PRESET_UI_METADATA[preset];
+    const targetLang = meta ? meta.shortLang : "";
+    renderEncounteredReferences(targetLang);
     
     // Reset playheads to current audio time or 0
     if (audioCtx) {

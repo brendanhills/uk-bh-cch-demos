@@ -20,12 +20,12 @@ def mock_robots_txt_globally(request):
         from import_glossary import load_scrape_state, save_scrape_state
         
         def mock_load_state(filepath):
-            if filepath == "dictionary/scrape_state.json":
+            if filepath == "glossary/scrape_state.json":
                 return set()
             return load_scrape_state(filepath)
             
         def mock_save_state(scraped_urls, filepath):
-            if filepath == "dictionary/scrape_state.json":
+            if filepath == "glossary/scrape_state.json":
                 return
             return save_scrape_state(scraped_urls, filepath)
             
@@ -477,6 +477,7 @@ def test_pipeline_execution(
         scrape="https://www.healthdirect.gov.au/health-topics/conditions",
         max_letters=1,
         glossary_json=str(glossary_json),
+        csv_path=str(tmp_path / "glossary.csv"),
         gcs_destination="gs://test-bucket/glossaries/glossary.csv",
         glossary_id="test-glossary",
         location="us-central1",
@@ -492,10 +493,10 @@ def test_pipeline_execution(
         max_letters=1,
         delay=1.0,
         force=False,
-        state_path="dictionary/scrape_state.json"
+        state_path="glossary/scrape_state.json"
     )
     mock_translate.assert_called_once()
-    mock_upload.assert_called_once_with("dictionary/glossary.csv", "gs://test-bucket/glossaries/glossary.csv")
+    mock_upload.assert_called_once_with(str(tmp_path / "glossary.csv"), "gs://test-bucket/glossaries/glossary.csv")
     mock_recreate.assert_called_once_with(
         project_id="test-project",
         location="us-central1",

@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from web_server import app
+from demo.web_server import app
 
 def test_get_glossary_endpoint():
     client = TestClient(app)

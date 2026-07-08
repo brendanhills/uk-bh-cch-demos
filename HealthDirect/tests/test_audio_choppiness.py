@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # Load env variables for Gemini API key
 load_dotenv()
 
-from web_server import app
+from demo.web_server import app
 
 def test_audio_streaming_and_quality():
     """

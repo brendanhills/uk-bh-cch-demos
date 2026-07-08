@@ -11,8 +11,8 @@ load_dotenv("/home/brendanhills/dev/uk-bh-experiments/HealthDirect/.env")
 # Force standard TLS/HTTPS to avoid VM auth errors
 os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
 
-import web_server
-from web_server import assemble_system_instructions, load_and_format_glossary
+from demo import web_server
+from demo.web_server import assemble_system_instructions, load_and_format_glossary
 
 # ==============================================================================
 # UNIT TESTS (MOCK MODE)
@@ -51,6 +51,8 @@ def test_websocket_model_parameter_routing_flash_live(monkeypatch):
             pass
             
     class MockLiveSession:
+        async def send_realtime_input(self, audio):
+            pass
         async def receive(self):
             yield MagicMock(server_content=None)
             
@@ -188,7 +190,7 @@ async def test_live_glossary_translation_gemini_31():
     from google.genai import types
     
     # 1. Load glossary (contains Fieber -> Extreme Fire Flame)
-    glossary_str = load_and_format_glossary("German", direction="p_to_n")
+    glossary_str = load_and_format_glossary("German", direction="p_to_n", exclude_descriptions=True)
     
     # 2. Assemble system instructions with passive interpreter rules
     sys_inst = assemble_system_instructions("p_to_n", "German", glossary_str, is_flash_live=True)

@@ -45,7 +45,7 @@ file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-GLOSSARY_PATH = "dictionary/glossary.json"
+GLOSSARY_PATH = "glossary/glossary.json"
 
 app = FastAPI(title="Bilingual Medical Interpreter API")
 
@@ -123,6 +123,9 @@ def has_speech(chunk: bytes, threshold: int = 1000) -> bool:
         return False
     import array
     try:
+        # Align to 2-byte boundary to prevent ValueError from odd length chunks
+        if len(chunk) % 2 != 0:
+            chunk = chunk[:len(chunk) - 1]
         samples = array.array('h', chunk)
         return any(abs(s) > threshold for s in samples)
     except Exception:
@@ -133,7 +136,7 @@ async def get_glossary(language: str = None):
     glossary_path = GLOSSARY_PATH
     if not os.path.exists(glossary_path):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        fallback_path = os.path.join(base_dir, "dictionary/glossary.json")
+        fallback_path = os.path.join(base_dir, "glossary/glossary.json")
         if os.path.exists(fallback_path):
             glossary_path = fallback_path
             
@@ -158,7 +161,30 @@ async def get_glossary(language: str = None):
         
     return {"glossary": entries}
 
-def load_and_format_glossary(target_language: str, direction: str = "n_to_p") -> str:
+@app.get("/api/pacing-config")
+async def get_pacing_config():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_dir, "pacing_config.json")
+    if not os.path.exists(config_path):
+        return {
+            "turn_timeout_sec": 15.0,
+            "ceased_audio_threshold": 4.5,
+            "startup_audio_threshold": 15.0,
+            "additional_pause_sec": 2.0
+        }
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading pacing config: {e}")
+        return {
+            "turn_timeout_sec": 15.0,
+            "ceased_audio_threshold": 4.5,
+            "startup_audio_threshold": 15.0,
+            "additional_pause_sec": 2.0
+        }
+
+def load_and_format_glossary(target_language: str, direction: str = "n_to_p", exclude_descriptions: bool = False) -> str:
     """
     Loads active glossary terms from GLOSSARY_PATH, filters by target_language
     (case-insensitive matching), and formats each matching term into a clean
@@ -167,7 +193,7 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p") ->
     glossary_path = GLOSSARY_PATH
     if not os.path.exists(glossary_path):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        fallback_path = os.path.join(base_dir, "dictionary/glossary.json")
+        fallback_path = os.path.join(base_dir, "glossary/glossary.json")
         if os.path.exists(fallback_path):
             glossary_path = fallback_path
             
@@ -204,12 +230,13 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p") ->
             else:
                 term_rule = f"{english} -> {translation}"
                 
-            if description:
+            if description and not exclude_descriptions:
                 formatted_lines.append(f"- {term_rule}: {description}")
             else:
                 formatted_lines.append(f"- {term_rule}")
                 
     return "\n".join(formatted_lines)
+
 
 def assemble_system_instructions(direction: str, target_language: str, glossary_str: str, is_flash_live: bool = False) -> str:
     """
@@ -333,10 +360,13 @@ async def websocket_endpoint(websocket: WebSocket):
             return
             
         preset_name = data.get("preset", "german")
-        pacing_mode = data.get("pacing", "auto") # "auto" or "manual"
         timeout_sec = float(data.get("pause", data.get("timeout", 15.0)))
         if timeout_sec <= 0.0:
             timeout_sec = 15.0
+            
+        ceased_audio_threshold = float(data.get("ceased_audio_threshold", 4.5))
+        startup_audio_threshold = float(data.get("startup_audio_threshold", 15.0))
+        additional_pause_sec = float(data.get("additional_pause_sec", 2.0))
         
         if preset_name not in PRESETS:
             await websocket.send_json({"type": "error", "message": f"Preset '{preset_name}' is not recognized."})
@@ -362,6 +392,20 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_json({"type": "error", "message": f"Failed to prepare audio sample: {str(e)}"})
             return
 
+        # Fail-fast in-memory audio slicing
+        limit_seconds = data.get("limit_seconds")
+        if limit_seconds:
+            try:
+                # 16kHz, 16-bit mono = 32000 bytes per second
+                limit_bytes = int(16000 * 2 * float(limit_seconds))
+                if chunk_size > 0:
+                    limit_bytes = (limit_bytes // chunk_size) * chunk_size
+                patient_bytes = patient_bytes[:limit_bytes]
+                nurse_bytes = nurse_bytes[:limit_bytes]
+                logger.info(f"Fail-fast testing: sliced in-memory audio to the first {limit_seconds} seconds ({len(patient_bytes)} bytes).")
+            except Exception as slice_err:
+                logger.warning(f"Failed to apply limit_seconds slice: {slice_err}")
+
         # Notify client of success and preparation details
         await websocket.send_json({
             "type": "status", 
@@ -371,17 +415,18 @@ async def websocket_endpoint(websocket: WebSocket):
             "duration_ms": len(patient_bytes) // 32 # 32 bytes per ms for 16kHz 16-bit mono
         })
 
-        # Load and format language-specific directed glossaries
-        glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n")
-        glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p")
-        
         # Detect active model
         model_name = data.get("model", "gemini-3.5-live-translate-preview")
         if model_name not in ["gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview"]:
             model_name = "gemini-3.5-live-translate-preview"
             
-        is_flash_live = (model_name == "gemini-3.1-flash-live-preview")
+        is_flash_live = (model_name in ["gemini-3.1-flash-live-preview"])
         logger.info(f"Using model: {model_name} (Glossary Enforced: {is_flash_live})")
+
+        # Load and format language-specific directed glossaries
+        glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=is_flash_live)
+        glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=is_flash_live)
+
         
         # Initialize/reset the transcript file at the start of the WebSocket session
         try:
@@ -389,7 +434,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 f.write("SESSION TRANSCRIPT START\n")
                 f.write(f"Language: {language}\n")
                 f.write(f"Model: {model_name}\n")
-                f.write(f"Pacing: {pacing_mode}\n")
+                f.write("Pacing: auto\n")
                 f.write("========================================\n")
         except Exception as e:
             logger.error(f"Failed to initialize conversation_transcript.log: {e}")
@@ -413,6 +458,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 ),
                 input_audio_transcription=types.AudioTranscriptionConfig(),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
+                realtime_input_config=types.RealtimeInputConfig(
+                    automatic_activity_detection=types.AutomaticActivityDetection(
+                        silence_duration_ms=400
+                    )
+                ),
             )
         else:
             config_p_to_n = types.LiveConnectConfig(
@@ -426,6 +476,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 ),
                 input_audio_transcription=types.AudioTranscriptionConfig(),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
+                realtime_input_config=types.RealtimeInputConfig(
+                    automatic_activity_detection=types.AutomaticActivityDetection(
+                        silence_duration_ms=400
+                    )
+                ),
             )
 
         # 2. Config Nurse -> Patient (translates English to Patient native language)
@@ -442,6 +497,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 ),
                 input_audio_transcription=types.AudioTranscriptionConfig(),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
+                realtime_input_config=types.RealtimeInputConfig(
+                    automatic_activity_detection=types.AutomaticActivityDetection(
+                        silence_duration_ms=400
+                    )
+                ),
             )
         else:
             config_n_to_p = types.LiveConnectConfig(
@@ -455,6 +515,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 ),
                 input_audio_transcription=types.AudioTranscriptionConfig(),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
+                realtime_input_config=types.RealtimeInputConfig(
+                    automatic_activity_detection=types.AutomaticActivityDetection(
+                        silence_duration_ms=400
+                    )
+                ),
             )
         
         # Connect both Live sessions in parallel using the chosen model
@@ -469,7 +534,6 @@ async def websocket_endpoint(websocket: WebSocket):
             # Track translation completions to coordinate speaker pacing
             patient_translation_complete = asyncio.Event()
             nurse_translation_complete = asyncio.Event()
-            manual_next_event = asyncio.Event()
             stream_state = {
                 "is_paused": False,
                 "last_audio_p_to_n": 0.0,
@@ -492,7 +556,8 @@ async def websocket_endpoint(websocket: WebSocket):
                             if server_content.model_turn:
                                 for part in server_content.model_turn.parts:
                                     if part.inline_data:
-                                        stream_state["last_audio_p_to_n"] = asyncio.get_running_loop().time()
+                                        if has_speech(part.inline_data.data, threshold=500):
+                                            stream_state["last_audio_p_to_n"] = asyncio.get_running_loop().time()
                                         encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
                                         await websocket.send_json({
                                             "type": "translated_audio",
@@ -528,16 +593,15 @@ async def websocket_endpoint(websocket: WebSocket):
                             # Forward Nurse Translation text transcript (interim segments)
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
-                                if not is_flash_live:
-                                    convo_state["patient_trans"] += text
-                                    logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
-                                    await websocket.send_json({
-                                        "type": "transcript",
-                                        "speaker": "nurse",
-                                        "event": "translation",
-                                        "text": text,
-                                        "final": False # turns are marked completed via turn_complete
-                                    })
+                                convo_state["patient_trans"] += text
+                                logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
+                                await websocket.send_json({
+                                    "type": "transcript",
+                                    "speaker": "nurse",
+                                    "event": "translation",
+                                    "text": text,
+                                    "final": False # turns are marked completed via turn_complete
+                                })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
@@ -587,7 +651,8 @@ async def websocket_endpoint(websocket: WebSocket):
                             if server_content.model_turn:
                                 for part in server_content.model_turn.parts:
                                     if part.inline_data:
-                                        stream_state["last_audio_n_to_p"] = asyncio.get_running_loop().time()
+                                        if has_speech(part.inline_data.data, threshold=500):
+                                            stream_state["last_audio_n_to_p"] = asyncio.get_running_loop().time()
                                         encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
                                         await websocket.send_json({
                                             "type": "translated_audio",
@@ -623,16 +688,15 @@ async def websocket_endpoint(websocket: WebSocket):
                             # Forward Patient Translation text transcript
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
-                                if not is_flash_live:
-                                    convo_state["nurse_trans"] += text
-                                    logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
-                                    await websocket.send_json({
-                                        "type": "transcript",
-                                        "speaker": "patient",
-                                        "event": "translation",
-                                        "text": text,
-                                        "final": False
-                                    })
+                                convo_state["nurse_trans"] += text
+                                logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
+                                await websocket.send_json({
+                                    "type": "transcript",
+                                    "speaker": "patient",
+                                    "event": "translation",
+                                    "text": text,
+                                    "final": False
+                                })
                                 
                             # Handle turn completion
                             if server_content.turn_complete:
@@ -681,18 +745,16 @@ async def websocket_endpoint(websocket: WebSocket):
                     SILENCE_CHUNKS_THRESHOLD = 3 # 3 chunks * 200ms = 600ms of silence
                     takeover_cooldown = 0
                     
+                    patient_translation_complete.clear()
+                    nurse_translation_complete.clear()
+                    
+                    silence_chunk = b'\x00' * chunk_size
+                    
                     for i in range(0, max_len, chunk_size):
                         # Check user pause
                         if stream_state["is_paused"]:
-                            logger.info("Streaming paused by user. Feeding silence to Gemini to hold connection...")
+                            logger.info("Streaming paused by user...")
                             while stream_state["is_paused"]:
-                                silence_chunk = b'\x00' * chunk_size
-                                await session_p_to_n.send_realtime_input(
-                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                )
-                                await session_n_to_p.send_realtime_input(
-                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                )
                                 await asyncio.sleep(0.2)
                             logger.info("Streaming resumed.")
 
@@ -705,6 +767,11 @@ async def websocket_endpoint(websocket: WebSocket):
                         p_has = has_speech(chunk_p)
                         n_has = has_speech(chunk_n)
                         
+                        if p_has:
+                            patient_translation_complete.clear()
+                        if n_has:
+                            nurse_translation_complete.clear()
+                            
                         speaker_finished = None
                         next_speaker = None
                         
@@ -758,96 +825,117 @@ async def websocket_endpoint(websocket: WebSocket):
                             
                             silence_chunk = b'\x00' * chunk_size
                             
-                            if pacing_mode == "manual":
-                                # Clear the manual resume event
-                                manual_next_event.clear()
+                            # Auto Pacing mode
+                            event_to_wait = patient_translation_complete if speaker_finished == "patient" else nurse_translation_complete
+                            event_to_wait.clear() # Clear immediately to prevent prior turns' late events from bypassing hold
+                            
+                            # Reset the audio envelope tracker for the active stream
+                            audio_tracker_key = "last_audio_p_to_n" if speaker_finished == "patient" else "last_audio_n_to_p"
+                            stream_state[audio_tracker_key] = 0.0
+                            hold_start_time = asyncio.get_running_loop().time()
+                            
+                            # Fix the race condition: Check if the translation is already complete!
+                            if event_to_wait.is_set():
+                                logger.info(f"Gemini already completed translation for {speaker_finished} before entering hold state.")
+                            else:
+                                logger.info(f"Entering dynamic silence-streaming hold state for {speaker_finished}. Waiting for Gemini turn_complete...")
                                 
-                                # Notify client we are waiting for a manual next turn confirmation
-                                await websocket.send_json({
-                                    "type": "waiting_for_next",
-                                    "speaker": speaker_finished
-                                })
-                                
-                                logger.info(f"Entering manual hold state for {speaker_finished}. Waiting for user 'Next' trigger...")
-                                
-                                # Keep streaming silence to Gemini in a loop to keep connections alive
-                                # Timeout after 1500 iterations (5 minutes max safety timeout)
-                                for _ in range(1500):
-                                    if manual_next_event.is_set():
-                                        logger.info("Received manual next_turn trigger. Exiting hold state.")
+                                # Loop up to timeout_sec (each iteration is 0.2s)
+                                iterations = int(timeout_sec * 5)
+                                for hold_idx in range(iterations):
+                                    if event_to_wait.is_set():
+                                        logger.info(f"Received turn_complete from Gemini for {speaker_finished} after {hold_idx * 0.2:.1f}s. Exiting hold loop.")
                                         break
                                         
-                                    await session_p_to_n.send_realtime_input(
-                                        audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                    )
-                                    await session_n_to_p.send_realtime_input(
-                                        audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                    )
-                                    await asyncio.sleep(0.2)
-                                else:
-                                    logger.warning(f"Manual hold state timed out after 5 minutes for {speaker_finished}. Proceeding.")
+                                    # Audio power envelope/activity fallback monitoring
+                                    now = asyncio.get_running_loop().time()
+                                    last_audio_time = stream_state[audio_tracker_key]
                                     
-                            else:
-                                # Auto Pacing mode
-                                event_to_wait = patient_translation_complete if speaker_finished == "patient" else nurse_translation_complete
-                                
-                                # Reset the audio envelope tracker for the active stream
-                                audio_tracker_key = "last_audio_p_to_n" if speaker_finished == "patient" else "last_audio_n_to_p"
-                                stream_state[audio_tracker_key] = 0.0
-                                hold_start_time = asyncio.get_running_loop().time()
-                                
-                                # Fix the race condition: Check if the translation is already complete!
-                                if event_to_wait.is_set():
-                                    logger.info(f"Gemini already completed translation for {speaker_finished} before entering hold state.")
-                                else:
-                                    logger.info(f"Entering dynamic silence-streaming hold state for {speaker_finished}. Waiting for Gemini turn_complete...")
-                                    
-                                    # Loop up to timeout_sec (each iteration is 0.2s)
-                                    iterations = int(timeout_sec * 5)
-                                    for i in range(iterations):
-                                        if event_to_wait.is_set():
-                                            logger.info(f"Received turn_complete from Gemini for {speaker_finished} after {i * 0.2:.1f}s. Exiting hold loop.")
+                                    if last_audio_time > 0.0:
+                                        # Audio was received, check if it has ceased for more than ceased_audio_threshold seconds
+                                        if now - last_audio_time > ceased_audio_threshold:
+                                            logger.info(f"Audio envelope detection: Translation audio ceased for {now - last_audio_time:.1f}s (Threshold: {ceased_audio_threshold}s). Assuming turn complete.")
+                                            break
+                                    else:
+                                        # No audio received yet. Timeout if we have waited more than startup_audio_threshold seconds for first audio
+                                        if now - hold_start_time > startup_audio_threshold:
+                                            logger.info(f"Audio envelope detection: No translation audio received within {startup_audio_threshold}s startup window. Assuming turn complete or silent.")
                                             break
                                             
-                                        # Audio power envelope/activity fallback monitoring
-                                        now = asyncio.get_running_loop().time()
-                                        last_audio_time = stream_state[audio_tracker_key]
-                                        
-                                        if last_audio_time > 0.0:
-                                            # Audio was received, check if it has ceased for more than 1.5 seconds
-                                            if now - last_audio_time > 1.5:
-                                                logger.info(f"Audio envelope detection: Translation audio ceased for {now - last_audio_time:.1f}s. Assuming turn complete.")
-                                                break
+                                    # Keep Gemini sessions alive with continuous active-session silence for flash, or sparse heartbeats for non-flash
+                                    if is_flash_live:
+                                        if speaker_finished == "patient":
+                                            # Send continuous silence to active patient session to let VAD trigger naturally
+                                            await session_p_to_n.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
                                         else:
-                                            # No audio received yet. Timeout if we have waited more than 4.0 seconds for first audio
-                                            if now - hold_start_time > 4.0:
-                                                logger.info(f"Audio envelope detection: No translation audio received within 4.0s startup window. Assuming turn complete or silent.")
-                                                break
-                                                
-                                        # Keep Gemini sessions alive and progressing with silence
+                                            # Send continuous silence to active nurse session to let VAD trigger naturally
+                                            await session_n_to_p.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
+                                    else:
+                                        # Non-flash models don't have VAD jamming issues, so keep active progressing and inactive warm
+                                        if speaker_finished == "patient":
+                                            await session_p_to_n.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
+                                            if hold_idx % 15 == 0:
+                                                logger.info(f"[HEARTBEAT] Sending sparse hold-state heartbeat to inactive Nurse session (hold_idx={hold_idx})")
+                                                await session_n_to_p.send_realtime_input(
+                                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                                )
+                                        else:
+                                            await session_n_to_p.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
+                                            if hold_idx % 15 == 0:
+                                                logger.info(f"[HEARTBEAT] Sending sparse hold-state heartbeat to inactive Patient session (hold_idx={hold_idx})")
+                                                await session_p_to_n.send_realtime_input(
+                                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                                )
+                                    await asyncio.sleep(0.2)
+                                else:
+                                    logger.warning(f"Silence-streaming hold state timed out after {timeout_sec}s for {speaker_finished}. Proceeding.")
+                                    
+                            # Insert an additional pause for natural turn-taking transition and client playback clearance
+                            logger.info(f"Pausing for {additional_pause_sec}s additional natural transition time...")
+                            for pause_idx in range(max(1, int(additional_pause_sec * 5))):
+                                if is_flash_live:
+                                    if speaker_finished == "patient":
+                                        # Keep streaming continuous silence to active patient session to finalize VAD naturally
                                         await session_p_to_n.send_realtime_input(
                                             audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
                                         )
+                                    else:
+                                        # Keep streaming continuous silence to active nurse session to finalize VAD naturally
                                         await session_n_to_p.send_realtime_input(
                                             audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
                                         )
-                                        await asyncio.sleep(0.2)
+                                else:
+                                    # Non-flash models
+                                    if speaker_finished == "patient":
+                                        await session_p_to_n.send_realtime_input(
+                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                        )
+                                        if pause_idx % 15 == 0:
+                                            logger.info(f"[HEARTBEAT] Sending sparse pause-state heartbeat to inactive Nurse session (pause_idx={pause_idx})")
+                                            await session_n_to_p.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
                                     else:
-                                        logger.warning(f"Silence-streaming hold state timed out after {timeout_sec}s for {speaker_finished}. Proceeding.")
-                                        
-                                # Insert an additional 2.0s pause for natural turn-taking transition and client playback clearance
-                                logger.info("Pausing for 2.0s additional natural transition time...")
-                                for _ in range(10):
-                                    await session_p_to_n.send_realtime_input(
-                                        audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                    )
-                                    await session_n_to_p.send_realtime_input(
-                                        audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                    )
-                                    await asyncio.sleep(0.2)
-                                    
-                                # Clear the translation complete event ONLY at the end of the turn
-                                event_to_wait.clear()
+                                        await session_n_to_p.send_realtime_input(
+                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                        )
+                                        if pause_idx % 15 == 0:
+                                            logger.info(f"[HEARTBEAT] Sending sparse pause-state heartbeat to inactive Patient session (pause_idx={pause_idx})")
+                                            await session_p_to_n.send_realtime_input(
+                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
+                                            )
+                                await asyncio.sleep(0.2)
+                                
+                            # Clear the translation complete event ONLY at the end of the turn
+                            event_to_wait.clear()
                             
                             # Reset active speaker state and silence counter after exiting hold/pacing block
                             active_speaker = next_speaker
@@ -857,10 +945,12 @@ async def websocket_endpoint(websocket: WebSocket):
                             logger.info(f"Resuming pre-recorded stream with active speaker state: {active_speaker}")
                             
                         # Send patient channel to Gemini and forward original to browser
+                        chunk_idx = i // chunk_size
                         if chunk_p:
-                            await session_p_to_n.send_realtime_input(
-                                audio=types.Blob(data=chunk_p, mime_type="audio/pcm;rate=16000")
-                            )
+                            if active_speaker == "patient":
+                                await session_p_to_n.send_realtime_input(
+                                    audio=types.Blob(data=chunk_p, mime_type="audio/pcm;rate=16000")
+                                )
                             encoded_p = base64.b64encode(chunk_p).decode("utf-8")
                             await websocket.send_json({
                                 "type": "original_audio",
@@ -870,9 +960,10 @@ async def websocket_endpoint(websocket: WebSocket):
                                 
                         # Send nurse channel to Gemini and forward original to browser
                         if chunk_n:
-                            await session_n_to_p.send_realtime_input(
-                                audio=types.Blob(data=chunk_n, mime_type="audio/pcm;rate=16000")
-                            )
+                            if active_speaker == "nurse":
+                                await session_n_to_p.send_realtime_input(
+                                    audio=types.Blob(data=chunk_n, mime_type="audio/pcm;rate=16000")
+                                )
                             encoded_n = base64.b64encode(chunk_n).decode("utf-8")
                             await websocket.send_json({
                                 "type": "original_audio",
@@ -882,6 +973,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                 
                         # Dynamic-friendly 200ms throttle sleep (avoids catchup bug on resume)
                         await asyncio.sleep(0.2)
+
                         
                     logger.info("Finished streaming pre-recorded audio channels.")
                     # Keep sessions alive for any final translation trailing content
@@ -903,8 +995,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         if action == "resume":
                             logger.info(f"Received resume signal from client for speaker turn: {msg_data.get('speaker')} (Ignoring - backend resumes automatically)")
                         elif action == "next_turn":
-                            logger.info("Received next_turn signal from client.")
-                            manual_next_event.set()
+                            logger.info("Received next_turn signal from client. (Ignoring - manual pacing is removed)")
                         elif action == "pause":
                             logger.info("User requested call pause. Setting stream_state['is_paused'] = True.")
                             stream_state["is_paused"] = True
@@ -944,9 +1035,13 @@ async def websocket_endpoint(websocket: WebSocket):
         logger.info("Cleaned up and shut down translation session tasks.")
 
 # Mount the static files directory to serve the frontend html/js/css
-app.mount("/", StaticFiles(directory="web", html=True), name="static")
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "web"), html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
     # Start the server on localhost:8000
-    uvicorn.run("web_server:app", host="127.0.0.1", port=8000, reload=True)
+    # Ensure uvicorn's path resolution succeeds even if run directly as a script
+    parent_dir = os.path.dirname(BASE_DIR)
+    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=8000, reload=True, app_dir=parent_dir)

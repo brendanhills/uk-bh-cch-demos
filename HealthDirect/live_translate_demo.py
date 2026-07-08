@@ -47,6 +47,11 @@ PRESETS = {
         "file": "samples/paediatric_vietnamese_demo.wav",
         "code": "vi",
         "language": "Vietnamese"
+    },
+    "arabic": {
+        "file": "samples/ar_asthma_session.wav",
+        "code": "ar",
+        "language": "Arabic"
     }
 }
 
@@ -175,7 +180,14 @@ async def run_live_translation(file_path: str, lang_code: str, language: str, ap
     pcm_p_to_n = open(p_to_n_pcm_path, "wb")
     pcm_n_to_p = open(n_to_p_pcm_path, "wb")
 
-    client = genai.Client(api_key=api_key)
+    if api_key:
+        client = genai.Client(api_key=api_key)
+    else:
+        project_id = os.environ.get("PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT")
+        location = os.environ.get("LOCATION", "us-central1")
+        logger.info(f"Initializing Vertex AI Client as fallback (Project: {project_id}, Location: {location})")
+        client = genai.Client(vertexai=True, project=project_id, location=location)
+
 
     # 1. Config Patient -> Nurse (Translate patient language -> English)
     config_p_to_n = types.LiveConnectConfig(
@@ -385,8 +397,12 @@ async def run_live_translation(file_path: str, lang_code: str, language: str, ap
             print_border()
 
     except Exception as e:
-        print(f"❌ Gemini Live connection error: {e}")
-        print("Please check your GEMINI_API_KEY environment variable and internet connection.")
+        if "translation_config" in str(e) and not api_key:
+            print("\n❌ Error: The Gemini Live Translate API (which uses `translation_config`) is exclusively supported on Google AI Studio (Gemini Developer API mode) and requires a GEMINI_API_KEY.")
+            print("Please restore your GEMINI_API_KEY in the `.env` file to run this demo.")
+        else:
+            print(f"\n❌ Gemini Live connection error: {e}")
+            print("Please check your GEMINI_API_KEY environment variable and internet connection.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Standalone Gemini Live Real-Time Bidirectional Medical Interpreter Demo")
@@ -394,7 +410,7 @@ if __name__ == "__main__":
         "--preset", "-p",
         choices=list(PRESETS.keys()),
         default="german",
-        help="Use a preset call sample (german, spanish, vietnamese)"
+        help="Use a preset call sample (german, spanish, vietnamese, arabic)"
     )
     parser.add_argument(
         "--file", "-f",
@@ -402,7 +418,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--language", "-l",
-        help="Custom target language (e.g., German, Spanish, Vietnamese)"
+        help="Custom target language (e.g., German, Spanish, Vietnamese, Arabic)"
     )
     parser.add_argument(
         "--code", "-c",
@@ -411,7 +427,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model", "-m",
         default="gemini-3.5-live-translate-preview",
-        help="Gemini Live model name (default: gemini-3.5-live-translate-preview)"
+        help="Gemini Live model name (e.g., gemini-3.5-live-translate-preview, gemini-2.5-flash)"
     )
 
     args = parser.parse_args()
@@ -419,9 +435,9 @@ if __name__ == "__main__":
     # Get API Key
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        print("❌ Error: GEMINI_API_KEY environment variable is not set.")
-        print("Please set it in your environment or create a `.env` file.")
-        sys.exit(1)
+        print("ℹ️ GEMINI_API_KEY environment variable is not set.")
+        print("Attempting to run using Google Cloud Vertex AI credentials.")
+
 
     # Determine file, language, and code
     if args.file:

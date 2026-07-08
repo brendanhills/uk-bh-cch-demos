@@ -2,15 +2,15 @@ import pytest
 import os
 import json
 import tempfile
-import web_server
-from web_server import load_and_format_glossary, assemble_system_instructions
+from demo import web_server
+from demo.web_server import load_and_format_glossary, assemble_system_instructions
 
 def test_load_and_format_glossary_real_file():
-    """Verify that we can load and format the real glossary from dictionary/glossary.json."""
+    """Verify that we can load and format the real glossary from glossary/glossary.json."""
     # Test German
     german_glossary = load_and_format_glossary("German")
     assert isinstance(german_glossary, str)
-    assert "Extreme Fire Flame -> Fieber" in german_glossary
+    assert "extreme fire flame -> Fieber" in german_glossary
     assert "paracetamol -> Paracetamol" in german_glossary
     
     # Test case insensitivity
@@ -20,7 +20,7 @@ def test_load_and_format_glossary_real_file():
     # Test Vietnamese
     vietnamese_glossary = load_and_format_glossary("Vietnamese")
     assert isinstance(vietnamese_glossary, str)
-    assert "Extreme Fire Flame -> sốt" in vietnamese_glossary
+    assert "extreme fire flame -> sốt" in vietnamese_glossary
     assert "paracetamol -> paracetamol" in vietnamese_glossary
 
 def test_load_and_format_glossary_missing_file(monkeypatch):

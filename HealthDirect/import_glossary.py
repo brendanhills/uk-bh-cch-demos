@@ -130,7 +130,7 @@ def scrape_healthdirect_page(
     is_subpage: bool = False,
     delay: float = 1.0,
     force: bool = False,
-    state_path: str = "dictionary/scrape_state.json"
+    state_path: str = "glossary/scrape_state.json"
 ) -> dict:
     """Scrapes a HealthDirect webpage and extracts clinical terms, recursively crawling if it is an index."""
     user_agent = "HealthDirectGlossaryImporter/1.0 (Bilingual Translation Experiment)"
@@ -333,7 +333,7 @@ def search_google(query: str) -> list[dict]:
                 # Fallback to default Client initialization (picks up credentials/variables from env)
                 client = genai.Client()
                 
-        # Fallback list of models (using ONLY Gemini 3 or later)
+        # Fallback list of models (trying Gemini 3.x first)
         models_to_try = ["gemini-3.5-flash", "gemini-3.1-flash-lite"]
         response = None
         last_err = None
@@ -640,7 +640,7 @@ def run_pipeline(args) -> None:
         existing = load_glossary_json(args.glossary_json)
         print(f"  Loaded {len(existing)} existing terminology mappings.")
     else:
-        print(f"No existing local database found at '{args.glossary_json}'. Initiating new dictionary database.")
+        print(f"No existing local database found at '{args.glossary_json}'. Initiating new glossary database.")
         
     # 2. Scrape new terms
     scraped = {}
@@ -651,7 +651,7 @@ def run_pipeline(args) -> None:
             max_letters=args.max_letters,
             delay=getattr(args, "delay", 1.0),
             force=getattr(args, "force", False),
-            state_path=getattr(args, "state_file", "dictionary/scrape_state.json")
+            state_path=getattr(args, "state_file", "glossary/scrape_state.json")
         )
         print(f"  Scraped {len(scraped)} term references from crawl.")
         limit_val = getattr(args, "limit_terms", None)
@@ -661,9 +661,9 @@ def run_pipeline(args) -> None:
             print(f"  Limited ingestion to the first {len(scraped)} scraped terms (as requested by -limit).")
     # Ensure parent directories exist early
     os.makedirs(os.path.dirname(os.path.abspath(args.glossary_json)), exist_ok=True)
-    os.makedirs("dictionary", exist_ok=True)
+    os.makedirs("glossary", exist_ok=True)
     
-    csv_temp_path = "dictionary/glossary.csv"
+    csv_temp_path = getattr(args, "csv_path", None) or "glossary/glossary.csv"
     
     def save_progress(current_glossary):
         save_glossary_json(current_glossary, args.glossary_json)
@@ -839,7 +839,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("--max-letters", "-m", type=int, default=None, help="Maximum alphabetical letters to crawl")
     parser.add_argument("--limit-terms", "-l", type=int, default=None, help="Limit number of scraped terms to process")
-    parser.add_argument("--glossary-json", default="dictionary/glossary.json", help="Path to local glossary.json")
+    parser.add_argument("--glossary-json", default="glossary/glossary.json", help="Path to local glossary.json")
+    parser.add_argument("--csv-path", default="glossary/glossary.csv", help="Path to local glossary.csv")
     parser.add_argument("--gcs-destination", default="gs://uk-bh-experiments-argolis-us/HealthDirect/glossaries/glossary.csv", help="GCS destination URI")
     parser.add_argument("--glossary-id", default="healthdirect_glossary", help="GCP Translation glossary ID")
     parser.add_argument("--location", default="us-central1", help="GCP Location")
@@ -847,7 +848,7 @@ if __name__ == "__main__":
     parser.add_argument("--ground", "-g", action="store_true", help="Perform automated Google Search grounding to verify and provide context for translated terms")
     parser.add_argument("--delay", "-d", type=float, default=1.0, help="Politeness delay in seconds between HTTP requests (default: 1.0)")
     parser.add_argument("--force", "-f", action="store_true", help="Ignore scrape_state.json cache and force scraping of all URLs")
-    parser.add_argument("--state-file", default="dictionary/scrape_state.json", help="Path to local scrape state JSON cache file")
+    parser.add_argument("--state-file", default="glossary/scrape_state.json", help="Path to local scrape state JSON cache file")
     parser.add_argument("--add-language", "-al", type=str, default=None, help="Add and translate existing terms to a new language (Format: Name=code, e.g. German=de) without re-scraping")
     
     parsed_args = parser.parse_args(args_to_parse)

@@ -5,7 +5,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 
-from web_server import app
+from demo.web_server import app
 
 # Create mock classes to mimic google.genai.Client and LiveConnect sessions
 class MockLiveSession:
@@ -120,7 +120,7 @@ def mock_genai_and_audio():
     mock_client.aio = MockAio(p_to_n, n_to_p)
     
     with patch("google.genai.Client", return_value=mock_client), \
-         patch("web_server.load_and_split_channels", return_value=(patient_bytes, nurse_bytes, chunk_size)):
+          patch("demo.web_server.load_and_split_channels", return_value=(patient_bytes, nurse_bytes, chunk_size)):
         yield p_to_n, n_to_p
 
 
@@ -205,88 +205,6 @@ def test_auto_pacing_state_machine(mock_genai_and_audio):
                         n_orig_count += 1
                         
             # Chunks 8 and 9 are patient speech.
-            assert p_orig_count == 10
-            assert n_orig_count == 10
-            assert completed
-
-
-def test_manual_pacing_state_machine(mock_genai_and_audio):
-    """
-    Test that the server enters manual hold states and resumes instantly
-    when the client sends the manual next_turn trigger.
-    """
-    p_to_n, n_to_p = mock_genai_and_audio
-    
-    with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
-            websocket.send_json({
-                "action": "start",
-                "preset": "german",
-                "pacing": "manual"
-            })
-            
-            # 1. Verify handshake status
-            msg = websocket.receive_json()
-            assert msg["type"] == "status" and msg["status"] == "ready"
-            msg = websocket.receive_json()
-            assert msg["type"] == "status" and msg["status"] == "connected"
-            
-            # Read original audio chunks until Case A silence timeout (which puts server into waiting_for_next hold state)
-            p_orig_count = 0
-            n_orig_count = 0
-            waiting = False
-            while not waiting:
-                msg = websocket.receive_json()
-                if msg["type"] == "original_audio":
-                    if msg["speaker"] == "patient":
-                        p_orig_count += 1
-                    elif msg["speaker"] == "nurse":
-                        n_orig_count += 1
-                elif msg["type"] == "waiting_for_next":
-                    assert msg["speaker"] == "patient"
-                    waiting = True
-                    
-            assert p_orig_count == 5
-            assert n_orig_count == 5
-            
-            # Server is now fully held on manual_next_event. Trigger the manual next action!
-            websocket.send_json({
-                "action": "next_turn"
-            })
-            
-            # Read original audio chunks until Case B direct takeover by patient
-            waiting = False
-            while not waiting:
-                msg = websocket.receive_json()
-                if msg["type"] == "original_audio":
-                    if msg["speaker"] == "patient":
-                        p_orig_count += 1
-                    elif msg["speaker"] == "nurse":
-                        n_orig_count += 1
-                elif msg["type"] == "waiting_for_next":
-                    assert msg["speaker"] == "nurse"
-                    waiting = True
-                    
-            assert p_orig_count == 8
-            assert n_orig_count == 8
-            
-            # Trigger manual next action to resume from takeover hold
-            websocket.send_json({
-                "action": "next_turn"
-            })
-            
-            # Wait for remaining patient chunks (8, 9) and completion
-            completed = False
-            while not completed:
-                msg = websocket.receive_json()
-                if msg["type"] == "status" and msg["status"] == "completed":
-                    completed = True
-                elif msg["type"] == "original_audio":
-                    if msg["speaker"] == "patient":
-                        p_orig_count += 1
-                    elif msg["speaker"] == "nurse":
-                        n_orig_count += 1
-                        
             assert p_orig_count == 10
             assert n_orig_count == 10
             assert completed
@@ -384,7 +302,7 @@ def test_auto_pacing_ceased_fallback(mock_genai_and_audio):
     # Custom Mock parts to simulate receiving audio chunks during the hold
     class MockPart:
         def __init__(self):
-            self.inline_data = MagicMock(data=b"\x01" * 100)
+            self.inline_data = MagicMock(data=b"\xd0\x07" * 50)
             self.text = None
 
     class MockModelTurn:
