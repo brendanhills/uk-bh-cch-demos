@@ -96,5 +96,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: HealthDirect UI Redesign**
+- [~] **Track: HealthDirect UI Redesign**
   *Link: [./tracks/healthdirect_ui_redesign_20260708/](./tracks/healthdirect_ui_redesign_20260708/)*

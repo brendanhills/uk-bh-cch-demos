@@ -39,9 +39,34 @@ class GlossaryHighlighter:
                 translations = entry.get("translations", {})
                 for lang_key, trans_val in translations.items():
                     if lang_key.lower() == language.lower() and trans_val:
-                        # Split by comma or semicolon to support multiple synonyms
-                        parts = [t.strip() for t in re.split(r'[,;]+', trans_val) if t.strip()]
-                        target_terms.extend(parts)
+                        # Support dictionary or list structures robustly
+                        if isinstance(trans_val, dict):
+                            def extract_strings(v):
+                                if isinstance(v, str):
+                                    return [v]
+                                elif isinstance(v, list):
+                                    res = []
+                                    for item in v:
+                                        res.extend(extract_strings(item))
+                                    return res
+                                elif isinstance(v, dict):
+                                    res = []
+                                    for item in v.values():
+                                        res.extend(extract_strings(item))
+                                    return res
+                                return []
+                            raw_strings = extract_strings(trans_val)
+                        elif isinstance(trans_val, list):
+                            raw_strings = trans_val
+                        elif isinstance(trans_val, str):
+                            raw_strings = [trans_val]
+                        else:
+                            raw_strings = []
+                            
+                        for r_str in raw_strings:
+                            # Split by comma or semicolon to support multiple synonyms
+                            parts = [t.strip() for t in re.split(r'[,;]+', r_str) if t.strip()]
+                            target_terms.extend(parts)
             if target_terms:
                 pattern = self._compile_pattern(target_terms)
                 text = pattern.sub(lambda m: f"\x1b[1;35m{m.group(0)}\x1b[0m", text)

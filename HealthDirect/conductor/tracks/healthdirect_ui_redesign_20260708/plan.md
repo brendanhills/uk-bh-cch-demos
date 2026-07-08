@@ -6,7 +6,7 @@
     - [x] Set brand colors: Navy (`#0c426e`), Coral-Orange (`#f05a28`), and Accent Teal (`#00a29a`)
     - [x] Redefine button styling and state transitions (hover, active, disabled) to look flat, modern, and clean
     - [x] Update background color and general layout container rules to look cohesive
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: CSS Architecture & Global Design Tokens' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: CSS Architecture & Global Design Tokens' (Protocol in workflow.md)
 
 ## Phase 2: Mock Video Call Layout & Floating Overlays
 - [ ] Task: Redesign the Call Monitor Board as two premium, wide-aspect video stream feeds

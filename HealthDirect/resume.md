@@ -1,24 +1,26 @@
-# Working Session Handoff: July 8, 2026 (6:40 PM)
+# Working Session Handoff: July 8, 2026 (9:35 PM)
 
 ## 📝 Session Summary
-- **What we did**: 
-  - **Reverted Core Logic to Stable Pre-Modularization Structure**: Restored the web server's core logic inside [demo/web_server.py](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web_server.py) back to the stable, single-file state-machine structure, moving away from the over-engineered multi-module `core/` package architecture that was causing severe multi-turn translation drops, latency spikes, and session timeout crashes.
-  - **Continuous Active-Session Silence-Streaming**: Kept Gemini sessions active by streaming a continuous flow of 200ms silence chunks **only** to the currently active translating session to let server-side VAD (Voice Activity Detection) trigger naturally, while completely starving the inactive session to avoid disturbing its VAD state.
-  - **Fail-Fast Testing Slicing**: Added a `"limit_seconds"` parameter in the WebSocket connection start handshake to slice audio in memory, enabling ultra-fast verification (under 30 seconds) of multi-turn patient-nurse dialogs.
-  - **Restored Fully-Translated Clinical Glossary**: Recovered the 2,263-term fully-translated clinical glossary from the `feature/utterance-level-playback` branch, aligning both `glossary/glossary.json` (1.3 MB) and `glossary/glossary.csv` (435 KB) to contain matching bilingual Spanish and Vietnamese terms.
-  - **Validated End-to-End**: Confirmed full multi-turn stability across German, Spanish, and Vietnamese presets!
-- **Workspace State**: 
-  - Active branch: `stable-pre-modularization` (Committed and pushed to remote origin).
-  - Modified files: Clean (all changes to web server, tests, and glossary committed and pushed).
+- **What we did**:
+  - **Identified and Fixed WebSocket Crash on Gemini 3.5 Live Translate**:
+    - Discovered that the pacing state machine in [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web_server.py) was sending continuous silence frames to the active session and sparse heartbeats to the inactive session during turn-hold and transition-pause states.
+    - Standard conversational models (like `gemini-3.1-flash-live-preview`) require active silence streaming to trigger their server-side Voice Activity Detection (VAD) naturally. However, the closed-pipeline translation-specific model (`gemini-3.5-live-translate-preview`) manages its own end-pointing automatically and does not support receiving extra audio inputs (even silence) during its translation generation phase.
+    - Sending these extra silence chunks/heartbeats triggered a `1011 (internal error) Internal error encountered` from the Gemini server, terminating the WebSocket connection.
+    - Resolved this by updating [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web_server.py) to completely bypass active silence streaming and inactive heartbeats during the hold and transition pause states when the selected model is non-flash (i.e. `is_flash_live == False`, representing `gemini-3.5-live-translate-preview`).
+    - Successfully validated the fix by running the pacing state machine test suite and passing all 3 tests!
+
+- **Workspace State**:
+  - Active branch: `stable-pre-modularization`
+  - Modified files: [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web_server.py) and [.agents/AGENTS.md](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/.agents/AGENTS.md)
   - Untracked files/folders: None in sub-project (excluding root-level untracked siblings).
 
 ## 📌 Current Context & Progress
-- **Active Track**: Improving Gemini 3.1 Flash Live performance / multi-turn translation stability.
-- **Last Active Task**: Successfully ran the 60-second multi-turn test, verifying that VAD triggers cleanly for both Turn 1 (patient) and Turn 2 (nurse) and proceeds to Turn 3 seamlessly.
+- **Active Track**: Improving Gemini 3.5 Live Translate Multi-turn Stability.
+- **Last Active Task**: Successfully diagnosed, fixed, and verified the `1011 None. Internal error encountered` WebSocket crash.
 
 ## 🚦 Remaining Tasks & Blockers
-- None! The core VAD jamming/starvation and timeout bugs under Gemini 3.1 Live are completely resolved.
+- None! The WebSocket 1011 internal error is completely resolved under Gemini 3.5 Live Translate.
 
 ## 🚀 Immediate Next Steps
-1. **Full Integration Testing**: Run un-sliced, full-dialogue Spanish, German, and Vietnamese presets through the Web UI to experience the flawless, real-time dual-channel translation.
+1. **Full Integration Testing**: Run un-sliced, full-dialogue Spanish, German, and Vietnamese presets through the Web UI using Gemini 3.5 Live Translate to experience the seamless translation.
 2. **Proceed to UI Redesign**: Trigger Conductor track `healthdirect_ui_redesign_20260708` to adapt the local call monitor interface into official HealthDirect style-guide colors and templates.

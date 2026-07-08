@@ -6,10 +6,10 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 
 ## Key Features
 
-- **Dual-Model Support & Evaluation**: Supports both **Gemini 3.5 Live Translate (Preview)** and **Gemini 3.1 Flash Live + Glossary** modes, with a dynamic Model Selector in the Web UI.
+- **Dual-Model Support & Evaluation**: Supports both **Gemini 3.5 Live Translate (Preview)** and **Gemini 3.1 Flash Live + Glossary** modes, with a dynamic Model Selector in the Web UI. Specifically resolves the WebSocket 1011 internal error under Gemini 3.5 by bypassing redundant silence/heartbeat streaming during generation.
 - **Dynamic Voice Gender Selection**: Automatically assigns appropriate male/female TTS voices (e.g., Puck/Charon vs. Kore/Aoede) matching the speaker's specified gender in `LiveConnectConfig`.
 - **Low-Latency Real-Time Text Streaming**: Intercepts real-time text parts (`parts[].text`) from the Gemini Live stream and immediately forwards low-latency transcripts to the client WebSocket interface.
-- **Resilient Audio Power Envelope Pacing**: Resolves pacing hangs and freezes under standard models. Features an intelligent activity monitor that automatically proceeds with the next turn if translated audio ceases for $> 1.5$ seconds or fails to play back within a $4.0$-second startup window.
+- **Resilient Audio Power Envelope Pacing**: Resolves pacing hangs and freezes under standard models. Features an intelligent activity monitor that automatically proceeds with the next turn if translated audio ceases for $> 1.5$ seconds or fails to play back within a $4.0$-second startup window. For native translation models (Gemini 3.5), the state machine intelligently avoids streaming inactive/active silence to ensure session stability.
 - **Strict Clinical Glossary Enforcement**: When utilizing Gemini 3.1, frontloads a customized passive interpreter system prompt with Australian terminology spellings and a formatted glossary list to enforce absolute vocabulary dominance in translated audio text.
 - **Real-Time Bidirectional Translation**: Establishes dual parallel **Gemini Live API WebSocket** streams to translate patient speech (e.g., German, Spanish, Vietnamese, Arabic) to English and clinician speech (English) to the patient's language concurrently.
 - **Stereo Channel Splitting**: Loads stereo `.wav` audio files and separates them into independent mono feeds—the Left channel represents the Patient (foreign language) and the Right channel represents the Nurse (English).

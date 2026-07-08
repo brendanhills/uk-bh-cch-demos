@@ -302,35 +302,35 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 }
 
 .btn-primary {
-    background-color: var(--brand-navy);
+    background-color: #10b981; /* Highly visible Emerald-Green for Start */
     color: #ffffff;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: #082f4d;
-    box-shadow: 0 4px 12px var(--brand-navy-glow);
+    background-color: #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
 .btn-danger {
-    background-color: var(--brand-coral);
+    background-color: #ef4444; /* Standard Red-500 for End Call */
     color: #ffffff;
 }
 
 .btn-danger:hover:not(:disabled) {
-    background-color: #d84315;
-    box-shadow: 0 4px 12px var(--brand-coral-glow);
+    background-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 .btn-secondary {
-    background-color: var(--bg-card);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    background-color: #e2e8f0; /* Shaded Slate-200 background */
+    color: #334155; /* Darker Slate-700 text */
+    border: 1px solid #cbd5e1;
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: var(--bg-dark);
-    color: var(--text-primary);
-    border-color: var(--text-secondary);
+    background-color: #cbd5e1; /* Darker Slate-300 on hover */
+    color: #1e293b;
+    border-color: #94a3b8;
 }
 
 .btn-accent {
@@ -873,13 +873,13 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
    ========================================================================== */
 .btn-warning {
     background-color: #d97706; /* Amber-600 */
-    color: var(--text-primary);
+    color: #ffffff; /* Highly visible white text */
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-warning:hover:not(:disabled) {
     background-color: #b45309; /* Amber-700 */
-    box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
 }
 
 /* ==========================================================================
@@ -953,7 +953,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: rgba(24, 24, 27, 0.4); /* Slight subtle depth contrast */
+    background-color: var(--bg-dark); /* Light depth contrast */
 }
 
 .search-input-wrapper {
@@ -974,7 +974,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 .search-input-wrapper input {
     width: 100%;
     padding: 8px 30px 8px 32px;
-    background-color: rgba(9, 9, 11, 0.6); /* Glassmorphic darker zinc input */
+    background-color: #ffffff; /* Clean white input */
     color: var(--text-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -985,9 +985,9 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 }
 
 .search-input-wrapper input:focus {
-    border-color: var(--primary-blue);
-    background-color: rgba(9, 9, 11, 0.9);
-    box-shadow: 0 0 0 2px var(--primary-blue-glow);
+    border-color: var(--brand-teal); /* Brand Teal Focus */
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px var(--brand-teal-glow);
 }
 
 .search-input-wrapper .clear-search-btn {
@@ -1009,7 +1009,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 
 .search-input-wrapper .clear-search-btn:hover {
     color: var(--text-primary);
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.05); /* Light hover background */
 }
 
 .filter-options {
@@ -1222,9 +1222,7 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 
 /* Encountered Medical References Panel at bottom of Chat */
 .encountered-references-panel {
-    background: rgba(24, 24, 27, 0.85); /* Slightly transparent dark card */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--bg-card); /* Pristine white card background */
     border-top: 1px solid var(--border-color);
     border-bottom-left-radius: var(--radius-lg);
     border-bottom-right-radius: var(--radius-lg);
@@ -1251,9 +1249,9 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 }
 
 .encountered-references-panel .panel-header .count-badge {
-    background-color: rgba(56, 189, 248, 0.1);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.2);
+    background-color: rgba(0, 162, 154, 0.08);
+    color: var(--brand-teal);
+    border: 1px solid rgba(0, 162, 154, 0.2);
     font-size: 0.7rem;
     font-weight: 600;
     padding: 1px 6px;
@@ -1279,9 +1277,9 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
 .reference-pill {
     display: inline-flex;
     align-items: center;
-    background: rgba(56, 189, 248, 0.05);
-    border: 1px solid rgba(56, 189, 248, 0.15);
-    color: #38bdf8;
+    background: rgba(0, 162, 154, 0.05);
+    border: 1px solid rgba(0, 162, 154, 0.15);
+    color: var(--brand-teal);
     text-decoration: none;
     font-size: 0.75rem;
     font-weight: 500;
@@ -1289,15 +1287,15 @@ select:hover, select:focus, input[type="number"]:hover, input[type="number"]:foc
     border-radius: 9999px;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .reference-pill:hover {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: rgba(56, 189, 248, 0.4);
+    background: rgba(0, 162, 154, 0.1);
+    border-color: var(--brand-teal);
     transform: translateY(-1.5px);
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
-    color: #7dd3fc;
+    box-shadow: 0 4px 12px rgba(0, 162, 154, 0.15);
+    color: var(--brand-navy);
 }
 
 .reference-pill:active {

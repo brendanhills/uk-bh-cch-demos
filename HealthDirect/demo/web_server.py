@@ -225,10 +225,25 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
                 
         if matched_lang_key:
             translation = translations[matched_lang_key]
-            if direction == "p_to_n":
-                term_rule = f"{translation} -> {english}"
+            if isinstance(translation, dict):
+                synonyms = []
+                formal = translation.get("formal")
+                if formal:
+                    synonyms.append(formal)
+                informal = translation.get("informal")
+                if informal:
+                    if isinstance(informal, list):
+                        synonyms.extend(informal)
+                    elif isinstance(informal, str):
+                        synonyms.append(informal)
+                translation_str = ", ".join(synonyms) if synonyms else str(translation)
             else:
-                term_rule = f"{english} -> {translation}"
+                translation_str = str(translation)
+                
+            if direction == "p_to_n":
+                term_rule = f"{translation_str} -> {english}"
+            else:
+                term_rule = f"{english} -> {translation_str}"
                 
             if description and not exclude_descriptions:
                 formatted_lines.append(f"- {term_rule}: {description}")
@@ -862,7 +877,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                             logger.info(f"Audio envelope detection: No translation audio received within {startup_audio_threshold}s startup window. Assuming turn complete or silent.")
                                             break
                                             
-                                    # Keep Gemini sessions alive with continuous active-session silence for flash, or sparse heartbeats for non-flash
+                                    # Keep Gemini sessions alive with continuous active-session silence for flash, or do nothing for translation preview
                                     if is_flash_live:
                                         if speaker_finished == "patient":
                                             # Send continuous silence to active patient session to let VAD trigger naturally
@@ -875,25 +890,8 @@ async def websocket_endpoint(websocket: WebSocket):
                                                 audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
                                             )
                                     else:
-                                        # Non-flash models don't have VAD jamming issues, so keep active progressing and inactive warm
-                                        if speaker_finished == "patient":
-                                            await session_p_to_n.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
-                                            if hold_idx % 15 == 0:
-                                                logger.info(f"[HEARTBEAT] Sending sparse hold-state heartbeat to inactive Nurse session (hold_idx={hold_idx})")
-                                                await session_n_to_p.send_realtime_input(
-                                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                                )
-                                        else:
-                                            await session_n_to_p.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
-                                            if hold_idx % 15 == 0:
-                                                logger.info(f"[HEARTBEAT] Sending sparse hold-state heartbeat to inactive Patient session (hold_idx={hold_idx})")
-                                                await session_p_to_n.send_realtime_input(
-                                                    audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                                )
+                                        # gemini-3.5-live-translate-preview does not support receiving inputs during translation generation/hold state
+                                        pass
                                     await asyncio.sleep(0.2)
                                 else:
                                     logger.warning(f"Silence-streaming hold state timed out after {timeout_sec}s for {speaker_finished}. Proceeding.")
@@ -913,25 +911,8 @@ async def websocket_endpoint(websocket: WebSocket):
                                             audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
                                         )
                                 else:
-                                    # Non-flash models
-                                    if speaker_finished == "patient":
-                                        await session_p_to_n.send_realtime_input(
-                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                        )
-                                        if pause_idx % 15 == 0:
-                                            logger.info(f"[HEARTBEAT] Sending sparse pause-state heartbeat to inactive Nurse session (pause_idx={pause_idx})")
-                                            await session_n_to_p.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
-                                    else:
-                                        await session_n_to_p.send_realtime_input(
-                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                        )
-                                        if pause_idx % 15 == 0:
-                                            logger.info(f"[HEARTBEAT] Sending sparse pause-state heartbeat to inactive Patient session (pause_idx={pause_idx})")
-                                            await session_p_to_n.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
+                                    # gemini-3.5-live-translate-preview does not support receiving inputs during pause/transition state
+                                    pass
                                 await asyncio.sleep(0.2)
                                 
                             # Clear the translation complete event ONLY at the end of the turn
