@@ -11,7 +11,7 @@ Provide a high-fidelity development and evaluation environment for real-time bil
 
 # Core Goals
 1. **Real-time Bilingual Translation:** Specifically utilize the Gemini Live API's Live Translate (`https://ai.google.dev/gemini-api/docs/live-api/live-translate`) to interpret conversational audio in real-time.
-2. **Bilingual Stream Delivery:** Real-time side-by-side bilingual speech translation (German/Spanish/Vietnamese <-> English) to simulate live patient-nurse medical consults.
+2. **Bilingual Stream Delivery:** Real-time side-by-side bilingual speech translation (German/Spanish/Vietnamese/Arabic <-> English) to simulate live patient-nurse medical consults.
 3. **Australian Medical Glossary Priming:** Dynamically inject HealthDirect clinical glossaries to prime the Gemini Live Translate session, ensuring proper terminology mapping.
 4. **Interactive Demonstrations:** Provide high-fidelity standalone demo scripts showing translation in action.
 
