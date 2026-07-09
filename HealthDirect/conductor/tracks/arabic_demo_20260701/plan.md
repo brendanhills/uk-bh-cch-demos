@@ -40,4 +40,4 @@
 - [x] **Task 4.1: Run E2E test with Arabic Demo**
   - Start the web server and test the Arabic demo session.
   - Verify that both patient transcriptions (Arabic) and translations render beautifully with correct alignment and RTL direction.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 4' (Protocol in workflow.md)**
