@@ -1,0 +1,8 @@
+{
+  "track_id": "multi_client_simulator_20260709",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-09T11:49:00Z",
+  "updated_at": "2026-07-09T11:49:00Z",
+  "description": "Plan a track to more accurately simulate a conversation between Nurse and Patient where they are on different machines (multi-client split-view over WebSockets)."
+}

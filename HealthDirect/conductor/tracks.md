@@ -93,3 +93,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Gemini 2.5 Unary/Streaming Integration & Evaluation**
   *Link: [./tracks/gemini_25_integration_20260708/](./tracks/gemini_25_integration_20260708/)*
+
+---
+
+- [ ] **Track: Multi-Client Split-View Conversation Simulator**
+  *Link: [./tracks/multi_client_simulator_20260709/](./tracks/multi_client_simulator_20260709/)*
