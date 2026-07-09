@@ -23,7 +23,7 @@
   - Overlay synthesized audio segments into a dual-channel stereo WAV file at `samples/ar_asthma_session.wav`.
 - [x] **Task 2.2: Verify generated audio** 353
   - Confirm the file is stereo and can be processed correctly by the audio utilities.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 2' (Protocol in workflow.md)**
 
 ## Phase 3: Web Server & Web UI RTL Support
 - [x] **Task 3.1: Add Arabic preset to `web_server.py`**
