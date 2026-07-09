@@ -238,6 +238,23 @@ function highlightText(text, query) {
     return escaped.replace(regex, "<span class='search-highlight'>$1</span>");
 }
 
+function getTranslationString(val) {
+    if (!val) return "";
+    if (typeof val === "object") {
+        const parts = [];
+        if (val.formal) parts.push(val.formal);
+        if (val.informal) {
+            if (Array.isArray(val.informal)) {
+                parts.push(...val.informal);
+            } else {
+                parts.push(val.informal);
+            }
+        }
+        return parts.join(", ");
+    }
+    return String(val);
+}
+
 function renderGlossaryList() {
     const listDiv = document.getElementById("glossary-list");
     const countBadge = document.getElementById("glossary-count");
@@ -259,7 +276,7 @@ function renderGlossaryList() {
     const filteredTerms = glossaryTerms.filter(entry => {
         const trans = entry.translations || {};
         const transKey = Object.keys(trans).find(k => k.toLowerCase() === targetLang.toLowerCase());
-        const translationVal = transKey ? trans[transKey] : "";
+        const translationVal = transKey ? getTranslationString(trans[transKey]) : "";
         
         // 1. Filter by Active Category Chip
         const urlKey = `${targetLang}_grounding_url`;
@@ -311,7 +328,7 @@ function renderGlossaryList() {
         
         const trans = entry.translations || {};
         const transKey = Object.keys(trans).find(k => k.toLowerCase() === targetLang.toLowerCase());
-        const translationVal = transKey ? trans[transKey] : "";
+        const translationVal = transKey ? getTranslationString(trans[transKey]) : "";
         
         const termRow = document.createElement("div");
         termRow.className = "item-term-row";
@@ -390,7 +407,7 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
             const trans = entry.translations || {};
             const key = Object.keys(trans).find(k => k.toLowerCase() === matchLanguage.toLowerCase());
             if (key) {
-                termVal = trans[key];
+                termVal = getTranslationString(trans[key]);
             }
         }
         
@@ -433,7 +450,7 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
             const englishTerm = entry.english || "";
             const translations = entry.translations || {};
             const transKey = Object.keys(translations).find(k => k.toLowerCase() === targetLang.toLowerCase());
-            const translationVal = transKey ? translations[transKey] : "";
+            const translationVal = transKey ? getTranslationString(translations[transKey]) : "";
             const desc = entry.description || "";
             
             logger(`[UI Event] [Glossary Match] Matched term: "${matched}" -> English: "${englishTerm}"${translationVal ? ` (Translation: "${translationVal}")` : ""}`);
