@@ -1,5 +1,11 @@
 # Plan: Simultaneous Multi-Client Split-View Conversation Simulator (`simultaneous_multi_client`)
 
+## 🛑 Execution Guardrails
+* **Headless-First Verification**: Never load a browser window to debug WebSocket routing. Verify session coordination, room pairing, and message routing using `fastapi.testclient` and mock connections first.
+* **Web Audio Autoplay Bypass**: Implement a simple, high-visibility "Initialize Audio" button to guarantee user-interaction-based `AudioContext` activation. Do not write complex self-retrying state loops to bypass browser autoplay blocks.
+* **No-Drift Threshold**: Define "acceptable lockstep sync" as ±250ms. If the two clients play within 250ms of each other, do not implement additional dynamic NTP clock syncing.
+* **Single-Pair Simplification**: The session coordinator should manage a single, static dual-client pair (one Nurse, one Patient) for demo purposes. Do not implement complex multi-room multi-tenant scaling architectures. Keep it simple and focused.
+
 ## Phase 1: Git Sandboxing & Backend Endpoints Setup
 - [ ] **Task 1.1**: Set up dedicated Git branch for safety
   *   Run `git checkout -b feature/simultaneous-multi-client` from `stable-pre-modularization` and push to remote.
@@ -9,6 +15,7 @@
   *   Create independent WebSocket routes.
 - [ ] **Task 1.4**: Build thread-safe `ActiveSession` coordinator class
   *   Manage paired connection sockets, broadcast configuration updates (preset, model, language) from `/nurse` to `/patient`, and handle disconnects.
+  *   *Anti-Loop Guard*: The session coordinator should manage a single, static dual-client pair (one Nurse, one Patient) for demo purposes. Do not implement complex multi-room multi-tenant scaling architectures. Keep it simple and focused.
 - [ ] **Task 1.5**: Write unit tests for session pairing and state synchronization
 
 ## Phase 2: Simultaneous Continuous Streaming Router
@@ -28,6 +35,7 @@
   *   Instantiate `AudioContext`.
   *   Route incoming original WAV stream chunks to `originalPanner` (panned Left).
   *   Route incoming Gemini translated audio bytes to `translationPanner` (panned Right).
+  *   *Anti-Loop Guard*: Implement standard, direct gain manipulation. Do not build custom audio fading curves or exponential volume decay algorithms.
 - [ ] **Task 3.3**: Build the independent Nurse-side Bilingual Audio Panning Slider
   *   Create a slider in the `/nurse` UI to dynamically adjust the gain/panning of the original and translated audio nodes.
   *   Verify: Slider is localized to `/nurse` and does not affect `/patient`. Slider at `-1.0` plays only original; at `+1.0` plays only translation; at `0.0` plays both blended 50/50.
@@ -55,5 +63,12 @@
   *   Verify that selecting a language on the Nurse view automatically updates the Patient view.
   *   Start the session, verify continuous dual-channel streaming, simultaneous translation, and independent slider panning on both sides.
   *   Test the "Demo Focus" mute buttons to ensure smooth audio switching during screen sharing.
+  *   *Anti-Loop Guard*: If you encounter audio clicking/popping over WebSockets, apply a static, simple 50ms buffer delay. Do not rewrite the browser's audio decoding engine. If it works smoothly in Chrome, do not attempt to refactor the entire pipeline to resolve edge cases in old Safari or Firefox builds unless explicitly required.
 - [ ] **Task 5.3**: Backward compatibility validation
   *   Verify that the test suite runs and all existing tests pass on the feature branch.
+- [ ] **Task 5.4**: Create and run Headless WebSocket Session Sync test (`tests/test_multi_client_sync.py`)
+  *   Verify paired connection sockets, broadcast configuration updates from `/nurse` to `/patient`, and handle client disconnects.
+- [ ] **Task 5.5**: Create and run Lockstep Paced Streaming Throttling test (`tests/test_streaming_throttling.py`)
+  *   Verify that the server-side real-time streaming loop delivers chunks at a precise, non-blocking rate of 200ms per chunk (5 chunks per second).
+- [ ] **Task 5.6**: Create and run Offline Gap & Starvation Detector test (`tests/test_offline_gap_check.py`)
+  *   Verify that no single chunk interval exceeds 250ms under load, catching any blocking synchronous thread execution immediately.

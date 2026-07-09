@@ -209,7 +209,7 @@ async function fetchGlossary() {
     if (!meta) return;
     
     try {
-        const response = await fetch(`/api/glossary?language=${meta.shortLang}`);
+        const response = await fetch(`/api/glossary?language=${meta.shortLang}&_=${Date.now()}`);
         if (response.ok) {
             const data = await response.json();
             glossaryTerms = data.glossary || [];
@@ -240,19 +240,27 @@ function highlightText(text, query) {
 
 function getTranslationString(val) {
     if (!val) return "";
+    if (Array.isArray(val)) {
+        return val.map(item => getTranslationString(item)).filter(Boolean).join(", ");
+    }
     if (typeof val === "object") {
         const parts = [];
-        if (val.formal) parts.push(val.formal);
+        if (val.formal) parts.push(getTranslationString(val.formal));
         if (val.informal) {
             if (Array.isArray(val.informal)) {
-                parts.push(...val.informal);
+                parts.push(...val.informal.map(item => getTranslationString(item)));
             } else {
-                parts.push(val.informal);
+                parts.push(getTranslationString(val.informal));
             }
         }
-        return parts.join(", ");
+        const filteredParts = parts.map(p => p.trim()).filter(Boolean);
+        if (filteredParts.length === 0) {
+            // Fallback for other dictionary shapes
+            return Object.values(val).map(v => getTranslationString(v)).filter(Boolean).join(", ");
+        }
+        return filteredParts.join(", ");
     }
-    return String(val);
+    return String(val).trim();
 }
 
 function renderGlossaryList() {
@@ -1272,7 +1280,27 @@ if (pauseBtn) {
 }
 
 resetBtn.addEventListener("click", () => {
-    logger("Resetting call UI and conversation state.");
+    logger("Resetting call UI, clearing cache, and conversation state.");
+    
+    // Force stylesheet reload to bust browser CSS cache
+    document.querySelectorAll("link[rel='stylesheet']").forEach(link => {
+        try {
+            const url = new URL(link.href, window.location.href);
+            url.searchParams.set("v", Date.now());
+            link.href = url.toString();
+        } catch (e) {
+            link.href = 'style.css?v=' + Date.now();
+        }
+    });
+
+    // Clear local storage and session storage
+    try {
+        localStorage.clear();
+        sessionStorage.clear();
+    } catch (e) {
+        console.warn("Storage clear blocked: ", e);
+    }
+
     chatFeed.innerHTML = `
         <div class="system-message" id="welcome-message">
             Select a consultation scenario above and click "Start Call" to begin the real-time AI interpreter demo.
@@ -1285,6 +1313,9 @@ resetBtn.addEventListener("click", () => {
     const meta = PRESET_UI_METADATA[preset];
     const targetLang = meta ? meta.shortLang : "";
     renderEncounteredReferences(targetLang);
+    
+    // Fetch latest glossary terms with cache-busting
+    fetchGlossary();
     
     // Reset playheads to current audio time or 0
     if (audioCtx) {

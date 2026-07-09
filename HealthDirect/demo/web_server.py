@@ -204,6 +204,117 @@ async def get_pacing_config():
             "additional_pause_sec": 2.0
         }
 
+def scan_and_log_clinical_terms(orig_text: str, trans_text: str, target_language: str, speaker: str):
+    """
+    Scans the original and translated texts of a turn for active medical glossary terms
+    and logs them to the server terminal.
+    """
+    if not orig_text and not trans_text:
+        return
+
+    # Load glossary
+    glossary_path = GLOSSARY_PATH
+    if not os.path.exists(glossary_path):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        fallback_path = os.path.join(base_dir, "glossary/glossary.json")
+        if os.path.exists(fallback_path):
+            glossary_path = fallback_path
+    
+    if not os.path.exists(glossary_path):
+        return
+        
+    try:
+        with open(glossary_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            entries = data.get("glossary", [])
+    except Exception as e:
+        logger.error(f"Error loading glossary for term scanning: {e}")
+        return
+
+    import re
+
+    def get_val_string(val):
+        if not val:
+            return ""
+        if isinstance(val, list):
+            return ", ".join(get_val_string(item) for item in val if item)
+        if isinstance(val, dict):
+            parts = []
+            if val.get("formal"):
+                parts.append(get_val_string(val["formal"]))
+            if val.get("informal"):
+                inf = val["informal"]
+                if isinstance(inf, list):
+                    parts.extend(get_val_string(item) for item in inf if item)
+                else:
+                    parts.append(get_val_string(inf))
+            return ", ".join(p for p in parts if p)
+        return str(val).strip()
+
+    matches = []
+    
+    # Check both english and target_language terms
+    for entry in entries:
+        english_term = entry.get("english", "")
+        translations = entry.get("translations", {})
+        
+        # Get target translation string
+        trans_val = ""
+        for lang_key, val in translations.items():
+            if lang_key.lower() == target_language.lower():
+                trans_val = get_val_string(val)
+                break
+                
+        # Split synonyms by comma or semicolon
+        english_syns = [s.strip() for s in re.split(r'[,;]+', english_term) if s.strip()]
+        trans_syns = [s.strip() for s in re.split(r'[,;]+', trans_val) if s.strip()] if trans_val else []
+        
+        matched_eng = []
+        matched_trans = []
+        
+        if speaker.lower() == "nurse":
+            # Nurse speaks English
+            for syn in english_syns:
+                pattern = r'\b' + re.escape(syn) + r'\b'
+                if re.search(pattern, orig_text, re.IGNORECASE):
+                    matched_eng.append(syn)
+            # Translation to foreign
+            for syn in trans_syns:
+                pattern = r'(?<!\w)' + re.escape(syn) + r'(?!\w)'
+                if re.search(pattern, trans_text, re.IGNORECASE):
+                    matched_trans.append(syn)
+        else:
+            # Patient speaks foreign
+            for syn in trans_syns:
+                pattern = r'(?<!\w)' + re.escape(syn) + r'(?!\w)'
+                if re.search(pattern, orig_text, re.IGNORECASE):
+                    matched_trans.append(syn)
+            # Translation to English
+            for syn in english_syns:
+                pattern = r'\b' + re.escape(syn) + r'\b'
+                if re.search(pattern, trans_text, re.IGNORECASE):
+                    matched_eng.append(syn)
+                    
+        if matched_eng or matched_trans:
+            matches.append({
+                "english": english_term,
+                "translation": trans_val,
+                "description": entry.get("description", ""),
+                "matched_english": matched_eng,
+                "matched_translation": matched_trans
+            })
+
+    if matches:
+        logger.info(f"\n💡 [CLINICAL TERMS IDENTIFIED][{speaker.upper()} TURN]")
+        for m in matches:
+            details = []
+            if m["matched_english"]:
+                details.append(f"English matched: '{', '.join(m['matched_english'])}'")
+            if m["matched_translation"]:
+                details.append(f"Translation matched: '{', '.join(m['matched_translation'])}'")
+            logger.info(f"  • {m['english']} -> {m['translation']} ({'; '.join(details)}) | Desc: {m['description']}")
+        logger.info("")
+
 def load_and_format_glossary(target_language: str, direction: str = "n_to_p", exclude_descriptions: bool = False) -> str:
     """
     Loads active glossary terms from GLOSSARY_PATH, filters by target_language
@@ -550,9 +661,6 @@ async def websocket_endpoint(websocket: WebSocket):
         else:
             config_p_to_n = types.LiveConnectConfig(
                 response_modalities=[types.Modality.AUDIO],
-                system_instruction=types.Content(
-                    parts=[types.Part.from_text(text=sys_inst_p_to_n)]
-                ),
                 translation_config=types.TranslationConfig(
                     target_language_code="en",
                     echo_target_language=True
@@ -589,9 +697,6 @@ async def websocket_endpoint(websocket: WebSocket):
         else:
             config_n_to_p = types.LiveConnectConfig(
                 response_modalities=[types.Modality.AUDIO],
-                system_instruction=types.Content(
-                    parts=[types.Part.from_text(text=sys_inst_n_to_p)]
-                ),
                 translation_config=types.TranslationConfig(
                     target_language_code=lang_code,
                     echo_target_language=True

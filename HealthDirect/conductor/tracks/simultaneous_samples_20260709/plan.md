@@ -1,5 +1,10 @@
 # Plan: Programmatic Simultaneous Sample Generation (`simultaneous_samples`)
 
+## 🛑 Execution Guardrails
+* **Voice Optimization Cap**: Limit SSML voice customization to a maximum of 2 iterations. If a voice does not sound "perfectly sick", accept a readable, slow, high-quality default.
+* **One-Pass Canvas Compilation**: Do not attempt to implement multi-track background ambient noises or complex mixing. Maintain a strict Left/Right mono splitter and simple overlay.
+* **DoD (Definition of Done) Lock**: Once `test_simultaneous_timeline.py` and `test_ssml_dryrun.py` pass, the generation engine is finalized. Do not perform further micro-refactorings.
+
 ## Phase 1: Dialogue Script Library Setup (JSON Metadata)
 - [ ] **Task 1.1**: Set up directory structure for sample metadata
   *   Create directory `samples/metadata/` if it does not exist.
@@ -28,6 +33,8 @@
       *   Apply `<emphasis level="moderate">` on key symptoms like pain, headache, and fever.
   *   Make calls using `TextToSpeechAsyncClient.synthesize_speech()` requesting `LINEAR16` audio at `16000Hz`.
   *   Ingest raw synthesized bytes into `pydub.AudioSegment`.
+  *   *Anti-Loop Guard*: Use a standard schema-validation dictionary for voice mappings. Do not dynamically fetch voice parameters or perform ad-hoc overrides.
+  *   *Failure Exit*: If any regional voice raises a 400 bad-request, immediately fall back to a standard stable Neural2 voice without SSML wrappers.
 - [ ] **Task 2.3**: Implement the Simultaneous Timeline Compiler
   *   Write `async def compile_simultaneous_stereo_wav(scenario_id, script, tail_buffer_ms=2500)`.
   *   Initialize silent mono `left_channel` and `right_channel` canvases.
@@ -47,5 +54,10 @@
   *   Check that the generated files have correct Left/Right speaker separation (Patient in Left ear, Nurse in Right ear).
   *   Verify that the silence gap between the end of a spoken turn on one channel and the start of a turn on the other channel measures exactly `2.5 seconds`.
   *   Ensure there are no overlapping voices *within* the pre-recorded files themselves (the files should be paced perfectly for simultaneous translation, where the translation itself will fill the silence gaps on the other channel).
+  *   *Fail-Fast Boundary*: Run the automated timeline verification script (`test_simultaneous_timeline.py`). If the timing check fails, adjust the base mathematical formula variables in `generate_simultaneous_audio.py` globally. Do not adjust manual offsets for individual segments.
 - [ ] **Task 3.3**: GCS Verification
   *   Ensure files are successfully pushed to Google Cloud Storage under `gs://uk-bh-experiments-argolis-us/HealthDirect/call_samples/`.
+- [ ] **Task 3.4**: Create and run SSML voice customization dry-run test (`tests/test_ssml_dryrun.py`)
+  *   Implement the test as specified in the diagnostics reports to dry-run regional voice codes (`de-DE`, `es-ES`, `vi-VN`) and SSML syntax offline against Google Cloud TTS.
+- [ ] **Task 3.5**: Create and run Programmatic Audio Timeline verification test (`tests/test_simultaneous_timeline.py`)
+  *   Implement the test to analyze generated `.wav` RMS and guarantee zero vocal overlaps and perfect 2.5s silence gap pacing across channels.
