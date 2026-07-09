@@ -91,5 +91,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Multi-Client Split-View Conversation Simulator**
-  *Link: [./tracks/multi_client_simulator_20260709/](./tracks/multi_client_simulator_20260709/)*
+- [ ] **Track: Bilingual Simultaneous Sample Audio Library (Automated Generation)**
+  *Link: [./tracks/simultaneous_samples_20260709/](./tracks/simultaneous_samples_20260709/)*
+
+---
+
+- [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
+  *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
