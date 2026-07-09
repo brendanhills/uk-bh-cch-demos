@@ -491,7 +491,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 system_instruction=types.Content(
                     parts=[types.Part.from_text(text=sys_inst_p_to_n)]
                 ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
+                input_audio_transcription=types.AudioTranscriptionConfig(language_codes=[lang_code]),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
                 realtime_input_config=types.RealtimeInputConfig(
                     automatic_activity_detection=types.AutomaticActivityDetection(
@@ -509,7 +509,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     target_language_code="en",
                     echo_target_language=True
                 ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
+                input_audio_transcription=types.AudioTranscriptionConfig(language_codes=[lang_code]),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
                 realtime_input_config=types.RealtimeInputConfig(
                     automatic_activity_detection=types.AutomaticActivityDetection(
@@ -530,7 +530,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 system_instruction=types.Content(
                     parts=[types.Part.from_text(text=sys_inst_n_to_p)]
                 ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
+                input_audio_transcription=types.AudioTranscriptionConfig(language_codes=["en"]),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
                 realtime_input_config=types.RealtimeInputConfig(
                     automatic_activity_detection=types.AutomaticActivityDetection(
@@ -548,7 +548,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     target_language_code=lang_code,
                     echo_target_language=True
                 ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
+                input_audio_transcription=types.AudioTranscriptionConfig(language_codes=["en"]),
                 output_audio_transcription=types.AudioTranscriptionConfig(),
                 realtime_input_config=types.RealtimeInputConfig(
                     automatic_activity_detection=types.AutomaticActivityDetection(
