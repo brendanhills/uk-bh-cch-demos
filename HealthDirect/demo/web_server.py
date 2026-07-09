@@ -85,14 +85,14 @@ def load_and_split_channels(file_path: str, target_sample_rate: int = 16000) -> 
     """
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Audio file not found at {file_path}")
-        
+
     logger.info(f"Loading and processing audio file: {file_path}")
     seg = AudioSegment.from_file(file_path)
-    
+
     # Force 16kHz, 16-bit PCM (sample width = 2 bytes)
     seg = seg.set_frame_rate(target_sample_rate)
     seg = seg.set_sample_width(2)
-    
+
     # Ensure it's stereo
     if seg.channels != 2:
         logger.warning("Input audio is not stereo. Simulating mono on both channels.")
@@ -101,17 +101,17 @@ def load_and_split_channels(file_path: str, target_sample_rate: int = 16000) -> 
     else:
         # Split into left and right mono channels
         left_mono, right_mono = seg.split_to_mono()
-        
+
     patient_bytes = left_mono.raw_data
     nurse_bytes = right_mono.raw_data
-    
+
     # 16-bit mono bytes per second = 16000 * 1 * 2 = 32000
     bytes_per_sec = target_sample_rate * 1 * 2
     # 200ms chunk = 0.2s
     chunk_size = int(bytes_per_sec * 0.2)
     # Align to 2-byte frame boundary
     chunk_size = (chunk_size // 2) * 2
-    
+
     return patient_bytes, nurse_bytes, chunk_size
 
 def has_speech(chunk: bytes, threshold: int = 1000) -> bool:
@@ -139,10 +139,10 @@ async def get_glossary(language: str = None):
         fallback_path = os.path.join(base_dir, "glossary/glossary.json")
         if os.path.exists(fallback_path):
             glossary_path = fallback_path
-            
+
     if not os.path.exists(glossary_path):
         return {"glossary": []}
-        
+
     try:
         with open(glossary_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -150,7 +150,7 @@ async def get_glossary(language: str = None):
     except Exception as e:
         logger.error(f"Error loading glossary: {e}")
         return {"glossary": []}
-        
+
     if language:
         filtered_entries = []
         for entry in entries:
@@ -158,7 +158,7 @@ async def get_glossary(language: str = None):
             if language.lower() == "english" or any(l.lower() == language.lower() for l in translations.keys()):
                 filtered_entries.append(entry)
         return {"glossary": filtered_entries}
-        
+
     return {"glossary": entries}
 
 @app.get("/api/pacing-config")
@@ -196,11 +196,11 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
         fallback_path = os.path.join(base_dir, "glossary/glossary.json")
         if os.path.exists(fallback_path):
             glossary_path = fallback_path
-            
+
     if not os.path.exists(glossary_path):
         logger.warning(f"Glossary file not found at {glossary_path}.")
         return ""
-        
+
     try:
         with open(glossary_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -208,21 +208,21 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
     except Exception as e:
         logger.error(f"Error loading glossary for formatting: {e}")
         return ""
-        
+
     formatted_lines = []
     target_lang_lower = target_language.lower()
     for entry in entries:
         english = entry.get("english", "")
         translations = entry.get("translations", {})
         description = entry.get("description", "")
-        
+
         # Find the case-insensitive matching language key
         matched_lang_key = None
         for lang_key in translations.keys():
             if lang_key.lower() == target_lang_lower:
                 matched_lang_key = lang_key
                 break
-                
+
         if matched_lang_key:
             translation = translations[matched_lang_key]
             if isinstance(translation, dict):
@@ -239,17 +239,17 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
                 translation_str = ", ".join(synonyms) if synonyms else str(translation)
             else:
                 translation_str = str(translation)
-                
+
             if direction == "p_to_n":
                 term_rule = f"{translation_str} -> {english}"
             else:
                 term_rule = f"{english} -> {translation_str}"
-                
+
             if description and not exclude_descriptions:
                 formatted_lines.append(f"- {term_rule}: {description}")
             else:
                 formatted_lines.append(f"- {term_rule}")
-                
+
     return "\n".join(formatted_lines)
 
 
@@ -264,7 +264,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         "Maintain a neutral, professional medical tone. Translate exactly what is said without summarizing, "
         "embellishing, or adding medical advice."
     )
-    
+
     australian_rules = (
         "CRITICAL SPELLING & NOMENCLATURE CONSTRAINT:\n"
         "You must strictly adhere to Australian medical standards, terminology, and spelling conventions.\n"
@@ -273,7 +273,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         "- Use Australian/Commonwealth spelling: e.g., 'paediatric' (not 'pediatric'), 'haematology' (not 'hematology'), "
         "'gastroenteritis' (not 'stomach flu')."
     )
-    
+
     passive_constraint = ""
     if is_flash_live:
         passive_constraint = (
@@ -291,7 +291,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             "or distress, your translated output voice delivery and phrasing must accurately reflect that level of "
             "urgency and empathy without sounding mechanical or robotic."
         )
-    
+
     if direction == "p_to_n":
         task_description = (
             f"DIRECTIONS:\n"
@@ -306,7 +306,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             f"Your job is to translate the clinician's English explanations and questions into accurate, "
             f"comprehensible, and culturally appropriate {target_language}. Keep clinical terms precise."
         )
-        
+
     glossary_section = ""
     if glossary_str:
         if is_flash_live:
@@ -329,7 +329,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             )
     else:
         glossary_section = "ACTIVE BILINGUAL GLOSSARY:\nNo custom glossary terms are available for this session. Use standard medical terms."
-        
+
     parts = []
     if is_flash_live:
         # Front-load critical constraints and glossary rules for Gemini 3.1 to override audio translation weights
@@ -345,16 +345,16 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         parts.append(australian_rules)
         parts.append(task_description)
         parts.append(glossary_section)
-        
+
     parts.append("Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully.")
-    
+
     return "\n\n".join(parts)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     logger.info("Client connected to interpreter WebSocket.")
-    
+
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         await websocket.send_json({"type": "error", "message": "GEMINI_API_KEY is not configured on the backend server."})
@@ -369,37 +369,37 @@ async def websocket_endpoint(websocket: WebSocket):
         init_message = await websocket.receive_text()
         data = json.loads(init_message)
         logger.info(f"Received starting handshake payload from client: {data}")
-        
+
         if data.get("action") != "start":
             await websocket.send_json({"type": "error", "message": "Invalid starting command."})
             return
-            
+
         preset_name = data.get("preset", "german")
         timeout_sec = float(data.get("pause", data.get("timeout", 15.0)))
         if timeout_sec <= 0.0:
             timeout_sec = 15.0
-            
+
         ceased_audio_threshold = float(data.get("ceased_audio_threshold", 4.5))
         startup_audio_threshold = float(data.get("startup_audio_threshold", 15.0))
         additional_pause_sec = float(data.get("additional_pause_sec", 2.0))
-        
+
         if preset_name not in PRESETS:
             await websocket.send_json({"type": "error", "message": f"Preset '{preset_name}' is not recognized."})
             return
-            
+
         preset = PRESETS[preset_name]
         file_path = preset["file"]
         lang_code = preset["code"]
         language = preset["language"]
-        
+
         # Select appropriate prebuilt voice names based on preset gender
         patient_gender = preset.get("gender", "male")
         patient_voice = "Puck" if patient_gender == "male" else "Kore"
         nurse_voice = "Kore"  # Nurse Sarah is always female
 
-        
+
         logger.info(f"Starting real-time interpretation call. Language: {language} ({lang_code}) File: {file_path}")
-        
+
         # Load and split audio channels
         try:
             patient_bytes, nurse_bytes, chunk_size = load_and_split_channels(file_path)
@@ -423,9 +423,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
         # Notify client of success and preparation details
         await websocket.send_json({
-            "type": "status", 
-            "status": "ready", 
-            "language": language, 
+            "type": "status",
+            "status": "ready",
+            "language": language,
             "code": lang_code,
             "duration_ms": len(patient_bytes) // 32 # 32 bytes per ms for 16kHz 16-bit mono
         })
@@ -434,7 +434,7 @@ async def websocket_endpoint(websocket: WebSocket):
         model_name = data.get("model", "gemini-3.5-live-translate-preview")
         if model_name not in ["gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview"]:
             model_name = "gemini-3.5-live-translate-preview"
-            
+
         is_flash_live = (model_name in ["gemini-3.1-flash-live-preview"])
         logger.info(f"Using model: {model_name} (Glossary Enforced: {is_flash_live})")
 
@@ -442,7 +442,7 @@ async def websocket_endpoint(websocket: WebSocket):
         glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=is_flash_live)
         glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=is_flash_live)
 
-        
+
         # Initialize/reset the transcript file at the start of the WebSocket session
         try:
             with open("conversation_transcript.log", "w", encoding="utf-8") as f:
@@ -453,7 +453,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 f.write("========================================\n")
         except Exception as e:
             logger.error(f"Failed to initialize conversation_transcript.log: {e}")
-        
+
         # Assemble structured medical system instructions
         sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str_p_to_n, is_flash_live=is_flash_live)
         sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str_n_to_p, is_flash_live=is_flash_live)
@@ -536,13 +536,13 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
                 ),
             )
-        
+
         # Connect both Live sessions in parallel using the chosen model
         logger.info(f"Connecting to dual live sessions using model: {model_name}")
-        
+
         async with client.aio.live.connect(model=model_name, config=config_p_to_n) as session_p_to_n, \
                    client.aio.live.connect(model=model_name, config=config_n_to_p) as session_n_to_p:
-                   
+
             await websocket.send_json({"type": "status", "status": "connected"})
             logger.info("Parallel Gemini translation sessions successfully established.")
 
@@ -590,7 +590,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                                 "text": part.text,
                                                 "final": False
                                             })
-                                        
+
                             # Forward Patient Original text transcript (interim segments)
                             if server_content.input_transcription and server_content.input_transcription.text:
                                 text = server_content.input_transcription.text
@@ -604,7 +604,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "text": text,
                                     "final": is_final
                                 })
-                                
+
                             # Forward Nurse Translation text transcript (interim segments)
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
@@ -617,7 +617,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "text": text,
                                     "final": False # turns are marked completed via turn_complete
                                 })
-                                
+
                             # Handle turn completion
                             if server_content.turn_complete:
                                 patient_translation_complete.set()
@@ -644,7 +644,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "type": "turn_complete",
                                     "speaker": "patient"
                                 })
-                                
+
                             if server_content.interrupted:
                                 logger.info("[INTERRUPTED][PATIENT]")
                                 await websocket.send_json({
@@ -685,7 +685,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                                 "text": part.text,
                                                 "final": False
                                             })
-                                        
+
                             # Forward Nurse Original text transcript
                             if server_content.input_transcription and server_content.input_transcription.text:
                                 text = server_content.input_transcription.text
@@ -699,7 +699,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "text": text,
                                     "final": is_final
                                 })
-                                
+
                             # Forward Patient Translation text transcript
                             if server_content.output_transcription and server_content.output_transcription.text:
                                 text = server_content.output_transcription.text
@@ -712,7 +712,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "text": text,
                                     "final": False
                                 })
-                                
+
                             # Handle turn completion
                             if server_content.turn_complete:
                                 nurse_translation_complete.set()
@@ -739,7 +739,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "type": "turn_complete",
                                     "speaker": "nurse"
                                 })
-                                
+
                             if server_content.interrupted:
                                 await websocket.send_json({
                                     "type": "interrupted",
@@ -754,17 +754,17 @@ async def websocket_endpoint(websocket: WebSocket):
             async def send_audio():
                 try:
                     max_len = max(len(patient_bytes), len(nurse_bytes))
-                    
+
                     active_speaker = None
                     silence_counter = 0
                     SILENCE_CHUNKS_THRESHOLD = 3 # 3 chunks * 200ms = 600ms of silence
                     takeover_cooldown = 0
-                    
+
                     patient_translation_complete.clear()
                     nurse_translation_complete.clear()
-                    
+
                     silence_chunk = b'\x00' * chunk_size
-                    
+
                     for i in range(0, max_len, chunk_size):
                         # Check user pause
                         if stream_state["is_paused"]:
@@ -775,24 +775,24 @@ async def websocket_endpoint(websocket: WebSocket):
 
                         if takeover_cooldown > 0:
                             takeover_cooldown -= 1
-                            
+
                         chunk_p = patient_bytes[i : i + chunk_size]
                         chunk_n = nurse_bytes[i : i + chunk_size]
-                        
+
                         p_has = has_speech(chunk_p)
                         n_has = has_speech(chunk_n)
-                        
+
                         if p_has:
                             patient_translation_complete.clear()
                         if n_has:
                             nurse_translation_complete.clear()
-                            
+
                         speaker_finished = None
                         next_speaker = None
-                        
+
                         # 1. Update and check speech detection state machine for Turn Transitions
                         if p_has and n_has:
-                            # Both speaking simultaneously. 
+                            # Both speaking simultaneously.
                             # If we have an active speaker, the other starting is treated as a takeover if cooldown is clear.
                             if takeover_cooldown == 0 and active_speaker == "nurse":
                                 speaker_finished = "nurse"
@@ -827,45 +827,45 @@ async def websocket_endpoint(websocket: WebSocket):
                                     # Case A: Silence threshold met
                                     speaker_finished = active_speaker
                                     next_speaker = None
-                            
+
                         # 2. Trigger Turn Hold & Pacing Block if a turn finished
                         if speaker_finished is not None:
                             logger.info(f"{speaker_finished.capitalize()} finished speaking (takeover/silence). Pausing stream to wait for translation playback.")
-                            
+
                             # Notify client that backend has paused sending original audio
                             await websocket.send_json({
                                 "type": "stream_paused",
                                 "speaker": speaker_finished
                             })
-                            
+
                             silence_chunk = b'\x00' * chunk_size
-                            
+
                             # Auto Pacing mode
                             event_to_wait = patient_translation_complete if speaker_finished == "patient" else nurse_translation_complete
                             event_to_wait.clear() # Clear immediately to prevent prior turns' late events from bypassing hold
-                            
+
                             # Reset the audio envelope tracker for the active stream
                             audio_tracker_key = "last_audio_p_to_n" if speaker_finished == "patient" else "last_audio_n_to_p"
                             stream_state[audio_tracker_key] = 0.0
                             hold_start_time = asyncio.get_running_loop().time()
-                            
+
                             # Fix the race condition: Check if the translation is already complete!
                             if event_to_wait.is_set():
                                 logger.info(f"Gemini already completed translation for {speaker_finished} before entering hold state.")
                             else:
                                 logger.info(f"Entering dynamic silence-streaming hold state for {speaker_finished}. Waiting for Gemini turn_complete...")
-                                
+
                                 # Loop up to timeout_sec (each iteration is 0.2s)
                                 iterations = int(timeout_sec * 5)
                                 for hold_idx in range(iterations):
                                     if event_to_wait.is_set():
                                         logger.info(f"Received turn_complete from Gemini for {speaker_finished} after {hold_idx * 0.2:.1f}s. Exiting hold loop.")
                                         break
-                                        
+
                                     # Audio power envelope/activity fallback monitoring
                                     now = asyncio.get_running_loop().time()
                                     last_audio_time = stream_state[audio_tracker_key]
-                                    
+
                                     if last_audio_time > 0.0:
                                         # Audio was received, check if it has ceased for more than ceased_audio_threshold seconds
                                         if now - last_audio_time > ceased_audio_threshold:
@@ -876,7 +876,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                         if now - hold_start_time > startup_audio_threshold:
                                             logger.info(f"Audio envelope detection: No translation audio received within {startup_audio_threshold}s startup window. Assuming turn complete or silent.")
                                             break
-                                            
+
                                     # Keep Gemini sessions alive with continuous active-session silence for flash, or do nothing for translation preview
                                     if is_flash_live:
                                         if speaker_finished == "patient":
@@ -895,7 +895,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                     await asyncio.sleep(0.2)
                                 else:
                                     logger.warning(f"Silence-streaming hold state timed out after {timeout_sec}s for {speaker_finished}. Proceeding.")
-                                    
+
                             # Insert an additional pause for natural turn-taking transition and client playback clearance
                             logger.info(f"Pausing for {additional_pause_sec}s additional natural transition time...")
                             for pause_idx in range(max(1, int(additional_pause_sec * 5))):
@@ -914,17 +914,17 @@ async def websocket_endpoint(websocket: WebSocket):
                                     # gemini-3.5-live-translate-preview does not support receiving inputs during pause/transition state
                                     pass
                                 await asyncio.sleep(0.2)
-                                
+
                             # Clear the translation complete event ONLY at the end of the turn
                             event_to_wait.clear()
-                            
+
                             # Reset active speaker state and silence counter after exiting hold/pacing block
                             active_speaker = next_speaker
                             silence_counter = 0
                             if active_speaker is not None:
                                 takeover_cooldown = 10  # 10 chunks = 2.0s cooldown to prevent cascading takeovers
                             logger.info(f"Resuming pre-recorded stream with active speaker state: {active_speaker}")
-                            
+
                         # Send patient channel to Gemini and forward original to browser
                         chunk_idx = i // chunk_size
                         if chunk_p:
@@ -938,7 +938,7 @@ async def websocket_endpoint(websocket: WebSocket):
                                 "speaker": "patient",
                                 "data": encoded_p
                             })
-                                
+
                         # Send nurse channel to Gemini and forward original to browser
                         if chunk_n:
                             if active_speaker == "nurse":
@@ -951,16 +951,16 @@ async def websocket_endpoint(websocket: WebSocket):
                                 "speaker": "nurse",
                                 "data": encoded_n
                             })
-                                
+
                         # Dynamic-friendly 200ms throttle sleep (avoids catchup bug on resume)
                         await asyncio.sleep(0.2)
 
-                        
+
                     logger.info("Finished streaming pre-recorded audio channels.")
                     # Keep sessions alive for any final translation trailing content
                     await asyncio.sleep(6)
                     await websocket.send_json({"type": "status", "status": "completed"})
-                    
+
                 except asyncio.CancelledError:
                     pass
                 except Exception as e:
@@ -995,9 +995,9 @@ async def websocket_endpoint(websocket: WebSocket):
             rec_n_to_p_task = asyncio.create_task(receive_n_to_p())
             send_audio_task = asyncio.create_task(send_audio())
             rec_client_task = asyncio.create_task(receive_client_messages())
-            
+
             active_tasks.extend([rec_p_to_n_task, rec_n_to_p_task, send_audio_task, rec_client_task])
-            
+
             # Wait for either the streaming to finish, or the client connection to break
             done, pending = await asyncio.wait(
                 [send_audio_task, rec_client_task],
@@ -1022,7 +1022,7 @@ app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "web"), html=True), 
 
 if __name__ == "__main__":
     import uvicorn
-    # Start the server on localhost:8000
+    # Start the server on localhost:9000
     # Ensure uvicorn's path resolution succeeds even if run directly as a script
     parent_dir = os.path.dirname(BASE_DIR)
-    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=8000, reload=True, app_dir=parent_dir)
+    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=9000, reload=True, app_dir=parent_dir)
