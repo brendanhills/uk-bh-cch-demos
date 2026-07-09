@@ -7,3 +7,10 @@ samples/
 __pycache__/
 .venv/
 output/
+
+#Ignore log files
+*.log
+
+# Ignore local scratch/debug directory
+scratch/
+
