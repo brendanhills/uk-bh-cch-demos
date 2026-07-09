@@ -245,33 +245,55 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
 
         if matched_lang_key:
             translation = translations[matched_lang_key]
+            rules = []
+
             if isinstance(translation, dict):
-                synonyms = []
-                formal = translation.get("formal")
-                if formal:
-                    synonyms.append(formal)
-                informal = translation.get("informal")
-                if informal:
-                    if isinstance(informal, list):
-                        synonyms.extend(informal)
-                    elif isinstance(informal, str):
-                        synonyms.append(informal)
-                translation_str = ", ".join(synonyms) if synonyms else str(translation)
+                formal_lang = translation.get("formal")
+                informal_lang_list = []
+                informal_raw = translation.get("informal")
+                if informal_raw:
+                    if isinstance(informal_raw, list):
+                        informal_lang_list.extend(informal_raw)
+                    elif isinstance(informal_raw, str):
+                        informal_lang_list.append(informal_raw)
+
+                formal_eng = english
+                informal_eng_list = entry.get("informal_english", [])
+
+                if direction == "p_to_n":
+                    # Formal mapping: Cephalgie -> cephalalgia
+                    if formal_lang:
+                        rules.append((formal_lang, formal_eng))
+                    # Informal mapping: Kopfschmerzen -> headache
+                    if informal_lang_list:
+                        target_informal_eng = informal_eng_list[0] if (informal_eng_list and len(informal_eng_list) > 0) else formal_eng
+                        for inf_lang in informal_lang_list:
+                            rules.append((inf_lang, target_informal_eng))
+                else:
+                    # Nurse -> Patient (English -> Foreign)
+                    # Formal mapping: cephalalgia -> Cephalgie
+                    if formal_lang:
+                        rules.append((formal_eng, formal_lang))
+                    # Informal mapping: headache -> Kopfschmerzen
+                    if informal_eng_list and informal_lang_list:
+                        for inf_eng in informal_eng_list:
+                            rules.append((inf_eng, ", ".join(informal_lang_list)))
+                    elif informal_lang_list:
+                        rules.append((formal_eng, ", ".join(informal_lang_list)))
             else:
+                # Flat string translation (e.g. "Fieber" -> "extreme fire flame")
                 translation_str = str(translation)
+                if direction == "p_to_n":
+                    rules.append((translation_str, english))
+                else:
+                    rules.append((english, translation_str))
 
-            if direction == "p_to_n":
-                # Prefer colloquial English if defined in informal_english (e.g., "headache" over "cephalalgia")
-                informal_eng = entry.get("informal_english", [])
-                target_english = informal_eng[0] if (informal_eng and isinstance(informal_eng, list) and len(informal_eng) > 0) else english
-                term_rule = f"{translation_str} -> {target_english}"
-            else:
-                term_rule = f"{english} -> {translation_str}"
-
-            if description and not exclude_descriptions:
-                formatted_lines.append(f"- {term_rule}: {description}")
-            else:
-                formatted_lines.append(f"- {term_rule}")
+            for from_term, to_term in rules:
+                term_rule = f"{from_term} -> {to_term}"
+                if description and not exclude_descriptions:
+                    formatted_lines.append(f"- {term_rule}: {description}")
+                else:
+                    formatted_lines.append(f"- {term_rule}")
 
     return "\n".join(formatted_lines)
 
