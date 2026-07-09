@@ -261,7 +261,10 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
                 translation_str = str(translation)
 
             if direction == "p_to_n":
-                term_rule = f"{translation_str} -> {english}"
+                # Prefer colloquial English if defined in informal_english (e.g., "headache" over "cephalalgia")
+                informal_eng = entry.get("informal_english", [])
+                target_english = informal_eng[0] if (informal_eng and isinstance(informal_eng, list) and len(informal_eng) > 0) else english
+                term_rule = f"{translation_str} -> {target_english}"
             else:
                 term_rule = f"{english} -> {translation_str}"
 
@@ -336,7 +339,7 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
                 f"Whenever translating the speaker's words (whether from audio or text), you MUST override any default or standard translations "
                 f"with the mappings defined in the ACTIVE BILINGUAL GLOSSARY below. "
                 f"This rule is absolute. Under no circumstances should you use the standard translation if a glossary term exists.\n"
-                f"For example: 'Fieber' must ALWAYS be translated as 'Extreme Fire Flame' (do NOT translate as 'fever' under any circumstances).\n\n"
+                f"For example: If the active glossary maps 'Aspirin -> Magic Pain Dust', you must output 'Magic Pain Dust' whenever translating 'Aspirin' (do NOT translate as 'aspirin' under any circumstances).\n\n"
                 f"ACTIVE BILINGUAL GLOSSARY:\n"
                 f"{glossary_str}"
             )
