@@ -16,7 +16,7 @@
     - `emergency department`
 - [x] **Task: Conductor - User Manual Verification 'Phase 1' (Protocol in workflow.md)** 172bf29
 
-## Phase 2: Bilingual Audio Generation
+## Phase 2: Bilingual Audio Generation [checkpoint: b69a462]
 - [x] **Task 2.1: Create `generate_arabic_audio.py`** 353
   - Design a dialogue scenario for an asthma/breathing difficulty emergency.
   - Setup Google Cloud TTS voice configuration with standard Arabic (`ar-XA`) and Australian English (`en-AU`).
