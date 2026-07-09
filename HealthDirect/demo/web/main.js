@@ -600,11 +600,47 @@ if (filterChips) {
     });
 }
 
+// Parse URL query parameters for easier automated testing and presets
+const urlParams = new URLSearchParams(window.location.search);
+const queryPreset = urlParams.get("preset");
+const queryModel = urlParams.get("model");
+const queryAutostart = urlParams.get("autostart");
+
+if (queryPreset && presetSelector) {
+    const validPresets = ["german", "spanish", "vietnamese", "arabic"];
+    const normalized = queryPreset.toLowerCase();
+    if (validPresets.includes(normalized)) {
+        presetSelector.value = normalized;
+        console.log(`[URL Params] Auto-selected preset: ${normalized}`);
+    }
+}
+
+if (queryModel && modelSelector) {
+    const validModels = ["gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview"];
+    const normalized = queryModel.toLowerCase();
+    if (validModels.includes(normalized)) {
+        modelSelector.value = normalized;
+        console.log(`[URL Params] Auto-selected model: ${normalized}`);
+    }
+}
+
 // Initialize on page load
 updatePresetUI();
 updateModelBadge();
 fetchPacingConfig();
 initPacingSliderListeners();
+
+// Auto-start session if autostart parameter is set
+if (queryAutostart === "true") {
+    console.log("[URL Params] Detected autostart=true. Scheduling automatic call start...");
+    // Slight delay to ensure glossary and configurations are fully loaded
+    setTimeout(() => {
+        if (startBtn && !startBtn.disabled) {
+            console.log("[URL Params] Triggering click on start-btn.");
+            startBtn.click();
+        }
+    }, 1200);
+}
 
 /* ==========================================================================
    PACING CONFIGURATION INTEGRATION
@@ -884,23 +920,21 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
         bubbleSpeaker = (speaker === "nurse" ? "patient" : "nurse");
     }
     
-    // If a new original turn starts, reset the bubble reference
-    if (eventType === "original") {
-        if (shouldStartNewBubble || bubbleSpeaker !== lastOriginalSpeaker) {
-            // New turn requested, or speaker changed! Reset both bubble references.
-            currentNurseBubble = null;
-            currentPatientBubble = null;
-            lastOriginalSpeaker = bubbleSpeaker;
-            nurseTurnFinished = false;
-            patientTurnFinished = false;
-            shouldStartNewBubble = false; // Reset the flag
-        } else if (nurseTurnFinished || patientTurnFinished) {
-            // Same speaker, but the turn finished (e.g. back-to-back utterances after hold)
-            currentNurseBubble = null;
-            currentPatientBubble = null;
-            nurseTurnFinished = false;
-            patientTurnFinished = false;
-        }
+    // Reset/new-bubble logic: trigger whenever a new turn starts (on original OR translation!)
+    if (shouldStartNewBubble || bubbleSpeaker !== lastOriginalSpeaker) {
+        // New turn requested, or speaker changed! Reset both bubble references.
+        currentNurseBubble = null;
+        currentPatientBubble = null;
+        lastOriginalSpeaker = bubbleSpeaker;
+        nurseTurnFinished = false;
+        patientTurnFinished = false;
+        shouldStartNewBubble = false; // Reset the flag
+    } else if (nurseTurnFinished || patientTurnFinished) {
+        // Same speaker, but the turn finished (e.g. back-to-back utterances after hold)
+        currentNurseBubble = null;
+        currentPatientBubble = null;
+        nurseTurnFinished = false;
+        patientTurnFinished = false;
     }
     
     let bubble = bubbleSpeaker === "nurse" ? currentNurseBubble : currentPatientBubble;

@@ -45,6 +45,26 @@ file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+async def safe_send_realtime_input(session_or_managed, chunk: bytes, mime_type: str = "audio/pcm;rate=16000"):
+    """
+    Sends audio data to Gemini session safely and catches any connection errors.
+    Supports raw sessions or ManagedSession helper objects.
+    """
+    session = session_or_managed
+    if hasattr(session_or_managed, "session"):
+        session = session_or_managed.session
+        
+    if session is None:
+        # Session is currently connecting/disconnected, skip chunk
+        return
+        
+    try:
+        await session.send_realtime_input(
+            audio=types.Blob(data=chunk, mime_type=mime_type)
+        )
+    except Exception as e:
+        logger.warning(f"Failed to send realtime input on session {id(session)}: {e}")
+
 GLOSSARY_PATH = "glossary/glossary.json"
 
 app = FastAPI(title="Bilingual Medical Interpreter API")
@@ -537,11 +557,49 @@ async def websocket_endpoint(websocket: WebSocket):
                 ),
             )
 
+        class ManagedSession:
+            def __init__(self, direction, client, model_name, config):
+                self.direction = direction
+                self.client = client
+                self.model_name = model_name
+                self.config = config
+                self.cm = None
+                self.session = None
+
+            async def connect(self):
+                if self.cm:
+                    try:
+                        await self.cm.__aexit__(None, None, None)
+                    except Exception as e:
+                        logger.warning(f"Error closing previous session in connect for {self.direction}: {e}")
+                    self.cm = None
+                    self.session = None
+
+                self.cm = self.client.aio.live.connect(model=self.model_name, config=self.config)
+                self.session = await self.cm.__aenter__()
+                logger.info(f"Connected fresh session for {self.direction}")
+                return self.session
+
+            async def __aenter__(self):
+                await self.connect()
+                return self
+
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                if self.cm:
+                    try:
+                        await self.cm.__aexit__(exc_type, exc_val, exc_tb)
+                    except Exception as e:
+                        logger.warning(f"Error in __aexit__ for {self.direction}: {e}")
+                    self.cm = None
+                    self.session = None
+
+        managed_p_to_n = ManagedSession("patient_to_nurse", client, model_name, config_p_to_n)
+        managed_n_to_p = ManagedSession("nurse_to_patient", client, model_name, config_n_to_p)
+
         # Connect both Live sessions in parallel using the chosen model
         logger.info(f"Connecting to dual live sessions using model: {model_name}")
 
-        async with client.aio.live.connect(model=model_name, config=config_p_to_n) as session_p_to_n, \
-                   client.aio.live.connect(model=model_name, config=config_n_to_p) as session_n_to_p:
+        async with managed_p_to_n, managed_n_to_p:
 
             await websocket.send_json({"type": "status", "status": "connected"})
             logger.info("Parallel Gemini translation sessions successfully established.")
@@ -564,191 +622,209 @@ async def websocket_endpoint(websocket: WebSocket):
             # Task: Read responses from Patient -> Nurse session (translating to English)
             async def receive_p_to_n():
                 try:
-                    async for response in session_p_to_n.receive():
-                        server_content = response.server_content
-                        if server_content:
-                            # Forward Translated English Audio (24kHz Mono PCM) to client
-                            if server_content.model_turn:
-                                for part in server_content.model_turn.parts:
-                                    if part.inline_data:
-                                        if has_speech(part.inline_data.data, threshold=500):
-                                            stream_state["last_audio_p_to_n"] = asyncio.get_running_loop().time()
-                                        encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
+                    while True:
+                        session = managed_p_to_n.session
+                        if session is None:
+                            await asyncio.sleep(0.1)
+                            continue
+                        try:
+                            async for response in session.receive():
+                                server_content = response.server_content
+                                if server_content:
+                                    # Forward Translated English Audio (24kHz Mono PCM) to client
+                                    if server_content.model_turn:
+                                        for part in server_content.model_turn.parts:
+                                            if part.inline_data:
+                                                if has_speech(part.inline_data.data, threshold=500):
+                                                    stream_state["last_audio_p_to_n"] = asyncio.get_running_loop().time()
+                                                encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
+                                                await websocket.send_json({
+                                                    "type": "translated_audio",
+                                                    "stream": "p_to_n",
+                                                    "data": encoded_audio
+                                                })
+                                            if part.text:
+                                                logger.info(f"[MODEL PART TEXT][p_to_n]: {part.text}")
+                                                if is_flash_live:
+                                                    convo_state["patient_trans"] += part.text
+                                                    await websocket.send_json({
+                                                        "type": "transcript",
+                                                        "speaker": "nurse",
+                                                        "event": "translation",
+                                                        "text": part.text,
+                                                        "final": False
+                                                    })
+
+                                    # Forward Patient Original text transcript (interim segments)
+                                    if server_content.input_transcription and server_content.input_transcription.text:
+                                        text = server_content.input_transcription.text
+                                        is_final = server_content.input_transcription.finished
+                                        convo_state["patient_orig"] += text
+                                        logger.info(f"[TRANSCRIPT ORIGINAL][PATIENT] {text} (final={is_final})")
                                         await websocket.send_json({
-                                            "type": "translated_audio",
-                                            "stream": "p_to_n",
-                                            "data": encoded_audio
+                                            "type": "transcript",
+                                            "speaker": "patient",
+                                            "event": "original",
+                                            "text": text,
+                                            "final": is_final
                                         })
-                                    if part.text:
-                                        logger.info(f"[MODEL PART TEXT][p_to_n]: {part.text}")
-                                        if is_flash_live:
-                                            convo_state["patient_trans"] += part.text
-                                            await websocket.send_json({
-                                                "type": "transcript",
-                                                "speaker": "nurse",
-                                                "event": "translation",
-                                                "text": part.text,
-                                                "final": False
-                                            })
 
-                            # Forward Patient Original text transcript (interim segments)
-                            if server_content.input_transcription and server_content.input_transcription.text:
-                                text = server_content.input_transcription.text
-                                is_final = server_content.input_transcription.finished
-                                convo_state["patient_orig"] += text
-                                logger.info(f"[TRANSCRIPT ORIGINAL][PATIENT] {text} (final={is_final})")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "patient",
-                                    "event": "original",
-                                    "text": text,
-                                    "final": is_final
-                                })
+                                    # Forward Nurse Translation text transcript (interim segments)
+                                    if server_content.output_transcription and server_content.output_transcription.text:
+                                        text = server_content.output_transcription.text
+                                        convo_state["patient_trans"] += text
+                                        logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
+                                        await websocket.send_json({
+                                            "type": "transcript",
+                                            "speaker": "nurse",
+                                            "event": "translation",
+                                            "text": text,
+                                            "final": False # turns are marked completed via turn_complete
+                                        })
 
-                            # Forward Nurse Translation text transcript (interim segments)
-                            if server_content.output_transcription and server_content.output_transcription.text:
-                                text = server_content.output_transcription.text
-                                convo_state["patient_trans"] += text
-                                logger.info(f"[TRANSCRIPT TRANSLATED][PATIENT -> English] {text}")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "nurse",
-                                    "event": "translation",
-                                    "text": text,
-                                    "final": False # turns are marked completed via turn_complete
-                                })
+                                    # Handle turn completion
+                                    if server_content.turn_complete:
+                                        patient_translation_complete.set()
+                                        logger.info("[TURN COMPLETE][PATIENT]")
+                                        orig = convo_state.get("patient_orig", "").strip()
+                                        trans = convo_state.get("patient_trans", "").strip()
+                                        if orig or trans:
+                                            msg = (
+                                                f"\n========================================\n"
+                                                f"WHO: PATIENT\n"
+                                                f"SAID: {orig}\n"
+                                                f"TRANSLATED TO: {trans}\n"
+                                                f"========================================\n"
+                                            )
+                                            logger.info(msg)
+                                            try:
+                                                with open("conversation_transcript.log", "a", encoding="utf-8") as f:
+                                                    f.write(msg)
+                                            except Exception as e:
+                                                logger.error(f"Failed to append to conversation_transcript.log: {e}")
+                                            convo_state["patient_orig"] = ""
+                                            convo_state["patient_trans"] = ""
+                                        await websocket.send_json({
+                                            "type": "turn_complete",
+                                            "speaker": "patient"
+                                        })
 
-                            # Handle turn completion
-                            if server_content.turn_complete:
-                                patient_translation_complete.set()
-                                logger.info("[TURN COMPLETE][PATIENT]")
-                                orig = convo_state.get("patient_orig", "").strip()
-                                trans = convo_state.get("patient_trans", "").strip()
-                                if orig or trans:
-                                    msg = (
-                                        f"\n========================================\n"
-                                        f"WHO: PATIENT\n"
-                                        f"SAID: {orig}\n"
-                                        f"TRANSLATED TO: {trans}\n"
-                                        f"========================================\n"
-                                    )
-                                    logger.info(msg)
-                                    try:
-                                        with open("conversation_transcript.log", "a", encoding="utf-8") as f:
-                                            f.write(msg)
-                                    except Exception as e:
-                                        logger.error(f"Failed to append to conversation_transcript.log: {e}")
-                                    convo_state["patient_orig"] = ""
-                                    convo_state["patient_trans"] = ""
-                                await websocket.send_json({
-                                    "type": "turn_complete",
-                                    "speaker": "patient"
-                                })
-
-                            if server_content.interrupted:
-                                logger.info("[INTERRUPTED][PATIENT]")
-                                await websocket.send_json({
-                                    "type": "interrupted",
-                                    "speaker": "patient"
-                                })
+                                    if server_content.interrupted:
+                                        logger.info("[INTERRUPTED][PATIENT]")
+                                        await websocket.send_json({
+                                            "type": "interrupted",
+                                            "speaker": "patient"
+                                        })
+                        except asyncio.CancelledError:
+                            break
+                        except Exception as e:
+                            logger.error(f"Error in Patient->Nurse session receive loop: {e}")
+                            await asyncio.sleep(0.2)
                 except asyncio.CancelledError:
                     pass
-                except Exception as e:
-                    logger.error(f"Error in Patient->Nurse receiver: {e}")
 
             # Task: Read responses from Nurse -> Patient session (translating to target language)
             async def receive_n_to_p():
                 try:
-                    async for response in session_n_to_p.receive():
-                        server_content = response.server_content
-                        if server_content:
-                            # Forward Translated Target Audio (24kHz Mono PCM) to client
-                            if server_content.model_turn:
-                                for part in server_content.model_turn.parts:
-                                    if part.inline_data:
-                                        if has_speech(part.inline_data.data, threshold=500):
-                                            stream_state["last_audio_n_to_p"] = asyncio.get_running_loop().time()
-                                        encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
+                    while True:
+                        session = managed_n_to_p.session
+                        if session is None:
+                            await asyncio.sleep(0.1)
+                            continue
+                        try:
+                            async for response in session.receive():
+                                server_content = response.server_content
+                                if server_content:
+                                    # Forward Translated Target Audio (24kHz Mono PCM) to client
+                                    if server_content.model_turn:
+                                        for part in server_content.model_turn.parts:
+                                            if part.inline_data:
+                                                if has_speech(part.inline_data.data, threshold=500):
+                                                    stream_state["last_audio_n_to_p"] = asyncio.get_running_loop().time()
+                                                encoded_audio = base64.b64encode(part.inline_data.data).decode("utf-8")
+                                                await websocket.send_json({
+                                                    "type": "translated_audio",
+                                                    "stream": "n_to_p",
+                                                    "data": encoded_audio
+                                                })
+                                            if part.text:
+                                                logger.info(f"[MODEL PART TEXT][n_to_p]: {part.text}")
+                                                if is_flash_live:
+                                                    convo_state["nurse_trans"] += part.text
+                                                    await websocket.send_json({
+                                                        "type": "transcript",
+                                                        "speaker": "patient",
+                                                        "event": "translation",
+                                                        "text": part.text,
+                                                        "final": False
+                                                    })
+
+                                    # Forward Nurse Original text transcript
+                                    if server_content.input_transcription and server_content.input_transcription.text:
+                                        text = server_content.input_transcription.text
+                                        is_final = server_content.input_transcription.finished
+                                        convo_state["nurse_orig"] += text
+                                        logger.info(f"[TRANSCRIPT ORIGINAL][NURSE] {text} (final={is_final})")
                                         await websocket.send_json({
-                                            "type": "translated_audio",
-                                            "stream": "n_to_p",
-                                            "data": encoded_audio
+                                            "type": "transcript",
+                                            "speaker": "nurse",
+                                            "event": "original",
+                                            "text": text,
+                                            "final": is_final
                                         })
-                                    if part.text:
-                                        logger.info(f"[MODEL PART TEXT][n_to_p]: {part.text}")
-                                        if is_flash_live:
-                                            convo_state["nurse_trans"] += part.text
-                                            await websocket.send_json({
-                                                "type": "transcript",
-                                                "speaker": "patient",
-                                                "event": "translation",
-                                                "text": part.text,
-                                                "final": False
-                                            })
 
-                            # Forward Nurse Original text transcript
-                            if server_content.input_transcription and server_content.input_transcription.text:
-                                text = server_content.input_transcription.text
-                                is_final = server_content.input_transcription.finished
-                                convo_state["nurse_orig"] += text
-                                logger.info(f"[TRANSCRIPT ORIGINAL][NURSE] {text} (final={is_final})")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "nurse",
-                                    "event": "original",
-                                    "text": text,
-                                    "final": is_final
-                                })
+                                    # Forward Patient Translation text transcript
+                                    if server_content.output_transcription and server_content.output_transcription.text:
+                                        text = server_content.output_transcription.text
+                                        convo_state["nurse_trans"] += text
+                                        logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
+                                        await websocket.send_json({
+                                            "type": "transcript",
+                                            "speaker": "patient",
+                                            "event": "translation",
+                                            "text": text,
+                                            "final": False
+                                        })
 
-                            # Forward Patient Translation text transcript
-                            if server_content.output_transcription and server_content.output_transcription.text:
-                                text = server_content.output_transcription.text
-                                convo_state["nurse_trans"] += text
-                                logger.info(f"[TRANSCRIPT TRANSLATED][NURSE -> PATIENT] {text}")
-                                await websocket.send_json({
-                                    "type": "transcript",
-                                    "speaker": "patient",
-                                    "event": "translation",
-                                    "text": text,
-                                    "final": False
-                                })
+                                    # Handle turn completion
+                                    if server_content.turn_complete:
+                                        nurse_translation_complete.set()
+                                        logger.info("[TURN COMPLETE][NURSE]")
+                                        orig = convo_state.get("nurse_orig", "").strip()
+                                        trans = convo_state.get("nurse_trans", "").strip()
+                                        if orig or trans:
+                                            msg = (
+                                                f"\n========================================\n"
+                                                f"WHO: NURSE\n"
+                                                f"SAID: {orig}\n"
+                                                f"TRANSLATED TO: {trans}\n"
+                                                f"========================================\n"
+                                            )
+                                            logger.info(msg)
+                                            try:
+                                                with open("conversation_transcript.log", "a", encoding="utf-8") as f:
+                                                    f.write(msg)
+                                            except Exception as e:
+                                                logger.error(f"Failed to append to conversation_transcript.log: {e}")
+                                            convo_state["nurse_orig"] = ""
+                                            convo_state["nurse_trans"] = ""
+                                        await websocket.send_json({
+                                            "type": "turn_complete",
+                                            "speaker": "nurse"
+                                        })
 
-                            # Handle turn completion
-                            if server_content.turn_complete:
-                                nurse_translation_complete.set()
-                                logger.info("[TURN COMPLETE][NURSE]")
-                                orig = convo_state.get("nurse_orig", "").strip()
-                                trans = convo_state.get("nurse_trans", "").strip()
-                                if orig or trans:
-                                    msg = (
-                                        f"\n========================================\n"
-                                        f"WHO: NURSE\n"
-                                        f"SAID: {orig}\n"
-                                        f"TRANSLATED TO: {trans}\n"
-                                        f"========================================\n"
-                                    )
-                                    logger.info(msg)
-                                    try:
-                                        with open("conversation_transcript.log", "a", encoding="utf-8") as f:
-                                            f.write(msg)
-                                    except Exception as e:
-                                        logger.error(f"Failed to append to conversation_transcript.log: {e}")
-                                    convo_state["nurse_orig"] = ""
-                                    convo_state["nurse_trans"] = ""
-                                await websocket.send_json({
-                                    "type": "turn_complete",
-                                    "speaker": "nurse"
-                                })
-
-                            if server_content.interrupted:
-                                await websocket.send_json({
-                                    "type": "interrupted",
-                                    "speaker": "nurse"
-                                })
+                                    if server_content.interrupted:
+                                        await websocket.send_json({
+                                            "type": "interrupted",
+                                            "speaker": "nurse"
+                                        })
+                        except asyncio.CancelledError:
+                            break
+                        except Exception as e:
+                            logger.error(f"Error in Nurse->Patient session receive loop: {e}")
+                            await asyncio.sleep(0.2)
                 except asyncio.CancelledError:
                     pass
-                except Exception as e:
-                    logger.error(f"Error in Nurse->Patient receiver: {e}")
 
             # Task: Feed audio streams in synchronized real-time with Dynamic Hold/Resume
             async def send_audio():
@@ -757,8 +833,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
                     active_speaker = None
                     silence_counter = 0
-                    SILENCE_CHUNKS_THRESHOLD = 3 # 3 chunks * 200ms = 600ms of silence
+                    SILENCE_CHUNKS_THRESHOLD = 8 # 8 chunks * 200ms = 1.6s of silence
                     takeover_cooldown = 0
+                    loop_counter = 0
 
                     patient_translation_complete.clear()
                     nurse_translation_complete.clear()
@@ -766,6 +843,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     silence_chunk = b'\x00' * chunk_size
 
                     for i in range(0, max_len, chunk_size):
+                        loop_counter += 1
                         # Check user pause
                         if stream_state["is_paused"]:
                             logger.info("Streaming paused by user...")
@@ -855,17 +933,18 @@ async def websocket_endpoint(websocket: WebSocket):
                             else:
                                 logger.info(f"Entering dynamic silence-streaming hold state for {speaker_finished}. Waiting for Gemini turn_complete...")
 
-                                # Loop up to timeout_sec (each iteration is 0.2s)
-                                iterations = int(timeout_sec * 5)
+                                # Loop up to safety-net timeout (each iteration is 0.2s)
+                                # Using max(timeout_sec, 25.0) prevents long/slow translations from being cut off prematurely
+                                iterations = int(max(timeout_sec, 25.0) * 5)
                                 for hold_idx in range(iterations):
                                     if event_to_wait.is_set():
                                         logger.info(f"Received turn_complete from Gemini for {speaker_finished} after {hold_idx * 0.2:.1f}s. Exiting hold loop.")
                                         break
-
+ 
                                     # Audio power envelope/activity fallback monitoring
                                     now = asyncio.get_running_loop().time()
                                     last_audio_time = stream_state[audio_tracker_key]
-
+ 
                                     if last_audio_time > 0.0:
                                         # Audio was received, check if it has ceased for more than ceased_audio_threshold seconds
                                         if now - last_audio_time > ceased_audio_threshold:
@@ -876,82 +955,102 @@ async def websocket_endpoint(websocket: WebSocket):
                                         if now - hold_start_time > startup_audio_threshold:
                                             logger.info(f"Audio envelope detection: No translation audio received within {startup_audio_threshold}s startup window. Assuming turn complete or silent.")
                                             break
-
-                                    # Keep Gemini sessions alive with continuous active-session silence for flash, or do nothing for translation preview
+ 
+                                    # Keep Gemini sessions alive with continuous active/inactive silence streaming
                                     if is_flash_live:
-                                        if speaker_finished == "patient":
-                                            # Send continuous silence to active patient session to let VAD trigger naturally
-                                            await session_p_to_n.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
-                                        else:
-                                            # Send continuous silence to active nurse session to let VAD trigger naturally
-                                            await session_n_to_p.send_realtime_input(
-                                                audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                            )
+                                        # For 3.1 Flash: send silence to BOTH sessions to keep connections hot and VAD active
+                                        await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                                        await safe_send_realtime_input(managed_n_to_p, silence_chunk)
                                     else:
-                                        # gemini-3.5-live-translate-preview does not support receiving inputs during translation generation/hold state
-                                        pass
+                                        # For 3.5 Translate: stream silence ONLY to the inactive session sparsely to keep it alive
+                                        # and avoid sending to the active session which does not support input during generation
+                                        if hold_idx % 15 == 0:
+                                            if speaker_finished == "patient":
+                                                await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+                                            else:
+                                                await safe_send_realtime_input(managed_p_to_n, silence_chunk)
                                     await asyncio.sleep(0.2)
                                 else:
-                                    logger.warning(f"Silence-streaming hold state timed out after {timeout_sec}s for {speaker_finished}. Proceeding.")
-
+                                    logger.warning(f"Silence-streaming hold state timed out after safety window for {speaker_finished}. Proceeding.")
+ 
                             # Insert an additional pause for natural turn-taking transition and client playback clearance
                             logger.info(f"Pausing for {additional_pause_sec}s additional natural transition time...")
                             for pause_idx in range(max(1, int(additional_pause_sec * 5))):
-                                if is_flash_live:
-                                    if speaker_finished == "patient":
-                                        # Keep streaming continuous silence to active patient session to finalize VAD naturally
-                                        await session_p_to_n.send_realtime_input(
-                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                        )
-                                    else:
-                                        # Keep streaming continuous silence to active nurse session to finalize VAD naturally
-                                        await session_n_to_p.send_realtime_input(
-                                            audio=types.Blob(data=silence_chunk, mime_type="audio/pcm;rate=16000")
-                                        )
-                                else:
-                                    # gemini-3.5-live-translate-preview does not support receiving inputs during pause/transition state
-                                    pass
+                                # Send silence to BOTH sessions to keep them hot and active during transition pause
+                                await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                                await safe_send_realtime_input(managed_n_to_p, silence_chunk)
                                 await asyncio.sleep(0.2)
-
+ 
                             # Clear the translation complete event ONLY at the end of the turn
                             event_to_wait.clear()
-
+ 
                             # Reset active speaker state and silence counter after exiting hold/pacing block
                             active_speaker = next_speaker
                             silence_counter = 0
                             if active_speaker is not None:
                                 takeover_cooldown = 10  # 10 chunks = 2.0s cooldown to prevent cascading takeovers
                             logger.info(f"Resuming pre-recorded stream with active speaker state: {active_speaker}")
-
-                        # Send patient channel to Gemini and forward original to browser
-                        chunk_idx = i // chunk_size
+ 
+                            # Recycle the finished speaker's session asynchronously under 3.1 Flash Live
+                            if is_flash_live:
+                                if speaker_finished == "patient":
+                                    logger.info("Asynchronously recycling Patient->Nurse session...")
+                                    asyncio.create_task(managed_p_to_n.connect())
+                                elif speaker_finished == "nurse":
+                                    logger.info("Asynchronously recycling Nurse->Patient session...")
+                                    asyncio.create_task(managed_n_to_p.connect())
+ 
+                        # Send patient channel original audio to browser
                         if chunk_p:
-                            if active_speaker == "patient":
-                                await session_p_to_n.send_realtime_input(
-                                    audio=types.Blob(data=chunk_p, mime_type="audio/pcm;rate=16000")
-                                )
                             encoded_p = base64.b64encode(chunk_p).decode("utf-8")
                             await websocket.send_json({
                                 "type": "original_audio",
                                 "speaker": "patient",
                                 "data": encoded_p
                             })
-
-                        # Send nurse channel to Gemini and forward original to browser
+ 
+                        # Send nurse channel original audio to browser
                         if chunk_n:
-                            if active_speaker == "nurse":
-                                await session_n_to_p.send_realtime_input(
-                                    audio=types.Blob(data=chunk_n, mime_type="audio/pcm;rate=16000")
-                                )
                             encoded_n = base64.b64encode(chunk_n).decode("utf-8")
                             await websocket.send_json({
                                 "type": "original_audio",
                                 "speaker": "nurse",
                                 "data": encoded_n
                             })
-
+ 
+                        # Stream real-time speech/silence to keep BOTH Gemini Live sessions hot
+                        if active_speaker == "patient":
+                            if chunk_p:
+                                await safe_send_realtime_input(managed_p_to_n, chunk_p)
+                            else:
+                                await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                            # Send silence keepalive to the inactive nurse session
+                            if is_flash_live:
+                                await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+                            else:
+                                if loop_counter % 15 == 0:
+                                    await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+                        elif active_speaker == "nurse":
+                            if chunk_n:
+                                await safe_send_realtime_input(managed_n_to_p, chunk_n)
+                            else:
+                                await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+                            # Send silence keepalive to the inactive patient session
+                            if is_flash_live:
+                                await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                            else:
+                                if loop_counter % 15 == 0:
+                                    await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                        else:
+                            # Both sessions are currently idle, send silence to both
+                            if is_flash_live:
+                                await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                                await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+                            else:
+                                if loop_counter % 15 == 0:
+                                    await safe_send_realtime_input(managed_p_to_n, silence_chunk)
+                                    await safe_send_realtime_input(managed_n_to_p, silence_chunk)
+ 
                         # Dynamic-friendly 200ms throttle sleep (avoids catchup bug on resume)
                         await asyncio.sleep(0.2)
 
