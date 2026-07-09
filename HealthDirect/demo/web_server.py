@@ -229,7 +229,7 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
         logger.error(f"Error loading glossary for formatting: {e}")
         return ""
 
-    formatted_lines = []
+    raw_rules = []
     target_lang_lower = target_language.lower()
     for entry in entries:
         english = entry.get("english", "")
@@ -245,8 +245,6 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
 
         if matched_lang_key:
             translation = translations[matched_lang_key]
-            rules = []
-
             if isinstance(translation, dict):
                 formal_lang = translation.get("formal")
                 informal_lang_list = []
@@ -263,37 +261,62 @@ def load_and_format_glossary(target_language: str, direction: str = "n_to_p", ex
                 if direction == "p_to_n":
                     # Formal mapping: Cephalgie -> cephalalgia
                     if formal_lang:
-                        rules.append((formal_lang, formal_eng))
+                        raw_rules.append((formal_lang, formal_eng, description))
                     # Informal mapping: Kopfschmerzen -> headache
                     if informal_lang_list:
                         target_informal_eng = informal_eng_list[0] if (informal_eng_list and len(informal_eng_list) > 0) else formal_eng
                         for inf_lang in informal_lang_list:
-                            rules.append((inf_lang, target_informal_eng))
+                            raw_rules.append((inf_lang, target_informal_eng, description))
                 else:
                     # Nurse -> Patient (English -> Foreign)
                     # Formal mapping: cephalalgia -> Cephalgie
                     if formal_lang:
-                        rules.append((formal_eng, formal_lang))
+                        raw_rules.append((formal_eng, formal_lang, description))
                     # Informal mapping: headache -> Kopfschmerzen
                     if informal_eng_list and informal_lang_list:
                         for inf_eng in informal_eng_list:
-                            rules.append((inf_eng, ", ".join(informal_lang_list)))
+                            raw_rules.append((inf_eng, ", ".join(informal_lang_list), description))
                     elif informal_lang_list:
-                        rules.append((formal_eng, ", ".join(informal_lang_list)))
+                        raw_rules.append((formal_eng, ", ".join(informal_lang_list), description))
             else:
                 # Flat string translation (e.g. "Fieber" -> "extreme fire flame")
                 translation_str = str(translation)
                 if direction == "p_to_n":
-                    rules.append((translation_str, english))
+                    raw_rules.append((translation_str, english, description))
                 else:
-                    rules.append((english, translation_str))
+                    raw_rules.append((english, translation_str, description))
 
-            for from_term, to_term in rules:
-                term_rule = f"{from_term} -> {to_term}"
-                if description and not exclude_descriptions:
-                    formatted_lines.append(f"- {term_rule}: {description}")
-                else:
-                    formatted_lines.append(f"- {term_rule}")
+    # Now deduplicate rules with priority logic to prevent conflicting instructions
+    unique_rules = {}
+    for from_term, to_term, desc in raw_rules:
+        from_term_clean = from_term.strip().lower()
+        if from_term_clean in unique_rules:
+            existing_to = unique_rules[from_term_clean][1]
+            
+            # Priority 1: 'extreme fire flame' always wins (demo priority override)
+            if to_term.strip().lower() == "extreme fire flame":
+                unique_rules[from_term_clean] = (from_term, to_term, desc)
+            elif existing_to.strip().lower() == "extreme fire flame":
+                pass
+            # Priority 2: 'headache' (singular) overrides 'headaches' (plural) for natural translation
+            elif to_term.strip().lower() == "headache":
+                unique_rules[from_term_clean] = (from_term, to_term, desc)
+            elif existing_to.strip().lower() == "headache":
+                pass
+            else:
+                # Default: keep latest mapping
+                unique_rules[from_term_clean] = (from_term, to_term, desc)
+        else:
+            unique_rules[from_term_clean] = (from_term, to_term, desc)
+
+    # Format the deduplicated rules
+    formatted_lines = []
+    for from_term, to_term, desc in unique_rules.values():
+        term_rule = f"{from_term} -> {to_term}"
+        if desc and not exclude_descriptions:
+            formatted_lines.append(f"- {term_rule}: {desc}")
+        else:
+            formatted_lines.append(f"- {term_rule}")
 
     return "\n".join(formatted_lines)
 
