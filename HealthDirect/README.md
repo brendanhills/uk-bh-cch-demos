@@ -104,6 +104,29 @@ PYTHONPATH=. uv run python demo/web_server.py
 
 ---
 
+## Dynamic Session Recycling Architecture (What Worked for Gemini 3.1 Flash)
+
+Under **Gemini 3.1 Flash Live** (`gemini-3.1-flash-live-preview`), sending multiple speech-to-speech turns down a single WebSocket connection results in an internal server-side freeze, leading to silent GFE proxy drops and TCP keepalive timeouts on subsequent turns. We resolved this by implementing an **asynchronous background session-recycling pattern** inside the FastAPI backend.
+
+### Architecture Highlights
+
+- **The `ManagedSession` Context-Wrapper**: Encapsulates connection state and pre-establishes a fresh WebSocket connection asynchronously in the background. Setup takes ~1.0s and is initiated pre-emptively so connections are hot and ready before the user speaks.
+- **Dynamic Connection Resolution**: Adapts the `safe_send_realtime_input` helper to extract active sockets on-the-fly from managed objects, dropping input packets safely if a recycle is currently in progress.
+- **Continuously Resilient Receivers**: Receiver loops (`receive_p_to_n` and `receive_n_to_p`) run as continuous `while True` blocks. They catch `Normal Closure (1000)` exceptions when a session is closed/recycled, sleep briefly, and re-bind to the active session instantly without dropping data.
+- **Non-Blocking Background Warmup**: Immediately upon a turn completing, the sender loop triggers a background warmup task to pre-warm the finished speaker's session:
+  ```python
+  asyncio.create_task(managed_p_to_n.connect())
+  ```
+  This warmup occurs during the other speaker's monologue or during natural dialogue transitions, maintaining **zero user-visible latency**.
+
+### Independent Recycling Diagnostics
+To verify this recycling pattern independently without running the full web server, you can run the simulated clinical multi-turn script:
+```bash
+uv run scratch/test_single_session.py
+```
+
+---
+
 ## Polite Glossary Scraper & Ingestion Pipeline
 
 To support customized dictionaries and speech adaptations, the `import_glossary.py` scraper ingests clinical terminology from HealthDirect Australia across four main directories:
