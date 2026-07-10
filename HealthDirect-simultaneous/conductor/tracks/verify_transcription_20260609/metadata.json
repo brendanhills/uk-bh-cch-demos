@@ -1,0 +1,8 @@
+{
+  "track_id": "verify_transcription_20260609",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-06-09T05:00:23Z",
+  "updated_at": "2026-06-09T05:00:23Z",
+  "description": "Verify and benchmark the existing transcription application"
+}

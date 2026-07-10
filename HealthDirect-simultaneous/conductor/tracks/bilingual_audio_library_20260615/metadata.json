@@ -1,0 +1,8 @@
+{
+  "track_id": "bilingual_audio_library_20260615",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-06-15T12:21:00Z",
+  "updated_at": "2026-06-15T12:21:00Z",
+  "description": "Create a library of synthesized bilingual medical phone calls (stereo dual-channel WAVs) for testing and demonstrations using clear TTS voices"
+}

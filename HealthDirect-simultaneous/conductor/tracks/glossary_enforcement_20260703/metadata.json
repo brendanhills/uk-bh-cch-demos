@@ -1,0 +1,8 @@
+{
+  "track_id": "glossary_enforcement_20260703",
+  "type": "feature",
+  "status": "completed",
+  "created_at": "2026-07-03T18:46:00Z",
+  "updated_at": "2026-07-03T18:50:00Z",
+  "description": "Enforce Clinical Glossary on Gemini Live standard sessions with dual-model comparison capabilities."
+}

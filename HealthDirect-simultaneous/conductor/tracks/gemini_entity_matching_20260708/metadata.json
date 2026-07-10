@@ -1,0 +1,8 @@
+{
+  "track_id": "gemini_entity_matching_20260708",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-08T15:40:00Z",
+  "updated_at": "2026-07-08T15:40:00Z",
+  "description": "Contextual Clinical Entity Highlighting with Gemini NLU"
+}

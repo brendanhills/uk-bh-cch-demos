@@ -1,0 +1,8 @@
+{
+  "track_id": "healthdirect_ui_redesign_20260708",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-08T17:53:00Z",
+  "updated_at": "2026-07-08T17:53:00Z",
+  "description": "Redesign Bilingual Medical Call Monitor to match HealthDirect's look and feel from screenshot (layout, fonts, colors etc.) without adding new functions."
+}
