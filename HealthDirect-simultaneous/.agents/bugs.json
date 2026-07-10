@@ -70,5 +70,23 @@
     "status": "Fix Verified",
     "impact": "High",
     "priority": "P0"
+  },
+  {
+    "id": 9,
+    "description": "The Vietnamese sample doesn't play well - there are numerous long gaps.",
+    "date_reported": "2026-07-10T17:08:55+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Reported",
+    "priority": "",
+    "impact": ""
+  },
+  {
+    "id": 10,
+    "description": "The arabic sample is missing",
+    "date_reported": "2026-07-10T17:09:04+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Reported",
+    "priority": "",
+    "impact": ""
   }
 ]
