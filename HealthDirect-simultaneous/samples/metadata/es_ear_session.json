@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "language": "Spanish",
+    "code": "es-ES",
+    "topic": "ear pain",
+    "caller_gender": "male",
+    "caller_emotion": "anxious",
+    "nurse_gender": "female",
+    "preset_key": "spanish"
+  },
+  "turns": [
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Hello, thank you for calling HealthDirect. My name is Nurse Sarah. How can I help you today?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 1000
+    },
+    {
+      "speaker": "caller",
+      "language": "es-ES",
+      "text": "Hola, buenas tardes. Estoy llamando porque mi hijo pequeño tiene dolor de oído muy fuerte y está llorando mucho.",
+      "english_translation": "Hello, good afternoon. I am calling because my young son has a very severe earache and is crying a lot.",
+      "original_target_lang": "Hola, buenas tardes. Estoy llamando porque mi hijo pequeño tiene dolor de oído muy fuerte y está llorando mucho.",
+      "start_ms": 9224
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "I am sorry to hear about your son. Have you noticed any other symptoms, like fluid draining from the ear, or a fever?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 20229
+    },
+    {
+      "speaker": "caller",
+      "language": "es-ES",
+      "text": "Sí, tiene fiebre de treinta y ocho punto cinco grados. También tiene un resfriado y congestión. ¿El paracetamol es seguro para un niño de dos años?",
+      "english_translation": "Yes, he has a fever of thirty-eight point five degrees. He also has a cold and congestion. Is paracetamol safe for a two-year-old child?",
+      "original_target_lang": "Sí, tiene fiebre de treinta y ocho punto cinco grados. También tiene un resfriado y congestión. ¿El paracetamol es seguro para un niño de dos años?",
+      "start_ms": 29657
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Yes, paracetamol is safe and recommended for managing pain and fever in a two-year-old child. I recommend visiting your local general practitioner or GP to have his ears checked. If his condition worsens or you see discharge, take him to the Emergency Department.",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 43042
+    },
+    {
+      "speaker": "caller",
+      "language": "es-ES",
+      "text": "De acuerdo, muchas gracias. Llevaré a mi hijo al médico de cabecera de inmediato.",
+      "english_translation": "All right, thank you very much. I will take my son to the GP immediately.",
+      "original_target_lang": "De acuerdo, muchas gracias. Llevaré a mi hijo al médico de cabecera de inmediato.",
+      "start_ms": 61719
+    }
+  ],
+  "medical_terms": [
+    {
+      "english": "earache",
+      "translation": "dolor de oído",
+      "description": "Pain in the ear."
+    },
+    {
+      "english": "paracetamol",
+      "translation": "paracetamol",
+      "description": "A common medication used to treat pain and fever."
+    },
+    {
+      "english": "general practitioner / GP",
+      "translation": "médico de cabecera",
+      "description": "A medical doctor who treats acute and chronic illnesses and provides preventive care and health education."
+    }
+  ]
+}
