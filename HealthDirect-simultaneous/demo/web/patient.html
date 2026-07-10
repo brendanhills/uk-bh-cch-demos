@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthDirect Patient Triage Line</title>
+    
+    <!-- Modern typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    
+    <!-- Base premium styling -->
+    <link rel="stylesheet" href="/style.css?v=shorter-dashboard-v3">
+    
+    <style>
+        .patient-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            max-width: 600px;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        .patient-header {
+            background-color: var(--brand-teal);
+            color: white;
+            padding: 24px;
+            font-family: 'Outfit', sans-serif;
+            text-align: center;
+        }
+
+        .patient-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .patient-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .panning-control-panel {
+            background-color: #f1f5f9;
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .pan-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: #cbd5e1;
+            outline: none;
+        }
+
+        .pan-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--brand-teal);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--brand-teal-glow);
+            transition: transform 0.1s ease;
+        }
+
+        .pan-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-mute-focus {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-mute-focus:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-mute-focus.active {
+            background-color: #fef2f2;
+            color: var(--danger-red);
+            border-color: var(--danger-red);
+        }
+
+        .triage-indicator {
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .triage-waiting {
+            background-color: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .triage-live {
+            background-color: #d1fae5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="max-width: 800px;">
+        <div class="patient-card">
+            <!-- Patient Connection Header -->
+            <div class="patient-header">
+                <h2>HealthDirect Call Room</h2>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 4px;">Secure Patient Interpretation Line</p>
+            </div>
+
+            <!-- Connection Status -->
+            <div style="padding: 24px 24px 0 24px;">
+                <div id="triage-status-bar" class="triage-indicator triage-waiting">
+                    Waiting for Nurse to Start Session...
+                </div>
+            </div>
+
+            <!-- Audio Mixer -->
+            <div style="padding: 0 24px;">
+                <div class="panning-control-panel">
+                    <div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
+                        <span id="pan-label-left">Nurse Voice (Left)</span>
+                        <span id="pan-label-right">Interpreter (Right)</span>
+                    </div>
+                    <input type="range" id="pan-slider" class="pan-slider" min="-1" max="1" step="0.1" value="0">
+                    
+                    <div style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 6px;">
+                        <button id="btn-mute-tab" class="btn-mute-focus">
+                            🔊 Demo Focus: Mute Tab Audio
+                        </button>
+                        <div style="font-size: 0.62rem; color: var(--text-muted); margin-top: 4px; font-style: italic; max-width: 250px; line-height: 1.2;">
+                            *Mutes audio on this tab to prevent microphone feedback echoes when presenting over Google Meet*
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Scrolling Bubble Feed -->
+            <div id="patient-feed" class="patient-body">
+                <div class="system-message" style="margin: auto; text-align: center; color: var(--text-muted);">
+                    When the nurse starts the session, translations of your conversation will stream here in real-time.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Version -->
+        <footer style="text-align: center; padding: 2px; font-size: 0.7rem; color: var(--text-muted); opacity: 0.4; margin: 0;">
+            v1.4 - 2026-07-10 15:45:00
+        </footer>
+    </div>
+
+    <!-- Dual Web Audio and WebSocket simultaneous client controller -->
+    <script src="/simultaneous_client.js?v=simultaneous-client-v1.4"></script>
+    <script>
+        // Initialize patient client behavior
+        initSimultaneousClient("patient");
+    </script>
+</body>
+</html>
