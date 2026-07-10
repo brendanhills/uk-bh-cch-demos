@@ -98,3 +98,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
   *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
+
+---
+
+- [ ] **Track: Unified Single-Tab Presentation Console**
+*Link: [./tracks/unified_presentation_20260710/](./tracks/unified_presentation_20260710/)*
