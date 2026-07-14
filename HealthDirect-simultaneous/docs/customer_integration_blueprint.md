@@ -279,4 +279,164 @@ async def gemini_35_translate_session(audio_source_iterator, source_lang: str, t
         await asyncio.gather(send_audio_loop(), receive_translation_loop())
 ```
 
+---
+
+## 6. Real-Time Audio Chunk-Streaming & Connection Management
+
+The backbone of any Gemini Live session is robust, low-latency WebSocket communication. In production, physical audio input (from microphones, telephony trunks, or Web Audio API nodes) must be continuously chunked, queued, and pushed to the Google GenAI WebSocket API, while incoming response streams are processed in parallel.
+
+### Bidirectional Message Contract
+- **Client-to-Server (Outbound):** Raw PCM chunks must be encapsulated in structured JSON payloads or binary messages with the appropriate `mime_type` (typically `audio/pcm;rate=16000` for 16kHz mono audio).
+- **Server-to-Client (Inbound):** The server sends streamed response chunks containing text transcripts, audio responses, voice activity indicators, and turn-completion metadata.
+
+### Async Connection Reference Pseudocode
+
+This reference pattern implements a thread-safe connection manager that uses an `asyncio.Queue` to buffer outgoing audio chunks, running concurrent send/receive loops with proper connection error boundaries.
+
+```python
+import asyncio
+import logging
+from google import genai
+from google.genai import types
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("WebSocketManager")
+
+class GeminiLiveConnectionManager:
+    """
+    Manages the lifecycle, streaming, and reception of a Gemini Live WebSocket session.
+    Provides thread-safe audio buffering and graceful teardown.
+    """
+    def __init__(self, config: types.LiveConnectConfig):
+        self.config = config
+        self.client = genai.Client()
+        self.audio_queue = asyncio.Queue()
+        self.is_running = False
+        self._send_task = None
+        self._receive_task = None
+
+    def push_audio_chunk(self, pcm_chunk: bytes):
+        """
+        Thread-safe method to push raw 16kHz mono PCM chunks into the outgoing buffer.
+        In a production application, this is called by your audio hardware/input driver callback.
+        """
+        try:
+            # Non-blocking enqueue
+            self.audio_queue.put_nowait(pcm_chunk)
+        except asyncio.QueueFull:
+            logger.warning("Audio buffer queue full. Dropping chunk.")
+
+    async def start_session(self):
+        """Establishes the WebSocket connection and starts the sender/receiver loops."""
+        self.is_running = True
+        try:
+            logger.info("Attempting to connect to Gemini Live WebSocket API...")
+            async with self.client.aio.live.connect(config=self.config) as session:
+                logger.info("Connection established successfully.")
+                
+                # Run send and receive tasks concurrently
+                self._send_task = asyncio.create_task(self._send_loop(session))
+                self._receive_task = asyncio.create_task(self._receive_loop(session))
+                
+                # Wait until one of the loops terminates or is cancelled
+                done, pending = await asyncio.wait(
+                    [self._send_task, self._receive_task],
+                    return_when=asyncio.FIRST_COMPLETED
+                )
+                
+                # Cancel the remaining active loop
+                for task in pending:
+                    task.cancel()
+                    
+        except Exception as e:
+            logger.error(f"WebSocket connection encountered a fatal error: {e}")
+        finally:
+            await self.stop_session()
+
+    async def _send_loop(self, session):
+        """Continuously pulls PCM audio chunks from the queue and streams them to Gemini."""
+        try:
+            while self.is_running:
+                # Wait for a chunk to be pushed to the queue
+                pcm_chunk = await self.audio_queue.get()
+                
+                # Wrap the raw bytes into Gemini ClientContent
+                await session.send(
+                    input={"data": pcm_chunk, "mime_type": "audio/pcm;rate=16000"},
+                    end_of_turn=False
+                )
+                self.audio_queue.task_done()
+                
+        except asyncio.CancelledError:
+            logger.info("Outbound audio loop cancelled.")
+        except Exception as e:
+            logger.error(f"Error in outbound audio loop: {e}")
+
+    async def _receive_loop(self, session):
+        """Asynchronously listens for and processes all inbound response chunks from Gemini."""
+        try:
+            async for response in session.receive():
+                # Extract text chunks or translation payloads
+                if response.server_content is not None:
+                    model_turn = response.server_content.model_turn
+                    if model_turn is not None:
+                        for part in model_turn.parts:
+                            if part.text:
+                                self.handle_text_chunk(part.text)
+                                
+                if response.translation_response is not None:
+                    self.handle_translation(
+                        response.translation_response.source_text,
+                        response.translation_response.translated_text
+                    )
+                
+                if response.turn_complete:
+                    self.handle_turn_completion()
+                    
+        except asyncio.CancelledError:
+            logger.info("Inbound response loop cancelled.")
+        except Exception as e:
+            logger.error(f"Error in inbound response loop: {e}")
+
+    def handle_text_chunk(self, text: str):
+        """Process incoming raw transcript chunk (e.g., dispatch to UI)."""
+        print(text, end="", flush=True)
+
+    def handle_translation(self, original: str, translation: str):
+        """Process real-time bilingual translation events."""
+        if original or translation:
+            print(f"\n[Source]: {original} -> [Translation]: {translation}")
+
+    def handle_turn_completion(self):
+        """Handle endpoint/turn markers."""
+        print("\n[Turn Completed]")
+
+    async def stop_session(self):
+        """Gracefully shuts down tasks and empties queues."""
+        if not self.is_running:
+            return
+        logger.info("Shutting down live translation session...")
+        self.is_running = False
+        
+        # Cancel any active running async loops
+        for task in [self._send_task, self._receive_task]:
+            if task and not task.done():
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
+                
+        # Flush the remaining items in the audio queue
+        while not self.audio_queue.empty():
+            try:
+                self.audio_queue.get_nowait()
+                self.audio_queue.task_done()
+            except asyncio.QueueEmpty:
+                break
+                
+        logger.info("Live session cleanup completed.")
+```
+
+
 
