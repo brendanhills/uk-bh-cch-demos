@@ -7,7 +7,7 @@ This document serves as a comprehensive, production-ready integration blueprint 
 
 ## 1. System Architecture Overview
 
-To achieve perfect real-time speaker attribution and ultra-low latency bilingual translation, the system utilizes a **Producer-Consumer** architecture. Stereo audio (or multi-channel streams) is split into independent mono streams (Producers) representing separate physical channels (e.g., Channel 1 for the English-speaking Nurse, Channel 2 for the foreign-language Patient). These independent streams are re-interleaved and aligned chronologically by a centralized logic engine (Consumer) before interfacing with the Gemini Live API.
+To achieve perfect real-time speaker attribution and ultra-low latency bilingual translation, the system utilizes a **Producer-Consumer** architecture. Stereo audio (or multi-channel streams) is split into independent mono streams (Producers) representing separate physical channels (e.g., Channel 1 / Left Channel for the foreign-language Patient, Channel 2 / Right Channel for the English-speaking Nurse). These independent streams are re-interleaved and aligned chronologically by a centralized logic engine (Consumer) before interfacing with the Gemini Live API.
 
 ### High-Level Architecture Flow
 
@@ -22,8 +22,8 @@ graph TD
     end
     
     subgraph Producers [Independent Channel Workers]
-        Ch1["Channel 1 Worker (Nurse - English)"]:::main
-        Ch2["Channel 2 Worker (Patient - Foreign)"]:::main
+        Ch1["Channel 1 Worker (Patient - Foreign)"]:::main
+        Ch2["Channel 2 Worker (Nurse - English)"]:::main
     end
     
     subgraph Central Brain [Central Stabilization & Interleaving Engine]
@@ -701,7 +701,7 @@ To bridge the gap between high-level integration pseudocode and the working code
 | **Recursive Glossary Schema Ingestion (Section 7)** | [import_glossary.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/import_glossary.py) | Scrapes raw terminologies from the web, recursively unpacks complex list/dictionary formats, and caches them in `/glossary` for model priming. |
 | **Chronological Interleaving & Stabilization (Section 8)** | [live_translate_demo.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/live_translate_demo.py) | Houses the central playback-synchronization buffers and VAD pinning engine that aligns the English-speaking Nurse channel with the foreign-language Patient channel. |
 | **Dual-Column Demo Frontend App** | [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/demo/web_server.py) | Integrates translation and UI elements into a responsive, local-facing FastAPI + HTML user interface. |
-| **Sample Audio Generation & Throttling** | `generate_simultaneous_audio.py`, `generate_spanish_audio.py` | Utilizes SSML and Google Text-to-Speech API to generate dual-channel conversations to simulate physical playheads. |
+| **Sample Audio Generation & Throttling** | `generate_bilingual_audio.py`, `generate_spanish_audio.py` | Utilizes SSML and Google Text-to-Speech API to generate dual-channel conversations to simulate physical playheads. |
 
 ### Ingestion Maintenance Protocol
 
