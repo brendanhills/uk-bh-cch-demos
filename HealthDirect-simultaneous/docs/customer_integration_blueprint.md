@@ -166,3 +166,85 @@ async def gemini_31_live_session(audio_source_iterator, system_instruction: str)
         await asyncio.gather(send_audio_loop(), receive_responses_loop())
 ```
 
+---
+
+## 5. Gemini 3.5 Live Translate API Integration
+
+Gemini 3.5 Live Translate (`gemini-3.5-live-translate-preview`) is optimized specifically for real-time speech translation. It utilizes a dedicated `translation_config` block that handles bilingual source/target mappings natively, delivering translation streams with significantly reduced latency and higher accuracy than traditional prompt-engineered translation approaches.
+
+> [!IMPORTANT]
+> **Gemini Live Translate Compatibility Nuance:**
+> Under Developer API mode, `gemini-3.5-live-translate-preview` does **not** support the `system_instruction` parameter in `LiveConnectConfig` when used in tandem with `translation_config`. Attempting to pass both parameters will result in immediate WebSocket 1011 connection crashes. Always omit `system_instruction` when configuring translation sessions.
+
+### Key Integration Steps:
+1. **Configure Live Translation:** Construct a `LiveConnectConfig` containing a `translation_config` defining target languages (e.g., source English, target Spanish).
+2. **OMIT System Instructions:** Ensure `system_instruction` is not specified.
+3. **Establish Connection:** Connect asynchronously to the WebSocket.
+4. **Stream & Process Responses:** Receive specialized translation events and map them side-by-side.
+
+### Async Python Reference Pseudocode
+
+```python
+import asyncio
+from google import genai
+from google.genai import types
+
+async def gemini_35_translate_session(audio_source_iterator, source_lang: str, target_lang: str):
+    """
+    Demonstrates a high-level real-time speech translation session using
+    Gemini 3.5 Live Translate API.
+    """
+    client = genai.Client()
+
+    # 1. Build the translation configuration
+    translation_config = types.TranslationConfig(
+        source_language=source_lang, # e.g., "en" (English)
+        target_language=target_lang, # e.g., "es" (Spanish)
+    )
+
+    # 2. Configure the Session Parameters
+    # CRITICAL: Omit system_instruction completely to avoid WebSocket 1011 crashes!
+    config = types.LiveConnectConfig(
+        model="gemini-3.5-live-translate-preview",
+        response_modalities=[types.LiveModality.TEXT],
+        translation_config=translation_config, # Natively handles language mapping
+    )
+
+    # 3. Establish the Asynchronous Connection
+    async with client.aio.live.connect(config=config) as session:
+        print(f"Connected to Gemini 3.5 Live Translate [{source_lang} <-> {target_lang}].")
+
+        async def send_audio_loop():
+            """Streams raw audio chunks to the Live Translate session."""
+            try:
+                async for chunk in audio_source_iterator:
+                    await session.send(
+                        input={"data": chunk, "mime_type": "audio/pcm;rate=16000"},
+                        end_of_turn=False
+                    )
+                    await asyncio.sleep(0.1)
+            except asyncio.CancelledError:
+                pass
+
+        async def receive_translation_loop():
+            """Listens for and extracts translation outputs."""
+            try:
+                async for response in session.receive():
+                    # Live Translate returns specialized translation responses
+                    translation_response = response.translation_response
+                    if translation_response is not None:
+                        # Translate results contain source text and translated text
+                        source_text = translation_response.source_text
+                        translated_text = translation_response.translated_text
+                        
+                        if source_text or translated_text:
+                            print(f"\n[Original]: {source_text}")
+                            print(f"[Translated]: {translated_text}")
+            except asyncio.CancelledError:
+                pass
+
+        # 4. Run streaming and receiving concurrently
+        await asyncio.gather(send_audio_loop(), receive_translation_loop())
+```
+
+
