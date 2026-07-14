@@ -74,7 +74,7 @@ Choosing between Gemini 3.1 Live (standard audio/text Live session) and Gemini 3
 
 | Feature / Dimension | Gemini 3.1 Live API | Gemini 3.5 Live Translate API |
 | :--- | :--- | :--- |
-| **Primary Model ID** | `gemini-2.0-flash-exp` / `gemini-1.5-flash` | `gemini-3.5-live-translate-preview` |
+| **Primary Model ID** | `gemini-3.1-flash-live-preview` | `gemini-3.5-live-translate-preview` |
 | **Session Core Purpose** | Real-time voice-to-voice / text assistant | Real-time speech-to-speech / text-to-text bilingual translation |
 | **System Instruction Support** | Supported fully; ideal for prompt-engineering behaviors | **Not supported** when used in tandem with `translation_config` (causes WebSocket 1011 crashes) |
 | **Translation Latency** | High (handled via prompting within standard live context) | Ultra-low (handled natively by the translation engine) |
@@ -110,7 +110,7 @@ async def gemini_31_live_session(audio_source_iterator, system_instruction: str)
     # 2. Configure the Session Parameters
     # Note: Gemini 3.1 fully supports system instructions to guide behavioral outputs.
     config = types.LiveConnectConfig(
-        model="gemini-2.0-flash-exp",
+        model="gemini-3.1-flash-live-preview",
         response_modalities=[types.LiveModality.TEXT],  # TEXT or AUDIO
         system_instruction=types.Content(
             parts=[types.Part.from_text(text=system_instruction)]
