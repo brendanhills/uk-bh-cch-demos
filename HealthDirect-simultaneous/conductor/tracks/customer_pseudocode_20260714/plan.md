@@ -5,7 +5,7 @@ Outline the main guide layout and author the comparative section detailing Gemin
 - [x] Task: Create target document `docs/customer_integration_blueprint.md` with outline and introductory architecture diagrams. b370225
 - [x] Task: Implement Gemini 3.1 Live Integration Section with high-level async Python configuration and session flow pseudocode. f824699
 - [x] Task: Implement Gemini 3.5 Live Translate Integration Section with specialized translation config, bilingual output handling, and `system_instruction` compatibility. dab34ce
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Structuring & Model Comparison' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Structuring & Model Comparison' (Protocol in workflow.md)
 
 ## Phase 2: Core Architecture, Ingestion logic, & Maintenance
 Detail the streaming, glossary priming, and chronological alignment engine logics in high-level simplified Python, and establish the production mapping/maintenance protocol.
