@@ -7,7 +7,8 @@
 const PRESET_UI_METADATA = {
     "german": { lang: "German", shortLang: "de" },
     "spanish": { lang: "Spanish", shortLang: "es" },
-    "vietnamese": { lang: "Vietnamese", shortLang: "vi" }
+    "vietnamese": { lang: "Vietnamese", shortLang: "vi" },
+    "arabic": { lang: "Arabic", shortLang: "ar" }
 };
 
 let currentRole = null; // "nurse" or "patient"
