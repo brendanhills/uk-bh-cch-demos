@@ -687,6 +687,33 @@ if __name__ == "__main__":
     asyncio.run(run_simulation_example())
 ```
 
+---
+
+## 9. Production File Mapping & Maintenance Protocol
+
+To bridge the gap between high-level integration pseudocode and the working codebase, this appendix maps our architectural concepts back to their active production implementations and defines guidelines for ongoing updates.
+
+### Production Codebase File Mapping
+
+| Pseudocode Concept / Architectural Module | Production File in Active Workspace | Description |
+| :--- | :--- | :--- |
+| **WebSocket Connection & Streaming (Section 6)** | [live_translate_demo.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/live_translate_demo.py) | Establishes the real-time parallel client connection loops (`run_live_translation`), manages concurrent audio-streaming (`send_audio_task`), and receives transcripts. |
+| **Recursive Glossary Schema Ingestion (Section 7)** | [import_glossary.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/import_glossary.py) | Scrapes raw terminologies from the web, recursively unpacks complex list/dictionary formats, and caches them in `/glossary` for model priming. |
+| **Chronological Interleaving & Stabilization (Section 8)** | [live_translate_demo.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/live_translate_demo.py) | Houses the central playback-synchronization buffers and VAD pinning engine that aligns the English-speaking Nurse channel with the foreign-language Patient channel. |
+| **Dual-Column Demo Frontend App** | [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/demo/web_server.py) | Integrates translation and UI elements into a responsive, local-facing FastAPI + HTML user interface. |
+| **Sample Audio Generation & Throttling** | `generate_simultaneous_audio.py`, `generate_spanish_audio.py` | Utilizes SSML and Google Text-to-Speech API to generate dual-channel conversations to simulate physical playheads. |
+
+### Ingestion Maintenance Protocol
+
+As clinical glossaries evolve or new medical terminologies are registered:
+1. **Regenerate Glossary Cache:** Run the scraping pipeline to fetch the latest schemas:
+   ```bash
+   uv run import_glossary.py --scrape https://www.healthdirect.gov.au/medicines --ground
+   ```
+2. **Review Normalization Integrity:** If the target JSON schema shape changes, verify the recursive mapping in `import_glossary.py`'s parser function to confirm list/dictionary formats don't cause `TypeErrors`.
+3. **Verify API Live Limits:** Keep System Instructions under the model context token boundaries to guarantee rapid connection handshake speeds on start.
+
+
 
 
 
