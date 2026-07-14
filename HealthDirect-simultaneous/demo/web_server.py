@@ -1737,6 +1737,21 @@ async def serve_patient():
     response.headers["Expires"] = "0"
     return response
 
+@app.get("/presentation", response_class=HTMLResponse)
+@app.get("/presentation.html", response_class=HTMLResponse)
+async def serve_presentation():
+    """Serves the Single-Tab Unified Presentation Console interface."""
+    presentation_path = os.path.join(BASE_DIR, "web", "presentation.html")
+    if not os.path.exists(presentation_path):
+        return HTMLResponse("<h1>presentation.html not found</h1>", status_code=404)
+    with open(presentation_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    response = HTMLResponse(content=content)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 class NoCacheStaticFiles(StaticFiles):
     def is_dir_path(self, path: str) -> bool:
         return False

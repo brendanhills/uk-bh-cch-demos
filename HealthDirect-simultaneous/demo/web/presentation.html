@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthDirect Presentation Console - Single-Tab Split-View</title>
+    
+    <!-- Modern typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Base premium styling -->
+    <link rel="stylesheet" href="/style.css?v=presentation-v1">
+    
+    <style>
+        /* Modern presentation layout overrides */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .presentation-header {
+            background-color: var(--brand-navy);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .header-badge {
+            background-color: var(--brand-teal);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .header-modes-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-mode {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-mode.active {
+            background-color: var(--brand-teal);
+            border-color: var(--brand-teal);
+        }
+
+        /* Presentation Dual Workspace Panel */
+        .presentation-container {
+            display: grid;
+            grid-template-columns: 7fr 3fr; /* Nurse 70% | Patient 30% */
+            flex: 1;
+            padding: 16px;
+            gap: 16px;
+            box-sizing: border-box;
+            min-height: 0;
+            position: relative;
+        }
+
+        .frame-wrapper {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .frame-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        iframe {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease;
+        }
+
+        iframe:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer info */
+        .presentation-footer {
+            text-align: center;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background-color: #f1f5f9;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Header -->
+    <header class="presentation-header">
+        <div class="header-title-group">
+            <h1>HealthDirect Presentation Console</h1>
+            <span class="header-badge">Unified Screen Share View</span>
+        </div>
+        
+        <div class="header-modes-group">
+            <button id="btn-side-by-side" class="btn-mode active">📊 Split View (70/30)</button>
+            <button id="btn-pip" class="btn-mode" disabled>📱 PIP Overlay (In Dev)</button>
+        </div>
+    </header>
+
+    <!-- Main Side-by-Side Dual-Iframe Workspace -->
+    <main id="workspace" class="presentation-container">
+        <!-- Nurse Workspace Wrapper (70%) -->
+        <div id="nurse-wrapper" class="frame-wrapper">
+            <div class="frame-title">
+                <span>Clinician Panel (Nurse)</span>
+                <span class="badge" style="background-color: var(--brand-navy); color: white;">Port: 8000</span>
+            </div>
+            <iframe id="nurse-frame" src="/nurse" title="HealthDirect Nurse Console"></iframe>
+        </div>
+
+        <!-- Patient Workspace Wrapper (30%) -->
+        <div id="patient-wrapper" class="frame-wrapper">
+            <div class="frame-title">
+                <span>Caller Panel (Patient)</span>
+                <span class="badge" style="background-color: var(--brand-teal); color: white;">Port: 8000</span>
+            </div>
+            <iframe id="patient-frame" src="/patient" title="HealthDirect Patient Triage Line"></iframe>
+        </div>
+    </main>
+
+    <!-- Footer build metadata -->
+    <footer class="presentation-footer">
+        v1.5-presentation - 2026-07-14 11:55:00
+    </footer>
+</body>
+</html>
