@@ -59,12 +59,44 @@ graph TD
 ## 2. Table of Contents
 
 - [1. System Architecture Overview](#1-system-architecture-overview)
+- [2. Component Taxonomy: Production vs. Demo Simulation Harness](#2-component-taxonomy-production-vs-demo-simulation-harness)
 - [3. Model Comparison: Gemini 3.1 Live vs. Gemini 3.5 Live Translate](#3-model-comparison-gemini-31-live-vs-gemini-35-live-translate)
 - [4. Gemini 3.1 Live API Integration](#4-gemini-31-live-api-integration)
 - [5. Gemini 3.5 Live Translate API Integration](#5-gemini-35-live-translate-api-integration)
 - [6. Data Ingestion: Robust Glossary Schema Parsing](#6-data-ingestion-robust-glossary-schema-parsing)
 - [7. Central Interleaving, Stabilization, & VAD Pinning](#7-central-interleaving-stabilization--vad-pinning)
 - [8. Production Mapping & Maintenance Protocol](#8-production-mapping--readme)
+
+---
+
+## 2. Component Taxonomy: Production vs. Demo Simulation Harness
+
+When integrating this real-time bilingual medical interpreter into a customer's production system, it is vital to distinguish between the **Core Production Elements** and the **Demo Simulation Harness**. The simulation harness is strictly designed to synthesize real-time voice scenarios and display outputs in an intuitive developer-facing sandbox; a customer's actual production application only requires the Core Production Engine.
+
+### Component Breakdown
+
+```mermaid
+graph TD
+    classDef prod fill:#e6f4ea,stroke:#137333,stroke-width:2px,color:#0d3c1d;
+    classDef demo fill:#fef7e0,stroke:#f9ab00,stroke-width:2px,color:#5c3e00;
+
+    subgraph Core Production Engine [Required for Production Apps]
+        Glossary["Clinical Glossary Ingestion"]:::prod
+        Translation["WebSocket Translation & Streaming"]:::prod
+    end
+
+    subgraph Demo Simulation Harness [Discarded in Production]
+        SampleGen["Audio Sample Generation & Throttling"]:::demo
+        WebUI["Dual-Column Demo Frontend App"]:::demo
+    end
+```
+
+| Component | Description | Production Scope | Notes |
+| :--- | :--- | :--- | :--- |
+| **1. Clinical Glossary Ingestion** | Recursively loads and normalizes bilingual clinical glossaries from JSON schemas (handling strings, arrays, and formal/informal dictionaries) to inject custom terminology into model systems instructions. | **PRODUCTION REQUIRED** | Natively maps English clinical phrases (e.g., *extreme fire flame*) directly to localized equivalents (e.g., *Fieber*) for medical safety. |
+| **2. WebSocket Translation Code** | Establishes the asynchronous bidirectional WebSocket streams to the Gemini Live API, handling continuous raw PCM chunk-streaming (inbound/outbound) and translation output parsing. | **PRODUCTION REQUIRED** | The core integration engine interfacing with Google GenAI SDK. |
+| **3. Audio Sample Generation & Throttling** | Integrates SSML Text-to-Speech synthesis to auto-generate mock stereo conversational WAV files, and utilizes real-time throttle playback timing to feed PCM chunks at matching physical clock speeds. | **DEMO HARNESS ONLY** | In a production app, this entire pipeline is replaced by a physical microphone capture stream (e.g., PyAudio or Web Audio API) feeding real-time audio inputs directly. |
+| **4. Demo Web Frontend App** | Provides a side-by-side bilingual chat bubble GUI and control dashboards to run and display real-time dual-channel simulation playbacks. | **DEMO HARNESS ONLY** | In a production app, the translation/STT output events are piped directly into existing electronic health records (EHR), telemedicine platforms, or custom communication suites. |
 
 ---
 
