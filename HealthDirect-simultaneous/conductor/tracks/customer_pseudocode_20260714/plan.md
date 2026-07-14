@@ -12,6 +12,6 @@ Detail the streaming, glossary priming, and chronological alignment engine logic
 - [x] Task: Implement Gemini Live API WebSocket connection and bidirectional chunk-streaming logic pseudocode. 932ef24
 - [x] Task: Implement robust multi-format Australian Medical Glossary schema parsing (recursively mapping and joining strings, arrays, and dictionaries) and injection pseudocode. 5c410d0
 - [x] Task: Implement chronological stabilization and VAD pinning interleaving engine logic pseudocode. 3f8f52e
-- [~] Task: Implement Production File Mapping Appendix & Maintenance Protocol in the guide.
-- [ ] Task: Review the complete guide for quality, readability, and correct markdown formatting (e.g., GitHub-style alerts).
+- [x] Task: Implement Production File Mapping Appendix & Maintenance Protocol in the guide. e977f2d
+- [~] Task: Review the complete guide for quality, readability, and correct markdown formatting (e.g., GitHub-style alerts).
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Core Architecture, Ingestion logic, & Maintenance' (Protocol in workflow.md)
