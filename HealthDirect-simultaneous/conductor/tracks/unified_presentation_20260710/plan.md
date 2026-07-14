@@ -1,6 +1,6 @@
 # Implementation Plan: Single-Tab Unified Presentation Console
 
-## Phase 1: Parent Container & Unified Routing Layout
+## Phase 1: Parent Container & Unified Routing Layout [checkpoint: a10b03e]
 - [x] Task: Create a failing integration test for the presentation.html page load, layout verification, and router matching. [24769c9]
 - [x] Task: Implement the new `demo/web/presentation.html` standalone view with an elegant dual-frame layout (left pane for Nurse console, right pane for Patient native view). [24769c9]
 - [x] Task: Add route integration inside `demo/web_server.py` to serve `/presentation.html` and register it on startup. [24769c9]
