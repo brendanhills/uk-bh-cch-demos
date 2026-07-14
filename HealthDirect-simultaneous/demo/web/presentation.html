@@ -11,10 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Base premium styling -->
-    <link rel="stylesheet" href="/style.css?v=presentation-v1">
+    <link rel="stylesheet" href="/style.css?v=presentation-v2">
     
     <style>
-        /* Modern presentation layout overrides */
         body {
             margin: 0;
             padding: 0;
@@ -88,10 +87,8 @@
             border-color: var(--brand-teal);
         }
 
-        /* Presentation Dual Workspace Panel */
+        /* Presentation Workspace Layout Modes */
         .presentation-container {
-            display: grid;
-            grid-template-columns: 7fr 3fr; /* Nurse 70% | Patient 30% */
             flex: 1;
             padding: 16px;
             gap: 16px;
@@ -100,13 +97,46 @@
             position: relative;
         }
 
+        /* 1. Split Layout Grid */
+        .presentation-container.layout-split {
+            display: grid;
+            grid-template-columns: 7fr 3fr; /* Nurse 70% | Patient 30% */
+        }
+
+        /* 2. PIP Overlay Layout */
+        .presentation-container.layout-pip {
+            display: block;
+        }
+
+        .presentation-container.layout-pip #nurse-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper {
+            position: absolute;
+            width: 360px;
+            height: 520px;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
+            background-color: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            resize: both;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         .frame-wrapper {
             position: relative;
             height: 100%;
             display: flex;
             flex-direction: column;
             min-height: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s ease, height 0.3s ease;
         }
 
         .frame-title {
@@ -122,6 +152,21 @@
             align-items: center;
         }
 
+        /* Style tweaks for dragging in PIP mode */
+        .presentation-container.layout-pip #patient-wrapper .frame-title {
+            cursor: move;
+            background-color: var(--brand-teal);
+            color: white;
+            padding: 8px 12px;
+            margin-bottom: 0;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            user-select: none;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper .frame-title span {
+            color: white !important;
+        }
+
         iframe {
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
@@ -130,6 +175,12 @@
             background-color: white;
             box-shadow: var(--shadow-sm);
             transition: box-shadow 0.2s ease;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper iframe {
+            border: none;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            height: calc(100% - 36px);
         }
 
         iframe:hover {
@@ -157,12 +208,12 @@
         
         <div class="header-modes-group">
             <button id="btn-side-by-side" class="btn-mode active">📊 Split View (70/30)</button>
-            <button id="btn-pip" class="btn-mode" disabled>📱 PIP Overlay (In Dev)</button>
+            <button id="btn-pip" class="btn-mode">📱 PIP Overlay</button>
         </div>
     </header>
 
-    <!-- Main Side-by-Side Dual-Iframe Workspace -->
-    <main id="workspace" class="presentation-container">
+    <!-- Main Workspace Container -->
+    <main id="workspace" class="presentation-container layout-split">
         <!-- Nurse Workspace Wrapper (70%) -->
         <div id="nurse-wrapper" class="frame-wrapper">
             <div class="frame-title">
@@ -174,7 +225,7 @@
 
         <!-- Patient Workspace Wrapper (30%) -->
         <div id="patient-wrapper" class="frame-wrapper">
-            <div class="frame-title">
+            <div id="patient-header" class="frame-title">
                 <span>Caller Panel (Patient)</span>
                 <span class="badge" style="background-color: var(--brand-teal); color: white;">Port: {{ WEBSERVER_PORT }}</span>
             </div>
@@ -182,9 +233,77 @@
         </div>
     </main>
 
-    <!-- Footer build metadata -->
+    <!-- Footer metadata -->
     <footer class="presentation-footer">
-        v1.5-presentation - 2026-07-14 11:55:00
+        v2.0-presentation - 2026-07-14 13:00:00
     </footer>
+
+    <!-- Vanilla Javascript for Layout & Draggable Support -->
+    <script>
+        const btnSplit = document.getElementById('btn-side-by-side');
+        const btnPip = document.getElementById('btn-pip');
+        const workspace = document.getElementById('workspace');
+        const patientWrapper = document.getElementById('patient-wrapper');
+        const patientHeader = document.getElementById('patient-header');
+
+        // Layout switching handlers
+        btnSplit.addEventListener('click', () => {
+            btnSplit.classList.add('active');
+            btnPip.classList.remove('active');
+            workspace.classList.add('layout-split');
+            workspace.classList.remove('layout-pip');
+
+            // Reset inline styles applied by dragging/resizing
+            patientWrapper.style.left = '';
+            patientWrapper.style.top = '';
+            patientWrapper.style.right = '';
+            patientWrapper.style.bottom = '';
+            patientWrapper.style.width = '';
+            patientWrapper.style.height = '';
+        });
+
+        btnPip.addEventListener('click', () => {
+            btnPip.classList.add('active');
+            btnSplit.classList.remove('active');
+            workspace.classList.add('layout-pip');
+            workspace.classList.remove('layout-split');
+        });
+
+        // Draggable Card functionality (for PIP Mode)
+        let isDragging = false;
+        let initialX = 0;
+        let initialY = 0;
+
+        patientHeader.addEventListener('mousedown', (e) => {
+            if (!workspace.classList.contains('layout-pip')) return;
+            isDragging = true;
+            initialX = e.clientX - patientWrapper.offsetLeft;
+            initialY = e.clientY - patientWrapper.offsetTop;
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.clientX - initialX;
+            const y = e.clientY - initialY;
+
+            // Restrict bounds so it doesn't get dragged off screen
+            const maxX = window.innerWidth - patientWrapper.offsetWidth;
+            const maxY = window.innerHeight - patientWrapper.offsetHeight;
+            const boundedX = Math.max(0, Math.min(x, maxX));
+            const boundedY = Math.max(70, Math.min(y, maxY)); // Header takes 70px
+
+            patientWrapper.style.left = `${boundedX}px`;
+            patientWrapper.style.top = `${boundedY}px`;
+            patientWrapper.style.bottom = 'auto';
+            patientWrapper.style.right = 'auto';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
+    </script>
 </body>
 </html>
