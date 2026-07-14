@@ -12,8 +12,7 @@
 - [x] Task: Create a toggleable, resizable Picture-in-Picture (PIP) floating panel widget for the Patient View so users can seamlessly switch between Side-by-Side Split layout and Overlay layout. [a9739da]
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Session Sync, Scaling & Picture-in-Picture (PIP) Floating Panel' (Protocol in workflow.md) [2294d12]
 
-## Phase 3: Premium Styling Polish & Audio Sharing Help Overlay
+## Phase 3: Premium Styling Polish
 - [x] Task: Write comprehensive automation tests verifying that dual-channel audio streams operate independently and do not conflict within a single browser tab context. [32da7b9]
 - [x] Task: Apply premium HealthDirect CSS styling, adding responsive flex layouts, smooth slide transitions, and CSS scale-down transforms for smaller screens. [a358f52]
-- [x] Task: Add a high-visibility, elegant "Google Meet Audio Sharing Guide" overlay to teach presenters how to enable the "Share tab audio" option. [a358f52]
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Premium Styling Polish & Audio Sharing Help Overlay' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Premium Styling Polish' (Protocol in workflow.md)
