@@ -10,7 +10,7 @@
 - [x] Task: Add failing unit tests verifying synchronization events when triggering "Reset Session" or "Start Call". [a9739da]
 - [x] Task: Implement window-level message passing (`postMessage`) or unified WebSockets state synchronisation so that the Nurse pane can trigger state resets, model selections, and calls across both panels simultaneously. [a9739da]
 - [x] Task: Create a toggleable, resizable Picture-in-Picture (PIP) floating panel widget for the Patient View so users can seamlessly switch between Side-by-Side Split layout and Overlay layout. [a9739da]
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Session Sync, Scaling & Picture-in-Picture (PIP) Floating Panel' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Session Sync, Scaling & Picture-in-Picture (PIP) Floating Panel' (Protocol in workflow.md) [2294d12]
 
 ## Phase 3: Premium Styling Polish & Audio Sharing Help Overlay
 - [ ] Task: Write comprehensive automation tests verifying that dual-channel audio streams operate independently and do not conflict within a single browser tab context.
