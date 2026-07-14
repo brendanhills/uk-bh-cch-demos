@@ -55,6 +55,7 @@ def test_websocket_model_parameter_routing_flash_live(monkeypatch):
             pass
         async def receive(self):
             yield MagicMock(server_content=None)
+            await asyncio.sleep(3600)
             
     p_session = MockLiveSession()
     n_session = MockLiveSession()
@@ -293,4 +294,3 @@ async def test_live_medical_disclaimer_trigger_gemini_31():
         assert forbidden not in combined_result.lower(), (
             f"Model violated constraint by emitting medical disclaimer/advice: '{combined_result}'"
         )
-

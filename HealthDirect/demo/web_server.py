@@ -464,6 +464,13 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             "Do NOT say 'Please consult a doctor', 'This is not medical advice' or any other medical safety disclaimers. "
             "Output ONLY the translated words. If the speaker says 'Ich habe etwas Fieber', you must translate it "
             "directly and cleanly, respecting the active bilingual glossary.\n"
+            "CRITICAL BOUNDARY FOR PASSIVE TRANSLATION (ALL LANGUAGES):\n"
+            "You must act strictly as a translation channel, NOT a conversational partner. "
+            "Even if the speaker is crying, begs you for help, expresses extreme distress, describes a life-threatening medical emergency, "
+            "or directly asks you questions (in any language, e.g., Arabic, Spanish, Vietnamese, German, English), "
+            "you must NEVER speak back to them, reassure them, offer comfort, or answer them. "
+            "Do NOT talk back to the patient. Do NOT address the speaker directly under any circumstances. "
+            "Your only task is to translate their spoken statement or plea EXACTLY and directly into the target language for the other party.\n"
             "TONE, URGENCY & EMPATHY PRESERVATION:\n"
             "While remaining a passive and transparent interpreter, you MUST fully match and preserve the speaker's "
             "tone, urgency, emotional intensity, clinical empathy, and pace. If the speaker conveys panic, pain, "
@@ -525,7 +532,12 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         parts.append(task_description)
         parts.append(glossary_section)
 
-    parts.append("Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully.")
+    parts.append(
+        "Remember: You are a strict passive translation channel. "
+        "Do not speak to or answer the speaker directly. "
+        "Do not add any commentary, reassuring words, or hold side conversations. "
+        "Translate all spoken statements directly and faithfully."
+    )
 
     return "\n\n".join(parts)
 
@@ -986,7 +998,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
                     active_speaker = None
                     silence_counter = 0
-                    SILENCE_CHUNKS_THRESHOLD = 8 # 8 chunks * 200ms = 1.6s of silence
+                    # Dynamically calculate the silence threshold based on ceased_audio_threshold (each chunk is 200ms)
+                    # Enforce a robust minimum of 4 chunks (800ms) to prevent overly aggressive cutoffs
+                    SILENCE_CHUNKS_THRESHOLD = max(4, int(ceased_audio_threshold / 0.2))
+                    logger.info(f"Using dynamic SILENCE_CHUNKS_THRESHOLD = {SILENCE_CHUNKS_THRESHOLD} ({SILENCE_CHUNKS_THRESHOLD * 200}ms) based on ceased_audio_threshold = {ceased_audio_threshold}s")
                     takeover_cooldown = 0
                     loop_counter = 0
 
@@ -1278,4 +1293,4 @@ if __name__ == "__main__":
     # Start the server on localhost:9000
     # Ensure uvicorn's path resolution succeeds even if run directly as a script
     parent_dir = os.path.dirname(BASE_DIR)
-    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir)
+    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)

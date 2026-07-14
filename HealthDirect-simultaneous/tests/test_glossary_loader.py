@@ -114,6 +114,7 @@ def test_assemble_system_instructions_structure():
 
 def test_websocket_priming_injection(monkeypatch):
     """Verify that system_instruction is correctly injected into LiveConnectConfig during WebSocket start."""
+    import asyncio
     from unittest.mock import MagicMock
     captured_configs = []
     
@@ -128,8 +129,9 @@ def test_websocket_priming_injection(monkeypatch):
     # Mock LiveSession with a minimal async generator for receive()
     class MockLiveSessionLocal:
         async def receive(self):
-            # yield once to allow loop progress, then break
+            # yield once to allow loop progress, then block
             yield MagicMock(server_content=None)
+            await asyncio.sleep(3600)
             
     p_session = MockLiveSessionLocal()
     n_session = MockLiveSessionLocal()
@@ -162,7 +164,8 @@ def test_websocket_priming_injection(monkeypatch):
             ws.send_json({
                 "action": "start",
                 "preset": "german",
-                "pacing": "auto"
+                "pacing": "auto",
+                "model": "gemini-3.1-flash-live-preview"
             })
             
             # Read status messages

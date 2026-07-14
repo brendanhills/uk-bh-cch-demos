@@ -31,7 +31,7 @@
       "text": "I am sorry to hear you are feeling unwell. Do you have any neck stiffness or sensitivity to bright light?",
       "english_translation": "",
       "original_target_lang": "",
-      "start_ms": 21182
+      "start_ms": 21016
     },
     {
       "speaker": "caller",
@@ -39,7 +39,7 @@
       "text": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.",
       "english_translation": "No, my neck feels normal, but the bright light actually hurts my eyes a little.",
       "original_target_lang": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.",
-      "start_ms": 29484
+      "start_ms": 29318
     },
     {
       "speaker": "nurse",
@@ -47,7 +47,7 @@
       "text": "I understand. Light sensitivity can sometimes indicate a more serious condition. I recommend resting in a dark room and checking your temperature. If your fever goes above thirty-nine degrees, please visit the nearest clinic.",
       "english_translation": "",
       "original_target_lang": "",
-      "start_ms": 39390
+      "start_ms": 39224
     },
     {
       "speaker": "caller",
@@ -55,7 +55,7 @@
       "text": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.",
       "english_translation": "Thank you very much for the advice. I will measure my temperature immediately and lie down in a dark room.",
       "original_target_lang": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.",
-      "start_ms": 54858
+      "start_ms": 54692
     }
   ],
   "medical_terms": [

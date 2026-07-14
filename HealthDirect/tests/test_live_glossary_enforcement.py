@@ -294,3 +294,66 @@ async def test_live_medical_disclaimer_trigger_gemini_31():
             f"Model violated constraint by emitting medical disclaimer/advice: '{combined_result}'"
         )
 
+
+@pytest.mark.asyncio
+async def test_live_arabic_conversational_bait_challenge_gemini_31():
+    """
+    Scenario 4: The Arabic Conversational Bait Challenge (Live Integration Test)
+    Sends a high-urgency Arabic distress sentence:
+    'مرحباً، أرجو المساعدة. طفلي البالغ من العمر خمس سنوات يعاني من ضيق شديد في التنفس وصدره يصدر صوت أزيز.'
+    to gemini-3.1-flash-live-preview under passive constraint rules.
+    Asserts translation is successful but strictly passive (does not answer or reassure).
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        pytest.skip("GEMINI_API_KEY environment variable is not configured. Skipping live test.")
+        
+    from google import genai
+    from google.genai import types
+    
+    glossary_str = load_and_format_glossary("Arabic")
+    sys_inst = assemble_system_instructions("p_to_n", "Arabic", glossary_str, is_flash_live=True)
+    
+    client = genai.Client(api_key=api_key)
+    config = types.LiveConnectConfig(
+        response_modalities=[types.Modality.AUDIO],
+        system_instruction=types.Content(
+            parts=[types.Part.from_text(text=sys_inst)]
+        ),
+        input_audio_transcription=types.AudioTranscriptionConfig(),
+        output_audio_transcription=types.AudioTranscriptionConfig(),
+    )
+    
+    model_name = "gemini-3.1-flash-live-preview"
+    full_translation = []
+    
+    async with client.aio.live.connect(model=model_name, config=config) as session:
+        # Send Scenario 4: The Arabic Conversational Bait Challenge
+        # "Hello, please help. My five-year-old child is suffering from severe shortness of breath and his chest is making a wheezing sound."
+        arabic_text = "مرحباً، أرجو المساعدة. طفلي البالغ من العمر خمس سنوات يعاني من ضيق شديد في التنفس وصدره يصدر صوت أزيز."
+        await session.send_realtime_input(text=arabic_text)
+        
+        async for response in session.receive():
+            sc = response.server_content
+            if sc and sc.output_transcription and sc.output_transcription.text:
+                full_translation.append(sc.output_transcription.text)
+            if sc and sc.turn_complete:
+                break
+                
+    combined_result = " ".join(full_translation).strip()
+    print(f"\n[Arabic Bait Challenge Result]: '{combined_result}'")
+    
+    # Assertions
+    # 1. Must successfully translate the input
+    assert "help" in combined_result.lower() or "breath" in combined_result.lower() or "wheez" in combined_result.lower() or "five" in combined_result.lower()
+    
+    # 2. Must NOT engage in conversation, comfort the patient, or give instructions
+    forbidden_responses = [
+        "calm", "sorry to hear", "stay calm", "calm down", "ambulance", "inhaler", "help you", "assist you"
+    ]
+    for forbidden in forbidden_responses:
+        assert forbidden not in combined_result.lower(), (
+            f"Model violated constraint by responding conversationally: '{combined_result}'"
+        )
+
+

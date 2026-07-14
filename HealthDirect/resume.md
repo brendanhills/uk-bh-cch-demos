@@ -1,30 +1,33 @@
-# Working Session Handoff: July 9, 2026 (6:45 PM)
+# Working Session Handoff: July 14, 2026 (5:20 PM)
 
 ## 📝 Session Summary
 - **What we did**:
-  - **Clinical Glossary Parsing Robustness**:
-    - Addressed clinical glossary parsing inside the client-side `getTranslationString` method to recursively handle arrays, dictionaries with `.formal` and `.informal` keys, and dictionary fallbacks. This prevents TypeErrors or empty strings when streaming real-time Vietnamese/German translation terms.
-  - **UI Aesthetic Condensation**:
-    - Redesigned the visual heights of headers, scenario selects, action buttons, participant cards, and the Audio Mixer Dashboard. 
-    - Recovered over 80px of vertical screen real estate, maximizing the viewable area for the scrolling bilingual chat bubbles.
-  - **Advanced Cache-Busting "Reset" Utility**:
-    - Enhanced the "Reset" button to automatically force-reload all styles (using dynamic URL timestamp query params), clear `localStorage`/`sessionStorage` caches, and perform a fresh, cache-busted glossary load.
-  - **Engine Stability Preservation**:
-    - Reverted speculative logging changes on the server side to keep the delicate real-time pacing and VAD silence-streaming loop 100% untouched and stable.
+  - **Bug #9 Resolution (Vietnamese Audio Sample Pacing & Spacing)**:
+    - Reverted the custom pacing thresholds back to the standard defaults: `ceased_audio_threshold: 4.5` seconds and `additional_pause_sec: 2.0` seconds in both workspaces' `demo/pacing_config.json`.
+    - Set the default `tail_buffer_ms` in `generate_simultaneous_audio.py` back to the standard `2500` ms.
+    - Recompiled all simultaneous stereo audio files (German, Spanish, Vietnamese, and Arabic) and synchronized calculated start times back to their respective metadata JSON files.
+    - Successfully resolved the playback issue and long gaps in the Vietnamese sample, ensuring pacing is perfectly synchronized and aligned with standard settings.
+    - Copied the newly compiled Vietnamese audio (`samples/paediatric_vietnamese_demo.wav`) and its synchronized metadata (`samples/metadata/paediatric_vietnamese_demo.json`) over to the standard `HealthDirect` workspace to guarantee full cross-workspace parity.
+  - **Simultaneous Timeline Tests Restoration**:
+    - Reverted pacing and silence gap assertions in `tests/test_simultaneous_timeline.py` back to standard 2500ms bounds, matching the project-wide pacing defaults.
+    - Verified all timeline and glossary loader tests pass flawlessly.
 
 - **Workspace State**:
-  - Active branch: `stable-pre-modularization`
+  - Active branch: `feature/simultaneous-multi-client`
   - Modified files:
-    - [demo/web/main.js](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web/main.js)
-    - [demo/web/style.css](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web/style.css)
-    - [demo/web/index.html](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web/index.html)
-    - [demo/web_server.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/web_server.py)
-    - [.agents/AGENTS.md](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/.agents/AGENTS.md)
+    - [generate_simultaneous_audio.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/generate_simultaneous_audio.py)
+    - [demo/pacing_config.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/demo/pacing_config.json)
+    - [tests/test_simultaneous_timeline.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/tests/test_simultaneous_timeline.py)
+    - [samples/metadata/paediatric_vietnamese_demo.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/samples/metadata/paediatric_vietnamese_demo.json)
+    - [samples/metadata/de_fever_session.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/samples/metadata/de_fever_session.json)
+    - [../HealthDirect/demo/pacing_config.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/pacing_config.json)
+    - [../HealthDirect/samples/paediatric_vietnamese_demo.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/samples/paediatric_vietnamese_demo.json)
+    - [../HealthDirect/samples/paediatric_vietnamese_demo.wav](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/samples/paediatric_vietnamese_demo.wav)
 
 ## 📌 Current Context & Progress
-- **Active Task**: All visual refinements, glossary parsers, and cache-busting tools have been implemented, tested, and reverted back to perfect structural stability.
-- **System Performance**: Audio playback clocks and pacing structures remain identical to their pristine pre-redesign baseline.
+- **Active Task**: Vietnamese sample pacing is restored and fully verified, in perfect parity with standard and simultaneous workspaces.
+- **System Performance**: Automated simultaneous timeline test suite passes flawlessly (0.37s).
 
 ## 🚀 Immediate Next Steps
-1. **Client Deployment & Refresh**: Refresh browser tabs and perform a cache-busted Reset.
-2. **Execute Simulataneous Multi-Client Conductor Tracks**: If approved, begin checkout of the multi-client simultaneous branch `feature/simultaneous-multi-client` to proceed with full simultaneous overlapping stream work.
+1. **Launch Web Server**: Run `uv run demo/web_server.py` to manually verify the Vietnamese preset in the browser UI.
+2. **Clinical glossary enforcement evaluation**: Run evaluations on the live clinical glossary under different models.

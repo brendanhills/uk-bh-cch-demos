@@ -1,0 +1,8 @@
+{
+  "track_id": "passive_interpreter_guardrails_20260714",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-14T14:07:00Z",
+  "updated_at": "2026-07-14T14:07:00Z",
+  "description": "Implement passive interpreter guardrails to detect and prevent conversational responses, language leakage, and medical disclaimers in real-time."
+}

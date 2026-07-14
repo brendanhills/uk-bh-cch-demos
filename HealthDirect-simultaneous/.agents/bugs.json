@@ -76,17 +76,53 @@
     "description": "The Vietnamese sample doesn't play well - there are numerous long gaps.",
     "date_reported": "2026-07-10T17:08:55+10:00",
     "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
-    "status": "Reported",
-    "priority": "",
-    "impact": ""
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P1"
   },
   {
     "id": 10,
     "description": "The arabic sample is missing",
     "date_reported": "2026-07-10T17:09:04+10:00",
     "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
-    "status": "Reported",
-    "priority": "",
-    "impact": ""
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P1"
+  },
+  {
+    "id": 11,
+    "description": "It still breaks at random places in the audio",
+    "date_reported": "2026-07-14T13:17:52+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P0"
+  },
+  {
+    "id": 12,
+    "description": "all the logging has disaapeared form stdoiut",
+    "date_reported": "2026-07-14T13:19:03+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P1"
+  },
+  {
+    "id": 13,
+    "description": "on_event is deprecated, use lifespan event handlers instead.",
+    "date_reported": "2026-07-14T13:46:34+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Investigated",
+    "impact": "Low",
+    "priority": "P3"
+  },
+  {
+    "id": 14,
+    "description": "the Gemini 3.1 Flash API prompts are not working correctly. IN the arabic sample Gemini answers the patient instead of translating.",
+    "date_reported": "2026-07-14T13:49:42+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Critical",
+    "priority": "P0"
   }
 ]

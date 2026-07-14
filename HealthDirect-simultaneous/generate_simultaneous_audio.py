@@ -313,6 +313,8 @@ async def compile_simultaneous_stereo_wav(
         out_wav_path = "samples/es_ear_session.wav"
     elif preset_key == "arabic":
         out_wav_path = "samples/ar_asthma_session.wav"
+    elif preset_key == "vietnamese":
+        out_wav_path = "samples/paediatric_vietnamese_demo.wav"
         
     stereo_audio.export(out_wav_path, format="wav")
     print(f"[Timeline] Completed! Saved stereo wav to: {out_wav_path}")
@@ -356,7 +358,7 @@ async def main():
     metadata_files = [
         "samples/metadata/de_fever_session.json",
         "samples/metadata/es_ear_session.json",
-        "samples/metadata/vi_fever_session.json",
+        "samples/metadata/paediatric_vietnamese_demo.json",
         "samples/metadata/ar_asthma_session.json"
     ]
     

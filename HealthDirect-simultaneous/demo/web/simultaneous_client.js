@@ -13,6 +13,7 @@ const PRESET_UI_METADATA = {
 
 let currentRole = null; // "nurse" or "patient"
 let socket = null;
+let heartbeatInterval = null;
 let audioCtx = null;
 
 // Audio Graph nodes
@@ -129,6 +130,13 @@ function connectWebSocket() {
         if (currentRole === "nurse") {
             syncConfiguration();
         }
+        // Start a 5s keepalive heartbeat ping to prevent connection timeout by network proxies
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(() => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ action: "ping" }));
+            }
+        }, 5000);
     };
 
     socket.onmessage = async (event) => {
@@ -141,6 +149,10 @@ function connectWebSocket() {
     };
 
     socket.onclose = () => {
+        if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+            heartbeatInterval = null;
+        }
         console.warn("[WebSocket] Connection closed. Retrying in 3 seconds...");
         setTimeout(connectWebSocket, 3000);
     };

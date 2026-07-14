@@ -161,9 +161,9 @@ def test_auto_pacing_state_machine(mock_genai_and_audio):
                     assert msg["speaker"] == "patient"
                     paused = True
             
-            # Verify that we received 5 chunks of patient and nurse audio before pausing
-            assert p_orig_count == 5
-            assert n_orig_count == 5
+            # Verify that we received 6 chunks of patient and nurse audio before pausing
+            assert p_orig_count == 6
+            assert n_orig_count == 6
             
             # Since stream is paused, the server is now waiting on the translation complete event.
             # Simulate Gemini completing the translation of the patient's turn.
@@ -213,102 +213,73 @@ def test_auto_pacing_state_machine(mock_genai_and_audio):
 def test_auto_pacing_startup_fallback(mock_genai_and_audio):
     """
     Verify that the pacing state machine correctly falls back and breaks out of the hold
-    state if no translation audio is received within the 4.0s startup window.
+    state if no translation audio is received within the configured startup window.
     """
     p_to_n, n_to_p = mock_genai_and_audio
     
-    # We patch the event loop time to simulate the passage of 4+ seconds
-    class SimulatedClock:
-        def __init__(self):
-            self.val = 100.0
+    with TestClient(app) as client:
+        with client.websocket_connect("/ws") as websocket:
+            websocket.send_json({
+                "action": "start",
+                "preset": "german",
+                "pacing": "auto",
+                "startup_audio_threshold": 0.1
+            })
             
-        def time(self):
-            # Each time we ask for time, we increment by 0.5 seconds
-            self.val += 0.5
-            return self.val
-
-    clock = SimulatedClock()
-    
-    real_get_loop = asyncio.get_running_loop
-    def mock_get_loop():
-        loop = real_get_loop()
-        loop.time = clock.time
-        return loop
-        
-    with patch("asyncio.get_running_loop", side_effect=mock_get_loop):
-        with TestClient(app) as client:
-            with client.websocket_connect("/ws") as websocket:
-                websocket.send_json({
-                    "action": "start",
-                    "preset": "german",
-                    "pacing": "auto"
-                })
-                
-                # Handshake
+            # Handshake
+            msg = websocket.receive_json()
+            assert msg["type"] == "status" and msg["status"] == "ready"
+            msg = websocket.receive_json()
+            assert msg["type"] == "status" and msg["status"] == "connected"
+            
+            # We do NOT send mock translation completion.
+            # The short 0.1s startup fallback should trigger, breaking out of the hold loop.
+            p_orig_count = 0
+            n_orig_count = 0
+            paused = False
+            while not paused:
                 msg = websocket.receive_json()
-                assert msg["type"] == "status" and msg["status"] == "ready"
+                if msg["type"] == "original_audio":
+                    if msg["speaker"] == "patient":
+                        p_orig_count += 1
+                    elif msg["speaker"] == "nurse":
+                        n_orig_count += 1
+                elif msg["type"] == "stream_paused":
+                    assert msg["speaker"] == "patient"
+                    paused = True
+            
+            # It paused patient speaker. Now the startup fallback triggers, so it should proceed to completion
+            completed = False
+            while not completed:
                 msg = websocket.receive_json()
-                assert msg["type"] == "status" and msg["status"] == "connected"
-                
-                # We do NOT send mock translation completion.
-                # The simulated clock should trigger the 4.0s startup fallback, breaking out of the hold loop.
-                p_orig_count = 0
-                n_orig_count = 0
-                paused = False
-                while not paused:
-                    msg = websocket.receive_json()
-                    if msg["type"] == "original_audio":
-                        if msg["speaker"] == "patient":
-                            p_orig_count += 1
-                        elif msg["speaker"] == "nurse":
-                            n_orig_count += 1
-                    elif msg["type"] == "stream_paused":
-                        assert msg["speaker"] == "patient"
-                        paused = True
-                
-                # It paused patient speaker. Now the startup fallback triggers, so it should proceed to completion
-                completed = False
-                while not completed:
-                    msg = websocket.receive_json()
-                    if msg["type"] == "status" and msg["status"] == "completed":
-                        completed = True
-                    elif msg["type"] == "original_audio":
-                        if msg["speaker"] == "patient":
-                            p_orig_count += 1
-                        elif msg["speaker"] == "nurse":
-                            n_orig_count += 1
-                            
-                assert completed
+                if msg["type"] == "status" and msg["status"] == "completed":
+                    completed = True
+                elif msg["type"] == "original_audio":
+                    if msg["speaker"] == "patient":
+                        p_orig_count += 1
+                    elif msg["speaker"] == "nurse":
+                        n_orig_count += 1
+                        
+            assert completed
 
 
 def test_auto_pacing_ceased_fallback(mock_genai_and_audio):
     """
     Verify that the pacing state machine correctly falls back and breaks out of the hold
-    state if translation audio ceases for more than 1.5 seconds.
+    state if translation audio ceases for more than the configured threshold.
     """
     p_to_n, n_to_p = mock_genai_and_audio
-    
-    # Custom clock to simulate the passage of time
-    class SimulatedClock:
-        def __init__(self):
-            self.val = 100.0
-            
-        def time(self):
-            self.val += 0.5
-            return self.val
-
-    clock = SimulatedClock()
     
     # Custom Mock parts to simulate receiving audio chunks during the hold
     class MockPart:
         def __init__(self):
             self.inline_data = MagicMock(data=b"\xd0\x07" * 50)
             self.text = None
-
+ 
     class MockModelTurn:
         def __init__(self):
             self.parts = [MockPart()]
-
+ 
     class MockResponseWithAudio:
         def __init__(self):
             self.server_content = MagicMock(
@@ -318,58 +289,52 @@ def test_auto_pacing_ceased_fallback(mock_genai_and_audio):
                 output_transcription=None,
                 model_turn=MockModelTurn()
             )
-
-    real_get_loop = asyncio.get_running_loop
-    def mock_get_loop():
-        loop = real_get_loop()
-        loop.time = clock.time
-        return loop
-
-    with patch("asyncio.get_running_loop", side_effect=mock_get_loop):
-        with TestClient(app) as client:
-            with client.websocket_connect("/ws") as websocket:
-                websocket.send_json({
-                    "action": "start",
-                    "preset": "german",
-                    "pacing": "auto"
-                })
-                
-                # Handshake
+ 
+    with TestClient(app) as client:
+        with client.websocket_connect("/ws") as websocket:
+            websocket.send_json({
+                "action": "start",
+                "preset": "german",
+                "pacing": "auto",
+                "ceased_audio_threshold": 0.1
+            })
+            
+            # Handshake
+            msg = websocket.receive_json()
+            assert msg["type"] == "status" and msg["status"] == "ready"
+            msg = websocket.receive_json()
+            assert msg["type"] == "status" and msg["status"] == "connected"
+            
+            # We start reading messages until paused
+            p_orig_count = 0
+            n_orig_count = 0
+            paused = False
+            while not paused:
                 msg = websocket.receive_json()
-                assert msg["type"] == "status" and msg["status"] == "ready"
+                if msg["type"] == "original_audio":
+                    if msg["speaker"] == "patient":
+                        p_orig_count += 1
+                    elif msg["speaker"] == "nurse":
+                        n_orig_count += 1
+                elif msg["type"] == "stream_paused":
+                    assert msg["speaker"] == "patient"
+                    paused = True
+            
+            # Now that the patient stream is paused, the server is in the hold loop.
+            # Send a mock response containing translation audio. This will set "last_audio_p_to_n"
+            p_to_n.queue.put_nowait(MockResponseWithAudio())
+            
+            # Once time delta exceeds 0.1s from last audio,
+            # the ceased-audio fallback should trigger and break out of the hold loop.
+            completed = False
+            while not completed:
                 msg = websocket.receive_json()
-                assert msg["type"] == "status" and msg["status"] == "connected"
-                
-                # We start reading messages until paused
-                p_orig_count = 0
-                n_orig_count = 0
-                paused = False
-                while not paused:
-                    msg = websocket.receive_json()
-                    if msg["type"] == "original_audio":
-                        if msg["speaker"] == "patient":
-                            p_orig_count += 1
-                        elif msg["speaker"] == "nurse":
-                            n_orig_count += 1
-                    elif msg["type"] == "stream_paused":
-                        assert msg["speaker"] == "patient"
-                        paused = True
-                
-                # Now that the patient stream is paused, the server is in the hold loop.
-                # Send a mock response containing translation audio. This will set "last_audio_p_to_n"
-                p_to_n.queue.put_nowait(MockResponseWithAudio())
-                
-                # The clock will keep ticking. Once time delta exceeds 1.5 seconds from last audio,
-                # the ceased-audio fallback should trigger and break out of the hold loop.
-                completed = False
-                while not completed:
-                    msg = websocket.receive_json()
-                    if msg["type"] == "status" and msg["status"] == "completed":
-                        completed = True
-                    elif msg["type"] == "original_audio":
-                        if msg["speaker"] == "patient":
-                            p_orig_count += 1
-                        elif msg["speaker"] == "nurse":
-                            n_orig_count += 1
-                            
-                assert completed
+                if msg["type"] == "status" and msg["status"] == "completed":
+                    completed = True
+                elif msg["type"] == "original_audio":
+                    if msg["speaker"] == "patient":
+                        p_orig_count += 1
+                    elif msg["speaker"] == "nurse":
+                        n_orig_count += 1
+                        
+            assert completed

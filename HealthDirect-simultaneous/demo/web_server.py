@@ -19,6 +19,29 @@ from dotenv import load_dotenv
 from pydub import AudioSegment
 from typing import Optional
 
+# Load environment variables
+load_dotenv()
+
+# Configure logging
+logger = logging.getLogger("web_server")
+logger.setLevel(logging.INFO)
+
+# Clear any existing handlers to avoid duplicates
+if logger.handlers:
+    logger.handlers.clear()
+
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+
+# Console Handler
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+# File Handler
+file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding="utf-8")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 class ActiveSession:
     """Thread-safe, singleton-style room pairing session coordinator.
 
@@ -255,6 +278,7 @@ class ActiveSession:
                                     text = server_content.input_transcription.text or ""
                                     is_final = bool(server_content.input_transcription.finished)
                                     if text or is_final:
+                                        logger.info(f"[SIMUL-TRANSCRIPT ORIGINAL][PATIENT] {text} (final={is_final})")
                                         await self.broadcast_to_both({
                                             "type": "transcript",
                                             "speaker": "patient",
@@ -266,6 +290,7 @@ class ActiveSession:
                                     text = server_content.output_transcription.text or ""
                                     is_final = bool(server_content.output_transcription.finished)
                                     if text or is_final:
+                                        logger.info(f"[SIMUL-TRANSCRIPT TRANSLATED][PATIENT -> English] {text} (final={is_final})")
                                         await self.broadcast_to_both({
                                             "type": "transcript",
                                             "speaker": "patient",
@@ -274,6 +299,7 @@ class ActiveSession:
                                             "final": is_final
                                         })
                                 if server_content.turn_complete:
+                                    logger.info("[SIMUL-TURN COMPLETE][PATIENT]")
                                     await self.broadcast_to_both({
                                         "type": "turn_complete",
                                         "speaker": "patient"
@@ -306,6 +332,7 @@ class ActiveSession:
                                     text = server_content.input_transcription.text or ""
                                     is_final = bool(server_content.input_transcription.finished)
                                     if text or is_final:
+                                        logger.info(f"[SIMUL-TRANSCRIPT ORIGINAL][NURSE] {text} (final={is_final})")
                                         await self.broadcast_to_both({
                                             "type": "transcript",
                                             "speaker": "nurse",
@@ -317,6 +344,7 @@ class ActiveSession:
                                     text = server_content.output_transcription.text or ""
                                     is_final = bool(server_content.output_transcription.finished)
                                     if text or is_final:
+                                        logger.info(f"[SIMUL-TRANSCRIPT TRANSLATED][NURSE -> {language}] {text} (final={is_final})")
                                         await self.broadcast_to_both({
                                             "type": "transcript",
                                             "speaker": "nurse",
@@ -325,6 +353,7 @@ class ActiveSession:
                                             "final": is_final
                                         })
                                 if server_content.turn_complete:
+                                    logger.info("[SIMUL-TURN COMPLETE][NURSE]")
                                     await self.broadcast_to_both({
                                         "type": "turn_complete",
                                         "speaker": "nurse"
@@ -416,29 +445,6 @@ os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
 from google import genai
 from google.genai import types
 
-# Load environment variables
-load_dotenv()
-
-# Configure logging
-logger = logging.getLogger("web_server")
-logger.setLevel(logging.INFO)
-
-# Clear any existing handlers to avoid duplicates
-if logger.handlers:
-    logger.handlers.clear()
-
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-
-# Console Handler
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
-# File Handler
-file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding="utf-8")
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-
 async def safe_send_realtime_input(session_or_managed, chunk: bytes, mime_type: str = "audio/pcm;rate=16000"):
     """
     Sends audio data to Gemini session safely and catches any connection errors.
@@ -461,7 +467,21 @@ async def safe_send_realtime_input(session_or_managed, chunk: bytes, mime_type: 
 
 GLOSSARY_PATH = "glossary/glossary.json"
 
-app = FastAPI(title="Bilingual Medical Interpreter API")
+from contextlib import asynccontextmanager
+
+WEBSERVER_PORT = int(os.getenv("WEBSERVER_PORT", "9000"))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("\n" + "="*80)
+    print("🚀 BILINGUAL MEDICAL INTERPRETER WEB INTERFACE STARTED")
+    print(f"👉 Nurse Dashboard:              http://127.0.0.1:{WEBSERVER_PORT}/nurse.html")
+    print(f"👉 Patient Dashboard:            http://127.0.0.1:{WEBSERVER_PORT}/patient.html")
+    print(f"👉 Presentation Mode:            http://127.0.0.1:{WEBSERVER_PORT}/presentation.html")
+    print("="*80 + "\n")
+    yield
+
+app = FastAPI(title="Bilingual Medical Interpreter API", lifespan=lifespan)
 
 # Define preset medical call files (make sure paths match workspace)
 PRESETS = {
@@ -858,6 +878,13 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
             "Do NOT say 'Please consult a doctor', 'This is not medical advice' or any other medical safety disclaimers. "
             "Output ONLY the translated words. If the speaker says 'Ich habe etwas Fieber', you must translate it "
             "directly and cleanly, respecting the active bilingual glossary.\n"
+            "CRITICAL BOUNDARY FOR PASSIVE TRANSLATION (ALL LANGUAGES):\n"
+            "You must act strictly as a translation channel, NOT a conversational partner. "
+            "Even if the speaker is crying, begs you for help, expresses extreme distress, describes a life-threatening medical emergency, "
+            "or directly asks you questions (in any language, e.g., Arabic, Spanish, Vietnamese, German, English), "
+            "you must NEVER speak back to them, reassure them, offer comfort, or answer them. "
+            "Do NOT talk back to the patient. Do NOT address the speaker directly under any circumstances. "
+            "Your only task is to translate their spoken statement or plea EXACTLY and directly into the target language for the other party.\n"
             "TONE, URGENCY & EMPATHY PRESERVATION:\n"
             "While remaining a passive and transparent interpreter, you MUST fully match and preserve the speaker's "
             "tone, urgency, emotional intensity, clinical empathy, and pace. If the speaker conveys panic, pain, "
@@ -919,7 +946,12 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         parts.append(task_description)
         parts.append(glossary_section)
 
-    parts.append("Remember: Do not add commentary or hold external side conversations. Translate the audio directly and faithfully.")
+    parts.append(
+        "Remember: You are a strict passive translation channel. "
+        "Do not speak to or answer the speaker directly. "
+        "Do not add any commentary, reassuring words, or hold side conversations. "
+        "Translate all spoken statements directly and faithfully."
+    )
 
     return "\n\n".join(parts)
 
@@ -944,6 +976,8 @@ async def ws_nurse_endpoint(websocket: WebSocket):
                 await session_coordinator.stop_stream()
             elif action == "reset":
                 await session_coordinator.reset()
+            elif action == "ping":
+                pass
     except WebSocketDisconnect:
         await session_coordinator.disconnect_nurse()
     except Exception as e:
@@ -1428,7 +1462,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
                     active_speaker = None
                     silence_counter = 0
-                    SILENCE_CHUNKS_THRESHOLD = 8 # 8 chunks * 200ms = 1.6s of silence
+                    # Dynamically calculate the silence threshold based on ceased_audio_threshold (each chunk is 200ms)
+                    # Enforce a robust minimum of 4 chunks (800ms) to prevent overly aggressive cutoffs
+                    SILENCE_CHUNKS_THRESHOLD = max(4, int(ceased_audio_threshold / 0.2))
+                    logger.info(f"Using dynamic SILENCE_CHUNKS_THRESHOLD = {SILENCE_CHUNKS_THRESHOLD} ({SILENCE_CHUNKS_THRESHOLD * 200}ms) based on ceased_audio_threshold = {ceased_audio_threshold}s")
                     takeover_cooldown = 0
                     loop_counter = 0
 
@@ -1768,19 +1805,10 @@ class NoCacheStaticFiles(StaticFiles):
         return response
 
 app.mount("/", NoCacheStaticFiles(directory=os.path.join(BASE_DIR, "web"), html=True), name="static")
-WEBSERVER_PORT=int(os.getenv("WEBSERVER_PORT"))
-
-@app.on_event("startup")
-async def startup_event():
-    print("\n" + "="*80)
-    print("🚀 BILINGUAL MEDICAL INTERPRETER WEB INTERFACE STARTED")
-    print(f"👉 Nurse Dashboard:              http://127.0.0.1:{WEBSERVER_PORT}/nurse.html")
-    print(f"👉 Patient Dashboard:            http://127.0.0.1:{WEBSERVER_PORT}/patient.html")
-    print("="*80 + "\n")
 
 if __name__ == "__main__":
     import uvicorn
     # Start the server on localhost:9000
     # Ensure uvicorn's path resolution succeeds even if run directly as a script
     parent_dir = os.path.dirname(BASE_DIR)
-    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir)
+    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)

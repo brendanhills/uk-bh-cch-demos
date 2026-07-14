@@ -98,3 +98,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
   *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
+
+---
+
+- [ ] **Track: Real-Time Passive Interpreter Guardrails & Translation Auditing**
+  *Link: [./tracks/passive_interpreter_guardrails_20260714/](./tracks/passive_interpreter_guardrails_20260714/)*
+

@@ -109,3 +109,9 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [x] **Track: Customer Integration Blueprint & Architecture Pseudocode**
 *Link: [./tracks/customer_pseudocode_20260714/](./tracks/customer_pseudocode_20260714/)*
 
+---
+
+- [ ] **Track: Real-Time Passive Interpreter Guardrails & Translation Auditing**
+  *Link: [./tracks/passive_interpreter_guardrails_20260714/](./tracks/passive_interpreter_guardrails_20260714/)*
+
+

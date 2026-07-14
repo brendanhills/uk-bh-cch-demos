@@ -12,8 +12,8 @@ METADATA_FILES = [
      "samples/metadata/es_ear_session.json",
      "samples/es_ear_session.wav"),
     ("vietnamese",
-     "samples/metadata/vi_fever_session.json",
-     "samples/vietnamese_fever_session.wav"),
+     "samples/metadata/paediatric_vietnamese_demo.json",
+     "samples/paediatric_vietnamese_demo.wav"),
     ("arabic",
      "samples/metadata/ar_asthma_session.json",
      "samples/ar_asthma_session.wav")
