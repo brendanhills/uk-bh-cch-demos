@@ -4,7 +4,7 @@
 Outline the main guide layout and author the comparative section detailing Gemini 3.1 Live vs. Gemini 3.5 Live Translate, focusing on distinct setups, configurations, and WebSocket 1011 compatibility issues.
 - [x] Task: Create target document `docs/customer_integration_blueprint.md` with outline and introductory architecture diagrams. b370225
 - [x] Task: Implement Gemini 3.1 Live Integration Section with high-level async Python configuration and session flow pseudocode. f824699
-- [~] Task: Implement Gemini 3.5 Live Translate Integration Section with specialized translation config, bilingual output handling, and `system_instruction` compatibility.
+- [x] Task: Implement Gemini 3.5 Live Translate Integration Section with specialized translation config, bilingual output handling, and `system_instruction` compatibility. dab34ce
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Structuring & Model Comparison' (Protocol in workflow.md)
 
 ## Phase 2: Core Architecture, Ingestion logic, & Maintenance
