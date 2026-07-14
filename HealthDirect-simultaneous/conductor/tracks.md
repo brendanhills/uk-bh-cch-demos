@@ -101,5 +101,11 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Unified Single-Tab Presentation Console**
+- [~] **Track: Unified Single-Tab Presentation Console**
 *Link: [./tracks/unified_presentation_20260710/](./tracks/unified_presentation_20260710/)*
+
+---
+
+- [ ] **Track: Customer Integration Blueprint & Architecture Pseudocode**
+*Link: [./tracks/customer_pseudocode_20260714/](./tracks/customer_pseudocode_20260714/)*
+
