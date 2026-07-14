@@ -570,6 +570,124 @@ def build_priming_instruction(role: str, target_language: str, glossary_rules: s
     return base_persona
 ```
 
+---
+
+## 8. Central Interleaving, Stabilization, & VAD Pinning
+
+When running real-time parallel translation over multi-channel streams, different channels stream audio asynchronously. Directly printing transcription chunks as they arrive from WebSockets results in **non-chronological transcript jumping** (cross-talk and overlapping responses jumbled out of order). 
+
+To solve this, the Consumer must run a **Central Chronological Stabilization Engine** that manages an end-based buffer and stabilizes chunks utilizing voice activity detection (VAD).
+
+### Architectural Stabilization Pillars
+1. **End-Based Stability Buffer:** Translation fragments are held in memory until the global audio playhead clock progresses past their specific `end_sec` timestamp.
+2. **VAD Pinning:** Speech segments are pinned to their exact chronological positions based on real-time Voice Activity Detection (VAD) audio cues to anchor silence vs active speaking states.
+3. **Active Monologue Blocking:** Prevents a monologue from one channel from being sliced or interrupted by future-timestamped speech from the opposing channel.
+
+### Async Interleaving Engine Python Reference Pseudocode
+
+```python
+import asyncio
+import time
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+
+@dataclass
+class TranscriptionFragment:
+    channel_id: int
+    text: str
+    start_sec: float
+    end_sec: float
+    is_final: bool
+
+class PlayheadStabilizationEngine:
+    """
+    Stabilizes and interleaves asynchronous, multi-channel translation events.
+    Applies end-based stability buffers and VAD alignment.
+    """
+    def __init__(self, stability_threshold_sec: float = 1.0):
+        # Time to hold chunks after their end_sec before rendering them as final
+        self.stability_threshold_sec = stability_threshold_sec
+        self.channel_buffers: Dict[int, List[TranscriptionFragment]] = {1: [], 2: []}
+        self.global_playhead_sec = 0.0
+        self.lock = asyncio.Lock()
+
+    def update_playhead(self, current_sec: float):
+        """Updates the global audio playhead clock based on physical playhead progression."""
+        if current_sec > self.global_playhead_sec:
+            self.global_playhead_sec = current_sec
+
+    async def push_fragment(self, fragment: TranscriptionFragment, ui_callback):
+        """
+        Pushes a new translation chunk from a channel worker into the buffer.
+        Triggers real-time chronological flushing.
+        """
+        async with self.lock:
+            # Append fragment to the channel's active buffer
+            self.channel_buffers[fragment.channel_id].append(fragment)
+            
+            # Run the stabilization pipeline
+            await self._stabilize_and_flush(ui_callback)
+
+    async def _stabilize_and_flush(self, ui_callback):
+        """
+        Iterates over both channel buffers, resolving and rendering segments
+        whose timestamps are now certified 'stable' under the playhead clock.
+        """
+        stable_fragments: List[TranscriptionFragment] = []
+        
+        for channel_id, fragments in self.channel_buffers.items():
+            unstable_keep: List[TranscriptionFragment] = []
+            
+            for frag in fragments:
+                # End-Based Stability Rule:
+                # A chunk is stable ONLY if the playhead has progressed past its end time 
+                # plus the safety threshold buffer.
+                is_playhead_past = self.global_playhead_sec >= (frag.end_sec + self.stability_threshold_sec)
+                
+                if frag.is_final or is_playhead_past:
+                    stable_fragments.append(frag)
+                else:
+                    # Keep in buffer as still unstable (live and subject to model correction)
+                    unstable_keep.append(frag)
+                    
+            self.channel_buffers[channel_id] = unstable_keep
+
+        # Chronologically sort all stable fragments before rendering to prevent UI jumping
+        stable_fragments.sort(key=lambda x: (x.start_sec, x.channel_id))
+
+        for frag in stable_fragments:
+            # Emit chronological stabilized output to the UI Sinks
+            await ui_callback(frag.channel_id, frag.text, frag.start_sec, frag.end_sec)
+
+
+# Demonstration of Real-Time Stabilization Loop Mock
+async def ui_renderer(channel_id: int, text: str, start: float, end: float):
+    color = "\033[92m" if channel_id == 1 else "\033[93m"  # Green vs Yellow
+    reset = "\033[0m"
+    print(f"{color}[Ch {channel_id}][{start:.1f}s - {end:.1f}s]: {text}{reset}")
+
+async def run_simulation_example():
+    engine = PlayheadStabilizationEngine()
+    
+    # Simulating asynchronous pushes from Channel 1 and Channel 2
+    fragments = [
+        TranscriptionFragment(1, "Hello nurse, I have severe pain.", 0.5, 3.2, is_final=False),
+        TranscriptionFragment(2, "Hallo Krankenschwester.", 0.2, 2.1, is_final=False),
+    ]
+    
+    print("Pushing raw unstable asynchronous chunks...")
+    for frag in fragments:
+        await engine.push_fragment(frag, ui_renderer)
+        
+    print("\nAdvancing global playhead past 4.5 seconds (triggering stability flush)...")
+    engine.update_playhead(4.5)
+    await engine._stabilize_and_flush(ui_renderer)
+
+if __name__ == "__main__":
+    asyncio.run(run_simulation_example())
+```
+
+
 
 
 
