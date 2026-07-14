@@ -25,3 +25,4 @@ def test_presentation_page_load_and_layout():
     assert "nurse-frame" in html_content, "Expected nurse-frame element placeholder"
     assert "patient-frame" in html_content, "Expected patient-frame element placeholder"
     assert "presentation-container" in html_content, "Expected presentation-container layout wrapper"
+    assert "{{ WEBSERVER_PORT }}" not in html_content, "Template placeholder should be dynamically replaced"

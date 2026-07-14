@@ -1746,6 +1746,10 @@ async def serve_presentation():
         return HTMLResponse("<h1>presentation.html not found</h1>", status_code=404)
     with open(presentation_path, "r", encoding="utf-8") as f:
         content = f.read()
+    
+    # Dynamically inject port from .env config
+    content = content.replace("{{ WEBSERVER_PORT }}", str(WEBSERVER_PORT))
+    
     response = HTMLResponse(content=content)
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"

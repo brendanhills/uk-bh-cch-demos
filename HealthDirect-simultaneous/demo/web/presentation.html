@@ -167,7 +167,7 @@
         <div id="nurse-wrapper" class="frame-wrapper">
             <div class="frame-title">
                 <span>Clinician Panel (Nurse)</span>
-                <span class="badge" style="background-color: var(--brand-navy); color: white;">Port: 8000</span>
+                <span class="badge" style="background-color: var(--brand-navy); color: white;">Port: {{ WEBSERVER_PORT }}</span>
             </div>
             <iframe id="nurse-frame" src="/nurse" title="HealthDirect Nurse Console"></iframe>
         </div>
@@ -176,7 +176,7 @@
         <div id="patient-wrapper" class="frame-wrapper">
             <div class="frame-title">
                 <span>Caller Panel (Patient)</span>
-                <span class="badge" style="background-color: var(--brand-teal); color: white;">Port: 8000</span>
+                <span class="badge" style="background-color: var(--brand-teal); color: white;">Port: {{ WEBSERVER_PORT }}</span>
             </div>
             <iframe id="patient-frame" src="/patient" title="HealthDirect Patient Triage Line"></iframe>
         </div>
