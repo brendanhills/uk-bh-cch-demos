@@ -438,5 +438,138 @@ class GeminiLiveConnectionManager:
         logger.info("Live session cleanup completed.")
 ```
 
+---
+
+## 7. Data Ingestion: Robust Glossary Schema Parsing & Injection
+
+To enforce clinical vocabulary standards (e.g., mapping colloquial terms like *"extreme fire flame"* to standard medical translations like *"Fieber"* in German), production apps require a robust data ingestion layer. 
+
+Bypassing custom terminology can lead to medical mistranslation, but raw clinical glossary schemas are often nested, inconsistent, or highly structured. To prevent returning empty strings or throwing fatal `TypeErrors`, ingestion functions must handle translations recursively.
+
+### Glossary Schema Contract
+A single term translation in the glossary database may contain:
+1. **Flat String:** `"Fieber"`
+2. **Array of Strings:** `["Fieber", "hohe Temperatur"]`
+3. **Structured Dictionary:** `{"formal": "Fieber", "informal": "hohe Temperatur"}` (contains `.formal` and/or `.informal` keys)
+
+### Recursive Parser & Injection Python Reference Pseudocode
+
+```python
+import json
+import logging
+from typing import Union, List, Dict
+
+logger = logging.getLogger("GlossaryIngestion")
+
+def parse_translation_value(value: Union[str, List, Dict]) -> str:
+    """
+    Recursively parses and normalizes clinical translation schemas.
+    Guarantees no empty strings or TypeErrors are returned.
+    """
+    if value is None:
+        return ""
+        
+    # Case 1: Simple Flat String
+    if isinstance(value, str):
+        return value.strip()
+        
+    # Case 2: Array of Strings (Recursively map and join elements)
+    if isinstance(value, list):
+        parsed_elements = [parse_translation_value(item) for item in value if item is not None]
+        non_empty = [el for el in parsed_elements if el != ""]
+        return ", ".join(non_empty)
+        
+    # Case 3: Structured Dictionary (Handle formal/informal and fallbacks)
+    if isinstance(value, dict):
+        parts = []
+        for key in ["formal", "informal"]:
+            if key in value and value[key]:
+                sub_val = parse_translation_value(value[key])
+                if sub_val:
+                    parts.append(f"{key.capitalize()}: {sub_val}")
+                    
+        # Fallback recursive parser for unknown custom dictionary keys
+        if not parts:
+            for k, v in value.items():
+                sub_val = parse_translation_value(v)
+                if sub_val:
+                    parts.append(f"{k}: {sub_val}")
+                    
+        return " | ".join(parts)
+        
+    # Fallback to string cast
+    return str(value).strip()
+
+
+def load_clinical_glossary(file_path: str, target_language: str) -> str:
+    """
+    Loads, parses, and formats a local glossary JSON file into a standardized
+    string representing key-value clinical mapping rules.
+    """
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        glossary_items = data.get("glossary", [])
+        formatted_lines = []
+        
+        for item in glossary_items:
+            english_term = item.get("english", "").strip()
+            translations = item.get("translations", {})
+            description = item.get("description", "").strip()
+            
+            # Fetch target translation raw value
+            raw_translation = translations.get(target_language)
+            if not raw_translation:
+                continue
+                
+            # Perform robust recursive parsing
+            parsed_translation = parse_translation_value(raw_translation)
+            if not parsed_translation:
+                continue
+                
+            # Compile mapping rule
+            rule = f"- {english_term} -> {parsed_translation}"
+            if description:
+                rule += f" ({description})"
+            formatted_lines.append(rule)
+            
+        return "\n".join(formatted_lines)
+        
+    except FileNotFoundError:
+        logger.warning(f"Glossary database not found at {file_path}. Proceeding with empty glossary.")
+        return ""
+    except Exception as e:
+        logger.error(f"Failed to ingest clinical glossary: {e}")
+        return ""
+
+
+def build_priming_instruction(role: str, target_language: str, glossary_rules: str) -> str:
+    """
+    Assembles complete system instructions to prime Gemini 3.1 Live standard sessions,
+    dynamically injecting clinical glossary terminology constraints.
+    """
+    base_persona = (
+        f"You are a professional bilingual medical interpreter assisting in a high-risk "
+        f"Emergency Department triage context between an English-speaking Nurse and a "
+        f"patient speaking {target_language}.\n"
+        f"Role: {role.upper()}\n"
+        f"Spelling Guidelines: Always adhere strictly to Australian medical standards, "
+        f"terminology, and spelling conventions (e.g., paracetamol, paediatric, anaemia)."
+    )
+    
+    if glossary_rules:
+        injection_block = (
+            f"\n\n--- MANDATORY CLINICAL TERMINOLOGY GLOSSARY ---\n"
+            f"You MUST use these specific terms and translations when encountered:\n"
+            f"{glossary_rules}\n"
+            f"--- END OF GLOSSARY ---"
+        )
+        return base_persona + injection_block
+        
+    return base_persona
+```
+
+
 
 
