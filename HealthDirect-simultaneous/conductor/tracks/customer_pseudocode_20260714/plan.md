@@ -10,8 +10,8 @@ Outline the main guide layout and author the comparative section detailing Gemin
 ## Phase 2: Core Architecture, Ingestion logic, & Maintenance
 Detail the streaming, glossary priming, and chronological alignment engine logics in high-level simplified Python, and establish the production mapping/maintenance protocol.
 - [x] Task: Implement Gemini Live API WebSocket connection and bidirectional chunk-streaming logic pseudocode. 932ef24
-- [~] Task: Implement robust multi-format Australian Medical Glossary schema parsing (recursively mapping and joining strings, arrays, and dictionaries) and injection pseudocode.
-- [ ] Task: Implement chronological stabilization and VAD pinning interleaving engine logic pseudocode.
+- [x] Task: Implement robust multi-format Australian Medical Glossary schema parsing (recursively mapping and joining strings, arrays, and dictionaries) and injection pseudocode. 5c410d0
+- [~] Task: Implement chronological stabilization and VAD pinning interleaving engine logic pseudocode.
 - [ ] Task: Implement Production File Mapping Appendix & Maintenance Protocol in the guide.
 - [ ] Task: Review the complete guide for quality, readability, and correct markdown formatting (e.g., GitHub-style alerts).
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Core Architecture, Ingestion logic, & Maintenance' (Protocol in workflow.md)
