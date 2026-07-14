@@ -1,10 +1,10 @@
 # Implementation Plan: Single-Tab Unified Presentation Console
 
 ## Phase 1: Parent Container & Unified Routing Layout
-- [ ] Task: Create a failing integration test for the presentation.html page load, layout verification, and router matching.
-- [ ] Task: Implement the new `demo/web/presentation.html` standalone view with an elegant dual-frame layout (left pane for Nurse console, right pane for Patient native view).
-- [ ] Task: Add route integration inside `demo/web_server.py` to serve `/presentation.html` and register it on startup.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Parent Container & Unified Routing Layout' (Protocol in workflow.md)
+- [x] Task: Create a failing integration test for the presentation.html page load, layout verification, and router matching. [24769c9]
+- [x] Task: Implement the new `demo/web/presentation.html` standalone view with an elegant dual-frame layout (left pane for Nurse console, right pane for Patient native view). [24769c9]
+- [x] Task: Add route integration inside `demo/web_server.py` to serve `/presentation.html` and register it on startup. [24769c9]
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Parent Container & Unified Routing Layout' (Protocol in workflow.md)
 
 ## Phase 2: Session Sync, Scaling & Picture-in-Picture (PIP) Floating Panel
 - [ ] Task: Add failing unit tests verifying synchronization events when triggering "Reset Session" or "Start Call".
