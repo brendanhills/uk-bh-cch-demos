@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Base premium styling -->
-    <link rel="stylesheet" href="/style.css?v=presentation-v2">
+    <link rel="stylesheet" href="/style.css?v=presentation-v3">
     
     <style>
         body {
@@ -85,6 +85,24 @@
         .btn-mode.active {
             background-color: var(--brand-teal);
             border-color: var(--brand-teal);
+        }
+
+        .btn-guide {
+            background-color: transparent;
+            color: var(--brand-teal);
+            border: 1px solid var(--brand-teal);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 8px;
+        }
+
+        .btn-guide:hover {
+            background-color: var(--brand-teal);
+            color: white;
         }
 
         /* Presentation Workspace Layout Modes */
@@ -196,6 +214,23 @@
             background-color: #f1f5f9;
             border-top: 1px solid var(--border-color);
         }
+
+        /* Responsive stack for smaller screen layout */
+        @media (max-width: 1024px) {
+            .presentation-container.layout-split {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1.2fr 1fr;
+                overflow-y: auto;
+            }
+
+            .presentation-container.layout-pip #patient-wrapper {
+                position: static !important;
+                width: 100% !important;
+                height: 380px !important;
+                margin-top: 16px;
+                box-shadow: var(--shadow-sm) !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -209,6 +244,7 @@
         <div class="header-modes-group">
             <button id="btn-side-by-side" class="btn-mode active">📊 Split View (70/30)</button>
             <button id="btn-pip" class="btn-mode">📱 PIP Overlay</button>
+            <button id="btn-show-guide" class="btn-guide">💡 Share Audio Guide</button>
         </div>
     </header>
 
@@ -233,18 +269,52 @@
         </div>
     </main>
 
+    <!-- Google Meet Audio Sharing Guide Modal -->
+    <div id="guide-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center;">
+        <div style="background-color: white; border-radius: var(--radius-lg); width: 550px; max-width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column;">
+            <div style="background-color: var(--brand-navy); color: white; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">🔊 Google Meet Audio Sharing Guide</h3>
+                <button id="btn-close-guide" style="background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">&times;</button>
+            </div>
+            <div style="padding: 24px; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6; overflow-y: auto; max-height: 70vh;">
+                <p style="margin-top: 0; font-weight: 500;">To ensure both original and translated audio from both channels share natively in your Google Meet presentation, follow these simple steps:</p>
+                
+                <ol style="padding-left: 20px; margin-bottom: 24px; color: #334155;">
+                    <li style="margin-bottom: 12px;">Inside Google Meet, click the <strong>Present Now</strong> (screen icon) button in the bottom-middle controls bar.</li>
+                    <li style="margin-bottom: 12px;">Select the <strong>"Chrome Tab"</strong> (or <strong>"A Tab"</strong>) sharing option. <br><em style="font-size: 0.85rem; color: var(--brand-teal); font-style: normal; font-weight: 500;">Important: Avoid sharing your "Entire Screen" or "Window" as browsers do not allow system audio sharing through those methods.</em></li>
+                    <li style="margin-bottom: 12px;">Select this <strong>"HealthDirect Presentation Console"</strong> tab from the list of tabs.</li>
+                    <li style="margin-bottom: 12px;">At the bottom-left corner of the popup dialog, ensure the checkbox labeled <strong>"Also share tab audio"</strong> is checked!</li>
+                </ol>
+
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start;">
+                    <span style="font-size: 1.2rem;">✅</span>
+                    <span style="font-size: 0.85rem; color: #166534; font-weight: 500; line-height: 1.5;">This directs Chrome to stream both channels natively into Google Meet as a single digital feed, guaranteeing perfect stereo output and speaker isolation.</span>
+                </div>
+            </div>
+            <div style="padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                <button id="btn-close-guide-footer" class="btn btn-primary" style="margin: 0; padding: 8px 18px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: var(--radius-md); background-color: var(--brand-teal); border: none; color: white;">Got it, thanks!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer metadata -->
     <footer class="presentation-footer">
         v2.0-presentation - 2026-07-14 13:00:00
     </footer>
 
-    <!-- Vanilla Javascript for Layout & Draggable Support -->
+    <!-- Vanilla Javascript for Layout, Draggable Support & Modal Guide -->
     <script>
         const btnSplit = document.getElementById('btn-side-by-side');
         const btnPip = document.getElementById('btn-pip');
         const workspace = document.getElementById('workspace');
         const patientWrapper = document.getElementById('patient-wrapper');
         const patientHeader = document.getElementById('patient-header');
+
+        // Modal Elements
+        const btnShowGuide = document.getElementById('btn-show-guide');
+        const btnCloseGuide = document.getElementById('btn-close-guide');
+        const btnCloseGuideFooter = document.getElementById('btn-close-guide-footer');
+        const guideModal = document.getElementById('guide-modal');
 
         // Layout switching handlers
         btnSplit.addEventListener('click', () => {
@@ -267,6 +337,24 @@
             btnSplit.classList.remove('active');
             workspace.classList.add('layout-pip');
             workspace.classList.remove('layout-split');
+        });
+
+        // Guide Modal handlers
+        function openGuide() {
+            guideModal.style.display = 'flex';
+        }
+
+        function closeGuide() {
+            guideModal.style.display = 'none';
+        }
+
+        btnShowGuide.addEventListener('click', openGuide);
+        btnCloseGuide.addEventListener('click', closeGuide);
+        btnCloseGuideFooter.addEventListener('click', closeGuide);
+
+        // Close guide if clicked outside content card
+        guideModal.addEventListener('click', (e) => {
+            if (e.target === guideModal) closeGuide();
         });
 
         // Draggable Card functionality (for PIP Mode)
