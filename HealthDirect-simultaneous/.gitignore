@@ -13,4 +13,9 @@ output/
 
 # Ignore local scratch/debug directory
 scratch/
+timing_report.json
+
+# Ignore secrets env
+.env
+
 

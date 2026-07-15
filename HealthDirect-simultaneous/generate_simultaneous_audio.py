@@ -72,6 +72,20 @@ VOICE_MAPPING = {
             "gender": texttospeech.SsmlVoiceGender.FEMALE,
             "fallback_voice": "en-AU-Neural2-F"
         }
+    },
+    "hindi_cough": {
+        "caller": {
+            "language_code": "hi-IN",
+            "voice_name": "hi-IN-Wavenet-B",
+            "gender": texttospeech.SsmlVoiceGender.MALE,
+            "fallback_voice": "hi-IN-Neural2-B"
+        },
+        "nurse": {
+            "language_code": "en-AU",
+            "voice_name": "en-AU-Wavenet-C",
+            "gender": texttospeech.SsmlVoiceGender.FEMALE,
+            "fallback_voice": "en-AU-Neural2-F"
+        }
     }
 }
 
@@ -79,7 +93,8 @@ VOICE_MAPPING = {
 SYMPTOM_KEYWORDS = [
     "kopfschmerzen", "fieber", "schmerzen",
     "dolor de oído", "dolor", "fiebre",
-    "sốt cao", "thở rất khò khè", "lồng ngực cứ phập phồng", "mệt"
+    "sốt cao", "thở rất khò khè", "lồng ngực cứ phập phồng", "mệt",
+    "जकड़न", "तकलीफ", "सूखी खांसी", "बुखार", "भारीपन"
 ]
 
 
@@ -308,13 +323,8 @@ async def compile_simultaneous_stereo_wav(
     
     # Save Wav file
     os.makedirs("samples", exist_ok=True)
-    out_wav_path = f"samples/{preset_key}_fever_session.wav"
-    if preset_key == "spanish":
-        out_wav_path = "samples/es_ear_session.wav"
-    elif preset_key == "arabic":
-        out_wav_path = "samples/ar_asthma_session.wav"
-    elif preset_key == "vietnamese":
-        out_wav_path = "samples/paediatric_vietnamese_demo.wav"
+    base_name = os.path.splitext(os.path.basename(metadata_path))[0]
+    out_wav_path = f"samples/{base_name}.wav"
         
     stereo_audio.export(out_wav_path, format="wav")
     print(f"[Timeline] Completed! Saved stereo wav to: {out_wav_path}")
@@ -356,10 +366,11 @@ def upload_to_gcs(
 
 async def main():
     metadata_files = [
-        "samples/metadata/de_fever_session.json",
-        "samples/metadata/es_ear_session.json",
-        "samples/metadata/paediatric_vietnamese_demo.json",
-        "samples/metadata/ar_asthma_session.json"
+        "samples/scripts/de_fever_session.json",
+        "samples/scripts/es_ear_session.json",
+        "samples/scripts/vi_paediatric_session.json",
+        "samples/scripts/ar_asthma_session.json",
+        "samples/scripts/hi_cough_session.json"
     ]
     
     bucket_name = "uk-bh-experiments-argolis-us"

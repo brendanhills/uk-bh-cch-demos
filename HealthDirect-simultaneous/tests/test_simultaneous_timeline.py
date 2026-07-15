@@ -6,17 +6,20 @@ from pydub import AudioSegment
 
 METADATA_FILES = [
     ("german",
-     "samples/metadata/de_fever_session.json",
-     "samples/german_fever_session.wav"),
+     "samples/scripts/de_fever_session.json",
+     "samples/de_fever_session.wav"),
     ("spanish",
-     "samples/metadata/es_ear_session.json",
+     "samples/scripts/es_ear_session.json",
      "samples/es_ear_session.wav"),
     ("vietnamese",
-     "samples/metadata/paediatric_vietnamese_demo.json",
-     "samples/paediatric_vietnamese_demo.wav"),
+     "samples/scripts/vi_paediatric_session.json",
+     "samples/vi_paediatric_session.wav"),
     ("arabic",
-     "samples/metadata/ar_asthma_session.json",
-     "samples/ar_asthma_session.wav")
+     "samples/scripts/ar_asthma_session.json",
+     "samples/ar_asthma_session.wav"),
+    ("hindi",
+     "samples/scripts/hi_cough_session.json",
+     "samples/hi_cough_session.wav")
 ]
 
 

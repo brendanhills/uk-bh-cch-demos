@@ -47,7 +47,7 @@
       "text": "Understood. Please call an ambulance immediately or take him straight to your nearest Emergency Department. While you wait, continue administering puffs from the inhaler through the spacer. We are here to support you.",
       "english_translation": "",
       "original_target_lang": "",
-      "start_ms": 53197
+      "start_ms": 53196
     },
     {
       "speaker": "caller",
@@ -55,7 +55,7 @@
       "text": "حسناً، فهمت. سأأخذه إلى قسم الطوارئ فوراً. شكراً جزيلاً لكِ يا ممرضة.",
       "english_translation": "Okay, I understand. I will take him to the Emergency Department immediately. Thank you very much, nurse.",
       "original_target_lang": "حسناً، فهمت. سأأخذه إلى قسم الطوارئ فوراً. شكراً جزيلاً لكِ يا ممرضة.",
-      "start_ms": 68084
+      "start_ms": 68083
     },
     {
       "speaker": "nurse",
@@ -63,7 +63,7 @@
       "text": "You are very welcome. Please stay calm and act quickly. Goodbye.",
       "english_translation": "",
       "original_target_lang": "",
-      "start_ms": 79783
+      "start_ms": 79782
     }
   ],
   "medical_terms": [

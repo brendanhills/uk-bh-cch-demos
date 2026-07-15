@@ -19,7 +19,7 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 - **Clinical Glossary Highlighting**: 
   - Uses the **`GlossaryHighlighter`** engine to perform exact match highlighting of clinical terminology.
   - Matches terms descending by character length (so compound terms like "abdominal pain" take priority over individual constituent words like "pain").
-  - Enforces **Unicode-safe letter boundary constraints`** (`(?<!\p{L})` and `(?!\p{L})` with the `gui` flags) to support non-ASCII characters, German umlauts, and Vietnamese diacritics flawlessly, while preventing partial word corruption (e.g. matching "ear" inside "heart").
+  - Enforces **Unicode-safe letter boundary constraints** (`(?<!\p{L})` and `(?!\p{L})` with the `gui` flags) to support non-ASCII characters, German umlauts, and Vietnamese diacritics flawlessly, while preventing partial word corruption (e.g. matching "ear" inside "heart").
   - Computes visible-only text lengths (omitting ANSI colors) to maintain perfect vertical column alignment in the Terminal CLI.
   - Features expanded flat coverage for **colloquial medical terms** (e.g., `puffer`, `stiff neck`, `stuffy nose`, `trouble breathing`, `runny nose`) matching natural patient speech.
 - **Interactive Web Interface**:
@@ -29,18 +29,8 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
   - Leverages animated, sliding tooltips on hover to display medical details, descriptions, and translation mappings case-insensitively.
   - Includes an **on-demand "Reload Glossary" button** in the sidebar to refresh glossary terms from disk instantly without reloading the page or restarting the FastAPI web server.
   - **Simultaneous Split-View Dashboards (`nurse.html` & `patient.html`)**: Support for parallel, state-synchronized multi-client interfaces tailored for clinicians and patients. Employs a robust client-side turn finalizer that splits consecutive utterances into distinct chronological speech bubbles on speaker swap, bypassing long VAD delays.
-  - **Single-Tab Unified Presentation Console**: Planned and specified under Conductor track `unified_presentation_20260710` as a standalone alternative view (`presentation.html`) hosting both views in a single parent frame. This allows presenters to seamlessly share both audio channels natively over Google Meet.
-  - **Upcoming High-Fidelity UI Redesign**: Planned under Conductor track `healthdirect_ui_redesign_20260708` to bring the web application's aesthetics, colors, and wide-aspect video-call layout in perfect parity with HealthDirect's official design system (Light Mode, Navy/Coral-Orange/Teal accents, and interactive "Video Call Apps" sidebar layout).
-- **Dynamic WebSocket Connection Priming & System Instructions**:
-  - Dynamically loads, filters, and formats active glossary terms from `glossary/glossary.json` into a token-efficient key-value list on connection start.
-  - Assembles highly structured system prompts enforcing a professional clinical persona and strict compliance with Australian medical spelling and nomenclature standards (e.g., `paracetamol` over `acetaminophen`, `Emergency Department` over `ER`, and Commonwealth spellings like `paediatric`, `haematology`, `gastroenteritis`).
-  - Primes both parallel Patient-to-Nurse and Nurse-to-Patient Gemini Live Translate channels as a `system_instruction` parameter in the initial connection config handshakes (`LiveConnectConfig`).
-  - Demands standard models fully preserve **emotional tone, urgency, and clinical empathy** in translated speech outputs.
-- **Polite & Idempotent Glossary Scraper**:
-  - A robust terminology collector (`import_glossary.py`) designed to ingest clinical lists from HealthDirect Australia.
-  - **Robots.txt Adherence**: Dynamically fetches and parses the target domain's `robots.txt` using standard `urllib.robotparser` to guarantee absolute crawler compliance.
-  - **Idempotency & Resilience**: Progressively persists successfully crawled subpages into `glossary/scrape_state.json`. If a run is interrupted or times out, subsequent runs skip completed URLs, making crawls resumable.
-  - **Politeness Delay**: Respects target hosts by applying a user-configurable sleep delay (`--delay` / `-d`, defaulting to `1.0s`) between sequential requests.
+  - **Single-Tab Unified Presentation Console**: Hosted on `presentation.html` as a single parent frame. This allows presenters to seamlessly share both audio channels natively over Google Meet.
+- **Unified Configuration Registry**: Uses a single central config file (`demo/interpreter_config.json`) with universally loaded default keys (such as `chunk_ms`, model name overrides, and default clinical preset mappings) to guarantee configuration parity between the Web Server and command-line execution modes.
 
 ---
 
@@ -49,16 +39,21 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
 The codebase is organized as follows:
 
 ```text
-├── glossary_highlighter.py   # Core match-and-highlight engine (CLI and HTML outputs)
-├── live_translate_demo.py     # High-fidelity double-column Terminal CLI interpreter simulator
+├── live_translate_demo.py     # Backward-compatible forwarding wrapper to demo/web_server.py --cli
 ├── demo/                     # Dedicated web server & front-end assets package
-│   ├── web_server.py         # FastAPI backend serving endpoints and routing audio channels
+│   ├── web_server.py         # FastAPI backend & unified CLI / server engine
+│   ├── interpreter_config.json # Centralized JSON configuration file with presets & parameter defaults
 │   └── web/                  # Glassmorphic call monitor dashboard (main.js, style.css, index.html)
 ├── import_glossary.py        # Polite, idempotent glossary scraper & pre-translation pipeline
-├── generate_bilingual_audio.py# Google Cloud TTS script to generate dual-channel stereo test audio
-├── samples/                  # Stereo audio presets (.wav) for German, Spanish, and Vietnamese
+├── generate_simultaneous_audio.py # Dynamic, programmatic multi-lingual Text-to-Speech stereo audio scenario compiler
+├── glossary_highlighter.py   # Core match-and-highlight engine (CLI and HTML outputs)
 ├── glossary/                 # Local JSON database (`glossary.json`) and CSV exports
-└── tests/                    # Robust test suite covering highlighter, server endpoints, and scraping state
+├── samples/                  # Stereo audio presets (.wav) and dialog scripts (.json) under scripts/
+├── utils/                    # Developer helper utilities
+│   ├── evaluate_pacing_impact.py # Side-by-side performance CLI pacing and latency comparison utility
+│   ├── test_prewarming_sandbox.py # Self-contained WebSocket pre-warming keep-alive demonstration tool
+│   └── list_vertex_models.py # List available GenAI models
+├── tests/                    # Robust test suite covering highlighter, server endpoints, and scraping state
 ```
 
 ---
@@ -83,16 +78,21 @@ The codebase is organized as follows:
 ## Running the Clinical Demos
 
 ### 1. High-Fidelity CLI Simulator
-Run the live terminal interpreter with real-time audio playback, double-column turn-taking layouts, and glossary highlighting:
+You can run the live dual-channel terminal interpreter with real-time audio playback, side-by-side columnar layouts, and terminology highlighting in one command. All CLI commands automatically fetch settings from the centralized `demo/interpreter_config.json` while allowing full argument overrides:
 ```bash
-# Run the Spanish PRESENTS preset
-uv run live_translate_demo.py --preset spanish
+# Run Spanish medical preset with real-time status columns
+uv run live_translate_demo.py --preset spanish --stats
 
-# Run the GermanPRESENTS preset
-uv run live_translate_demo.py --preset german
+# Run German medical preset
+uv run live_translate_demo.py --preset german --stats
 
-# Run the Vietnamese PRESENTS preset
-uv run live_translate_demo.py --preset vietnamese
+# Run Vietnamese medical preset with custom 40ms audio chunks
+uv run live_translate_demo.py --preset vietnamese --chunk-ms 40 --stats
+```
+
+Under the hood, `live_translate_demo.py` is a forwarding stub delegating parameters to the unified backend engine:
+```bash
+uv run demo/web_server.py --cli --preset spanish --stats
 ```
 
 ### 2. Premium Interactive Web UI
@@ -106,7 +106,46 @@ PYTHONPATH=. uv run python demo/web_server.py
 
 ---
 
-## Dynamic Session Recycling Architecture (What Worked for Gemini 3.1 Flash)
+## ⚡ Pacing and Latency Performance Tuning
+
+Pacing adjustments can occasionally impact streaming response times or audio smooth-flow. To make sure you can safely experiment and measure changes without risk:
+
+### 1. Run Side-by-Side Pacing Comparisons
+We provide a dedicated performance evaluation utility to test the impact of low-latency chunks (40ms) and active buffer clearances vs. legacy simple pacing:
+
+```bash
+# Run the newly optimized configuration profile (40ms, paced turn-holding)
+uv run utils/evaluate_pacing_impact.py --profile optimized
+
+# Run the legacy stable configuration profile (100ms, simple interval pacing)
+uv run utils/evaluate_pacing_impact.py --profile legacy
+```
+
+### 2. Revert to Stable Settings instantly
+If you evaluate both and decide the original stable configuration performs better, you can easily roll back with a single command:
+```bash
+uv run utils/evaluate_pacing_impact.py --restore-stable
+```
+This instantly resets `demo/interpreter_config.json` to 100ms chunks and simple pacing.
+
+---
+
+## 📡 WebSocket Pre-Warming Sandbox
+To bypass connection cold-starts and establish ready-state parallel Live sessions, we support a pre-warming technique. You can safely demonstrate and verify this architecture inside a fully isolated developer sandbox script **without changing a single line of your main codebase**:
+
+```bash
+uv run utils/test_prewarming_sandbox.py
+```
+
+The sandbox will:
+1. Establish a background WebSocket connection handshake.
+2. Keep the channel "hot" for 15 seconds by streaming sparse digital silence frames (`b'\x00'`) every 2.5 seconds (VAD-safe keep-alives).
+3. Instantly swap a synthetic audio voice stream onto the hot channel.
+4. Measure and print the first-token response latency to prove sub-second responsiveness.
+
+---
+
+## Dynamic Session Recycling Architecture (What Worked for Gemini 3.1)
 
 Under **Gemini 3.1 Flash Live** (`gemini-3.1-flash-live-preview`), sending multiple speech-to-speech turns down a single WebSocket connection results in an internal server-side freeze, leading to silent GFE proxy drops and TCP keepalive timeouts on subsequent turns. We resolved this by implementing an **asynchronous background session-recycling pattern** inside the FastAPI backend.
 

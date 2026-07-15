@@ -22,6 +22,130 @@ from typing import Optional
 # Load environment variables
 load_dotenv()
 
+import argparse
+
+def load_config(config_path: str = None) -> dict:
+    """Loads the interpreter configuration JSON file."""
+    if not config_path:
+        config_path = os.path.join(BASE_DIR, "interpreter_config.json")
+    
+    if not os.path.exists(config_path):
+        return {}
+        
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def parse_args(args: list = None) -> argparse.Namespace:
+    """Parses command line arguments, falling back to interpreter_config.json defaults."""
+    initial_parser = argparse.ArgumentParser(add_help=False)
+    initial_parser.add_argument("--config", default=None)
+    parsed_initial, _ = initial_parser.parse_known_args(args)
+    
+    config_file = parsed_initial.config
+    config = load_config(config_file)
+    
+    parser = argparse.ArgumentParser(
+        description="Unified Real-Time Bidirectional Bilingual Medical Interpreter Server/CLI"
+    )
+    parser.add_argument("--cli", action="store_true", help="Enable CLI execution mode")
+    parser.add_argument("--config", default=config_file, help="Path to interpreter_config.json")
+    
+    parser.add_argument(
+        "--preset",
+        default=None,
+        help="Pre-configured medical call preset (e.g. 'german', 'spanish', 'vietnamese', 'arabic', 'hindi')"
+    )
+    parser.add_argument(
+        "--file",
+        default=None,
+        help="Path to custom stereo WAV input file"
+    )
+    
+    parser.add_argument(
+        "--model",
+        default=config.get("model_name", "gemini-3.5-live-translate-preview"),
+        help="Gemini Live model name"
+    )
+    parser.add_argument(
+        "--chunk-ms",
+        type=int,
+        default=config.get("chunk_ms", 40),
+        help="Audio streaming chunk size in milliseconds"
+    )
+    parser.add_argument(
+        "--pacing",
+        default=config.get("pacing_mode", "paced"),
+        choices=["simple", "paced"],
+        help="Pacing streaming mode"
+    )
+    parser.add_argument(
+        "--playback",
+        action="store_true",
+        default=config.get("enable_playback", False),
+        help="Enable local real-time audio playback through system speakers"
+    )
+    parser.add_argument(
+        "--no-glossary",
+        action="store_true",
+        default=not config.get("enable_glossary", True),
+        help="Disable clinical glossary priming"
+    )
+    parser.add_argument(
+        "--stats",
+        action="store_true",
+        default=config.get("enable_stats", False),
+        help="Enable logging frame-by-frame stats to console"
+    )
+    parser.add_argument(
+        "--language-code",
+        default=None,
+        help="Target translation language code (overrides preset)"
+    )
+    parser.add_argument(
+        "--language",
+        default=None,
+        help="Target translation language name (overrides preset)"
+    )
+    
+    parsed = parser.parse_args(args)
+    
+    if parsed.preset:
+        preset_key = parsed.preset.lower()
+        presets = config.get("presets", {})
+        if preset_key in presets:
+            preset_data = presets[preset_key]
+            if not parsed.file:
+                parsed.file = preset_data.get("file")
+            if not parsed.language_code:
+                parsed.language_code = preset_data.get("code")
+            if not parsed.language:
+                parsed.language = preset_data.get("language")
+                
+    return parsed
+
+def calculate_chunk_size(chunk_ms: int, sample_rate: int = 16000) -> int:
+    """Calculates the byte size of an audio chunk for 16-bit mono linear PCM.
+    
+    1 sample = 2 bytes. Mono.
+    """
+    bytes_per_second = sample_rate * 1 * 2  # 32000
+    chunk_size = int(bytes_per_second * (chunk_ms / 1000.0))
+    # Align to 2-byte frame boundary
+    return (chunk_size // 2) * 2
+
+def clear_active_buffers(*queues_or_lists):
+    """Clears all provided lists, queues, or buffer structures to handle interruptions."""
+    for structure in queues_or_lists:
+        if isinstance(structure, list):
+            structure.clear()
+        elif hasattr(structure, "empty") and hasattr(structure, "get_nowait"):
+            while not structure.empty():
+                try:
+                    structure.get_nowait()
+                except Exception:
+                    break
+
+
 # Configure logging
 logger = logging.getLogger("web_server")
 logger.setLevel(logging.INFO)
@@ -498,7 +622,7 @@ PRESETS = {
         "gender": "male"
     },
     "vietnamese": {
-        "file": "samples/paediatric_vietnamese_demo.wav",
+        "file": "samples/vi_paediatric_session.wav",
         "code": "vi",
         "language": "Vietnamese",
         "gender": "female"
@@ -508,14 +632,20 @@ PRESETS = {
         "code": "ar",
         "language": "Arabic",
         "gender": "male"
+    },
+    "hindi": {
+        "file": "samples/hi_cough_session.wav",
+        "code": "hi",
+        "language": "Hindi",
+        "gender": "male"
     }
 }
 
-def load_and_split_channels(file_path: str, target_sample_rate: int = 16000) -> tuple[bytes, bytes, int]:
+def load_and_split_channels(file_path: str, target_sample_rate: int = 16000, chunk_ms: int = 40) -> tuple[bytes, bytes, int]:
     """
     Loads a stereo audio file, resamples to 16kHz, converts to 16-bit PCM,
     splits into Left (Patient) and Right (Nurse) mono streams, and returns
-    (patient_bytes, nurse_bytes, chunk_size_100ms).
+    (patient_bytes, nurse_bytes, chunk_size).
     """
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Audio file not found at {file_path}")
@@ -539,12 +669,7 @@ def load_and_split_channels(file_path: str, target_sample_rate: int = 16000) -> 
     patient_bytes = left_mono.raw_data
     nurse_bytes = right_mono.raw_data
 
-    # 16-bit mono bytes per second = 16000 * 1 * 2 = 32000
-    bytes_per_sec = target_sample_rate * 1 * 2
-    # 200ms chunk = 0.2s
-    chunk_size = int(bytes_per_sec * 0.2)
-    # Align to 2-byte frame boundary
-    chunk_size = (chunk_size // 2) * 2
+    chunk_size = calculate_chunk_size(chunk_ms, sample_rate=target_sample_rate)
 
     return patient_bytes, nurse_bytes, chunk_size
 
@@ -953,6 +1078,11 @@ def assemble_system_instructions(direction: str, target_language: str, glossary_
         "Translate all spoken statements directly and faithfully."
     )
 
+    output_language = "English" if direction == "p_to_n" else target_language
+    parts.append(
+        f"RESPOND IN {output_language}. YOU MUST RESPOND UNMISTAKABLY IN {output_language}."
+    )
+
     return "\n\n".join(parts)
 
 @app.websocket("/ws/nurse")
@@ -1252,6 +1382,11 @@ async def websocket_endpoint(websocket: WebSocket):
                             continue
                         try:
                             async for response in session.receive():
+                                if getattr(response, "go_away", None):
+                                    logger.warning(f"[SESSION SIGNAL][p_to_n] GoAway message received from Gemini Live API. Details: {response.go_away}")
+                                if getattr(response, "generation_complete", None):
+                                    logger.info(f"[SESSION SIGNAL][p_to_n] Generation complete signal received.")
+                                    
                                 server_content = response.server_content
                                 if server_content:
                                     # Forward Translated English Audio (24kHz Mono PCM) to client
@@ -1359,6 +1494,11 @@ async def websocket_endpoint(websocket: WebSocket):
                             continue
                         try:
                             async for response in session.receive():
+                                if getattr(response, "go_away", None):
+                                    logger.warning(f"[SESSION SIGNAL][n_to_p] GoAway message received from Gemini Live API. Details: {response.go_away}")
+                                if getattr(response, "generation_complete", None):
+                                    logger.info(f"[SESSION SIGNAL][n_to_p] Generation complete signal received.")
+                                    
                                 server_content = response.server_content
                                 if server_content:
                                     # Forward Translated Target Audio (24kHz Mono PCM) to client
@@ -1806,9 +1946,519 @@ class NoCacheStaticFiles(StaticFiles):
 
 app.mount("/", NoCacheStaticFiles(directory=os.path.join(BASE_DIR, "web"), html=True), name="static")
 
+
+# parent import directory routing for root folder modules like glossary_highlighter
+parent_dir = os.path.dirname(BASE_DIR)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+highlighter = None
+try:
+    from glossary_highlighter import GlossaryHighlighter
+    highlighter = GlossaryHighlighter()
+except Exception:
+    pass
+
+# Optional PyAudio setup for local speaker output
+pyaudio_lib = None
+try:
+    import pyaudio
+    pyaudio_lib = pyaudio.PyAudio()
+except ImportError:
+    pass
+
+class SpeakerPlayer:
+    """Handles real-time audio playback through system speakers."""
+    def __init__(self, enabled=False):
+        self.stream = None
+        if enabled and pyaudio_lib:
+            try:
+                self.stream = pyaudio_lib.open(
+                    format=pyaudio.paInt16,
+                    channels=1,
+                    rate=24000,
+                    output=True
+                )
+            except Exception as e:
+                logger.warning(f"Failed to open PyAudio speaker stream: {e}")
+                
+    def play(self, data: bytes):
+        if self.stream:
+            try:
+                self.stream.write(data)
+            except Exception:
+                pass
+                
+    def close(self):
+        if self.stream:
+            try:
+                self.stream.stop_stream()
+                self.stream.close()
+            except Exception:
+                pass
+
+class StatsTracker:
+    """Tracks latency metrics and throughput stats for live sessions."""
+    def __init__(self, enabled=False):
+        self.enabled = enabled
+        self.p_to_n_bytes = 0
+        self.n_to_p_bytes = 0
+        self.p_to_n_frames = 0
+        self.n_to_p_frames = 0
+        self.latencies = []
+        
+    def add_chunk(self, direction: str, size: int, latency_ms: float = 0.0):
+        if direction == "p_to_n":
+            self.p_to_n_bytes += size
+            self.p_to_n_frames += 1
+        else:
+            self.n_to_p_bytes += size
+            self.n_to_p_frames += 1
+        if latency_ms > 0:
+            self.latencies.append(latency_ms)
+            
+    def log_stats(self):
+        if not self.enabled:
+            return
+        avg_latency = (sum(self.latencies) / len(self.latencies)) if self.latencies else 0.0
+        logger.info(
+            f"📊 [STATS] Cumulative Sent/Received: "
+            f"Patient->Nurse: {self.p_to_n_bytes} bytes ({self.p_to_n_frames} chunks), "
+            f"Nurse->Patient: {self.n_to_p_bytes} bytes ({self.n_to_p_frames} chunks). "
+            f"Avg Chunk Latency: {avg_latency:.1f}ms"
+        )
+
+def print_border():
+    print("=" * 114)
+
+def print_row(col1: str, col2: str, language: str = None):
+    """
+    Renders two strings side-by-side in an aligned double-column grid.
+    If language is provided, clinical glossary terms are highlighted:
+    - English in col1 (bold green)
+    - Target language in col2 (bold magenta)
+    """
+    import re
+    
+    c1_width = 54
+    c2_width = 54
+    
+    if language and highlighter:
+        col1 = highlighter.highlight_cli(col1, "english")
+        col2 = highlighter.highlight_cli(col2, language)
+
+    def len_visible(text: str) -> int:
+        return len(re.sub(r'\x1b\[[0-9;]*m', '', text))
+
+    def wrap_text(text, width):
+        words = text.split()
+        lines = []
+        current = []
+        for word in words:
+            if sum(len_visible(w) + 1 for w in current) + len_visible(word) <= width:
+                current.append(word)
+            else:
+                lines.append(" ".join(current))
+                current = [word]
+        if current:
+            lines.append(" ".join(current))
+        return lines or [""]
+
+    def pad_right(text: str, width: int) -> str:
+        vis_len = len_visible(text)
+        padding_needed = max(0, width - vis_len)
+        return text + (" " * padding_needed)
+
+    c1_lines = wrap_text(col1, c1_width)
+    c2_lines = wrap_text(col2, c2_width)
+    
+    max_lines = max(len(c1_lines), len(c2_lines))
+    for i in range(max_lines):
+        l1 = c1_lines[i] if i < len(c1_lines) else ""
+        l2 = c2_lines[i] if i < len(c2_lines) else ""
+        p1 = pad_right(l1, c1_width)
+        p2 = pad_right(l2, c2_width)
+        print(f"║ {p1} ║ {p2} ║")
+
+async def run_cli(args: argparse.Namespace):
+    """Runs the bidirectional translation interpreter as a command-line application in the terminal."""
+    os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
+    
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        print("❌ Error: GEMINI_API_KEY environment variable is not set. Please add it to your .env file.")
+        sys.exit(1)
+        
+    client = genai.Client(api_key=api_key)
+    
+    file_path = args.file
+    language = args.language or "German"
+    lang_code = args.language_code or "de"
+    
+    if not file_path:
+        file_path = "samples/de_fever_session.wav"
+        language = "German"
+        lang_code = "de"
+        
+    if not os.path.exists(file_path):
+        print(f"❌ Error: Audio file not found at {file_path}")
+        sys.exit(1)
+        
+    print_border()
+    print(f"║ {'GEMINI LIVE REAL-TIME BILINGUAL INTERPRETER':^110} ║")
+    print(f"║ {'Streaming file: ' + os.path.basename(file_path):^110} ║")
+    print(f"║ {'Target Language: ' + language + ' (' + lang_code + ') | Model: ' + args.model:^110} ║")
+    print_border()
+    print(f"║ {'CLINICIAN / NURSE (English)':^54} ║ {'PATIENT / FAMILY (' + language + ')':^54} ║")
+    print_border()
+    sys.stdout.flush()
+
+    output_dir = "output"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    p_to_n_pcm_path = os.path.join(output_dir, "translated_patient_to_nurse_en.pcm")
+    n_to_p_pcm_path = os.path.join(output_dir, f"translated_nurse_to_patient_{language.lower()}.pcm")
+    
+    pcm_p_to_n = open(p_to_n_pcm_path, "wb")
+    pcm_n_to_p = open(n_to_p_pcm_path, "wb")
+    
+    try:
+        patient_bytes, nurse_bytes, chunk_size = load_and_split_channels(
+            file_path, chunk_ms=args.chunk_ms
+        )
+    except Exception as e:
+        print(f"❌ Error splitting audio channels: {e}")
+        return
+
+    if not args.no_glossary:
+        glossary_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=True)
+        glossary_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=True)
+    else:
+        glossary_p_to_n = ""
+        glossary_n_to_p = ""
+        
+    sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_p_to_n, is_flash_live=True)
+    sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_n_to_p, is_flash_live=True)
+    
+    speaker = SpeakerPlayer(enabled=args.playback)
+    stats_tracker = StatsTracker(enabled=args.stats)
+    
+    config_p_to_n = types.LiveConnectConfig(
+        response_modalities=[types.Modality.AUDIO],
+        translation_config=types.TranslationConfig(
+            target_language_code="en",
+            echo_target_language=True
+        ),
+        input_audio_transcription=types.AudioTranscriptionConfig(),
+        output_audio_transcription=types.AudioTranscriptionConfig(),
+        system_instruction=types.Content(parts=[types.Part.from_text(sys_inst_p_to_n)])
+    )
+    
+    config_n_to_p = types.LiveConnectConfig(
+        response_modalities=[types.Modality.AUDIO],
+        translation_config=types.TranslationConfig(
+            target_language_code=lang_code,
+            echo_target_language=True
+        ),
+        input_audio_transcription=types.AudioTranscriptionConfig(),
+        output_audio_transcription=types.AudioTranscriptionConfig(),
+        system_instruction=types.Content(parts=[types.Part.from_text(sys_inst_n_to_p)])
+    )
+    
+    patient_translation_complete = asyncio.Event()
+    nurse_translation_complete = asyncio.Event()
+    
+    current_p_original = ""
+    current_n_translated = ""
+    current_n_original = ""
+    current_p_translated = ""
+    
+    last_audio_p_to_n = 0.0
+    last_audio_n_to_p = 0.0
+    
+    logger.info("Connecting parallel CLI live translation sessions to Gemini...")
+    try:
+        async with client.aio.live.connect(model=args.model, config=config_p_to_n) as session_p_to_n, \
+                   client.aio.live.connect(model=args.model, config=config_n_to_p) as session_n_to_p:
+            
+            async def safe_send(session, chunk):
+                try:
+                    await session.send_realtime_input(
+                        audio=types.Blob(data=chunk, mime_type="audio/pcm;rate=16000")
+                    )
+                except Exception as e:
+                    logger.warning(f"Error streaming chunk: {e}")
+
+            async def send_audio_cli():
+                try:
+                    max_len = max(len(patient_bytes), len(nurse_bytes))
+                    start_time = asyncio.get_running_loop().time()
+                    chunks_queued = 0
+                    
+                    if args.pacing == "simple":
+                        for i in range(0, max_len, chunk_size):
+                            chunk_p = patient_bytes[i : i + chunk_size]
+                            chunk_n = nurse_bytes[i : i + chunk_size]
+                            
+                            if chunk_p:
+                                await safe_send(session_p_to_n, chunk_p)
+                                stats_tracker.add_chunk("p_to_n", len(chunk_p))
+                            if chunk_n:
+                                await safe_send(session_n_to_p, chunk_n)
+                                stats_tracker.add_chunk("n_to_p", len(chunk_n))
+                                
+                            chunks_queued += 1
+                            expected_release_time = start_time + (chunks_queued * (args.chunk_ms / 1000.0))
+                            sleep_time = expected_release_time - asyncio.get_running_loop().time()
+                            if sleep_time > 0:
+                                await asyncio.sleep(sleep_time)
+                                
+                    else:
+                        active_speaker = None
+                        silence_counter = 0
+                        SILENCE_CHUNKS_THRESHOLD = max(4, int(4.5 / (args.chunk_ms / 1000.0)))
+                        takeover_cooldown = 0
+                        silence_chunk = b'\x00' * chunk_size
+                        
+                        for i in range(0, max_len, chunk_size):
+                            if takeover_cooldown > 0:
+                                takeover_cooldown -= 1
+                                
+                            chunk_p = patient_bytes[i : i + chunk_size]
+                            chunk_n = nurse_bytes[i : i + chunk_size]
+                            
+                            p_has = has_speech(chunk_p)
+                            n_has = has_speech(chunk_n)
+                            
+                            if p_has:
+                                patient_translation_complete.clear()
+                            if n_has:
+                                nurse_translation_complete.clear()
+                                
+                            speaker_finished = None
+                            
+                            if p_has and n_has:
+                                if takeover_cooldown == 0 and active_speaker == "nurse":
+                                    speaker_finished = "nurse"
+                                    active_speaker = "patient"
+                                    takeover_cooldown = int(2.5 / (args.chunk_ms / 1000.0))
+                                elif takeover_cooldown == 0 and active_speaker == "patient":
+                                    speaker_finished = "patient"
+                                    active_speaker = "nurse"
+                                    takeover_cooldown = int(2.5 / (args.chunk_ms / 1000.0))
+                                else:
+                                    silence_counter = 0
+                            elif p_has and not n_has:
+                                if takeover_cooldown == 0 and active_speaker == "nurse":
+                                    speaker_finished = "nurse"
+                                    active_speaker = "patient"
+                                    takeover_cooldown = int(2.5 / (args.chunk_ms / 1000.0))
+                                elif active_speaker is None:
+                                    active_speaker = "patient"
+                                silence_counter = 0
+                            elif n_has and not p_has:
+                                if takeover_cooldown == 0 and active_speaker == "patient":
+                                    speaker_finished = "patient"
+                                    active_speaker = "nurse"
+                                    takeover_cooldown = int(2.5 / (args.chunk_ms / 1000.0))
+                                elif active_speaker is None:
+                                    active_speaker = "nurse"
+                                silence_counter = 0
+                            else:
+                                if active_speaker is not None:
+                                    silence_counter += 1
+                                    if silence_counter >= SILENCE_CHUNKS_THRESHOLD:
+                                        speaker_finished = active_speaker
+                                        active_speaker = None
+                                        
+                            if active_speaker == "patient":
+                                if chunk_p:
+                                    await safe_send(session_p_to_n, chunk_p)
+                                    stats_tracker.add_chunk("p_to_n", len(chunk_p))
+                                if chunks_queued % 15 == 0:
+                                    await safe_send(session_n_to_p, silence_chunk)
+                            elif active_speaker == "nurse":
+                                if chunk_n:
+                                    await safe_send(session_n_to_p, chunk_n)
+                                    stats_tracker.add_chunk("n_to_p", len(chunk_n))
+                                if chunks_queued % 15 == 0:
+                                    await safe_send(session_p_to_n, silence_chunk)
+                            else:
+                                if chunks_queued % 15 == 0:
+                                    await safe_send(session_p_to_n, silence_chunk)
+                                    await safe_send(session_n_to_p, silence_chunk)
+                                    
+                            chunks_queued += 1
+                            
+                            if speaker_finished is not None:
+                                event_to_wait = patient_translation_complete if speaker_finished == "patient" else nurse_translation_complete
+                                hold_start = asyncio.get_running_loop().time()
+                                
+                                iterations = int(15.0 / (args.chunk_ms / 1000.0))
+                                for _ in range(iterations):
+                                    if event_to_wait.is_set():
+                                        break
+                                    now = asyncio.get_running_loop().time()
+                                    last_audio = last_audio_p_to_n if speaker_finished == "patient" else last_audio_n_to_p
+                                    if last_audio > 0.0 and now - last_audio > 4.5:
+                                        break
+                                    elif last_audio == 0.0 and now - hold_start > 15.0:
+                                        break
+                                        
+                                    if speaker_finished == "patient":
+                                        await safe_send(session_n_to_p, silence_chunk)
+                                    else:
+                                        await safe_send(session_p_to_n, silence_chunk)
+                                        
+                                    await asyncio.sleep(args.chunk_ms / 1000.0)
+                                    
+                                await asyncio.sleep(2.0)
+                                
+                            expected_release_time = start_time + (chunks_queued * (args.chunk_ms / 1000.0))
+                            sleep_time = expected_release_time - asyncio.get_running_loop().time()
+                            if sleep_time > 0:
+                                await asyncio.sleep(sleep_time)
+                                
+                    logger.info("Real-time dual-channel audio streaming complete.")
+                except asyncio.CancelledError:
+                    pass
+                except Exception as e:
+                    logger.error(f"Error in CLI send_audio loop: {e}")
+
+            async def receive_p_to_n_cli():
+                nonlocal current_p_original, current_n_translated, last_audio_p_to_n
+                try:
+                    async for response in session_p_to_n.receive():
+                        server_content = response.server_content
+                        if server_content:
+                            if server_content.model_turn:
+                                for part in server_content.model_turn.parts:
+                                    if part.inline_data:
+                                        if has_speech(part.inline_data.data, threshold=500):
+                                            last_audio_p_to_n = asyncio.get_running_loop().time()
+                                        pcm_p_to_n.write(part.inline_data.data)
+                                        speaker.play(part.inline_data.data)
+                                        stats_tracker.add_chunk("p_to_n_rx", len(part.inline_data.data))
+                                        
+                            if server_content.input_transcription and server_content.input_transcription.text:
+                                current_p_original += server_content.input_transcription.text
+                            if server_content.output_transcription and server_content.output_transcription.text:
+                                current_n_translated += server_content.output_transcription.text
+                                
+                            if server_content.turn_complete:
+                                patient_translation_complete.set()
+                                if current_p_original.strip() or current_n_translated.strip():
+                                    print_row(
+                                        f"🔊 Translation (EN):\n\"{current_n_translated.strip()}\"",
+                                        f"🎙️ Original ({language}):\n\"{current_p_original.strip()}\"",
+                                        language=language
+                                    )
+                                    print_row("- " * 27, "- " * 26)
+                                    sys.stdout.flush()
+                                current_p_original = ""
+                                current_n_translated = ""
+                                
+                            if server_content.interrupted:
+                                if current_p_original.strip() or current_n_translated.strip():
+                                    print_row(
+                                        f"🔊 Translation [Part] (EN):\n\"{current_n_translated.strip()}\"",
+                                        f"🎙️ Original [Part] ({language}):\n\"{current_p_original.strip()}\"",
+                                        language=language
+                                    )
+                                print_row("⚠️ Patient stream interrupted!", "⚠️ Patient stream interrupted!")
+                                print_row("- " * 27, "- " * 26)
+                                sys.stdout.flush()
+                                current_p_original = ""
+                                current_n_translated = ""
+                except asyncio.CancelledError:
+                    pass
+                except Exception as e:
+                    logger.error(f"Error in CLI Patient->Nurse receive task: {e}")
+
+            async def receive_n_to_p_cli():
+                nonlocal current_n_original, current_p_translated, last_audio_n_to_p
+                try:
+                    async for response in session_n_to_p.receive():
+                        server_content = response.server_content
+                        if server_content:
+                            if server_content.model_turn:
+                                for part in server_content.model_turn.parts:
+                                    if part.inline_data:
+                                        if has_speech(part.inline_data.data, threshold=500):
+                                            last_audio_n_to_p = asyncio.get_running_loop().time()
+                                        pcm_n_to_p.write(part.inline_data.data)
+                                        speaker.play(part.inline_data.data)
+                                        stats_tracker.add_chunk("n_to_p_rx", len(part.inline_data.data))
+                                        
+                            if server_content.input_transcription and server_content.input_transcription.text:
+                                current_n_original += server_content.input_transcription.text
+                            if server_content.output_transcription and server_content.output_transcription.text:
+                                current_p_translated += server_content.output_transcription.text
+                                
+                            if server_content.turn_complete:
+                                nurse_translation_complete.set()
+                                if current_n_original.strip() or current_p_translated.strip():
+                                    print_row(
+                                        f"🎙️ Original (EN):\n\"{current_n_original.strip()}\"",
+                                        f"🔊 Translation ({language}):\n\"{current_p_translated.strip()}\"",
+                                        language=language
+                                    )
+                                    print_row("- " * 27, "- " * 26)
+                                    sys.stdout.flush()
+                                current_n_original = ""
+                                current_p_translated = ""
+                                
+                            if server_content.interrupted:
+                                if current_n_original.strip() or current_p_translated.strip():
+                                    print_row(
+                                        f"🎙️ Original [Part] (EN):\n\"{current_n_original.strip()}\"",
+                                        f"🔊 Translation [Part] ({language}):\n\"{current_p_translated.strip()}\"",
+                                        language=language
+                                    )
+                                print_row("⚠️ Nurse stream interrupted!", "⚠️ Nurse stream interrupted!")
+                                print_row("- " * 27, "- " * 26)
+                                sys.stdout.flush()
+                                current_n_original = ""
+                                current_p_translated = ""
+                except asyncio.CancelledError:
+                    pass
+                except Exception as e:
+                    logger.error(f"Error in CLI Nurse->Patient receive task: {e}")
+
+            send_task = asyncio.create_task(send_audio_cli())
+            rec_p_to_n = asyncio.create_task(receive_p_to_n_cli())
+            rec_n_to_p = asyncio.create_task(receive_n_to_p_cli())
+            
+            await send_task
+            
+            print("\n🏁 Audio file streaming finished! Waiting a few seconds for final translation packets...")
+            await asyncio.sleep(6)
+            
+            rec_p_to_n.cancel()
+            rec_n_to_p.cancel()
+            
+            pcm_p_to_n.close()
+            pcm_n_to_p.close()
+            speaker.close()
+            
+            stats_tracker.log_stats()
+            
+            print_border()
+            print(f"║ {'REAL-TIME TRANSLATION FLOW COMPLETED':^110} ║")
+            print(f"║ Patient->Nurse translation saved to: {os.path.basename(p_to_n_pcm_path):<56} ║")
+            print(f"║ Nurse->Patient translation saved to: {os.path.basename(n_to_p_pcm_path):<56} ║")
+            print_border()
+            sys.stdout.flush()
+            
+    except Exception as e:
+        print(f"\n❌ Gemini Live connection error: {e}")
+
 if __name__ == "__main__":
     import uvicorn
-    # Start the server on localhost:9000
-    # Ensure uvicorn's path resolution succeeds even if run directly as a script
-    parent_dir = os.path.dirname(BASE_DIR)
-    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)
+    parsed_args = parse_args()
+    if parsed_args.cli:
+        asyncio.run(run_cli(parsed_args))
+    else:
+        parent_dir = os.path.dirname(BASE_DIR)
+        uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)
+

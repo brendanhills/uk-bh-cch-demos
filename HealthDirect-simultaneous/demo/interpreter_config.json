@@ -1,0 +1,41 @@
+{
+  "model_name": "gemini-3.5-live-translate-preview",
+  "chunk_ms": 40,
+  "pacing_mode": "paced",
+  "enable_playback": false,
+  "enable_stats": false,
+  "enable_glossary": true,
+  "pacing": {
+    "turn_timeout_sec": 15.0,
+    "ceased_audio_threshold": 4.5,
+    "startup_audio_threshold": 15.0,
+    "additional_pause_sec": 2.0
+  },
+  "presets": {
+    "german": {
+      "file": "samples/de_fever_session.wav",
+      "code": "de",
+      "language": "German"
+    },
+    "spanish": {
+      "file": "samples/es_ear_session.wav",
+      "code": "es",
+      "language": "Spanish"
+    },
+    "vietnamese": {
+      "file": "samples/vi_paediatric_session.wav",
+      "code": "vi",
+      "language": "Vietnamese"
+    },
+    "arabic": {
+      "file": "samples/ar_asthma_session.wav",
+      "code": "ar",
+      "language": "Arabic"
+    },
+    "hindi": {
+      "file": "samples/hi_cough_session.wav",
+      "code": "hi",
+      "language": "Hindi"
+    }
+  }
+}

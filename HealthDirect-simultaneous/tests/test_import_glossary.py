@@ -496,7 +496,9 @@ def test_pipeline_execution(
         state_path="glossary/scrape_state.json"
     )
     mock_translate.assert_called_once()
-    mock_upload.assert_called_once_with(str(tmp_path / "glossary.csv"), "gs://test-bucket/glossaries/glossary.csv")
+    assert mock_upload.call_count == 2
+    mock_upload.assert_any_call(str(tmp_path / "glossary.csv"), "gs://test-bucket/glossaries/glossary.csv")
+    mock_upload.assert_any_call(str(tmp_path / "glossary.json"), "gs://test-bucket/glossaries/glossary.json")
     mock_recreate.assert_called_once_with(
         project_id="test-project",
         location="us-central1",
@@ -733,6 +735,7 @@ def test_pipeline_execution_with_grounding(mock_ground, mock_recreate, mock_uplo
         scrape="https://www.healthdirect.gov.au/health-topics/conditions",
         max_letters=1,
         glossary_json=str(glossary_json),
+        csv_path=str(tmp_path / "glossary.csv"),
         gcs_destination=None,
         glossary_id=None,
         location="us-central1",
@@ -916,6 +919,7 @@ def test_pipeline_grounding_exhaustive_queue(mock_ground, tmp_path):
         scrape=None,
         max_letters=None,
         glossary_json=str(glossary_json),
+        csv_path=str(tmp_path / "glossary.csv"),
         gcs_destination=None,
         glossary_id=None,
         location="us-central1",
