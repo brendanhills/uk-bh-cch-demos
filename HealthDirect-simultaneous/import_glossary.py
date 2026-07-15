@@ -25,11 +25,63 @@ def clean_term_name(text: str) -> str:
     # Strip whitespace and convert to lowercase
     return text.strip().lower()
 
+def extract_parenthetical_term(text: str, href: str) -> tuple[str, str | None]:
+    """Helper to parse 'Primary (Synonym)' structures using URL slug comparison.
+    
+    Returns a tuple of (primary_clinical_key, informal_synonym_or_none).
+    """
+    text = text.strip()
+    href_slug = href.rstrip("/").split("/")[-1].lower().replace("-", " ").strip()
+    
+    match = re.match(r"^(.*?)\s*\((.*?)\)$", text)
+    if match:
+        outside = match.group(1).strip().lower()
+        inside = match.group(2).strip().lower()
+        
+        # If the inside term matches the URL slug, the inside term is the generic clinical key,
+        # and the outside term is a brand name / colloquial synonym.
+        # e.g., 'Amoxil (amoxicillin)' on '/medicines/amoxicillin'
+        if inside == href_slug or inside in href_slug or href_slug in inside:
+            return inside, outside
+            
+        # If the outside term matches the slug, the outside term is the generic clinical key,
+        # e.g., 'Amoxicillin (antibiotic)' on '/medicines/amoxicillin' or 'Middle ear infection (otitis media)'
+        if outside == href_slug or outside in href_slug or href_slug in outside:
+            # Check if inside text is a known generic class keyword to ignore it as synonym
+            if inside in ["antibiotic", "brand name", "generic", "procedures", "symptoms", "conditions"]:
+                return outside, None
+            return outside, inside
+            
+        # Fallback if slug matching is inconclusive: treat outside as main term, inside as synonym if not a class word
+        if inside in ["antibiotic", "brand name", "generic", "procedures", "symptoms", "conditions"]:
+            return outside, None
+        return outside, inside
+        
+    return clean_term_name(text), None
+
 def parse_html_terms(html_content: str) -> dict:
-    """Parses term list from HealthDirect directory HTML content."""
+    """Parses term list from HealthDirect directory HTML content with parenthetical synonyms."""
     soup = BeautifulSoup(html_content, "html.parser")
     terms = {}
     
+    def add_term_link(term_text, href):
+        if href.startswith("#") or href in ["/health-topics", "/medicines", "/health-topics/conditions", "/health-topics/symptoms", "/health-topics/procedures"]:
+            return
+        
+        full_url = f"https://www.healthdirect.gov.au{href}" if href.startswith("/") else href
+        primary_key, synonym = extract_parenthetical_term(term_text, href)
+        
+        if primary_key:
+            if primary_key not in terms:
+                terms[primary_key] = {"url": full_url, "synonyms": []}
+            if synonym and synonym != primary_key and synonym not in terms[primary_key]["synonyms"]:
+                terms[primary_key]["synonyms"].append(synonym)
+                
+            # Also add the synonym as a reference key in the parsed dict pointing to same URL 
+            # to make sure the crawling pipeline matches it and doesn't skip it!
+            if synonym and synonym not in terms:
+                terms[synonym] = {"url": full_url, "formal_name": primary_key}
+
     # 1. Look for HealthTopics/Conditions/Symptoms lists: ul.article_lists-column or section.article_lists
     topic_containers = soup.find_all(class_=re.compile(r"article_lists"))
     
@@ -42,36 +94,17 @@ def parse_html_terms(html_content: str) -> dict:
     if containers:
         for container in containers:
             for a in container.find_all("a", href=True):
-                href = a["href"]
-                # Skip any relative anchor links, or parent category links if they don't look like actual items
-                if href.startswith("#") or href == "/health-topics" or href == "/medicines":
-                    continue
-                term_text = a.get_text()
-                cleaned_name = clean_term_name(term_text)
-                if cleaned_name:
-                    if href.startswith("/"):
-                        full_url = f"https://www.healthdirect.gov.au{href}"
-                    else:
-                        full_url = href
-                    terms[cleaned_name] = {"url": full_url}
+                add_term_link(a.get_text(), a["href"])
     
     # Fallback to general matching if no specific containers were found
     if not terms:
         for a in soup.find_all("a", href=True):
             href = a["href"]
-            # Exclude top level directory paths as terms themselves
             if href.rstrip("/") in ["/medicines", "/health-topics", "/health-topics/conditions", "/health-topics/symptoms", "/health-topics/procedures"]:
                 continue
             if "/medicines/" in href or "/health-topics/" in href:
-                term_text = a.get_text()
-                cleaned_name = clean_term_name(term_text)
-                if cleaned_name:
-                    if href.startswith("/"):
-                        full_url = f"https://www.healthdirect.gov.au{href}"
-                    else:
-                        full_url = href
-                    terms[cleaned_name] = {"url": full_url}
-                    
+                add_term_link(a.get_text(), href)
+                
     return terms
 
 _robots_cache = {}
@@ -419,17 +452,28 @@ def merge_glossaries(existing_glossary: dict, scraped_glossary: dict) -> dict:
     merged = existing_glossary.copy()
     
     for term, data in scraped_glossary.items():
+        # If the scraped entry has a formal_name, we skip it here as it was added as an alias reference in parse_html_terms,
+        # but its synonyms are already mapped under the main clinical term.
+        if "formal_name" in data:
+            continue
+            
         if term not in merged:
             merged[term] = {
                 "translations": {},
                 "url": data["url"]
             }
         else:
-            # If the term exists, ensure we keep its translations and description,
-            # but preserve or update URL if missing.
             if "url" not in merged[term]:
                 merged[term]["url"] = data["url"]
                 
+        # Merge synonyms into informal_english
+        if "synonyms" in data and data["synonyms"]:
+            if "informal_english" not in merged[term]:
+                merged[term]["informal_english"] = []
+            for syn in data["synonyms"]:
+                if syn not in merged[term]["informal_english"]:
+                    merged[term]["informal_english"].append(syn)
+                    
     return merged
 
 def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: callable = None, languages: dict = None) -> dict:
@@ -482,17 +526,30 @@ def pre_translate_terms(glossary: dict, project_id: str = None, save_callback: c
                 if client and project_id:
                     try:
                         print(f"  Translating '{term}' -> {lang_name} ({lang_code})...")
+                        informal_list = data.get("informal_english", [])
+                        contents_to_translate = [term] + list(informal_list)
+                        
                         response = client.translate_text(
                             request={
                                 "parent": f"projects/{project_id}/locations/global",
-                                "contents": [term],
+                                "contents": contents_to_translate,
                                 "mime_type": "text/plain",
                                 "source_language_code": "en",
                                 "target_language_code": lang_code,
                             }
                         )
                         if response.translations:
-                            data["translations"][lang_name] = response.translations[0].translated_text
+                            formal_translated = response.translations[0].translated_text
+                            informal_translated_list = [trans.translated_text for trans in response.translations[1:]]
+                            
+                            if informal_translated_list:
+                                data["translations"][lang_name] = {
+                                    "formal": formal_translated,
+                                    "informal": informal_translated_list
+                                }
+                            else:
+                                data["translations"][lang_name] = formal_translated
+                                
                             print(f"    {lang_name}: {data['translations'][lang_name]}")
                             translated_any = True
                     except Exception as e:
@@ -518,6 +575,7 @@ def load_glossary_json(filepath: str) -> dict:
                     "translations": entry.get("translations", {}),
                     "description": entry.get("description", ""),
                     "url": entry.get("url", ""),
+                    "informal_english": entry.get("informal_english", []),
                     "Spanish_grounding_url": entry.get("Spanish_grounding_url", ""),
                     "Spanish_grounding_snippet": entry.get("Spanish_grounding_snippet", ""),
                     "Vietnamese_grounding_url": entry.get("Vietnamese_grounding_url", ""),
@@ -540,6 +598,8 @@ def save_glossary_json(flat_glossary: dict, filepath: str) -> None:
         }
         if data.get("url"):
             entry["url"] = data["url"]
+        if data.get("informal_english"):
+            entry["informal_english"] = data["informal_english"]
             
         # Add grounding fields if present
         for field in [
@@ -567,12 +627,31 @@ def export_to_csv(glossary: dict, csv_path: str) -> int:
         writer.writerow(["en", "es", "vi"])
         for term, data in glossary.items():
             translations = data.get("translations", {})
-            es_trans = translations.get("Spanish", "").strip()
-            vi_trans = translations.get("Vietnamese", "").strip()
+            es_trans = translations.get("Spanish", "")
+            vi_trans = translations.get("Vietnamese", "")
+            
+            # Helper to format field (which can be a string or a dict)
+            def format_field(val):
+                if isinstance(val, dict):
+                    formal = val.get("formal", "")
+                    informal_list = val.get("informal", [])
+                    if isinstance(informal_list, str):
+                        informal_list = [informal_list]
+                    parts = []
+                    if formal:
+                        parts.append(f"formal: {formal}")
+                    if informal_list:
+                        parts.append(f"informal: {', '.join(informal_list)}")
+                    return " | ".join(parts)
+                return str(val).strip()
+
+            es_str = format_field(es_trans)
+            vi_str = format_field(vi_trans)
+            
             # GCP Translation V3 requires all language fields to be populated in multilingual glossaries.
             # Only export entries that are fully translated.
-            if term and es_trans and vi_trans:
-                writer.writerow([term, es_trans, vi_trans])
+            if term and es_str and vi_str:
+                writer.writerow([term, es_str, vi_str])
                 count += 1
     return count
 

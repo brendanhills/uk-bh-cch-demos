@@ -16,10 +16,10 @@
     - [ ] Ensure that `scrape_state.json` is actively loaded, updated, and flushed after *each* successful alphabetical page scrape to track URL coverage.
     - [ ] Add idempotency checks to translation and grounding routines to bypass already processed terms based on current `glossary.json` contents.
     - [ ] Add tests verifying that interrupting and restarting `import_glossary.py` results in zero redundant network/API operations.
-- [ ] Task: Implement synonym auto-scraping and formal/informal nesting
-    - [ ] Implement parenthetical splitting in scraper/cleaner to capture both clinical/formal names and colloquial/informal synonyms (e.g., `ear infection (otitis media)`).
-    - [ ] Update translation and data saving routines to structure synonyms into nested `{ "formal": "...", "informal": [...] }` dictionaries under the standard translation schema.
-    - [ ] Write unit tests verifying that synonyms are correctly scraped, nested in JSON, and flattened in CSV output.
+- [x] Task: Implement synonym auto-scraping and formal/informal nesting
+    - [x] Implement parenthetical splitting in scraper/cleaner to capture both clinical/formal names and colloquial/informal synonyms (e.g., `ear infection (otitis media)`).
+    - [x] Update translation and data saving routines to structure synonyms into nested `{ "formal": "...", "informal": [...] }` dictionaries under the standard translation schema.
+    - [x] Write unit tests verifying that synonyms are correctly scraped, nested in JSON, and flattened in CSV output.
 - [ ] Task: Execute full scraping, translation, and search-grounding run (multi-invocation test)
     - [ ] Run `import_glossary.py` targeting all sub-directories. 
     - [ ] Interrupt the run intentionally, then restart it to verify seamless, idempotent pickup from the saved checkpoint state.
