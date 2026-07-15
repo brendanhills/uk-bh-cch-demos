@@ -35,6 +35,9 @@ mkdir -p "${GLOBAL_PLUGINS_DIR}"
 echo -e "  Target: ${BLUE}${GLOBAL_PLUGINS_DIR}/conductor${NC}"
 rm -rf "${GLOBAL_PLUGINS_DIR}/conductor"
 cp -r "${LOCAL_PLUGIN_DIR}" "${GLOBAL_PLUGINS_DIR}/conductor"
+if [ -f "${SCRIPT_DIR}/metadata.json" ]; then
+  cp "${SCRIPT_DIR}/metadata.json" "${GLOBAL_PLUGINS_DIR}/conductor/metadata.json"
+fi
 echo -e "  ${GREEN}Successfully synchronized config plugin!${NC}"
 
 # 3. Provision and Synchronize CLI plugins directory (~/.gemini/antigravity-cli/plugins)
@@ -43,7 +46,11 @@ mkdir -p "${CLI_PLUGINS_DIR}"
 echo -e "  Target: ${BLUE}${CLI_PLUGINS_DIR}/conductor${NC}"
 rm -rf "${CLI_PLUGINS_DIR}/conductor"
 cp -r "${LOCAL_PLUGIN_DIR}" "${CLI_PLUGINS_DIR}/conductor"
+if [ -f "${SCRIPT_DIR}/metadata.json" ]; then
+  cp "${SCRIPT_DIR}/metadata.json" "${CLI_PLUGINS_DIR}/conductor/metadata.json"
+fi
 echo -e "  ${GREEN}Successfully synchronized CLI plugin!${NC}"
+
 
 # 4. Sincronizar workflows globales llamando a setup_conductor.sh
 echo -e "\n${BLUE}[+] Sincronizando flujos de trabajo (workflows) globales...${NC}"
