@@ -27,12 +27,15 @@ CRITICAL: You must validate the success of every tool call. If any tool call fai
 ## 2.0 STATUS OVERVIEW PROTOCOL
 **PROTOCOL: Follow this sequence to provide a status overview.**
 
-### 2.1 Read Project Plan
+### 2.1 Read Project Plan and Bugs
 1.  **Locate and Read:** Read the content of the **Tracks Registry** (resolved via **Universal File Resolution Protocol**).
 2.  **Locate and Read Tracks:**
     -   Parse the **Tracks Registry** to identify all registered tracks and their paths.
         *   **Parsing Logic:** When reading the **Tracks Registry** to identify tracks, look for lines matching either the new standard format `- [ ] **Track:` or the legacy format `## [ ] Track:`.
     -   For each track, resolve and read its **Implementation Plan** (using **Universal File Resolution Protocol** via the track's index file).
+3.  **Read Bugs Registry (Optional)**:
+    -   Check if `.agents/bugs.json` exists in the current workspace directory.
+    -   If it exists, read and parse it as a JSON array of bugs.
 
 ### 2.2 Parse and Summarize Plan
 1.  **Parse Content:**
@@ -42,6 +45,11 @@ CRITICAL: You must validate the success of every tool call. If any tool call fai
     -   The total number of major phases.
     -   The total number of tasks.
     -   The number of tasks completed, in progress, and pending.
+3.  **Summarize Bugs**:
+    -   If the bugs array was successfully parsed:
+        -   Count total unresolved bugs (status is NOT `"Fix Verified"` and NOT `"Closed"`).
+        -   Calculate breakdown by priority (`P0`, `P1`, `P2`, `P3`) for unresolved bugs.
+        -   Extract a list of all unresolved `P0` and `P1` bugs.
 
 ### 2.3 Present Status Overview
 1.  **Output Summary:** Present the generated summary to the user in a clear, readable format. The status report must include:
@@ -53,5 +61,10 @@ CRITICAL: You must validate the success of every tool call. If any tool call fai
     -   **Phases (total):** The total number of major phases.
     -   **Tasks (total):** The total number of tasks.
     -   **Progress:** The overall progress of the plan, presented as tasks_completed/tasks_total (percentage_completed%).
+    -   **Bugs Summary (if bugs file exists)**:
+        -   **Total Active Bugs**: Count of unresolved bugs.
+        -   **Priority Breakdown**: e.g., `P0: X | P1: Y | P2: Z | P3: W`
+        -   **Active P0/P1 Items**: List each active `P0` or `P1` bug as `- [#ID] (Priority): <Description>`
+
 
 """

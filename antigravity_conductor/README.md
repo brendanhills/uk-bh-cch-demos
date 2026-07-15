@@ -4,125 +4,110 @@ Based on the original [Conductor Repository](https://github.com/gemini-cli-exten
 
 **Measure twice, code once.**
 
-Conductor is a workflow methodology that enables **Context-Driven Development**. It turns your AI assistant into a proactive project manager that follows a strict protocol to specify, plan, and implement software features and bug fixes.
+Conductor is a workflow methodology that enables **Context-Driven Development** inside Antigravity. It turns your AI assistant into a proactive project manager that follows a strict protocol to specify, plan, and implement software features and bug fixes.
 
 Instead of just writing code, Conductor ensures a consistent, high-quality lifecycle for every task: **Context -> Spec & Plan -> Implement**.
 
-The philosophy is simple: by treating context as a managed artifact alongside your code, you transform your repository into a single source of truth that drives every agent interaction with deep, persistent project awareness.
+---
 
-## 🚀 Features
+## 🚀 Feature Matrix: OOTB vs. Our Custom Enhancements
 
-### 📋 Conductor Methodology Features
-- **Context-Driven Development**: Treat context as a managed artifact (Product, Tech Stack, Guidelines).
-- **Plan Before You Build**: Automated generation of `spec.md` and `plan.md` for tracks.
-- **Safe Iterations**: Manual verification checkpoints at phase ends.
+We have taken the core out-of-the-box (OOTB) Conductor capabilities and significantly upgraded them into an enterprise-grade, robust, and highly automated software engineering toolkit.
 
-### 🛠️ Antigravity Workflow Features (This Repo)
-- **Upstream Synchronization**: `./sync_conductor_github.sh` checks for reference updates without clobbering local defaults.
-- **Syntax Verification Tests**: Automated PyTest suite (`tests/test_syntax.py`) to validate all `.toml` and `.md` files.
-- **Local Workspace Setup**: `./setup_conductor.sh` to symlink commands into your Antigravity runtime.
+### 1. Core Out-of-the-Box (OOTB) Features
+
+The foundational Conductor protocol provides structured tracking and spec-driven development:
+
+*   **Context-Driven Setup (`/conductor:setup`)**: Interactive onboarding that configures `product.md`, `tech-stack.md`, `workflow.md`, and `product-guidelines.md` as the project's single source of truth.
+*   **Spec & Plan Generation (`/conductor:newTrack`)**: Automatically initializes a track folder containing `spec.md`, `plan.md`, and `metadata.json` for any proposed feature, forcing architectural mapping before any coding begins.
+*   **Protocol-Driven Implementation (`/conductor:implement`)**: An agent-guided execution loop that iterates over `plan.md` tasks sequentially, enforcing manual validation checks at phase boundaries.
+*   **Automated Sync & Review (`/conductor:review`)**: Validates implemented features against your project standards and automatically updates high-level product specifications upon completion.
+*   **Safe Reversion (`/conductor:revert`)**: Restores code and tracks registry to a clean previous checkpoint if a feature implementation is cancelled or fails verification.
+
+---
+
+### 2. Our Enhanced & Custom Added Features (New!)
+
+To support complex developer setups, fast bug fixes, and rigorous command safety, we designed and built these powerful new modules:
+
+#### A. Centralized Multi-Runner Installation & Removal
+*   **Global Plugin Installer (`./install_conductor.sh`)**: Symmetrically copies the Conductor extension to both the system extension directory (`~/.gemini/config/plugins/conductor`) and the CLI configuration directory (`~/.gemini/antigravity-cli/plugins/conductor`). It automatically compiles and installs all 10 global workflows to ensure absolute consistency in `agy`, `antigravity-cli`, `antigravity-x64`, etc.
+*   **Surgical Uninstaller (`./uninstall_conductor.sh`)**: Symmetrically purges Conductor from both system and CLI plugin directories, and cleanly removes all Conductor global workflow files while leaving other custom tools untouched.
+
+#### B. Lightweight Bug Tracking System
+*   **`/conductor:bug <description>`**: Quickly flag a bug. Prompts for **Impact** and **Priority**, automatically calculates the next ID, records current timestamps and workspace paths, and writes directly to `.agents/bugs.json`.
+*   **`/conductor:bug-list [all]`**: Generates a clean markdown table of unresolved bugs grouped by priority, with `P0` listed at the top. Append `all` to show completed/closed items.
+*   **`/conductor:bug-triage [id]`**: Opens an interactive, guided CLI wizard allowing developers to adjust priority, modify the description, or advance the bug's status (`New` $\rightarrow$ `Investigating` $\rightarrow$ `Fix Implemented` $\rightarrow$ `Fix Verified` $\rightarrow$ `Closed`).
+*   **`/conductor:bug-fix <id>`**: Bypasses heavy track folder overhead. Directly guides the agent to locate the code defect, implement the fix, run workspace tests to verify success, and immediately mark the bug as `"Fix Implemented"`.
+
+#### C. Unified Dashboard Integration (`/conductor:status`)
+*   **Bugs Aggregation**: Automatically scans your workspace for `.agents/bugs.json` and parses it on-the-fly.
+*   **Metrics & Blockers**: Merges track progress metrics with your active bugs. The status report now lists the count of unresolved bugs, breakdown by priority (`P0: X | P1: Y ...`), and a bulleted list of active `P0/P1` items serving as critical blockers.
+
+#### D. Automated Validation & Testing Harnesses
+*   **TOML Structure Validator (`test_conductor_validation.py`)**: Automatically asserts that all commands under `commands/` have description and prompt metadata, conform to standard layout rules (including `SYSTEM DIRECTIVE` and `SETUP CHECK` headings), and map correctly to corresponding Markdown workflow files in `workflows/`.
+*   **Workspace Integrity & Schema Validator (`test_workspace_validation.py`)**: Validates the structural health of your workspace. It parses `.agents/bugs.json` to enforce strict formatting and valid statuses/priorities, and scans `conductor/tracks.md` to flag broken links, empty directories, or missing spec files.
+
+#### E. End-of-Session Checkpoint Tooling
+*   **`/conductor:checkpoint`**: Automatically performs your end-of-session handoff workflow right from within the Conductor command system. It checks Conductor tracks status, audits recent Git diffs, updates `README.md` dynamically, writes/overwrites a durable session `resume.md` handoff file, commits all changes (auto-branching off main/master if needed), and offers to push to origin!
+
+---
+
 
 ## 📁 Repository Structure
 
-- `commands/`: Conductor command definitions (e.g., `setup.toml`, `newTrack.toml`).
-- `policies/`: Antigravity tool usage policies (permits Plan Mode edits).
-- `tests/`: PyTest validation suite using Python's `tomllib`.
-- `sync_conductor_github.sh`: Script to automatically fetch upstream changes and verify against local customizations.
-- `setup_conductor.sh`: Symlinks local workflows into the Antigravity runtime environment.
+```
+.
+├── commands/                  # Conductor TOML command definitions
+│   ├── bug.toml               # (New!) /conductor:bug definition
+│   ├── bugFix.toml            # (New!) /conductor:bug-fix definition
+│   ├── bugList.toml           # (New!) /conductor:bug-list definition
+│   ├── bugTriage.toml         # (New!) /conductor:bug-triage definition
+│   ├── checkpoint.toml        # (New!) /conductor:checkpoint definition
+│   ├── status.toml            # (Enhanced) Unified dashboard status command
+│   └── ...                    # Other core commands (setup, implement, etc.)
+├── workflows/                 # Markdown wrapper files for slash commands
+│   ├── conductor-bug*.md      # (New!) Bug tracking workflow files
+│   ├── conductor-checkpoint.md # (New!) Checkpoint session workflow file
+│   └── ...                    # Core workflow files
+├── tests/                     # Validation suite
+│   ├── test_syntax.py         # OOTB syntax validator (JSON/TOML/MD)
+│   ├── test_conductor_validation.py  # (New!) Command structure validator
+│   └── test_workspace_validation.py  # (New!) Active workspace integrity checker
+├── install_conductor.sh       # (New!) Global multirunner setup script
+├── uninstall_conductor.sh     # (New!) Symmetrical uninstaller script
+├── setup_conductor.sh         # Symlinks workspace commands into global workflows
+└── sync_conductor_github.sh   # Slices upstream changes with local customizations
+```
+
+---
 
 ## ⚙️ Prerequisites
 
-- **uv** (Recommended dependency manager, https://github.com/astral-sh/uv)
-- **Python 3.11+**
-- **PyTest** (Managed automatically if using `uv`)
-- **Git** (for sync script cloning)
+*   **uv** (Recommended python package and environment manager: https://github.com/astral-sh/uv)
+*   **Python 3.11+**
+*   **PyTest** (Managed automatically if using `uv`)
 
-## 🛠️ Usage
+---
 
-### 1. Setup Local Symlinks
-To link these workflows into your global Antigravity environment, run:
+## 🛠️ Getting Started
+
+### 1. Install Globally (Run Once)
+To install the Conductor plugin and register all the OOTB and enhanced workflows across all your runners:
 ```bash
-./setup_conductor.sh
+./install_conductor.sh
 ```
 
-### 2. Set Up the Project (Run Once)
-When you run `/conductor-setup`, Conductor helps you define the core components of your project context.
-
-- **Product**: Define project context (e.g., users, goals, features).
-- **Product guidelines**: Define standards (prose style, branding).
-- **Tech stack**: Configure technical preferences (languages, frameworks).
-- **Workflow**: Set team preferences (TDD, commit strategy).
-
-**Generated Artifacts:**
-- `conductor/product.md`
-- `conductor/product-guidelines.md`
-- `conductor/tech-stack.md`
-- `conductor/workflow.md`
-- `conductor/code_styleguides/`
-- `conductor/tracks.md`
-
+### 2. Verify Your Configuration
+Run the automated testing suite at any time to verify that your workflows and commands conform perfectly to standard Conductor rules:
 ```bash
-/conductor-setup
+uv run pytest tests/
 ```
 
-### 3. Start a New Track (Feature or Bug)
-When you’re ready to take on a new feature or bug fix, run `/conductor-new-track`. This initializes a **track** — a high-level unit of work.
-
-- **Specs**: The detailed requirements for the specific job. What are we building and why?
-- **Plan**: An actionable to-do list containing phases, tasks, and sub-tasks.
-
-**Generated Artifacts:**
-- `conductor/tracks/<track_id>/spec.md`
-- `conductor/tracks/<track_id>/plan.md`
-- `conductor/tracks/<track_id>/metadata.json`
-
+### 3. Uninstall Globally
+To completely clean out and remove Conductor and its global workflows:
 ```bash
-/conductor-new-track
-# OR with a description
-/conductor-new-track "Add a dark mode toggle to the settings page"
-```
-
-### 4. Implement the Track
-Once you approve the plan, run `/conductor-implement`. Your coding agent then works through the `plan.md` file, checking off tasks as it completes them.
-
-```bash
-/conductor-implement
-```
-
-Conductor will:
-1. Select the next pending task.
-2. Follow the defined workflow (e.g., TDD).
-3. Verify progress at the end of each phase.
-
-### 5. Check Status, Review, and Revert
-- **Check status**: Get a high-level overview of project progress.
-  ```bash
-  /conductor-status
-  ```
-- **Review work**: Review completed work against guidelines and the plan.
-  ```bash
-  /conductor-review
-  ```
-- **Revert work**: Undo a feature or a specific task if needed.
-  ```bash
-  /conductor-revert
-  ```
-
-## 🔍 Upstream Verification
-
-To fetch the latest reference features from GitHub and review diffs without overriding your customizations:
-```bash
-./sync_conductor_github.sh
-```
-*Outputs will be saved to `diff_report.txt`.*
-
-To run syntax validation tests:
-```bash
-# Recommended (handles virtualenv and installs pytest automatically)
-uv run pytest tests/test_syntax.py
-
-# Standalone Python fallback
-pytest tests/test_syntax.py
+./uninstall_conductor.sh
 ```
 
 ---
