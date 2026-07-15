@@ -193,3 +193,72 @@ def test_websocket_priming_injection(monkeypatch):
             assert "bilingual medical interpreter" in prompt_n_text
             assert "Nurse" in prompt_n_text
             assert "Fieber" in prompt_n_text
+
+def test_load_and_format_glossary_colloquial_formal_edge_cases(monkeypatch):
+    """Verify load_and_format_glossary under various formal/informal dictionary structures and edge cases.
+    For example:
+    1. Entry has ONLY formal translation.
+    2. Entry has ONLY informal translation (flat list or string).
+    3. Flat string translation (backward compatibility).
+    """
+    test_data = {
+        "glossary": [
+            {
+                "english": "cephalalgia",
+                "translations": {
+                    "Spanish": {
+                        "formal": "cefalalgia"
+                        # informal is completely missing
+                    }
+                },
+                "description": "severe headache"
+            },
+            {
+                "english": "ear infection",
+                "informal_english": ["earache"],
+                "translations": {
+                    "Spanish": {
+                        # formal is completely missing
+                        "informal": ["dolor de oído", "infección de oído"]
+                    }
+                },
+                "description": "otitis media inflammation"
+            },
+            {
+                "english": "fever",
+                "translations": {
+                    "Spanish": "fiebre" # Flat string style
+                }
+            }
+        ]
+    }
+    
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as tmp:
+        json.dump(test_data, tmp)
+        tmp_name = tmp.name
+        
+    try:
+        monkeypatch.setattr(web_server, "GLOSSARY_PATH", tmp_name)
+        
+        # Test Nurse -> Patient direction (English -> Spanish)
+        spanish_n_to_p = load_and_format_glossary("Spanish", direction="n_to_p")
+        # 1. Cephalalgia only has formal:
+        assert "cephalalgia -> cefalalgia" in spanish_n_to_p
+        # 2. Ear infection only has informal:
+        assert "earache -> dolor de oído, infección de oído" in spanish_n_to_p
+        # 3. Fever flat string:
+        assert "fever -> fiebre" in spanish_n_to_p
+        
+        # Test Patient -> Nurse direction (Spanish -> English)
+        spanish_p_to_n = load_and_format_glossary("Spanish", direction="p_to_n")
+        # 1. Cephalalgia only has formal:
+        assert "cefalalgia -> cephalalgia" in spanish_p_to_n
+        # 2. Ear infection only has informal:
+        assert "dolor de oído -> earache" in spanish_p_to_n
+        assert "infección de oído -> earache" in spanish_p_to_n
+        # 3. Fever flat string:
+        assert "fiebre -> fever" in spanish_p_to_n
+        
+    finally:
+        if os.path.exists(tmp_name):
+            os.remove(tmp_name)
