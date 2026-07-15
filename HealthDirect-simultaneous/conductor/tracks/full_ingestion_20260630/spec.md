@@ -12,10 +12,13 @@ To make this intensive operation extremely robust, the pipeline will support **i
 4. **Data Synchronization & Backups:** Save progressive updates immediately to `glossary/glossary.json` and `glossary/glossary.csv` after each alphabetical page is processed, ensuring zero data loss on unexpected termination.
 5. **GCS & GCP Registration:** Upon 100% completion of the index listings, upload the compiled multilingual glossary CSV and JSON files to GCS and recreate the immutable GCP Translation Glossary resource in production.
 6. **GCS Sync/Download Support:** Maintain a `--download-gcs` option in the import script to pull the compiled dictionary from GCS into the local environment, ensuring that other developers can download the fully pre-compiled assets instantly.
+7. **Synonym Parsing & Formal/Informal Nesting:** Detect parenthetical patterns like `primary_term (synonym)` in crawl results (e.g., `middle ear infection (otitis media)` or `amoxil (amoxicillin)`). Automatically split these into formal clinical keys and informal/colloquial aliases. During translation, translate both formal and informal components and structure them into nested `{ "formal": "...", "informal": [...] }` dictionaries under our standard translation schema.
 
 ## Acceptance Criteria
 - No data loss occurred during the full migration (verified via progressive JSON/CSV commits).
 - The pipeline is fully idempotent: running `import_glossary.py` repeatedly does not perform duplicate scrapes, translations, or search grounding requests.
-- The exported CSV contains all translated terms formatted with standard translation headers (`en, es, vi`).
+- Scraped parenthetical terms are correctly parsed and split into formal and informal parts.
+- The resulting `glossary.json` contains nested formal/informal dictionaries conforming to our strict translation schema.
+- The exported CSV flattens the formal/informal nested dictionary keys into clear, readable text values (`formal: ... | informal: ...`).
 - The GCP Translation V3 Glossary is successfully updated and available for active interpreter prompts.
 - A developer can run `import_glossary.py --download-gcs` to successfully download the latest pre-compiled glossary from GCS, instantly populating the local workspace.

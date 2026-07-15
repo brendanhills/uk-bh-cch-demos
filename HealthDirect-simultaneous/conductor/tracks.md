@@ -31,7 +31,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Full Dictionary Ingestion & Production Registry**
+- [~] **Track: Full Dictionary Ingestion & Production Registry**
 *Link: [./tracks/full_ingestion_20260630/](./tracks/full_ingestion_20260630/)*
 
 ---
@@ -76,8 +76,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Glossary Synonyms & Formal/Informal Translation Mappings**
-  *Link: [./tracks/glossary_synonyms_20260706/](./tracks/glossary_synonyms_20260706/)*
+- [x] **Track: Glossary Synonyms & Formal/Informal Translation Mappings** (Merged into Full Dictionary Ingestion)
+  *Link: [./tracks/full_ingestion_20260630/](./tracks/full_ingestion_20260630/)*
 
 ---
 

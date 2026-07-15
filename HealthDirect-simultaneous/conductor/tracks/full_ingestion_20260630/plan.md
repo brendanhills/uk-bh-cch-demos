@@ -2,12 +2,12 @@
 
 ## Phase 1: GCS Sync Support Implementation
 
-- [ ] Task: Add GCS Download command support to import script
-    - [ ] Add the `--download-gcs` command-line argument to `import_glossary.py`.
-    - [ ] Implement a function to download `glossary.json` and `glossary.csv` from GCS (using `google-cloud-storage` client library) to local `glossary/` folder.
-    - [ ] Handle missing remote files or credentials gracefully with clear developer feedback.
-- [ ] Task: Write tests verifying GCS Sync behavior
-    - [ ] Add unit tests simulating/mocking GCS download and verifying that files are correctly saved to the local workspace.
+- [x] Task: Add GCS Download command support to import script
+    - [x] Add the `--download-gcs` command-line argument to `import_glossary.py`.
+    - [x] Implement a function to download `glossary.json` and `glossary.csv` from GCS (using `google-cloud-storage` client library) to local `glossary/` folder.
+    - [x] Handle missing remote files or credentials gracefully with clear developer feedback.
+- [x] Task: Write tests verifying GCS Sync behavior
+    - [x] Add unit tests simulating/mocking GCS download and verifying that files are correctly saved to the local workspace.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: GCS Sync Support Implementation' (Protocol in workflow.md)
 
 ## Phase 2: Operational Ingestion, Idempotency & GCS Verification
@@ -16,6 +16,10 @@
     - [ ] Ensure that `scrape_state.json` is actively loaded, updated, and flushed after *each* successful alphabetical page scrape to track URL coverage.
     - [ ] Add idempotency checks to translation and grounding routines to bypass already processed terms based on current `glossary.json` contents.
     - [ ] Add tests verifying that interrupting and restarting `import_glossary.py` results in zero redundant network/API operations.
+- [ ] Task: Implement synonym auto-scraping and formal/informal nesting
+    - [ ] Implement parenthetical splitting in scraper/cleaner to capture both clinical/formal names and colloquial/informal synonyms (e.g., `ear infection (otitis media)`).
+    - [ ] Update translation and data saving routines to structure synonyms into nested `{ "formal": "...", "informal": [...] }` dictionaries under the standard translation schema.
+    - [ ] Write unit tests verifying that synonyms are correctly scraped, nested in JSON, and flattened in CSV output.
 - [ ] Task: Execute full scraping, translation, and search-grounding run (multi-invocation test)
     - [ ] Run `import_glossary.py` targeting all sub-directories. 
     - [ ] Interrupt the run intentionally, then restart it to verify seamless, idempotent pickup from the saved checkpoint state.
