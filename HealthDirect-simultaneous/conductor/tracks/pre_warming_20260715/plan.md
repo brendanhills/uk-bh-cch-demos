@@ -2,7 +2,10 @@
 
 This plan details the design and testing phases required to implement stateful WebSocket preloading and model prewarming.
 
-## Phase 1: Configuration, CLI Override, and Base Pre-warming Loop (TDD)
+## Phase 1: Configuration, CLI Override, and Sandbox Verification (TDD)
+- [ ] Task: Pre-warming Sandbox Verification Tool
+    - [ ] Create `utils/test_prewarming_sandbox.py` to allow isolated sandbox testing of the sparse digital silence keep-alive loop and latency measurement.
+    - [ ] Run the sandbox script and verify that sparse silence keep-alives hold the channel hot for 15 seconds without closing and respond to voice swaps without triggering VAD regressions.
 - [ ] Task: Add Config Default & CLI Switch
     - [ ] Add `"enable_prewarming": true` to `demo/interpreter_config.json`.
     - [ ] Implement CLI parser flag `--no-prewarm` inside `demo/web_server.py`.
