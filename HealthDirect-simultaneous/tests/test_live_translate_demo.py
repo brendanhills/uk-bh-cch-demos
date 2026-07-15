@@ -1,7 +1,7 @@
 import pytest
 import re
 from unittest.mock import patch
-from live_translate_demo import print_row
+from demo.web_server import print_row
 
 def len_visible(text: str) -> int:
     # Helper to strip ANSI codes and get visible length
