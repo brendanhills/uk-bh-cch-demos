@@ -96,7 +96,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
+- [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
   *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
 
 ---
@@ -121,7 +121,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Review and clean up obsolete scripts and consolidate helper utilities**
+- [~] **Track: Review and clean up obsolete scripts and consolidate helper utilities**
   *Link: [./tracks/cleanup_and_merge_scripts_20260715/](./tracks/cleanup_and_merge_scripts_20260715/)*
 
 
