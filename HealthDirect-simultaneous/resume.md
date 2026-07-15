@@ -1,33 +1,23 @@
-# Working Session Handoff: July 14, 2026 (5:20 PM)
+# Working Session Handoff: 2026-07-15T13:41:00+10:00
 
 ## 📝 Session Summary
-- **What we did**:
-  - **Bug #9 Resolution (Vietnamese Audio Sample Pacing & Spacing)**:
-    - Reverted the custom pacing thresholds back to the standard defaults: `ceased_audio_threshold: 4.5` seconds and `additional_pause_sec: 2.0` seconds in both workspaces' `demo/pacing_config.json`.
-    - Set the default `tail_buffer_ms` in `generate_simultaneous_audio.py` back to the standard `2500` ms.
-    - Recompiled all simultaneous stereo audio files (German, Spanish, Vietnamese, and Arabic) and synchronized calculated start times back to their respective metadata JSON files.
-    - Successfully resolved the playback issue and long gaps in the Vietnamese sample, ensuring pacing is perfectly synchronized and aligned with standard settings.
-    - Copied the newly compiled Vietnamese audio (`samples/paediatric_vietnamese_demo.wav`) and its synchronized metadata (`samples/metadata/paediatric_vietnamese_demo.json`) over to the standard `HealthDirect` workspace to guarantee full cross-workspace parity.
-  - **Simultaneous Timeline Tests Restoration**:
-    - Reverted pacing and silence gap assertions in `tests/test_simultaneous_timeline.py` back to standard 2500ms bounds, matching the project-wide pacing defaults.
-    - Verified all timeline and glossary loader tests pass flawlessly.
-
-- **Workspace State**:
+- **What we did**: 
+  - Completed the **Full Dictionary Ingestion & Production Registry** track under Conductor.
+  - Upgraded `export_to_csv` in [import_glossary.py](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/import_glossary.py) to be completely dynamic. It now automatically discovers all translated languages present in the local JSON database (including English, Spanish, Vietnamese, Arabic, German, Hindi, and Japanese), mapping them to standard codes and exporting a fully complete, flat multi-lingual CSV file for GCP Translation V3.
+  - Implemented dual-format GCS syncing: upon a successful run, both `glossary.csv` and `glossary.json` are uploaded together, allowing seamless restoring of clean environments via the `--download-gcs` command.
+  - Created and ran robust test suites verifying lockstep database alignment ([tests/test_glossary_alignment.py](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/tests/test_glossary_alignment.py)) and formal/informal edge cases for the web server's loader module ([tests/test_glossary_loader.py](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/tests/test_glossary_loader.py)). All tests passed with 100% success.
+- **Workspace State**: 
   - Active branch: `feature/simultaneous-multi-client`
-  - Modified files:
-    - [generate_simultaneous_audio.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/generate_simultaneous_audio.py)
-    - [demo/pacing_config.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/demo/pacing_config.json)
-    - [tests/test_simultaneous_timeline.py](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/tests/test_simultaneous_timeline.py)
-    - [samples/metadata/paediatric_vietnamese_demo.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/samples/metadata/paediatric_vietnamese_demo.json)
-    - [samples/metadata/de_fever_session.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/samples/metadata/de_fever_session.json)
-    - [../HealthDirect/demo/pacing_config.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/demo/pacing_config.json)
-    - [../HealthDirect/samples/paediatric_vietnamese_demo.json](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/samples/paediatric_vietnamese_demo.json)
-    - [../HealthDirect/samples/paediatric_vietnamese_demo.wav](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect/samples/paediatric_vietnamese_demo.wav)
+  - Uncommitted changes: Local `glossary/` files (JSON database and CSV) re-exported dynamically.
 
 ## 📌 Current Context & Progress
-- **Active Task**: Vietnamese sample pacing is restored and fully verified, in perfect parity with standard and simultaneous workspaces.
-- **System Performance**: Automated simultaneous timeline test suite passes flawlessly (0.37s).
+- **Active Track**: [Full Dictionary Ingestion & Production Registry](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/conductor/tracks/full_ingestion_20260630/) - **100% COMPLETED**
+- **Last Active Task**: Final test suite completion and git commits of the dynamic language alignment validation tests.
+
+## 🚦 Remaining Tasks & Blockers
+- **Conductor Next Tracks**:
+  - [Track: Browser-Side WebSocket Migration & Mic Streaming](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/conductor/tracks.md#L49-51) (Ready for launch/planning).
 
 ## 🚀 Immediate Next Steps
-1. **Launch Web Server**: Run `uv run demo/web_server.py` to manually verify the Vietnamese preset in the browser UI.
-2. **Clinical glossary enforcement evaluation**: Run evaluations on the live clinical glossary under different models.
+1. Push the final completed branch (`feature/simultaneous-multi-client`) to the remote origin.
+2. Launch and plan the next track: **Browser-Side WebSocket Migration & Mic Streaming**.
