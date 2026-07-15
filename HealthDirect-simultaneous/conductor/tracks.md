@@ -71,7 +71,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Web Server Modularization**
+- [ ] **Track: Web Server Modularization** (ON HOLD — High Risk)
   *Link: [./tracks/modularize_web_server_20260706/](./tracks/modularize_web_server_20260706/)*
 
 ---
@@ -96,7 +96,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
+- [x] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
   *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
 
 ---
@@ -126,7 +126,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: WebSocket pre-warming and model preloading for low latency**
+- [x] **Track: WebSocket pre-warming and model preloading for low latency**
   *Link: [./tracks/pre_warming_20260715/](./tracks/pre_warming_20260715/)*
 
 

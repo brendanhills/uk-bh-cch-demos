@@ -141,8 +141,12 @@
     <div class="app-container" style="max-width: 800px;">
         <div class="patient-card">
             <!-- Patient Connection Header -->
-            <div class="patient-header">
-                <h2>HealthDirect Patient Line</h2>
+            <div class="patient-header" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <h2 style="margin: 0;">HealthDirect Patient Line</h2>
+                <span id="prewarm-badge" class="badge" style="background-color: rgba(255,255,255,0.15); color: white; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.25);">
+                    <span id="prewarm-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: rgba(255,255,255,0.6); box-shadow: 0 0 6px rgba(255,255,255,0.4);"></span>
+                    <span id="prewarm-text">Standby: Off</span>
+                </span>
             </div>
 
             <!-- Connection Status -->

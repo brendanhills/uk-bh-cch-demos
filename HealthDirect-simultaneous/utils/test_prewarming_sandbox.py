@@ -96,9 +96,6 @@ async def run_prewarming_test():
             target_language_code="es",  # English to Spanish translation setup
             echo_target_language=True
         ),
-        system_instruction=types.Content(parts=[types.Part.from_text(
-            "You are a real-time medical interpreter. Translate the user's spoken words into Spanish immediately."
-        )])
     )
     
     print(f"📡 1. Establishing background WebSocket connection to: {MODEL_NAME}")

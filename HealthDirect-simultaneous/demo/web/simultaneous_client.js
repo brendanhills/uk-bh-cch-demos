@@ -181,6 +181,10 @@ function syncConfiguration() {
  */
 function handleServerMessage(msg) {
     switch (msg.type) {
+        case "prewarm_status":
+            updatePrewarmUI(msg.status);
+            break;
+
         case "state_sync":
         case "config_update":
             console.log("[State Sync]", msg);
@@ -223,6 +227,7 @@ function handleServerMessage(msg) {
 
         case "status":
             if (msg.status === "ready") {
+                updatePrewarmUI("disconnected");
                 initAudio();
                 patientOriginalPlayhead = audioCtx.currentTime + 0.1;
                 nurseOriginalPlayhead = audioCtx.currentTime + 0.1;
@@ -868,5 +873,61 @@ function resetLocalSession() {
         document.getElementById("btn-end").disabled = true;
         document.getElementById("preset-selector").disabled = false;
         document.getElementById("model-selector").disabled = false;
+    }
+}
+
+/**
+ * Updates the pre-warm connection standby badge and indicators.
+ */
+function updatePrewarmUI(status) {
+    const badge = document.getElementById("prewarm-badge");
+    const dot = document.getElementById("prewarm-dot");
+    const text = document.getElementById("prewarm-text");
+    if (!badge || !dot || !text) return;
+
+    badge.style.display = "inline-flex";
+
+    if (currentRole === "patient") {
+        // Patient styling overrides for dark teal background card
+        if (status === "connecting") {
+            badge.style.backgroundColor = "rgba(234, 179, 8, 0.25)";
+            badge.style.borderColor = "rgba(234, 179, 8, 0.4)";
+            dot.style.backgroundColor = "#facc15";
+            dot.style.boxShadow = "0 0 10px #eab308";
+            text.innerText = "Standby: Pre-warming...";
+        } else if (status === "ready") {
+            badge.style.backgroundColor = "rgba(45, 212, 191, 0.25)";
+            badge.style.borderColor = "rgba(45, 212, 191, 0.4)";
+            dot.style.backgroundColor = "#2dd4bf";
+            dot.style.boxShadow = "0 0 10px #2dd4bf";
+            text.innerText = "Standby: Hot & Ready";
+        } else {
+            badge.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+            badge.style.borderColor = "rgba(255, 255, 255, 0.25)";
+            dot.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
+            dot.style.boxShadow = "0 0 6px rgba(255, 255, 255, 0.4)";
+            text.innerText = "Standby: Off";
+        }
+    } else {
+        // Nurse standard light/dark mode styling overrides
+        if (status === "connecting") {
+            badge.style.backgroundColor = "#fef9c3";
+            badge.style.color = "#854d0e";
+            dot.style.backgroundColor = "#eab308";
+            dot.style.boxShadow = "0 0 10px #eab308";
+            text.innerText = "Standby: Pre-warming...";
+        } else if (status === "ready") {
+            badge.style.backgroundColor = "#ccfbf1";
+            badge.style.color = "#115e59";
+            dot.style.backgroundColor = "#0d9488";
+            dot.style.boxShadow = "0 0 10px #0d9488";
+            text.innerText = "Standby: Hot & Ready";
+        } else {
+            badge.style.backgroundColor = "#f1f5f9";
+            badge.style.color = "#475569";
+            dot.style.backgroundColor = "#94a3b8";
+            dot.style.boxShadow = "0 0 6px #cbd5e1";
+            text.innerText = "Standby: Off";
+        }
     }
 }

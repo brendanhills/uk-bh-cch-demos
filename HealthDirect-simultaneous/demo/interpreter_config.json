@@ -1,5 +1,6 @@
 {
   "model_name": "gemini-3.5-live-translate-preview",
+  "enable_prewarming": true,
   "chunk_ms": 40,
   "pacing_mode": "paced",
   "enable_playback": false,
