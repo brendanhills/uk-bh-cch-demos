@@ -119,5 +119,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Merge live_translate_demo.py script into the main demo scripts so that they can be called either as a CLI or from the web_server.py app**
 *Link: [./tracks/merge_live_translate_20260715/](./tracks/merge_live_translate_20260715/)*
 
+---
+
+- [ ] **Track: Review and clean up obsolete scripts and consolidate helper utilities**
+  *Link: [./tracks/cleanup_and_merge_scripts_20260715/](./tracks/cleanup_and_merge_scripts_20260715/)*
+
 
 
