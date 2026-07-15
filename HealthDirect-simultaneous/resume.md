@@ -1,26 +1,32 @@
-# Working Session Handoff: July 15, 2026
+# Working Session Handoff: 2026-07-15
 
 ## 📝 Session Summary
 - **What we did**:
-  - Fully implemented Phase 2 of the **WebSocket Pre-Warming & Model Preloading** track, creating background connection loops, keeping them active with sparse PCM digital silence frames (VAD-safe keep-alives) every 2.5s, and enabling sub-10ms adoption of standby hot connections during active streams.
-  - Resolved 100% of standard test regressions under `pytest` by implementing automatic test-environment discovery (pytest bypasses pre-warming by default to protect existing event execution ordering).
-  - Wrote robust configuration defaults and command-line switches (`--no-prewarm`) to seamlessly disable pre-warming on-demand under any network/audio condition.
-  - Implemented Phase 3 of the track: Created state-driven, premium, real-time UI indicator badges inside both clinician (`/nurse`) and patient (`/patient`) dashboards, complete with pulsing neon indicator lights representing Standby, Connecting, and Hot & Ready connection states.
-  - Completed verification of all 100 unit/integration tests with a flawless green status.
+  - Fully completed, verified, and pushed the **WebSocket Pre-Warming, Connection Caching, and UI Status Indicators** track with 100% passing tests.
+  - Formulated two brand new Conductor development tracks:
+    - **Passive Interpreter Resiliency & End-to-End Testing (`resiliency_testing_20260715`)** with full specs, hierarchical checklist-driven implementation plans, and a pre-configured headless chaos test skeleton (`tests/test_chaos_recovery.py`).
+    - **ModelArmor PII & Safety Guardrails (`model_armor_pii_20260715`)** with full specs, custom safety-toggle config rules, and three-phase checklists.
+  - Compiled and merged authoritative project rules (`.agents/AGENTS.md`) documenting Pytest Keep-Alive isolation and the Zero-Retry Bubble Failure Principle to secure our streaming loops permanently.
 - **Workspace State**:
   - Active Branch: `feature/simultaneous-multi-client`
-  - Uncommitted Changes: Updates to `demo/web_server.py`, `demo/interpreter_config.json`, `demo/web/`, and `conductor/` tracker registries.
+  - Uncommitted Changes: None (All work, tracks, and new test skeletons are committed)
 
 ## 📌 Current Context & Progress
-- **Active Track**: WebSocket pre-warming and model preloading for low latency (`./tracks/pre_warming_20260715/`)
-- **Last Active Task**: Integrating state-driven, colored HTML/JS status indicators inside clinician and caller headers and marking the track as fully completed.
+- **Active Track**: **Passive Interpreter Resiliency & End-to-End Testing**
+  - *Link*: [conductor/tracks/resiliency_testing_20260715/](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/conductor/tracks/resiliency_testing_20260715/)
+- **Last Active Task**: Created the specification (`spec.md`), detailed hierarchical implementation checklist (`plan.md`), and the red-phase test case skeleton (`tests/test_chaos_recovery.py`) in full alignment with the Conductor developer manual.
 
 ## 🚦 Remaining Tasks & Blockers
-- **Open Action Items**:
-  - The WebSocket pre-warming feature is fully checked off and confirmed robust.
-  - The Simultaneous Simulator track cleanup is waiting on a user decision on whether to **archive** or **keep** the local tracker files.
+- **Resiliency Track Tasks**:
+  - [ ] Task: Create Failing Chaos Test Case
+  - [ ] Task: Implement Active Catch & Bubble (Green Phase)
+  - [ ] Task: Scaffold Playwright in `pyproject.toml`
+- **ModelArmor Track Tasks**:
+  - [ ] Task: Integrate Config Variables & UI Sidebar Toggles
+  - [ ] Task: Create TDD Red Unit Tests
+  - [ ] Task: Implement ModelArmor Engine & Fallbacks (Green Phase)
 
 ## 🚀 Immediate Next Steps
-1. Review the beautiful colored pre-warm badges by loading the interactive console.
-2. Provide feedback on whether to archive or retain the Simultaneous Simulator local tracker files.
-3. Initiate the next project tracks (such as Passive Interpreter Guardrails or Browser-Side WebSocket Migration).
+1. **Run the Red Test**: Run `uv run pytest tests/test_chaos_recovery.py` and observe the mock-connect assertion failure.
+2. **Implement Catch & Bubble**: Update `web_server.py`'s `execute_streaming_loop` and `run_simultaneous_stream` to catch connection closures, reset `is_active = False`, and bubble an error-type JSON message to both active dashboard channels to get the test to pass green.
+3. **Scaffold Playwright**: Add playwright dependencies to `pyproject.toml` using `uv`.

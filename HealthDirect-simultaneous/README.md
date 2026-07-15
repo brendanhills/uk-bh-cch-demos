@@ -31,6 +31,8 @@ This project is a high-fidelity, real-time bidirectional bilingual interpreter d
   - **Simultaneous Split-View Dashboards (`nurse.html` & `patient.html`)**: Support for parallel, state-synchronized multi-client interfaces tailored for clinicians and patients. Employs a robust client-side turn finalizer that splits consecutive utterances into distinct chronological speech bubbles on speaker swap, bypassing long VAD delays.
   - **Single-Tab Unified Presentation Console**: Hosted on `presentation.html` as a single parent frame. This allows presenters to seamlessly share both audio channels natively over Google Meet.
 - **Unified Configuration Registry**: Uses a single central config file (`demo/interpreter_config.json`) with universally loaded default keys (such as `chunk_ms`, model name overrides, and default clinical preset mappings) to guarantee configuration parity between the Web Server and command-line execution modes.
+- **WebSocket Pre-Warming & Model Preloading**: Pre-establishes Gemini Live API connections in the background when dashboards are idle, streaming sparse digital silence PCM pings (`b'\x00'`) every 2.5 seconds to hold channels hot. Lowers active handshake latencies to `<10ms` for seamless hot-swapping when a call begins. Includes animated CSS pre-warming state indicators (`Standby`, `Pre-warming`, `Hot & Ready`).
+- **Safety Guardrails & Chaos Resiliency (Planned)**: Integrates **Google Cloud ModelArmor** pre-transmission inspection to redact patient/clinician PII and profanities inline (e.g. `[REDACTED_NAME]`) before sending data to external APIs. Uses immediate fail-fast error-bubbling to gracefully shut down loops on socket closures without hanging or silent retry drifts.
 
 ---
 
