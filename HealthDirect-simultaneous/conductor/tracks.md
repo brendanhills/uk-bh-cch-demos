@@ -96,7 +96,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
+- [~] **Track: Simultaneous Multi-Client Split-View Conversation Simulator**
   *Link: [./tracks/simultaneous_multi_client_20260709/](./tracks/simultaneous_multi_client_20260709/)*
 
 ---

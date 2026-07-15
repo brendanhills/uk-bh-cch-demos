@@ -7,7 +7,7 @@
 * **Single-Pair Simplification**: The session coordinator should manage a single, static dual-client pair (one Nurse, one Patient) for demo purposes. Do not implement complex multi-room multi-tenant scaling architectures. Keep it simple and focused.
 
 ## Phase 1: Git Sandboxing & Backend Endpoints Setup
-- [ ] **Task 1.1**: Set up dedicated Git branch for safety
+- [x] **Task 1.1**: Set up dedicated Git branch for safety
   *   Run `git checkout -b feature/simultaneous-multi-client` from `stable-pre-modularization` and push to remote.
 - [ ] **Task 1.2**: Implement HTTP routes in `web_server.py`
   *   Create `/nurse` and `/patient` endpoints serving HTML files.
