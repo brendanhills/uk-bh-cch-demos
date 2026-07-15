@@ -114,4 +114,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Real-Time Passive Interpreter Guardrails & Translation Auditing**
   *Link: [./tracks/passive_interpreter_guardrails_20260714/](./tracks/passive_interpreter_guardrails_20260714/)*
 
+---
+
+- [ ] **Track: Merge live_translate_demo.py script into the main demo scripts so that they can be called either as a CLI or from the web_server.py app**
+*Link: [./tracks/merge_live_translate_20260715/](./tracks/merge_live_translate_20260715/)*
+
+
 
