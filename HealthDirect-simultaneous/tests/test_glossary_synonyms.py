@@ -87,3 +87,39 @@ def test_csv_export_flattening_of_nested_dictionaries(tmp_path):
     assert reader[2][0] == "paracetamol"
     assert reader[2][1] == "paracetamol"
     assert reader[2][2] == "paracetamol"
+
+@patch("requests.get")
+@patch("google.cloud.translate_v3.TranslationServiceClient")
+def test_interruption_and_restart_idempotency(mock_translate_client_class, mock_get, tmp_path):
+    """Verify that restarting the pipeline after an interruption does not result in redundant crawl or translate requests."""
+    from import_glossary import scrape_healthdirect_page, pre_translate_terms, save_scrape_state
+    
+    state_file = str(tmp_path / "scrape_state.json")
+    url = "https://www.healthdirect.gov.au/health-topics/conditions/otitis-media"
+    
+    # 1. Simulate previous successful crawl by adding URL to state
+    save_scrape_state({url}, state_file)
+    
+    # 2. Try crawling again: it should instantly bypass and make zero request calls
+    terms = scrape_healthdirect_page(url, is_subpage=True, state_path=state_file, delay=0.0)
+    assert terms == {}
+    mock_get.assert_not_called()
+    
+    # 3. Simulate pre_translate_terms with a glossary that already has all translations
+    mock_translate_client = MagicMock()
+    mock_translate_client_class.return_value = mock_translate_client
+    
+    glossary = {
+        "otitis media": {
+            "translations": {
+                "Spanish": "otitis media",
+                "Vietnamese": "viêm tai giữa"
+            }
+        }
+    }
+    
+    updated = pre_translate_terms(glossary, project_id="test-project", languages={"Spanish": "es", "Vietnamese": "vi"})
+    
+    # It should bypass translate client entirely because everything is already translated
+    mock_translate_client.translate_text.assert_not_called()
+    assert updated == glossary

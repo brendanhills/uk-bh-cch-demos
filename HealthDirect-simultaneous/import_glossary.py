@@ -74,6 +74,11 @@ def parse_html_terms(html_content: str) -> dict:
         if primary_key:
             if primary_key not in terms:
                 terms[primary_key] = {"url": full_url, "synonyms": []}
+            elif "synonyms" not in terms[primary_key]:
+                # If it was added as an alias reference first, upgrade it to a main term
+                terms[primary_key]["synonyms"] = []
+                terms[primary_key].pop("formal_name", None)
+
             if synonym and synonym != primary_key and synonym not in terms[primary_key]["synonyms"]:
                 terms[primary_key]["synonyms"].append(synonym)
                 
@@ -615,44 +620,96 @@ def save_glossary_json(flat_glossary: dict, filepath: str) -> None:
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump({"glossary": glossary_list}, f, indent=2, ensure_ascii=False)
 
-def export_to_csv(glossary: dict, csv_path: str) -> int:
+def export_to_csv(glossary: dict, csv_path: str, languages: dict = None) -> int:
     """Exports local glossary terms and translations into a Google Translation V3 multi-lingual CSV.
     Returns the number of fully-translated entries successfully exported.
     """
     import csv
+    
+    if languages is None:
+        # Discover languages dynamically from the database
+        discovered_languages = set()
+        for term, data in glossary.items():
+            for lang in data.get("translations", {}).keys():
+                discovered_languages.add(lang)
+        
+        language_code_map = {
+            "spanish": "es",
+            "vietnamese": "vi",
+            "arabic": "ar",
+            "german": "de",
+            "french": "fr",
+            "italian": "it",
+            "japanese": "ja",
+            "chinese": "zh",
+            "korean": "ko",
+            "portuguese": "pt",
+            "russian": "ru",
+        }
+        
+        preferred_order = ["Spanish", "Vietnamese", "Arabic"]
+        discovered_langs = sorted(list(discovered_languages))
+        
+        ordered_langs = []
+        for pref in preferred_order:
+            if pref in discovered_langs:
+                ordered_langs.append(pref)
+                discovered_langs.remove(pref)
+        ordered_langs.extend(discovered_langs)
+        
+        languages = {}
+        for lang in ordered_langs:
+            code = language_code_map.get(lang.lower(), lang.lower()[:2])
+            languages[lang] = code
+
     count = 0
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        # Write header with target/source language codes
-        writer.writerow(["en", "es", "vi"])
+        
+        # Build headers list: e.g. ["en", "es", "vi", "ar"]
+        headers = ["en"]
+        lang_columns = [] # list of (lang_name, lang_code)
+        for lang_name, lang_code in languages.items():
+            headers.append(lang_code)
+            lang_columns.append((lang_name, lang_code))
+            
+        writer.writerow(headers)
+        
         for term, data in glossary.items():
             translations = data.get("translations", {})
-            es_trans = translations.get("Spanish", "")
-            vi_trans = translations.get("Vietnamese", "")
+            row = [term]
+            has_all_translations = True
             
-            # Helper to format field (which can be a string or a dict)
-            def format_field(val):
-                if isinstance(val, dict):
-                    formal = val.get("formal", "")
-                    informal_list = val.get("informal", [])
-                    if isinstance(informal_list, str):
-                        informal_list = [informal_list]
-                    parts = []
-                    if formal:
-                        parts.append(f"formal: {formal}")
-                    if informal_list:
-                        parts.append(f"informal: {', '.join(informal_list)}")
-                    return " | ".join(parts)
-                return str(val).strip()
+            for lang_name, lang_code in lang_columns:
+                trans_val = translations.get(lang_name, "")
+                
+                # Helper to format field (which can be a string or a dict)
+                def format_field(val):
+                    if isinstance(val, dict):
+                        formal = val.get("formal", "")
+                        informal_list = val.get("informal", [])
+                        if isinstance(informal_list, str):
+                            informal_list = [informal_list]
+                        parts = []
+                        if formal:
+                            parts.append(f"formal: {formal}")
+                        if informal_list:
+                            parts.append(f"informal: {', '.join(informal_list)}")
+                        return " | ".join(parts)
+                    return str(val).strip()
 
-            es_str = format_field(es_trans)
-            vi_str = format_field(vi_trans)
-            
+                formatted_str = format_field(trans_val)
+                if not formatted_str:
+                    has_all_translations = False
+                    break
+                row.append(formatted_str)
+                
             # GCP Translation V3 requires all language fields to be populated in multilingual glossaries.
-            # Only export entries that are fully translated.
-            if term and es_str and vi_str:
-                writer.writerow([term, es_str, vi_str])
+            # Only export entries that are fully translated across all requested languages.
+            if term and has_all_translations:
+                writer.writerow(row)
                 count += 1
+                
     return count
 
 def upload_to_gcs(local_file_path: str, gcs_destination: str) -> None:
@@ -910,12 +967,21 @@ def run_pipeline(args) -> None:
     
     # 7. Upload CSV to GCS
     if args.gcs_destination:
+        def is_populated(val):
+            if isinstance(val, dict):
+                return bool(val.get("formal") or val.get("informal"))
+            return bool(str(val).strip())
+
         exported_count = sum(
             1 for term, data in updated.items()
-            if term and data.get("translations", {}).get("Spanish", "").strip() and data.get("translations", {}).get("Vietnamese", "").strip()
+            if term and is_populated(data.get("translations", {}).get("Spanish", "")) and is_populated(data.get("translations", {}).get("Vietnamese", ""))
         )
         if exported_count > 0:
             upload_to_gcs(csv_temp_path, args.gcs_destination)
+            
+            # Derived JSON destination path in GCS (e.g. glossary.csv -> glossary.json)
+            gcs_json_destination = args.gcs_destination.rsplit(".", 1)[0] + ".json"
+            upload_to_gcs(args.glossary_json, gcs_json_destination)
             
             # 8. Recreate GCP Translation Glossary resource
             if project_id and args.glossary_id:
