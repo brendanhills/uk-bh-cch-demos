@@ -12,6 +12,12 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+try:
+    from google.cloud import storage
+except ImportError:
+    storage = None
+
+
 def clean_term_name(text: str) -> str:
     """Cleans a term name by removing parenthetical remarks and extra whitespace."""
     # Remove anything inside parenthesis, e.g., "Amoxicillin (antibiotic)" -> "Amoxicillin"
@@ -624,11 +630,61 @@ def recreate_gcp_glossary(project_id: str, location: str, glossary_id: str, gcs_
     create_op.result()
     print("  GCP Glossary resource registered successfully.")
 
+def download_from_gcs(gcs_csv_uri: str, local_json_path: str, local_csv_path: str) -> None:
+    """Downloads glossary.csv and glossary.json from GCS destination directory.
+    
+    Given a GCS URI like gs://my-bucket/path/to/glossary.csv, it will download:
+    - glossary.csv from gs://my-bucket/path/to/glossary.csv
+    - glossary.json from gs://my-bucket/path/to/glossary.json
+    """
+    if not storage:
+        raise ImportError("google-cloud-storage is not installed or available.")
+    
+    if not gcs_csv_uri.startswith("gs://"):
+        raise ValueError("gcs_csv_uri must start with gs://")
+        
+    path_without_scheme = gcs_csv_uri[5:]
+    bucket_name, _, csv_blob_path = path_without_scheme.partition("/")
+    
+    if csv_blob_path.endswith(".csv"):
+        json_blob_path = csv_blob_path[:-4] + ".json"
+    else:
+        json_blob_path = csv_blob_path + ".json"
+        
+    print(f"Syncing pre-compiled glossary from GCS bucket '{bucket_name}' ...")
+    client = storage.Client()
+    bucket = client.bucket(bucket_name)
+    
+    local_dir = os.path.dirname(local_csv_path)
+    if local_dir:
+        os.makedirs(local_dir, exist_ok=True)
+        
+    # Download CSV
+    print(f"  Downloading CSV to: {local_csv_path} ...")
+    blob_csv = bucket.blob(csv_blob_path)
+    blob_csv.download_to_filename(local_csv_path)
+    
+    # Download JSON
+    print(f"  Downloading JSON to: {local_json_path} ...")
+    blob_json = bucket.blob(json_blob_path)
+    blob_json.download_to_filename(local_json_path)
+    
+    print("  GCS Synchronization completed successfully.")
+
 def run_pipeline(args) -> None:
     """Executes the full terminology ingestion and GCP Glossary registration pipeline."""
     import json
     import os
     
+    if getattr(args, "download_gcs", False):
+        download_from_gcs(
+            gcs_csv_uri=args.gcs_destination,
+            local_json_path=args.glossary_json,
+            local_csv_path=args.csv_path
+        )
+        print("GCS synchronization completed. Exiting pipeline.")
+        return
+        
     print("=" * 60)
     print("STARTING HEALTHDIRECT TERMINOLOGY IMPORT PIPELINE")
     print("=" * 60)
@@ -842,6 +898,7 @@ if __name__ == "__main__":
     parser.add_argument("--glossary-json", default="glossary/glossary.json", help="Path to local glossary.json")
     parser.add_argument("--csv-path", default="glossary/glossary.csv", help="Path to local glossary.csv")
     parser.add_argument("--gcs-destination", default="gs://uk-bh-experiments-argolis-us/HealthDirect/glossaries/glossary.csv", help="GCS destination URI")
+    parser.add_argument("--download-gcs", action="store_true", help="Download pre-compiled glossary JSON and CSV from GCS and exit")
     parser.add_argument("--glossary-id", default="healthdirect_glossary", help="GCP Translation glossary ID")
     parser.add_argument("--location", default="us-central1", help="GCP Location")
     parser.add_argument("--project-id", help="GCP Project ID")
