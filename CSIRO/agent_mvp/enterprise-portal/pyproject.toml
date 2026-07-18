@@ -1,0 +1,12 @@
+[project]
+name = "enterprise-portal"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.136.3",
+    "google-adk>=2.1.0",
+    "google-cloud-aiplatform>=1.153.1",
+    "uvicorn>=0.48.0",
+]

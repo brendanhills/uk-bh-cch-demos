@@ -1,0 +1,8 @@
+{
+  "track_id": "simultaneous_multi_client_20260709",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-09T14:51:00Z",
+  "updated_at": "2026-07-09T14:51:00Z",
+  "description": "Implementation of a simultaneous continuous-streaming audio router with distinct /nurse and /patient views and interactive Web Audio panning sliders."
+}

@@ -1,0 +1,8 @@
+{
+  "track_id": "merge_live_translate_20260715",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-15T12:21:30Z",
+  "updated_at": "2026-07-15T12:21:30Z",
+  "description": "Merge live_translate_demo.py script into the main demo scripts so that they can be called either as a CLI or from the web_server.py app"
+}

@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "language": "Arabic",
+    "code": "ar-XA",
+    "topic": "asthma",
+    "caller_gender": "male",
+    "caller_emotion": "anxious",
+    "nurse_gender": "female",
+    "preset_key": "arabic"
+  },
+  "turns": [
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Hello, thank you for calling HealthDirect. My name is Nurse Sarah. How can I help you today?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 1000
+    },
+    {
+      "speaker": "caller",
+      "language": "ar-XA",
+      "text": "مرحباً، أرجو المساعدة. طفلي البالغ من العمر خمس سنوات يعاني من ضيق شديد في التنفس وصدره يصدر صوت أزيز.",
+      "english_translation": "Hello, please help. My five-year-old child is suffering from severe shortness of breath and his chest is making a wheezing sound.",
+      "original_target_lang": "مرحباً، أرجو المساعدة. طفلي البالغ من العمر خمس سنوات يعاني من ضيق شديد في التنفس وصدره يصدر صوت أزيز.",
+      "start_ms": 9224
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "I am sorry to hear about your son. Does he have a history of asthma? And do you have a bronchodilator inhaler and a spacer with you?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 24349
+    },
+    {
+      "speaker": "caller",
+      "language": "ar-XA",
+      "text": "نعم، لديه تاريخ مع مرض الربو. لقد أعطيته جرعتين من جهاز الاستنشاق باستخدام المباعد قبل قليل، لكنه لا يزال يعاني من صعوبة بالغة في التنفس.",
+      "english_translation": "Yes, he has a history of asthma. I gave him two puffs of the inhaler using the spacer a short while ago, but he is still having a very difficult time breathing.",
+      "original_target_lang": "نعم، لديه تاريخ مع مرض الربو. لقد أعطيته جرعتين من جهاز الاستنشاق باستخدام المباعد قبل قليل، لكنه لا يزال يعاني من صعوبة بالغة في التنفس.",
+      "start_ms": 34300
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Understood. Please call an ambulance immediately or take him straight to your nearest Emergency Department. While you wait, continue administering puffs from the inhaler through the spacer. We are here to support you.",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 53196
+    },
+    {
+      "speaker": "caller",
+      "language": "ar-XA",
+      "text": "حسناً، فهمت. سأأخذه إلى قسم الطوارئ فوراً. شكراً جزيلاً لكِ يا ممرضة.",
+      "english_translation": "Okay, I understand. I will take him to the Emergency Department immediately. Thank you very much, nurse.",
+      "original_target_lang": "حسناً، فهمت. سأأخذه إلى قسم الطوارئ فوراً. شكراً جزيلاً لكِ يا ممرضة.",
+      "start_ms": 68083
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "You are very welcome. Please stay calm and act quickly. Goodbye.",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 79782
+    }
+  ],
+  "medical_terms": [
+    {
+      "english": "asthma",
+      "translation": "ربو",
+      "description": "A respiratory condition marked by spasms in the bronchi of the lungs, causing difficulty in breathing."
+    },
+    {
+      "english": "bronchodilator inhaler",
+      "translation": "جهاز استنشاق موسع للشعب الهوائية",
+      "description": "An inhaler that widens the bronchi."
+    },
+    {
+      "english": "spacer",
+      "translation": "مباعد",
+      "description": "An attachment device that helps coordinate inhalation with the release of medication."
+    }
+  ]
+}

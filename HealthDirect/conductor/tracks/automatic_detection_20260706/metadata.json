@@ -1,0 +1,8 @@
+{
+  "track_id": "automatic_detection_20260706",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-06T11:29:00Z",
+  "updated_at": "2026-07-06T11:29:00Z",
+  "description": "Automatically detect incoming caller language (German, Spanish, Vietnamese, Arabic) and voice gender from initial audio chunks rather than hardcoded presets."
+}

@@ -1,0 +1,8 @@
+{
+  "track_id": "arabic_demo_20260701",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-01T18:59:00Z",
+  "updated_at": "2026-07-01T18:59:00Z",
+  "description": "Add Arabic as a demo language with RTL layout alignment and a generated medical sample call."
+}

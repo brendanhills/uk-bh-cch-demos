@@ -1,0 +1,442 @@
+[
+  {
+    "test_id": "tests/test_arabic_audio.py::test_arabic_audio_exists_and_valid",
+    "status": "PASSED",
+    "duration": 0.8634822368621826
+  },
+  {
+    "test_id": "tests/test_audio_choppiness.py::test_audio_streaming_and_quality",
+    "status": "PASSED",
+    "duration": 11.028220891952515
+  },
+  {
+    "test_id": "tests/test_bug_6_reproduction.py::test_speaker_translation_mappings",
+    "status": "PASSED",
+    "duration": 4.321299314498901
+  },
+  {
+    "test_id": "tests/test_bug_7_reproduction.py::test_speech_bubble_offset_styles_exist",
+    "status": "PASSED",
+    "duration": 0.928532600402832
+  },
+  {
+    "test_id": "tests/test_bug_8_reproduction.py::test_bubble_anchor_cleared_on_final",
+    "status": "PASSED",
+    "duration": 0.8052802085876465
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_load_and_format_glossary_real_file",
+    "status": "PASSED",
+    "duration": 3.9334304332733154
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_load_and_format_glossary_missing_file",
+    "status": "PASSED",
+    "duration": 3.8602755069732666
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_load_and_format_glossary_malformed_json",
+    "status": "PASSED",
+    "duration": 3.79358172416687
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_load_and_format_glossary_formatting_structure",
+    "status": "PASSED",
+    "duration": 3.868189811706543
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_assemble_system_instructions_structure",
+    "status": "PASSED",
+    "duration": 4.262368202209473
+  },
+  {
+    "test_id": "tests/test_glossary_loader.py::test_websocket_priming_injection",
+    "status": "PASSED",
+    "duration": 4.00892972946167
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_init",
+    "status": "PASSED",
+    "duration": 0.794992208480835
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_cli_english",
+    "status": "PASSED",
+    "duration": 0.8441557884216309
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_cli_spanish",
+    "status": "PASSED",
+    "duration": 0.7841918468475342
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_cli_vietnamese",
+    "status": "PASSED",
+    "duration": 0.8130598068237305
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_boundary_safety",
+    "status": "PASSED",
+    "duration": 0.7494323253631592
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_case_insensitivity",
+    "status": "PASSED",
+    "duration": 0.850275993347168
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_length_sorting",
+    "status": "PASSED",
+    "duration": 0.8589262962341309
+  },
+  {
+    "test_id": "tests/test_highlighter.py::test_highlighter_fuzzy_matching",
+    "status": "PASSED",
+    "duration": 0.8252904415130615
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_parse_html_terms_basic",
+    "status": "PASSED",
+    "duration": 1.255267858505249
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_success",
+    "status": "PASSED",
+    "duration": 2.2417991161346436
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_merge_glossaries_no_duplicates",
+    "status": "PASSED",
+    "duration": 1.2889716625213623
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pre_translate_terms_success",
+    "status": "PASSED",
+    "duration": 1.7479779720306396
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_parse_html_terms_health_topics_subpage",
+    "status": "PASSED",
+    "duration": 1.2469348907470703
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_parse_html_terms_medicines_subpage",
+    "status": "PASSED",
+    "duration": 1.302034616470337
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_recursive",
+    "status": "PASSED",
+    "duration": 4.247749090194702
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_recursive_with_max_letters",
+    "status": "PASSED",
+    "duration": 3.2772469520568848
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_export_to_csv",
+    "status": "PASSED",
+    "duration": 1.2386999130249023
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_upload_to_gcs",
+    "status": "PASSED",
+    "duration": 1.69364595413208
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_recreate_gcp_glossary",
+    "status": "PASSED",
+    "duration": 1.7301959991455078
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_load_and_save_glossary_json",
+    "status": "PASSED",
+    "duration": 1.2316553592681885
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pipeline_execution",
+    "status": "PASSED",
+    "duration": 1.2436583042144775
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_upload_to_gcs_invalid_uri",
+    "status": "PASSED",
+    "duration": 1.8657491207122803
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_load_glossary_json_non_existent",
+    "status": "PASSED",
+    "duration": 1.1933701038360596
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_error",
+    "status": "PASSED",
+    "duration": 2.230598211288452
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_build_search_query_spanish",
+    "status": "PASSED",
+    "duration": 1.2111642360687256
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_build_search_query_vietnamese",
+    "status": "PASSED",
+    "duration": 1.2518315315246582
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_build_search_query_invalid",
+    "status": "PASSED",
+    "duration": 1.1985046863555908
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_parse_search_results_success",
+    "status": "PASSED",
+    "duration": 1.2430570125579834
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_parse_search_results_no_results",
+    "status": "PASSED",
+    "duration": 1.3537981510162354
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_success",
+    "status": "PASSED",
+    "duration": 3.6616709232330322
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_rate_limit",
+    "status": "PASSED",
+    "duration": 3.8547744750976562
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_ground_term_success",
+    "status": "PASSED",
+    "duration": 1.1867387294769287
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_ground_term_failure",
+    "status": "PASSED",
+    "duration": 1.3089821338653564
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_load_and_save_glossary_json_with_grounding",
+    "status": "PASSED",
+    "duration": 1.2771031856536865
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pipeline_execution_with_grounding",
+    "status": "PASSED",
+    "duration": 1.257991075515747
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_vertex_ai_auth",
+    "status": "PASSED",
+    "duration": 4.007232666015625
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_general_exception",
+    "status": "PASSED",
+    "duration": 3.4970459938049316
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_no_candidates",
+    "status": "PASSED",
+    "duration": 3.5090670585632324
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_no_metadata",
+    "status": "PASSED",
+    "duration": 3.8231141567230225
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_search_google_import_error",
+    "status": "PASSED",
+    "duration": 1.2528116703033447
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pre_translate_terms_import_error",
+    "status": "PASSED",
+    "duration": 1.2882134914398193
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_load_glossary_json_exception",
+    "status": "PASSED",
+    "duration": 1.4045777320861816
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_leaf_filtering",
+    "status": "PASSED",
+    "duration": 2.274613618850708
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pipeline_grounding_exhaustive_queue",
+    "status": "PASSED",
+    "duration": 4.169310092926025
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pre_translate_progressive_save",
+    "status": "PASSED",
+    "duration": 1.8784465789794922
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_is_crawl_allowed_success",
+    "status": "PASSED",
+    "duration": 1.2538516521453857
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_idempotency",
+    "status": "PASSED",
+    "duration": 1.2766573429107666
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_scrape_healthdirect_page_politeness_delay",
+    "status": "PASSED",
+    "duration": 1.1835124492645264
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pre_translate_terms_custom_languages",
+    "status": "PASSED",
+    "duration": 1.8400521278381348
+  },
+  {
+    "test_id": "tests/test_import_glossary.py::test_pre_translate_terms_defaults_to_arabic",
+    "status": "PASSED",
+    "duration": 1.7515830993652344
+  },
+  {
+    "test_id": "tests/test_live_config_safety.py::test_no_unsupported_language_codes_in_ast",
+    "status": "PASSED",
+    "duration": 0.9126157760620117
+  },
+  {
+    "test_id": "tests/test_live_glossary_enforcement.py::test_assemble_system_instructions_passive_constraint_injection",
+    "status": "PASSED",
+    "duration": 4.039702892303467
+  },
+  {
+    "test_id": "tests/test_live_glossary_enforcement.py::test_websocket_model_parameter_routing_flash_live",
+    "status": "PASSED",
+    "duration": 4.146551847457886
+  },
+  {
+    "test_id": "tests/test_live_glossary_enforcement.py::test_live_conversational_bait_challenge_gemini_31",
+    "status": "PASSED",
+    "duration": 8.114316701889038
+  },
+  {
+    "test_id": "tests/test_live_glossary_enforcement.py::test_live_glossary_translation_gemini_31",
+    "status": "PASSED",
+    "duration": 8.167052745819092
+  },
+  {
+    "test_id": "tests/test_live_glossary_enforcement.py::test_live_medical_disclaimer_trigger_gemini_31",
+    "status": "PASSED",
+    "duration": 8.322147369384766
+  },
+  {
+    "test_id": "tests/test_live_translate_demo.py::test_print_row_basic_alignment",
+    "status": "PASSED",
+    "duration": 3.9490625858306885
+  },
+  {
+    "test_id": "tests/test_live_translate_demo.py::test_print_row_wrapping_with_highlights",
+    "status": "PASSED",
+    "duration": 4.466646432876587
+  },
+  {
+    "test_id": "tests/test_live_translate_demo.py::test_print_row_integration_highlighting",
+    "status": "PASSED",
+    "duration": 4.218832492828369
+  },
+  {
+    "test_id": "tests/test_multi_client_sync.py::test_session_pairing_and_config_sync",
+    "status": "PASSED",
+    "duration": 4.062535047531128
+  },
+  {
+    "test_id": "tests/test_pacing_state_machine.py::test_auto_pacing_state_machine",
+    "status": "TIMEOUT (>60s)",
+    "duration": 60.03172278404236
+  },
+  {
+    "test_id": "tests/test_pacing_state_machine.py::test_auto_pacing_startup_fallback",
+    "status": "PASSED",
+    "duration": 14.796720743179321
+  },
+  {
+    "test_id": "tests/test_pacing_state_machine.py::test_auto_pacing_ceased_fallback",
+    "status": "PASSED",
+    "duration": 14.642622232437134
+  },
+  {
+    "test_id": "tests/test_presentation.py::test_presentation_page_load_and_layout",
+    "status": "PASSED",
+    "duration": 4.297478914260864
+  },
+  {
+    "test_id": "tests/test_presentation.py::test_dual_channel_stream_isolation",
+    "status": "PASSED",
+    "duration": 3.9766311645507812
+  },
+  {
+    "test_id": "tests/test_presentation_sync.py::test_presentation_start_and_reset_synchronization",
+    "status": "PASSED",
+    "duration": 4.258452415466309
+  },
+  {
+    "test_id": "tests/test_simultaneous_timeline.py::test_simultaneous_audio_timeline_and_isolation[german-samples/metadata/de_fever_session.json-samples/german_fever_session.wav]",
+    "status": "PASSED",
+    "duration": 0.82924485206604
+  },
+  {
+    "test_id": "tests/test_simultaneous_timeline.py::test_simultaneous_audio_timeline_and_isolation[spanish-samples/metadata/es_ear_session.json-samples/es_ear_session.wav]",
+    "status": "PASSED",
+    "duration": 0.9511387348175049
+  },
+  {
+    "test_id": "tests/test_simultaneous_timeline.py::test_simultaneous_audio_timeline_and_isolation[vietnamese-samples/metadata/paediatric_vietnamese_demo.json-samples/paediatric_vietnamese_demo.wav]",
+    "status": "PASSED",
+    "duration": 0.8720607757568359
+  },
+  {
+    "test_id": "tests/test_simultaneous_timeline.py::test_simultaneous_audio_timeline_and_isolation[arabic-samples/metadata/ar_asthma_session.json-samples/ar_asthma_session.wav]",
+    "status": "PASSED",
+    "duration": 0.8787906169891357
+  },
+  {
+    "test_id": "tests/test_simultaneous_timeline.py::test_timeline_spacing_accuracy",
+    "status": "PASSED",
+    "duration": 0.9413025379180908
+  },
+  {
+    "test_id": "tests/test_ssml_dryrun.py::test_ssml_tag_injection_and_formatting",
+    "status": "PASSED",
+    "duration": 1.5757818222045898
+  },
+  {
+    "test_id": "tests/test_ssml_dryrun.py::test_ssml_formatting_empty_string",
+    "status": "PASSED",
+    "duration": 1.6168529987335205
+  },
+  {
+    "test_id": "tests/test_ssml_dryrun.py::test_voice_mapping_structure",
+    "status": "PASSED",
+    "duration": 1.7164831161499023
+  },
+  {
+    "test_id": "tests/test_ssml_dryrun.py::test_synthesis_fallback_mitigation",
+    "status": "PASSED",
+    "duration": 1.6190385818481445
+  },
+  {
+    "test_id": "tests/test_streaming_throttling.py::test_streaming_throttling_accuracy",
+    "status": "PASSED",
+    "duration": 5.260375499725342
+  },
+  {
+    "test_id": "tests/test_web_server_glossary.py::test_get_glossary_endpoint",
+    "status": "PASSED",
+    "duration": 4.542109966278076
+  }
+]

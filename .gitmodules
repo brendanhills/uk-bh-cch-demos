@@ -1,0 +1,6 @@
+[submodule "CSIRO/agent_mvp/agents/code-compliance-agent/ge_connector_demo"]
+	path = CSIRO/agent_mvp/agents/code-compliance-agent/ge_connector_demo
+	url = git@github.com:brendanhills-altostrat/ge_connector_demo.git
+[submodule "antigravity_conductor/conductor"]
+	path = antigravity_conductor/conductor
+	url = git@github.com:gemini-cli-extensions/conductor.git

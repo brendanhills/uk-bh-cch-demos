@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthDirect Presentation Console - Single-Tab Split-View</title>
+    
+    <!-- Modern typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Base premium styling -->
+    <link rel="stylesheet" href="/style.css?v=presentation-v4">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .presentation-header {
+            background-color: var(--brand-navy);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .header-badge {
+            background-color: var(--brand-teal);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .header-modes-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-mode {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-mode.active {
+            background-color: var(--brand-teal);
+            border-color: var(--brand-teal);
+        }
+
+        /* Presentation Workspace Layout Modes */
+        .presentation-container {
+            flex: 1;
+            padding: 16px;
+            gap: 16px;
+            box-sizing: border-box;
+            min-height: 0;
+            position: relative;
+        }
+
+        /* 1. Split Layout Grid */
+        .presentation-container.layout-split {
+            display: grid;
+            grid-template-columns: 7fr 3fr; /* Nurse 70% | Patient 30% */
+        }
+
+        /* 2. PIP Overlay Layout */
+        .presentation-container.layout-pip {
+            display: block;
+        }
+
+        .presentation-container.layout-pip #nurse-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper {
+            position: absolute;
+            width: 360px;
+            height: 520px;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
+            background-color: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            resize: both;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .frame-wrapper {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .frame-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Style tweaks for dragging in PIP mode */
+        .presentation-container.layout-pip #patient-wrapper .frame-title {
+            cursor: move;
+            background-color: var(--brand-teal);
+            color: white;
+            padding: 8px 12px;
+            margin-bottom: 0;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            user-select: none;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper .frame-title span {
+            color: white !important;
+        }
+
+        iframe {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .presentation-container.layout-pip #patient-wrapper iframe {
+            border: none;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            height: calc(100% - 36px);
+        }
+
+        iframe:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer info */
+        .presentation-footer {
+            text-align: center;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background-color: #f1f5f9;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive stack for smaller screen layout */
+        @media (max-width: 1024px) {
+            .presentation-container.layout-split {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1.2fr 1fr;
+                overflow-y: auto;
+            }
+
+            .presentation-container.layout-pip #patient-wrapper {
+                position: static !important;
+                width: 100% !important;
+                height: 380px !important;
+                margin-top: 16px;
+                box-shadow: var(--shadow-sm) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Premium Header -->
+    <header class="presentation-header">
+        <div class="header-title-group">
+            <h1>HealthDirect Presentation Console</h1>
+            <span class="header-badge">Unified Screen Share View</span>
+        </div>
+        
+        <div class="header-modes-group">
+            <button id="btn-side-by-side" class="btn-mode active">📊 Split View (70/30)</button>
+            <button id="btn-pip" class="btn-mode">📱 PIP Overlay</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main id="workspace" class="presentation-container layout-split">
+        <!-- Nurse Workspace Wrapper (70%) -->
+        <div id="nurse-wrapper" class="frame-wrapper">
+            <div class="frame-title">
+                <span>Clinician Panel (Nurse)</span>
+                <span class="badge" style="background-color: var(--brand-navy); color: white;">Port: {{ WEBSERVER_PORT }}</span>
+            </div>
+            <iframe id="nurse-frame" src="/nurse" title="HealthDirect Nurse Console"></iframe>
+        </div>
+
+        <!-- Patient Workspace Wrapper (30%) -->
+        <div id="patient-wrapper" class="frame-wrapper">
+            <div id="patient-header" class="frame-title">
+                <span>Caller Panel (Patient)</span>
+                <span class="badge" style="background-color: var(--brand-teal); color: white;">Port: {{ WEBSERVER_PORT }}</span>
+            </div>
+            <iframe id="patient-frame" src="/patient" title="HealthDirect Patient Triage Line"></iframe>
+        </div>
+    </main>
+
+    <!-- Footer metadata -->
+    <footer class="presentation-footer">
+        v2.0-presentation - 2026-07-14 13:00:00
+    </footer>
+
+    <!-- Vanilla Javascript for Layout & Draggable Support -->
+    <script>
+        const btnSplit = document.getElementById('btn-side-by-side');
+        const btnPip = document.getElementById('btn-pip');
+        const workspace = document.getElementById('workspace');
+        const patientWrapper = document.getElementById('patient-wrapper');
+        const patientHeader = document.getElementById('patient-header');
+
+        // Layout switching handlers
+        btnSplit.addEventListener('click', () => {
+            btnSplit.classList.add('active');
+            btnPip.classList.remove('active');
+            workspace.classList.add('layout-split');
+            workspace.classList.remove('layout-pip');
+
+            // Reset inline styles applied by dragging/resizing
+            patientWrapper.style.left = '';
+            patientWrapper.style.top = '';
+            patientWrapper.style.right = '';
+            patientWrapper.style.bottom = '';
+            patientWrapper.style.width = '';
+            patientWrapper.style.height = '';
+        });
+
+        btnPip.addEventListener('click', () => {
+            btnPip.classList.add('active');
+            btnSplit.classList.remove('active');
+            workspace.classList.add('layout-pip');
+            workspace.classList.remove('layout-split');
+        });
+
+        // Draggable Card functionality (for PIP Mode)
+        let isDragging = false;
+        let initialX = 0;
+        let initialY = 0;
+
+        patientHeader.addEventListener('mousedown', (e) => {
+            if (!workspace.classList.contains('layout-pip')) return;
+            isDragging = true;
+            initialX = e.clientX - patientWrapper.offsetLeft;
+            initialY = e.clientY - patientWrapper.offsetTop;
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.clientX - initialX;
+            const y = e.clientY - initialY;
+
+            // Restrict bounds so it doesn't get dragged off screen
+            const maxX = window.innerWidth - patientWrapper.offsetWidth;
+            const maxY = window.innerHeight - patientWrapper.offsetHeight;
+            const boundedX = Math.max(0, Math.min(x, maxX));
+            const boundedY = Math.max(70, Math.min(y, maxY)); // Header takes 70px
+
+            patientWrapper.style.left = `${boundedX}px`;
+            patientWrapper.style.top = `${boundedY}px`;
+            patientWrapper.style.bottom = 'auto';
+            patientWrapper.style.right = 'auto';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            document.body.style.userSelect = '';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Ignore local audio samples
+samples/
+
+# Ignore python test coverage
+.coverage
+.pytest_cache/
+__pycache__/
+.venv/
+output/
+
+#Ignore log files
+*.log
+
+# Ignore local scratch/debug directory
+scratch/
+timing_report.json
+
+# Ignore secrets env
+.env
+
+

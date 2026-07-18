@@ -1,0 +1,8 @@
+{
+  "track_id": "browser_websocket_20260701",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-01T18:31:00Z",
+  "updated_at": "2026-07-01T18:31:00Z",
+  "description": "Migrate Gemini Live WebSocket connection and audio streaming directly to the browser with live microphone input and backend ephemeral token authentication"
+}

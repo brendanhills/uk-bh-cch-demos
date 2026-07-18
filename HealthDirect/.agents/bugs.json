@@ -1,0 +1,22 @@
+{
+  "bugs": [
+    {
+      "id": 9,
+      "description": "When attempting to share screens, Chrome/the browser only allows sharing audio when a tab is shared, but not when a window or the whole screen is shared.",
+      "date": "2026-07-10T13:28:54+10:00",
+      "workspace_context": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect",
+      "status": "Investigated",
+      "priority": "P3",
+      "impact": "Medium"
+    },
+    {
+      "id": 10,
+      "description": "the Gemini 3.1 Flash API prompts are not working correctly. IN the arabic sample Gemini answers the patient instead of translating.",
+      "date": "2026-07-14T13:49:42+10:00",
+      "workspace_context": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect",
+      "status": "Fix Implemented",
+      "priority": "P0",
+      "impact": "Critical"
+    }
+  ]
+}

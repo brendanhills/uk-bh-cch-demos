@@ -1,0 +1,13 @@
+[project]
+name = "notebooklm-api-sandbox"
+version = "0.1.0"
+description = "A clean Python sandbox to test and wrap Google NotebookLM Enterprise REST APIs."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.1",
+]
+
+[tool.uv]
+managed = true

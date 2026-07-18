@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "language": "German",
+    "code": "de-DE",
+    "topic": "fever",
+    "caller_gender": "male",
+    "caller_emotion": "anxious",
+    "nurse_gender": "female",
+    "preset_key": "german"
+  },
+  "turns": [
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Hello, thank you for calling HealthDirect. My name is Nurse Sarah. How can I help you today?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 1000
+    },
+    {
+      "speaker": "caller",
+      "language": "de-DE",
+      "text": "Guten Tag. Ich rufe an, weil ich seit heute Morgen sehr starke Kopfschmerzen und etwas Fieber habe. Ich mache mir große Sorgen.",
+      "english_translation": "Good day. I am calling because I have had a very bad headache and some fever since this morning. I am very worried.",
+      "original_target_lang": "Guten Tag. Ich rufe an, weil ich seit heute Morgen sehr starke Kopfschmerzen und etwas Fieber habe. Ich mache mir große Sorgen.",
+      "start_ms": 9224
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "I am sorry to hear you are feeling unwell. Do you have any neck stiffness or sensitivity to bright light?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 21016
+    },
+    {
+      "speaker": "caller",
+      "language": "de-DE",
+      "text": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.",
+      "english_translation": "No, my neck feels normal, but the bright light actually hurts my eyes a little.",
+      "original_target_lang": "Nein, mein Nacken fühlt sich normal an, aber das helle Licht schmerzt tatsächlich ein wenig in meinen Augen.",
+      "start_ms": 29318
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "I understand. Light sensitivity can sometimes indicate a more serious condition. I recommend resting in a dark room and checking your temperature. If your fever goes above thirty-nine degrees, please visit the nearest clinic.",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 39224
+    },
+    {
+      "speaker": "caller",
+      "language": "de-DE",
+      "text": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.",
+      "english_translation": "Thank you very much for the advice. I will measure my temperature immediately and lie down in a dark room.",
+      "original_target_lang": "Vielen Dank für den Rat. Ich werde sofort meine Temperatur messen und mich in ein dunkles Zimmer legen.",
+      "start_ms": 54692
+    }
+  ],
+  "medical_terms": [
+    {
+      "english": "headache",
+      "translation": "Kopfschmerzen",
+      "description": "Continuous pain in the head."
+    },
+    {
+      "english": "fever",
+      "translation": "Fieber",
+      "description": "An abnormally high body temperature, usually accompanied by shivering and headache."
+    },
+    {
+      "english": "light sensitivity",
+      "translation": "Lichtempfindlichkeit",
+      "description": "An abnormal sensitivity or intolerance to light."
+    }
+  ]
+}

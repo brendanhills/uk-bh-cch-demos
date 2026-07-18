@@ -1,0 +1,9 @@
+# Local mock configuration
+mock_tokens.json
+
+# Local Python environment and caches
+__pycache__/
+*.pyc
+.env
+.venv/
+.uv/

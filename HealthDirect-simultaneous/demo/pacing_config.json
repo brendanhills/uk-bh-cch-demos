@@ -1,0 +1,6 @@
+{
+  "turn_timeout_sec": 15.0,
+  "ceased_audio_threshold": 4.5,
+  "startup_audio_threshold": 15.0,
+  "additional_pause_sec": 2.0
+}
