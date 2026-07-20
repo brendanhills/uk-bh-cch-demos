@@ -1,20 +1,23 @@
 ---
 name: new_skill
-description: Scaffold and create a new custom skill and slash command for Jetski and Antigravity.
+description: Scaffold and create a new custom skill and slash command through interactive chat and design refinement.
 ---
 
 # Create New Skill Command (`/new_skill`)
 
-When the user runs `/new_skill`:
+When the user runs `/new_skill` (with or without arguments):
 
-### 1. Extract Inputs
-Extract the following details from the user's prompt or ask for them if missing:
-- **`name`**: Skill / command name (lowercase, e.g. `code_review`, `verify_build`).
-- **`description`**: A concise sentence describing what the skill does.
-- **`scope`**: `global` (saves to `~/.gemini/config/skills/`) or `project` (saves to `<workspace-root>/.agents/skills/`). Default is `global`.
+### 1. Collaborative Chat & Idea Refinement
+Do not require the user to specify name or description upfront. Instead, engage in a brief interactive chat:
+- **Understand Goal**: Ask or clarify what the user wants the command to achieve.
+- **Propose Name & Description**: Suggest an intuitive command `name` (lowercase, e.g. `review_tests`) and concise `description`.
+- **Suggest Improvements**: Offer concrete enhancements to the workflow, such as edge cases, clear output formatting, or tool integrations.
 
-### 2. File Creation
-Create the skill directory and `SKILL.md` file at `<target_directory>/<name>/SKILL.md` with YAML frontmatter:
+### 2. Confirm Scope
+Default to `global` (`~/.gemini/config/skills/`) so the command is available everywhere on the user's machine. Mention that `project` scope (`<workspace-root>/.agents/skills/`) is also available for repo sharing.
+
+### 3. File Creation & Registration
+Once aligned with the user, create `<target_directory>/<name>/SKILL.md` with YAML frontmatter:
 
 ```markdown
 ---
@@ -25,9 +28,8 @@ description: <description>
 # <Name> Command (`/<name>`)
 
 When the user runs `/<name>`:
-1. <Step 1>
-2. <Step 2>
+1. <Refined Step 1>
+2. <Refined Step 2>
 ```
 
-### 3. Confirmation
-Notify the user that the skill is created and ready for use via `/<name>`.
+Inform the user that the skill has been created and is immediately registered as `/<name>`.
