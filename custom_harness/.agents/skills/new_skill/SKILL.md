@@ -11,7 +11,7 @@ When the user runs `/new_skill`:
 Extract the following details from the user's prompt or ask for them if missing:
 - **`name`**: Skill / command name (lowercase, e.g. `code_review`, `verify_build`).
 - **`description`**: A concise sentence describing what the skill does.
-- **`scope`**: `project` (saves to `<workspace-root>/.agents/skills/`) or `global` (saves to `~/.gemini/config/skills/`). Default is `project`.
+- **`scope`**: `global` (saves to `~/.gemini/config/skills/`) or `project` (saves to `<workspace-root>/.agents/skills/`). Default is `global`.
 
 ### 2. File Creation
 Create the skill directory and `SKILL.md` file at `<target_directory>/<name>/SKILL.md` with YAML frontmatter:
