@@ -4,3 +4,6 @@
 [submodule "antigravity_conductor/conductor"]
 	path = antigravity_conductor/conductor
 	url = git@github.com:gemini-cli-extensions/conductor.git
+[submodule "custom_harness/conductor"]
+	path = custom_harness/conductor
+	url = https://github.com/gemini-cli-extensions/conductor.git
