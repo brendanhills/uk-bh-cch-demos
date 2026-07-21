@@ -1,0 +1,5 @@
+# Runtime log files
+.agents/prompt_heuristics_log.jsonl
+*.log
+__pycache__/
+*.pyc

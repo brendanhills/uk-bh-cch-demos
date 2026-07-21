@@ -7,3 +7,6 @@
 [submodule "custom_harness/conductor"]
 	path = custom_harness/conductor
 	url = https://github.com/gemini-cli-extensions/conductor.git
+[submodule "elevate_ai_ttt/elevate-hr-policy-agent"]
+	path = elevate_ai_ttt/elevate-hr-policy-agent
+	url = git@github.com:tanyagoogle/elevate-hr-policy-agent.git
