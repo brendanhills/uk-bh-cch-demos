@@ -19,6 +19,7 @@
 - **`/fix_bug [#id]`**: Adopts **Adaptive Tiered Verification** (Tier 1 fast-path, Tier 2 suite augmentation, Tier 3 reproduction test) with a **2-Retry Circuit Breaker** against test-debugging loops.
 
 ### 3. Active Global Rules (`.agents/rules`)
+- **`zero_approval_spam_standards.md`**: Prohibits inline `python3 -c` / `bash -c` one-liners in terminal commands, mandating native read-tools or standalone scripts in `scratch/` to prevent UI approval prompt spam.
 - **`cloudtop_git_velocity.md`**: Enforces atomic, compound Git execution (`git add ... && git commit ... && git push`) and forbids sequential diagnostic spam to prevent corporate SSH/FIDO2 latency stalls.
 - **`pragmatic_testing_standards.md`**: Enforces Implementation-First Velocity (no default TDD in normal chat), the 3-Tier Test Execution Heuristics Matrix (including explicit skipping of backend tests for Frontend UI/CSS visual styling), and the 2-Retry Test-Debugging Circuit Breaker.
 - **`standalone_customization_architecture.md`**: Mandates symlink architecture for global extensions in Standalone Jetski and Antigravity.
