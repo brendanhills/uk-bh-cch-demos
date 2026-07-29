@@ -1286,11 +1286,13 @@ async def websocket_endpoint(websocket: WebSocket):
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "web"), html=True), name="static")
-WEBSERVER_PORT=int(os.getenv("WEBSERVER_PORT"))
+WEBSERVER_PORT=int(os.getenv("WEBSERVER_PORT", 8000))
+WEBSERVER_HOST=os.getenv("WEBSERVER_HOST", "0.0.0.0")
 
 if __name__ == "__main__":
     import uvicorn
-    # Start the server on localhost:9000
+    # Start the server
     # Ensure uvicorn's path resolution succeeds even if run directly as a script
     parent_dir = os.path.dirname(BASE_DIR)
-    uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)
+    logger.info(f"Starting uvicorn server on http://{WEBSERVER_HOST}:{WEBSERVER_PORT}")
+    uvicorn.run("demo.web_server:app", host=WEBSERVER_HOST, port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)

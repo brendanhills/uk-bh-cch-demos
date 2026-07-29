@@ -827,14 +827,15 @@ GLOSSARY_PATH = "glossary/glossary.json"
 from contextlib import asynccontextmanager
 
 WEBSERVER_PORT = int(os.getenv("WEBSERVER_PORT", "9000"))
+WEBSERVER_HOST = os.getenv("WEBSERVER_HOST", "127.0.0.1")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("\n" + "="*80)
     print("🚀 BILINGUAL MEDICAL INTERPRETER WEB INTERFACE STARTED")
-    print(f"👉 Nurse Dashboard:              http://127.0.0.1:{WEBSERVER_PORT}/nurse.html")
-    print(f"👉 Patient Dashboard:            http://127.0.0.1:{WEBSERVER_PORT}/patient.html")
-    print(f"👉 Presentation Mode:            http://127.0.0.1:{WEBSERVER_PORT}/presentation.html")
+    print(f"👉 Nurse Dashboard:              http://{WEBSERVER_HOST}:{WEBSERVER_PORT}/nurse.html")
+    print(f"👉 Patient Dashboard:            http://{WEBSERVER_HOST}:{WEBSERVER_PORT}/patient.html")
+    print(f"👉 Presentation Mode:            http://{WEBSERVER_HOST}:{WEBSERVER_PORT}/presentation.html")
     print("="*80 + "\n")
     yield
 
@@ -2693,5 +2694,5 @@ if __name__ == "__main__":
         asyncio.run(run_cli(parsed_args))
     else:
         parent_dir = os.path.dirname(BASE_DIR)
-        uvicorn.run("demo.web_server:app", host="127.0.0.1", port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)
+        uvicorn.run("demo.web_server:app", host=WEBSERVER_HOST, port=WEBSERVER_PORT, reload=True, app_dir=parent_dir, log_config=None)
 
