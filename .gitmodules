@@ -10,3 +10,15 @@
 [submodule "elevate_ai_ttt/elevate-hr-policy-agent"]
 	path = elevate_ai_ttt/elevate-hr-policy-agent
 	url = git@github.com:tanyagoogle/elevate-hr-policy-agent.git
+
+[submodule "BudgetDemo"]
+	path = BudgetDemo
+	url = https://github.com/cloud-gtm/BudgetDemo.git
+
+[submodule "monash/StudyOSMaterials"]
+	path = monash/StudyOSMaterials
+	url = https://github.com/cloud-gtm/StudyOSMaterials.git
+
+[submodule "advanced_agent_patterns/adk_tutorial"]
+	path = advanced_agent_patterns/adk_tutorial
+	url = https://github.com/cuppibla/adk_tutorial.git
