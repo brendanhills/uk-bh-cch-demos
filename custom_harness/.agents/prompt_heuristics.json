@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "heuristics": [
+    {
+      "id": "be_specific",
+      "name": "Be Specific",
+      "headline": "NAME THE FILES, THE CASES, AND THE TOOLS",
+      "dont": "add tests for foo.py",
+      "do": "Write pytest tests for foo.py covering two cases:\n  • logged-out user\n  • expired token\nNo mocks — use the test client in tests/conftest.py.",
+      "why": "Naming the file, the exact cases, and the tools to use removes guesswork and stops the agent from inventing its own scope."
+    },
+    {
+      "id": "give_examples",
+      "name": "Give Examples",
+      "headline": "AN INPUT/OUTPUT PAIR PINS THE CONTRACT",
+      "dont": "parse the dates in this CSV",
+      "do": "Parse the `created` column.\nExample:\n  \"2026-03-09T14:00Z\"\n   → 1773064800000 (epoch ms)\nThree more pairs in tests/fixtures/dates.json — match them exactly.",
+      "why": "A concrete input → output pair (or a unit test) pins the contract far better than prose. Tests are executable examples the agent can run."
+    },
+    {
+      "id": "decompose",
+      "name": "Decompose",
+      "headline": "ONE COHERENT STEP AT A TIME",
+      "dont": "migrate the whole app from REST to GraphQL",
+      "do": "Step 1 only: expose the existing /users endpoint as a GraphQL query. Leave REST in place. Don't touch other endpoints yet.",
+      "why": "Small steps keep the diff reviewable and the context small. Migrate one service, not ten — then iterate on the next."
+    },
+    {
+      "id": "remove_ambiguity",
+      "name": "Remove Ambiguity",
+      "headline": "KILL EVERY \"THIS\", \"THAT\", \"THE OTHER ONE\"",
+      "dont": "fix it so this works like the other one",
+      "do": "In PaymentForm.tsx, make the submit button disable-on-submit exactly like CheckoutForm.tsx (lines 40–62). Reuse the useDisableOnSubmit hook.",
+      "why": "Vague pronouns force the agent to guess which thing you mean. Name the file, the function, and the line range."
+    },
+    {
+      "id": "point_to_existing_patterns",
+      "name": "Point to Existing Patterns",
+      "headline": "ANCHOR THE OUTPUT TO YOUR CODEBASE",
+      "dont": "create a new widget component",
+      "do": "Create a HotDogWidget that follows HamburgerWidget.tsx exactly:\n  • same props shape\n  • same folder layout\n  • same test-file structure",
+      "why": "Pointing at a reference file makes the output match your conventions instead of a generic internet style. “Follow the pattern in X.”"
+    },
+    {
+      "id": "iterate",
+      "name": "Iterate",
+      "headline": "REPHRASE; DON'T PILE UP CORRECTIONS",
+      "dont": "no, fix the colors too\n…still broken\n…now the header is wrong\n(all in one growing thread)",
+      "do": "That approach used global state — let's restart.\nNew prompt: implement the cart with a local reducer, following CartContext.tsx.",
+      "why": "After two failed corrections, /clear and rewrite the first prompt. Stacked fixes pollute the context and entrench the wrong approach."
+    }
+  ]
+}
