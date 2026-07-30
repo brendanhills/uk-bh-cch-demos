@@ -4,3 +4,6 @@
 [submodule "antigravity_conductor/conductor"]
 	path = antigravity_conductor/conductor
 	url = git@github.com:gemini-cli-extensions/conductor.git
+[submodule "agent_school/advanced_agent_patterns/adk_tutorial"]
+	path = agent_school/advanced_agent_patterns/adk_tutorial
+	url = https://github.com/cuppibla/adk_tutorial.git

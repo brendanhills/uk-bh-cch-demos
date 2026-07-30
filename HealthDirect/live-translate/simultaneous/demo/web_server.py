@@ -485,6 +485,7 @@ class ActiveSession:
 
     async def run_simultaneous_stream(self):
         """Streams the dual audio channels and connects to Gemini Live."""
+        self.is_active = True
         logger.info("Initializing simultaneous streaming session...")
         preset = PRESETS.get(self.preset_key)
         if not preset:
@@ -497,8 +498,10 @@ class ActiveSession:
 
         # Load and split audio channels
         try:
+            config = load_config()
+            chunk_ms = config.get("chunk_ms", 40)
             patient_bytes, nurse_bytes, chunk_size = load_and_split_channels(
-                file_path
+                file_path, chunk_ms=chunk_ms
             )
         except Exception as e:
             logger.error(f"Failed to prepare audio sample: {e}")
@@ -508,26 +511,66 @@ class ActiveSession:
             })
             return
 
-        # Prepare Gemini Configs (Live Translate Compatibility rule)
-        config_p_to_n = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            translation_config=types.TranslationConfig(
-                target_language_code="en",
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-        )
+        # Prepare Gemini Configs based on selected model
+        is_flash_live = (self.model_name in ["gemini-3.1-flash-live-preview"])
+        if is_flash_live:
+            patient_gender = preset.get("gender", "male")
+            patient_voice = "Puck" if patient_gender == "male" else "Kore"
+            nurse_voice = "Kore"
 
-        config_n_to_p = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            translation_config=types.TranslationConfig(
-                target_language_code=lang_code,
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-        )
+            glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=True)
+            glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=True)
+            sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str_p_to_n, is_flash_live=True)
+            sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str_n_to_p, is_flash_live=True)
+
+            config_p_to_n = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=patient_voice)
+                    )
+                ),
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_p_to_n)]
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
+
+            config_n_to_p = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                speech_config=types.SpeechConfig(
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=nurse_voice)
+                    )
+                ),
+                system_instruction=types.Content(
+                    parts=[types.Part.from_text(text=sys_inst_n_to_p)]
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
+        else:
+            # Prepare Gemini Configs (Live Translate Compatibility rule)
+            config_p_to_n = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                translation_config=types.TranslationConfig(
+                    target_language_code="en",
+                    echo_target_language=True
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
+
+            config_n_to_p = types.LiveConnectConfig(
+                response_modalities=[types.Modality.AUDIO],
+                translation_config=types.TranslationConfig(
+                    target_language_code=lang_code,
+                    echo_target_language=True
+                ),
+                input_audio_transcription=types.AudioTranscriptionConfig(),
+                output_audio_transcription=types.AudioTranscriptionConfig(),
+            )
 
         api_key = os.getenv("GEMINI_API_KEY")
         if api_key:
@@ -612,6 +655,7 @@ class ActiveSession:
 
         except Exception as ex:
             logger.error(f"Error in simultaneous stream: {ex}")
+            self.is_active = False
             await self.broadcast_to_both({
                 "type": "error",
                 "message": f"Connection error: {str(ex)}"
@@ -619,6 +663,8 @@ class ActiveSession:
 
     async def execute_streaming_loop(self, session_p_to_n, session_n_to_p, patient_bytes, nurse_bytes, chunk_size, language, lang_code):
         """Executes the dual-channel audio streaming and receiver synchronization loops."""
+        config = load_config()
+        chunk_ms = config.get("chunk_ms", 40)
         async def receive_p_to_n():
             """Listens to Patient-to-Nurse translated audio/text."""
             try:
@@ -672,6 +718,13 @@ class ActiveSession:
                 pass
             except Exception as ex:
                 logger.error(f"Error in receive_p_to_n: {ex}")
+                self.is_active = False
+                await self.broadcast_to_both({
+                    "type": "error",
+                    "message": f"Connection error: {str(ex)}"
+                })
+                if self.streaming_task and not self.streaming_task.done():
+                    self.streaming_task.cancel()
 
         async def receive_n_to_p():
             """Listens to Nurse-to-Patient translated audio/text."""
@@ -726,6 +779,13 @@ class ActiveSession:
                 pass
             except Exception as ex:
                 logger.error(f"Error in receive_n_to_p: {ex}")
+                self.is_active = False
+                await self.broadcast_to_both({
+                    "type": "error",
+                    "message": f"Connection error: {str(ex)}"
+                })
+                if self.streaming_task and not self.streaming_task.done():
+                    self.streaming_task.cancel()
 
         rec_p_task = asyncio.create_task(receive_p_to_n())
         rec_n_task = asyncio.create_task(receive_n_to_p())
@@ -743,6 +803,10 @@ class ActiveSession:
         })
 
         for i in range(0, max_len, chunk_size):
+            if not self.is_active:
+                logger.warning("Session deactivated during streaming. Aborting sending loop.")
+                break
+
             chunk_p = patient_bytes[i : i + chunk_size]
             chunk_n = nurse_bytes[i : i + chunk_size]
 
@@ -770,28 +834,33 @@ class ActiveSession:
 
             chunks_sent += 1
 
-            elapsed_ms = chunks_sent * 200
+            elapsed_ms = chunks_sent * chunk_ms
             await self.broadcast_to_both({
                 "type": "playhead",
                 "elapsed_ms": elapsed_ms,
                 "duration_ms": max_len // 32
             })
 
-            expected_time = start_time + (chunks_sent * 0.2)
+            expected_time = start_time + (chunks_sent * (chunk_ms / 1000.0))
             sleep_time = expected_time - asyncio.get_event_loop().time()
             if sleep_time > 0:
                 await asyncio.sleep(sleep_time)
 
-        logger.info("Streaming complete. Waiting 5s for translations...")
-        await asyncio.sleep(5.0)
+        if self.is_active:
+            logger.info("Streaming complete. Waiting 5s for translations...")
+            try:
+                await asyncio.sleep(5.0)
+            except asyncio.CancelledError:
+                pass
 
         rec_p_task.cancel()
         rec_n_task.cancel()
 
-        await self.broadcast_to_both({
-            "type": "status",
-            "status": "completed"
-        })
+        if self.is_active:
+            await self.broadcast_to_both({
+                "type": "status",
+                "status": "completed"
+            })
 
 session_coordinator = ActiveSession()
 

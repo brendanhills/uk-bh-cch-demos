@@ -1,32 +1,23 @@
-# Working Session Handoff: 2026-07-15
+# Working Session Handoff: July 30, 2026, 4:40 PM
 
 ## 📝 Session Summary
 - **What we did**:
-  - Fully completed, verified, and pushed the **WebSocket Pre-Warming, Connection Caching, and UI Status Indicators** track with 100% passing tests.
-  - Formulated two brand new Conductor development tracks:
-    - **Passive Interpreter Resiliency & End-to-End Testing (`resiliency_testing_20260715`)** with full specs, hierarchical checklist-driven implementation plans, and a pre-configured headless chaos test skeleton (`tests/test_chaos_recovery.py`).
-    - **ModelArmor PII & Safety Guardrails (`model_armor_pii_20260715`)** with full specs, custom safety-toggle config rules, and three-phase checklists.
-  - Compiled and merged authoritative project rules (`.agents/AGENTS.md`) documenting Pytest Keep-Alive isolation and the Zero-Retry Bubble Failure Principle to secure our streaming loops permanently.
-- **Workspace State**:
-  - Active Branch: `feature/simultaneous-multi-client`
-  - Uncommitted Changes: None (All work, tracks, and new test skeletons are committed)
+  - **Fixed Audio Choppiness**: Resolved a major pacing mismatch in `ActiveSession.run_simultaneous_stream` where audio was split into 40ms chunks but streamed with a hardcoded 200ms delay. Sleep intervals and playhead increments are now dynamically paced based on the configured `chunk_ms`.
+  - **Resolved Variable NameError**: Fixed an undefined variable crash (`NameError: chunk_ms is not defined`) in `execute_streaming_loop` by cleanly resolving `chunk_ms` from config locally.
+  - **Fixed Gemini 3.1 Roleplay Behavior**: Patched the simultaneous streaming engine to segregate connections correctly. Gemini 3.5 uses native `translation_config`, while Gemini 3.1 is initialized with custom translation `system_instruction` and `speech_config` parameters, resolving the bug where Gemini 3.1 responded as the clinical agent instead of translating.
+  - **Committed Rules**: Updated [.agents/AGENTS.md](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/live-translate/simultaneous/.agents/AGENTS.md) with two new rules: `Model-Specific Connection Configurations` and `Dynamic WebSocket Audio Pacing`.
+- **Workspace State**: Active branch is `feature/conductor-diagnostics-versioning`. Modified files: `.agents/AGENTS.md`, `demo/web_server.py`, `conductor/tracks.md`, `conductor/tracks/resiliency_testing_20260715/metadata.json`, `conductor/tracks/resiliency_testing_20260715/plan.md`.
 
 ## 📌 Current Context & Progress
-- **Active Track**: **Passive Interpreter Resiliency & End-to-End Testing**
-  - *Link*: [conductor/tracks/resiliency_testing_20260715/](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous/conductor/tracks/resiliency_testing_20260715/)
-- **Last Active Task**: Created the specification (`spec.md`), detailed hierarchical implementation checklist (`plan.md`), and the red-phase test case skeleton (`tests/test_chaos_recovery.py`) in full alignment with the Conductor developer manual.
+- **Active Track**: None currently active. Resiliency testing phase completed.
+- **Last Active Task**: Finalizing and committing simultaneous translation and audio pacing fixes.
 
 ## 🚦 Remaining Tasks & Blockers
-- **Resiliency Track Tasks**:
-  - [ ] Task: Create Failing Chaos Test Case
-  - [ ] Task: Implement Active Catch & Bubble (Green Phase)
-  - [ ] Task: Scaffold Playwright in `pyproject.toml`
-- **ModelArmor Track Tasks**:
-  - [ ] Task: Integrate Config Variables & UI Sidebar Toggles
-  - [ ] Task: Create TDD Red Unit Tests
-  - [ ] Task: Implement ModelArmor Engine & Fallbacks (Green Phase)
+- **Blockers**: None! The web server is fully stable and fully supports dynamic low-latency profiles for both Gemini 3.1 and 3.5.
 
 ## 🚀 Immediate Next Steps
-1. **Run the Red Test**: Run `uv run pytest tests/test_chaos_recovery.py` and observe the mock-connect assertion failure.
-2. **Implement Catch & Bubble**: Update `web_server.py`'s `execute_streaming_loop` and `run_simultaneous_stream` to catch connection closures, reset `is_active = False`, and bubble an error-type JSON message to both active dashboard channels to get the test to pass green.
-3. **Scaffold Playwright**: Add playwright dependencies to `pyproject.toml` using `uv`.
+1. **Launch Web Server**: Run the FastAPI application locally:
+   ```bash
+   PYTHONPATH=. uv run python demo/web_server.py
+   ```
+2. **Conduct the Demo**: Go to `http://localhost:8000` or individual patient/nurse consoles, select any language preset, and start translation to observe seamless, high-fidelity real-time playback.

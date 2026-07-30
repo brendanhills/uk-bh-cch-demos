@@ -131,7 +131,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Passive Interpreter Resiliency & End-to-End Testing**
+- [x] **Track: Passive Interpreter Resiliency & End-to-End Testing**
   *Link: [./tracks/resiliency_testing_20260715/](./tracks/resiliency_testing_20260715/)*
 
 ---
