@@ -402,8 +402,20 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function applyHTMLHighlight(text, matchLanguage, targetLang) {
-    if (!text || !glossaryTerms || glossaryTerms.length === 0) return text;
+    if (!text) return "";
+    const safeText = escapeHTML(text);
+    if (!glossaryTerms || glossaryTerms.length === 0) return safeText;
     
     const termsWithPatterns = [];
     
@@ -442,7 +454,7 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
         }
     });
     
-    if (termsWithPatterns.length === 0) return text;
+    if (termsWithPatterns.length === 0) return safeText;
     
     // Sort descending by canonical term length to ensure longer compound matches are tried first in the alternation
     termsWithPatterns.sort((a, b) => b.canonical.length - a.canonical.length);
@@ -450,7 +462,7 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
     const overallPatternStr = "(?<!\\p{L})(" + termsWithPatterns.map(item => item.patternStr).join("|") + ")(?!\\p{L})";
     const regex = new RegExp(overallPatternStr, "gui");
     
-    return text.replace(regex, (matched) => {
+    return safeText.replace(regex, (matched) => {
         // Find which entry matched by testing each item's pattern against the matched string
         const matchItem = termsWithPatterns.find(item => item.regex.test(matched));
         if (matchItem) {
@@ -473,10 +485,10 @@ function applyHTMLHighlight(text, matchLanguage, targetLang) {
                 tooltipText = `${englishTerm}: ${desc}`;
             }
             
-            const escapedTooltip = tooltipText.replace(/"/g, "&quot;");
-            return `<mark class="glossary-highlight" data-tooltip="${escapedTooltip}">${matched}</mark>`;
+            const escapedTooltip = escapeHTML(tooltipText);
+            return `<mark class="glossary-highlight" data-tooltip="${escapedTooltip}">${escapeHTML(matched)}</mark>`;
         }
-        return matched;
+        return safeText;
     });
 }
 

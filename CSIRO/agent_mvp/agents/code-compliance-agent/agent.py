@@ -3,14 +3,18 @@ import httpx
 from google.adk import Agent
 from google.adk.tools import FunctionTool
 
+from urllib.parse import urlparse
+
 def parse_github_repo(repo: str) -> str:
     """Parses a repository string or URL into 'owner/repo' format."""
     repo = repo.strip()
-    if "github.com/" in repo:
-        parts = repo.split("github.com/")[-1].split("/")
+    parsed = urlparse(repo if "://" in repo else f"https://{repo}")
+    if parsed.netloc in ("github.com", "www.github.com"):
+        parts = [p for p in parsed.path.strip("/").split("/") if p]
         if len(parts) >= 2:
-            return f"{parts[0]}/{parts[1].replace('.git', '')}"
-    if "/" in repo:
+            repo_name = parts[1][:-4] if parts[1].endswith(".git") else parts[1]
+            return f"{parts[0]}/{repo_name}"
+    if "/" in repo and not repo.startswith("http"):
         return repo
     return f"brendanhills-altostrat/{repo}"
 

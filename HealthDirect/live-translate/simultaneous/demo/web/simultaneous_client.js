@@ -548,7 +548,7 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
         const ss = String(lastElapsedSeconds % 60).padStart(2, '0');
         const timestamp = `${mm}:${ss}`;
 
-        console.log(`%c[UI - NEW BUBBLE] Created NEW bubble for speaker="${speaker}", type="${eventType}" at ${timestamp} (playhead: ${lastElapsedSeconds}s)`, "color: #10b981; font-weight: bold;");
+        console.log("%c[UI - NEW BUBBLE] Created NEW bubble for speaker=\"%s\", type=\"%s\" at %s (playhead: %ds)", "color: #10b981; font-weight: bold;", String(speaker), String(eventType), String(timestamp), Number(lastElapsedSeconds));
 
         bubble.innerHTML = `
             <div class="bubble-meta" style="font-weight:600; font-size:0.8rem; margin-bottom:4px; color:var(--text-secondary);">
@@ -575,7 +575,7 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
             }
         }
     } else {
-        console.log(`%c[UI - REUSE BUBBLE] Appending text to existing bubble for speaker="${speaker}", type="${eventType}"`, "color: #3b82f6;");
+        console.log("%c[UI - REUSE BUBBLE] Appending text to existing bubble for speaker=\"%s\", type=\"%s\"", "color: #3b82f6;", String(speaker), String(eventType));
     }
 
     const bodySpan = bubble.querySelector(".original-text");
@@ -593,7 +593,7 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
 
         if (isFinal) {
             bodySpan.classList.remove("interim");
-            console.log(`%c[UI - UTTERANCE FINAL] Utterance is FINAL for speaker="${speaker}", type="${eventType}". Clearing active bubble tracking anchor.`, "color: #f59e0b; font-weight: bold;");
+            console.log("%c[UI - UTTERANCE FINAL] Utterance is FINAL for speaker=\"%s\", type=\"%s\". Clearing active bubble tracking anchor.", "color: #f59e0b; font-weight: bold;", String(speaker), String(eventType));
             // Set tracking bubble to null so the next utterance starts a fresh bubble
             if (speaker === "patient") {
                 if (eventType === "original") {
@@ -618,7 +618,7 @@ function updateSpeechText(speaker, eventType, text, isFinal) {
  * Terminates turn markers, clearing the active bubble to force a new bubble on next turn.
  */
 function completeTurn(speaker) {
-    console.log(`%c[UI - TURN COMPLETE] Received turn_complete event for speaker="${speaker}". Clearing all tracking anchors for this speaker.`, "color: #ef4444; font-weight: bold;");
+    console.log("%c[UI - TURN COMPLETE] Received turn_complete event for speaker=\"%s\". Clearing all tracking anchors for this speaker.", "color: #ef4444; font-weight: bold;", String(speaker));
     if (speaker === "patient") {
         currentPatientOriginalBubble = null;
         currentPatientTranslationBubble = null;
