@@ -185,9 +185,9 @@ This spreadsheet is mathematically mapped and custom-styled using a clean, profe
 
 To ensure HealthDirect maintains the most cost-effective, premium, and performant operational posture, we recommend the following 5 strategic optimization measures:
 
-### Strategy 1: Standardize on Native Translation (Approach A)
-* **Action:** Lock the production deployment configuration to utilize **`gemini-3.5-live-translate-preview`** with native `TranslationConfig` rather than multi-turn prompt-driven models (Approach B/C).
-* **Financial Impact:** Saves **`7.5% to 8.5%`** on total operational costs. It completely avoids the `12.5%` audio duration packet expansion caused by custom prompt-based pacing.
+### Strategy 1: Standardize on Prompt-Driven Live Preview (Approach B)
+* **Action:** Deploy the production configuration utilizing **`gemini-3.1-flash-live-preview`** (Approach B) with custom system instructions. 
+* **Financial Impact:** Saves over **`30%`** in runtime streaming fees compared to Approach A, completely offsetting the `12.5%` audio pacing overhead. This approach also fully supports clinical glossaries and custom instructions, which Approach A natively lacks.
 
 ### Strategy 2: Maintain High Context Cache Ratios
 * **Action:** Ensure the clinician prompt guidelines, regional dialects, and medical terminology glossaries are unified and loaded from the persistent **Gemini Context Cache**. Keep system instructions static to prevent cache invalidation.
@@ -197,9 +197,9 @@ To ensure HealthDirect maintains the most cost-effective, premium, and performan
 * **Action:** Configure the post-session clinical summary generation to use **No Thinking (None) / Low Thinking** settings for standard calls, and reserve High Thinking budgets only for high-complexity, multi-symptom tele-triage calls.
 * **Financial Impact:** Reduces summary generation output costs by **`40% to 60%`** by eliminating standard reasoning token overhead while maintaining identical summary structure.
 
-### Strategy 4: Active Stream Disconnect Detection
-* **Action:** Ensure that the WebSocket connection immediately terminates the Gemini Live session the moment either user (nurse or patient) hangs up, rather than keeping the stream open or sending silence.
-* **Financial Impact:** Since streaming audio is billed continuously ($3.00/1M input, $12.00/1M output), preventing even 10 seconds of idle trailing silence on 1,000 weekly calls saves over **`$100.00 AUD`** weekly.
+### Strategy 4: Client-Side VAD (Voice Activity Detection) Silence Suppression
+* **Action:** Enforce Client-Side VAD in both web clients (using lightweight local engines like Silero VAD) to automatically stop streaming audio bytes when a user is silent or listening. Combine with a 300ms pre-buffer to prevent initial consonant clipping.
+* **Financial Impact:** Cuts input audio token consumption in half (reducing the input multiplier from 2x continuous dual-streaming down to 1x active speech streaming), saving substantial fees over the course of standard calls.
 
 ### Strategy 5: Selective Real-Time Transcription
 * **Action:** If the live visual text transcript is not required in real-time by the nurse on the screen, disable `input_audio_transcription` and `output_audio_transcription` in the active stream, and let the summary model transcribe on-demand during post-call summarization.

@@ -153,7 +153,7 @@ def create_styled_calculator():
         ("Annual_Total_Call_Volume", 1800000, "HealthDirect FY Video Call total consultation scale", "#,##0"),
         ("Target_Translation_Percentage", 0.05, "Estimated percentage of total call volume benefiting from translation (Low: 5%, High: 10%)", "0.0%"),
         ("Weeks_Per_Year", 52, "Standard billing weeks per calendar year", "#,##0"),
-        ("Active_Speech_Duty_Cycle", 0.40, "Estimated percentage per channel of active speech (microphones only stream when active)", "0.0%"),
+        ("Active_Speech_Duty_Cycle", 0.40, "Estimated percentage of session with active speech (Client-Side VAD assumes microphones only stream when speech is detected, suppressing silence)", "0.0%"),
         ("Barge_In_Overlap_Overhead", 0.05, "Estimated streaming & playback duration overhead to account for overlap and barge-in", "0.0%"),
         ("Weekly_Session_Volume", "=B7*B8/B9", "Dynamic weekly session volume: (Annual Volume * Target Rate) / Weeks Per Year", "#,##0")
     ]
@@ -240,7 +240,7 @@ def create_styled_calculator():
         # Row 26
         ("Prompt Cache Read Cost (USD)", "=B25*(B20/1000000)", "=C25*(C20/1000000)", "=D25*(D20/1000000)", "Tokens * (Cache Read Rate / 1,000,000)", "$#,##0.00000"),
         # Row 27
-        ("Audio Input Tokens per Session", "=2*$B$6*60*250*$B$10*(1+$B$11)", "=2*$B$6*60*250*$B$10*(1+$B$11)", "=2*$B$6*60*250*$B$10*(1+$B$11)", "2 connections * Duration in seconds * 250 tokens/sec * Duty Cycle * (1 + Overlap Overhead)", "#,##0"),
+        ("Audio Input Tokens per Session", "=$B$6*60*250*$B$10*(1+$B$11)", "=$B$6*60*250*$B$10*(1+$B$11)", "=$B$6*60*250*$B$10*(1+$B$11)", "Active connection duration (Client VAD suppresses silence) * 250 tokens/sec * (1 + Overlap Overhead)", "#,##0"),
         # Row 28
         ("Audio Input Cost (USD)", "=B27*(B16/1000000)", "=C27*(C16/1000000)", "=D27*(D16/1000000)", "Tokens * (Audio Input Rate / 1,000,000)", "$#,##0.00"),
         # Row 29
