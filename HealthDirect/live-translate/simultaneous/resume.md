@@ -1,23 +1,27 @@
-# Working Session Handoff: July 30, 2026, 4:40 PM
+# Working Session Handoff: 2026-08-03 13:05 (AEST)
 
 ## 📝 Session Summary
 - **What we did**:
-  - **Fixed Audio Choppiness**: Resolved a major pacing mismatch in `ActiveSession.run_simultaneous_stream` where audio was split into 40ms chunks but streamed with a hardcoded 200ms delay. Sleep intervals and playhead increments are now dynamically paced based on the configured `chunk_ms`.
-  - **Resolved Variable NameError**: Fixed an undefined variable crash (`NameError: chunk_ms is not defined`) in `execute_streaming_loop` by cleanly resolving `chunk_ms` from config locally.
-  - **Fixed Gemini 3.1 Roleplay Behavior**: Patched the simultaneous streaming engine to segregate connections correctly. Gemini 3.5 uses native `translation_config`, while Gemini 3.1 is initialized with custom translation `system_instruction` and `speech_config` parameters, resolving the bug where Gemini 3.1 responded as the clinical agent instead of translating.
-  - **Committed Rules**: Updated [.agents/AGENTS.md](file:///home/brendanhills/dev/uk-bh-experiments/HealthDirect/live-translate/simultaneous/.agents/AGENTS.md) with two new rules: `Model-Specific Connection Configurations` and `Dynamic WebSocket Audio Pacing`.
-- **Workspace State**: Active branch is `feature/conductor-diagnostics-versioning`. Modified files: `.agents/AGENTS.md`, `demo/web_server.py`, `conductor/tracks.md`, `conductor/tracks/resiliency_testing_20260715/metadata.json`, `conductor/tracks/resiliency_testing_20260715/plan.md`.
+  - **Transcription Cost Investigation**: Verified that in the paid tier of `gemini-3.5-live-translate-preview`, transcription outputs are billed at standard text output rates (`$21.00` per 1M tokens) without separate per-minute speech-to-text fees.
+  - **Dynamic Excel Totals Labels**: Upgraded rows 38 and 39 in Tab 2 of the Excel spreadsheet to use dynamic formula-based labels concatenation (e.g., `="Total Session Cost (USD) - Per average session length: "&B6&" mins"`). Expanded Column A width to `65` characters to support this.
+  - **Dynamic Linguistic Transcript Expansion Factor**: Introduced the `Linguistic_Transcript_Expansion_Factor` parameter as a user-adjustable parameter in Row 12 (Cell `B12` default `2.20`) and linked it to the dynamic transcription token row 33 (`=(B29*$B$12)*1.33`).
+  - **Dynamic SOAP Note Word/Token Sizing**: Added user-adjustable `Post-Call Summary Output (Words)` on row 36 (default `900` words) and dynamically mapped the token output row 37 (`=B36*1.33`), resulting in a clean, parameter-driven `1,200` token summary size.
+  - **Clean Compilation & Remote Push**: Successfully compiled the binary spreadsheet and pushed all code commits to the remote branch `feature/conductor-diagnostics-versioning`.
+- **Workspace State**:
+  - **Active Branch**: `feature/conductor-diagnostics-versioning` (in sync with remote origin)
+  - **Git Status**: Clean (no uncommitted changes in the `HealthDirect` simultaneous translator directory).
 
 ## 📌 Current Context & Progress
-- **Active Track**: None currently active. Resiliency testing phase completed.
-- **Last Active Task**: Finalizing and committing simultaneous translation and audio pacing fixes.
+- **Active Track**: [Cost-Estimation & Optimization](./conductor/tracks/cost_estimation_20260803/plan.md) is now fully **complete**!
+- **Last Active Task**: Wrapping up dynamic parameter updates for the spreadsheet.
 
 ## 🚦 Remaining Tasks & Blockers
-- **Blockers**: None! The web server is fully stable and fully supports dynamic low-latency profiles for both Gemini 3.1 and 3.5.
+- **Upcoming Track**: [Conversation summary & PII Deletion](./conductor/tracks/conversation_summary_20260803/plan.md)
+  - **Phase 1**: Backend Transcript Caching, Summary Generation, and Purging.
+  - **Phase 2**: WebSocket Protocol & Frontend UI Integration.
+- **Blockers**: None.
 
 ## 🚀 Immediate Next Steps
-1. **Launch Web Server**: Run the FastAPI application locally:
-   ```bash
-   PYTHONPATH=. uv run python demo/web_server.py
-   ```
-2. **Conduct the Demo**: Go to `http://localhost:8000` or individual patient/nurse consoles, select any language preset, and start translation to observe seamless, high-fidelity real-time playback.
+1. Switch to the next incomplete track in our registry: **`conversation_summary_20260803`**.
+2. Update the track status in `conductor/tracks.md` from `[~]` to active.
+3. Begin Phase 1 by implementing in-memory transcript collection and Gemini summarization inside `demo/web_server.py`.
