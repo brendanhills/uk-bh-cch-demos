@@ -9,3 +9,9 @@ The agent core engine enforces strict, hardcoded system protection boundaries on
 When processing queues, lists, or batch items (such as bug triage loops, bulk refactoring, or multi-file analysis):
 - **Single-Target Requests**: If the user explicitly asks for a specific ID, file, or target, and that target is out of scope, invalid, or closed, the agent MUST immediately notify the user and halt.
 - **Batch Requests**: If processing a list (e.g., "triage bugs", "fix all errors"), the agent MUST gracefully and silently **skip** out-of-scope items (e.g., resolved bugs, untracked files) and continue sequential execution of the remaining active targets. Never break or halt a batch loop on an out-of-scope item unless explicitly requested.
+
+## 3. Process Termination and Active Session Safety (Process Safety Standards)
+When writing or executing scripts/commands that clean up background processes (such as stale language servers, hung compilers, or orphaned database connections):
+- **Avoid Broad Matches**: Never use broad, case-insensitive string matches (like `grep -E -i "antigravity"`) that can capture and kill the parent IDE GUI, main application binaries, or current workspace runner.
+- **Strict Command/comm Identification**: Target specific backend-only executable/comm names literally (such as `language_server` or `gemini_cli`).
+- **Enforce Ancestor Exclusion Walking**: Dynamically walk up the process tree from the active shell PID (`$$`) to collect all parent, grandparent, and root process IDs. Exclude these ancestor PIDs explicitly from any `kill` lists to guarantee terminal and IDE session stability.
