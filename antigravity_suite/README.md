@@ -2,6 +2,10 @@
 
 A consolidated, premium, and unified developer extension, diagnostics, and maintenance suite for **Antigravity** and **Jetski**.
 
+> [!WARNING]
+> **Do NOT use the Conductor extension in this project.**
+> The Conductor submodule and its skills are tracked solely for diagnostic and backwards-compatibility check-ups, but must never be executed or active.
+
 ---
 
 ## 📂 Suite Structure
@@ -41,3 +45,13 @@ View all command options:
 ```bash
 ./install.sh --help
 ```
+
+---
+
+## 🛡️ Safety Updates
+
+### August 2026: Safe Diagnostics and Repair
+- **Safe Process Targeting:** Resolved an issue where running `./install.sh --repair` would abruptly kill the active Antigravity GUI/IDE and other terminal processes, resulting in a core dump.
+- **Path Isolation:** Switched from matching processes on full command-line arguments (which caused path-name collisions with workspaces named `antigravity_suite`) to matching only on the specific binary/executable name (`comm`).
+- **IDE Preservation:** Restricted process termination exclusively to `language_server` instances. The main `antigravity` editor process is now entirely untouched, guaranteeing session stability during configuration repairs.
+
