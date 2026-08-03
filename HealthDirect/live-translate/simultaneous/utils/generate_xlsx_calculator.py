@@ -265,13 +265,13 @@ def create_styled_calculator():
         ("Post-Call Summary Cost (USD)", "=(B35*(B18/1000000))+(B36*(B19/1000000))", "=(C35*(C18/1000000))+(C36*(C19/1000000))", "=(D35*(D18/1000000))+(D36*(D19/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
         
         # Shifted Totals Rows (Row 38 & 39)
-        ("Total Session Cost (USD)", "=B26+B28+B32+B34+B37", "=C26+C28+C32+C34+C37", "=D26+D28+D32+D34+D37", "Sum of all live streaming & summary costs", "$#,##0.00"),
-        ("Total Session Cost (AUD)", "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
+        ('="Total Session Cost (USD) - Per average session length: "&B6&" mins"', "=B26+B28+B32+B34+B37", "=C26+C28+C32+C34+C37", "=D26+D28+D32+D34+D37", "Sum of all live streaming & summary costs", "$#,##0.00"),
+        ('="Total Session Cost (AUD) - Per average session length: "&B6&" mins"', "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
     ]
 
     for r_idx, row_data in enumerate(data_s3, start=25):
         # Calculation name
-        is_total_row = (row_data[0] in ["Total Session Cost (USD)", "Total Session Cost (AUD)"])
+        is_total_row = (r_idx in [38, 39])
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total_row else font_regular
         
         # Columns B, C, D
@@ -550,7 +550,7 @@ def create_styled_calculator():
                 
         # Padding adjustments for specific columns
         if col_letter == "A":
-            ws.column_dimensions[col_letter].width = 38
+            ws.column_dimensions[col_letter].width = 65
         elif col_letter in ["B", "C", "D"]:
             ws.column_dimensions[col_letter].width = 32
         elif col_letter == "E":
