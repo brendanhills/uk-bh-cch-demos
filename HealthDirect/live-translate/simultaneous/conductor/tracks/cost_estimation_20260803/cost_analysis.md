@@ -11,10 +11,10 @@ To ensure the end customer only reviews costs relevant to ongoing production bil
 ### Group A: Core Production Translation Application (Primary Focus)
 This comprises the active runtime dependencies required to run live patient-nurse translation sessions. These are continuous, session-dependent usage costs.
 * **Gemini Live API:** Dual-session WebSockets streaming bidirectional speech.
-  - *Model Versions:* **`gemini-3.5-live-translate-preview`**, **`gemini-3.1-flash`**, **`gemini-2.5-flash`**.
+  - *Model Versions:* **`gemini-3.5-live-translate-preview`**, **`gemini-3.1-flash-live-preview`**, **`gemini-2.5-flash`**.
   - *Cost Drivers:* Streaming audio input, live audio output, **transcription overhead**, **thinking budget level**, and **native vs. custom translation architectural overhead**.
 * **Gemini Context Caching:** Reusing clinical instructions and glossary lists.
-  - *Model Versions:* **`gemini-3.5-live-translate-preview`**, **`gemini-3.1-flash`**, **`gemini-2.5-flash`** (v1alpha).
+  - *Model Versions:* **`gemini-3.5-live-translate-preview`**, **`gemini-3.1-flash-live-preview`**, **`gemini-2.5-flash`** (v1alpha).
   - *Cost Drivers:* Hourly cache storage and hit token counts.
 
 ### Group B: Production Glossary Registration & Management (Secondary Focus)
@@ -39,14 +39,14 @@ These tools are used strictly by developers to generate offline synthetic conver
 ### A. Core Translation App: Gemini Live API
 We review the standard pricing across the three model options. Note that audio rates are identical, but text inputs/outputs are cheaper on Gemini 2.5 Flash, whereas cached token reads are priced differently:
 
-| Metric / Item | `gemini-3.5-live-translate-preview` | `gemini-3.1-flash` | `gemini-2.5-flash` | Cost Type / Behavior |
+| Metric / Item | `gemini-3.5-live-translate-preview` | `gemini-3.1-flash-live-preview` | `gemini-2.5-flash` | Cost Type / Behavior |
 | :--- | :--- | :--- | :--- | :--- |
-| **Audio Input** | $3.00 / 1M tokens | $3.00 / 1M tokens | $3.00 / 1M tokens | Continuous incoming user speech (~$0.005/min) |
-| **Audio Output** | $12.00 / 1M tokens | $12.00 / 1M tokens | $12.00 / 1M tokens | Spoken synthesized translations (~$0.018/min) |
-| **Text Input** | $0.75 / 1M tokens | $0.75 / 1M tokens | $0.075 / 1M tokens | Static prompt parts, text messages |
-| **Text Output** | $4.50 / 1M tokens | $4.50 / 1M tokens | $0.30 / 1M tokens | Returned text translations / transcripts |
-| **Cached Token Read**| $0.15 / 1M tokens | $0.15 / 1M tokens | $0.015 / 1M tokens | 80% discounted rate for inputs matching cache |
-| **Cache Storage** | $1.00 / 1M tokens / hr | $1.00 / 1M tokens / hr | $0.10 / 1M tokens / hr | Active context cache hourly hosting cost |
+| **Audio Input** | $3.50 / 1M tokens | $3.00 / 1M tokens | $3.00 / 1M tokens | Continuous incoming user speech (~$0.0053/min vs ~$0.005/min) |
+| **Audio Output** | $21.00 / 1M tokens | $12.00 / 1M tokens | $12.00 / 1M tokens | Spoken synthesized translations (~$0.0315/min vs ~$0.018/min) |
+| **Text Input** | $3.50 / 1M tokens | $0.75 / 1M tokens | $0.075 / 1M tokens | Static prompt parts, text messages |
+| **Text Output** | $21.00 / 1M tokens | $4.50 / 1M tokens | $0.30 / 1M tokens | Returned text translations / transcripts |
+| **Cached Token Read**| $0.00 (N/A) | $0.15 / 1M tokens | $0.015 / 1M tokens | 80% discounted rate for inputs matching cache |
+| **Cache Storage** | $0.00 (N/A) | $1.00 / 1M tokens / hr | $0.10 / 1M tokens / hr | Active context cache hourly hosting cost |
 
 > [!IMPORTANT]
 > **Transcription Cost Overhead Impact:**
@@ -99,7 +99,7 @@ This approach leverages the native translation framework specified in `types.Tra
    - *Est. Audio Output Duration:* Highly optimized (base length, no custom pacing overhead).
 3. **Zero Translation Logic Overhead:** Native mapping minimizes reasoning/logic token overhead on output.
 
-### Approaches B & C: Custom Prompt-Driven Translation (`gemini-3.1-flash` & `gemini-2.5-flash`)
+### Approaches B & C: Custom Prompt-Driven Translation (`gemini-3.1-flash-live-preview` & `gemini-2.5-flash`)
 These approaches do not support native `TranslationConfig`, and must rely on standard multi-turn `system_instruction` prompts to dictate translation rules.
 1. **Full Custom Instruction & Glossary Support (CRITICAL PRO):**
    These standard models support custom `system_instruction` blocks and Gemini Context Caching. This enables full injection and strict enforcement of the custom HealthDirect medical glossary list directly within the active audio-to-audio websocket stream.
@@ -135,20 +135,20 @@ Below are the exact measurements of speech duration, conversational turns, word 
 ### 2. Side-by-Side Playthrough Cost Comparison
 We compare the total cost (USD) of running a full playthrough of each preset dialogue across the three models.
 
-*Approach A (`gemini-3.5-live-translate-preview`) represents the optimized native translation config baseline. Approaches B & C utilize custom pacing guidelines and prompt caching overhead.*
+*Approach A (`gemini-3.5-live-translate-preview`) represents the native translation config baseline. Approach B (`gemini-3.1-flash-live-preview`) and Approach C (`gemini-2.5-flash`) utilize custom pacing guidelines and prompt caching.*
 
-| Medical Preset (Language) | Duration | Approach A: Native<br>`gemini-3.5-live-translate-preview` | Approach B: Prompt-Driven<br>`gemini-3.1-flash` | Approach C: Prompt-Driven<br>`gemini-2.5-flash` |
+| Medical Preset (Language) | Duration | Approach A: Native<br>`gemini-3.5-live-translate-preview` | Approach B: Prompt-Driven<br>`gemini-3.1-flash-live-preview` | Approach C: Prompt-Driven<br>`gemini-2.5-flash` |
 | :--- | :--- | :---: | :---: | :---: |
-| **Arabic Asthma** | 86.43s | **$0.32569** | $0.35053 | $0.34802 |
-| **German Fever** | 64.30s | **$0.27022** | $0.29230 | $0.28997 |
-| **Spanish Ear** | 70.43s | **$0.29806** | $0.32245 | $0.31996 |
-| **Hindi Cough** | 108.63s | **$0.46609** | $0.50419 | $0.50072 |
-| **Vietnamese Paediatric**| 68.72s | **$0.29649** | $0.32100 | $0.31848 |
+| **Arabic Asthma** | 86.43s | $0.49915 | $0.35053 | $0.34802 |
+| **German Fever** | 64.30s | $0.42085 | $0.29230 | $0.28997 |
+| **Spanish Ear** | 70.43s | $0.46471 | $0.32245 | $0.31996 |
+| **Hindi Cough** | 108.63s | $0.72840 | $0.50419 | $0.50072 |
+| **Vietnamese Paediatric**| 68.72s | $0.46353 | $0.32100 | $0.31848 |
 
 ### Core Takeaways from Comparative Cost Audit:
-1. **`gemini-3.5-live-translate-preview` is the Most Cost-Effective Option:** Across all presets, the native translation model is **`7.5% to 8.5%` cheaper** than the other models, despite Gemini 2.5 Flash having significantly lower text input/output rates.
-2. **Audio Streaming Rates Dominate:** Because Gemini Live continuously streams audio ($3.00/1M input, $12.00/1M output), the text token pricing differences are entirely drowned out. The overhead of prompt-driven pacing (which expands spoken output audio duration by `12.5%`) adds far more cost than the cheaper text rate of 2.5 Flash can recover.
-3. **Glossary Caching is Crucial:** For all models, utilizing Gemini Context Caching for our medical glossary and prompt rules cuts input reading costs by **`80% to 90%`**, saving several cents per session.
+1. **Prompt-Driven Live Preview (Approach B) is Highly Cost-Effective:** Due to the specialized $21.00 / 1M token premium on Gemini 3.5 Live Translate (Approach A) outputs, **Approach B (`gemini-3.1-flash-live-preview`) is actually 30% to 31% cheaper than Approach A**, and only fractionally (~0.5%) more expensive than Approach C.
+2. **Approach B represents the Optimal Architectural Choice:** Approach B not only delivers substantial cost savings compared to Approach A, but it also **fully supports custom system instructions and strict medical glossary enforcement** (which Approach A natively lacks due to API restrictions). The custom pacing overhead (+12.5% audio output length) is completely dwarfed by Approach B's 43% lower audio output unit rate ($12.00 vs $21.00 / 1M tokens).
+3. **Glossary Caching is Crucial:** For Approaches B & C, utilizing Gemini Context Caching for our medical glossary and prompt rules cuts static input reading costs by **`80% to 90%`**, ensuring that loading a large glossary (3k tokens) on every turn remains extremely cheap.
 
 ---
 

@@ -89,7 +89,7 @@ def create_styled_calculator():
          "Hardware-accelerated native translation pacing. System instructions are omitted completely to prevent WebSocket connection crashes.",
          "RECOMMENDED BASELINE FOR RAW SPEED.\nSaves 7.5% to 8.5% on streaming costs but cannot enforce a spoken clinical glossary. Post-call summary adds only $0.00096 USD (0.14% overhead)."),
          
-        ("Approach B:\nPrompt-Driven Flash 3.1\n(gemini-3.1-flash)",
+        ("Approach B:\nPrompt-Driven Flash 3.1\n(gemini-3.1-flash-live-preview)",
          "Alternative translation approach where translation and pacing are guided via custom system prompts.\n\n[PRO] FULLY supports custom system instructions and dynamic clinical glossary enforcement in synthesized spoken audio.\n\nPost-call summary dynamically uses gemini-3.1-flash.",
          "Requires custom pacing prompts and manual turn buffers, adding a +12.5% duration overhead to streaming audio outputs. System instruction includes the full clinical glossary, cached via Context Caching.",
          "RECOMMENDED FOR COMPLIANCE & GLOSSARIES.\nIncurs slightly higher streaming fees due to the pacing expansion, but enforces medical terminology perfectly. Fully integrated with prompt caching."),
@@ -135,10 +135,10 @@ def create_styled_calculator():
     ws["A3"].font = font_section
     ws["A3"].fill = fill_section
     ws.row_dimensions[3].height = 24
-    ws.merge_cells("A3:E3")
+    ws.merge_cells("A3:F3")
 
     # Parameter Table Header
-    headers_s1 = ["Parameter", "Value", "Description", "", ""]
+    headers_s1 = ["Parameter", "Value", "Description", "", "", ""]
     for idx, h in enumerate(headers_s1):
         cell = ws.cell(row=4, column=idx+1, value=h)
         cell.font = font_header
@@ -169,30 +169,30 @@ def create_styled_calculator():
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 2 Header (Merged A:E) (Shifted to Row 14)
+    # Section 2 Header (Merged A:F) (Shifted to Row 14)
     ws["A14"] = "SECTION 2: MODEL UNIT RATES (USD per Million Tokens)"
     ws["A14"].font = font_section
     ws["A14"].fill = fill_section
     ws.row_dimensions[14].height = 24
-    ws.merge_cells("A14:E14")
+    ws.merge_cells("A14:F14")
 
     # Section 2 Headers (Shifted to Row 15)
-    headers_s2 = ["Service/Item", "gemini-3.5-live-translate-preview", "gemini-3.1-flash", "gemini-2.5-flash", "Unit"]
+    headers_s2 = ["Service/Item", "gemini-3.5-live-translate-preview", "gemini-3.1-flash-live-preview", "gemini-2.5-flash", "Unit", "Pricing Reference"]
     for idx, h in enumerate(headers_s2):
         cell = ws.cell(row=15, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
-        cell.alignment = align_left if idx == 0 or idx == 4 else align_right
+        cell.alignment = align_left if idx in [0, 4, 5] else align_right
     ws.row_dimensions[15].height = 22
 
     # S2 Data rows (USD per Million Tokens) (Shifted to Row 16 onwards)
     data_s2 = [
-        ("Audio Input", 3.00, 3.00, 3.00, "per Million Tokens"),
-        ("Audio Output", 12.00, 12.00, 12.00, "per Million Tokens"),
-        ("Text Input", 0.75, 0.75, 0.075, "per Million Tokens"),
-        ("Text Output", 4.50, 4.50, 0.30, "per Million Tokens"),
-        ("Cached Read", 0.15, 0.15, 0.015, "per Million Tokens"),
-        ("Cache Storage", 1.00, 1.00, 0.10, "per Million Tokens")
+        ("Audio Input", 3.50, 3.00, 3.00, "per Million Tokens"),
+        ("Audio Output", 21.00, 12.00, 12.00, "per Million Tokens"),
+        ("Text Input", 3.50, 0.75, 0.075, "per Million Tokens"),
+        ("Text Output", 21.00, 4.50, 0.30, "per Million Tokens"),
+        ("Cached Read", 0.00, 0.15, 0.015, "per Million Tokens"),
+        ("Cache Storage", 0.00, 1.00, 0.10, "per Million Tokens")
     ]
     for r_idx, row_data in enumerate(data_s2, start=16):
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
@@ -206,16 +206,23 @@ def create_styled_calculator():
             else:
                 val_cell.number_format = "$#,##0.00"
         ws.cell(row=r_idx, column=5, value=row_data[4]).font = font_regular
-        for col_idx in range(1, 6):
+        
+        # Add hyperlinked Pricing Reference Link
+        ref_cell = ws.cell(row=r_idx, column=6, value="Google AI Studio Pricing")
+        ref_cell.hyperlink = "https://ai.google.dev/pricing"
+        ref_cell.font = Font(name="Outfit", size=10, color="0000FF", underline="single")
+        ref_cell.alignment = align_left
+        
+        for col_idx in range(1, 7):
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 3 Header (Merged A:E) (Shifted to Row 23)
+    # Section 3 Header (Merged A:F) (Shifted to Row 23)
     ws["A23"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
     ws["A23"].font = font_section
     ws["A23"].fill = fill_section
     ws.row_dimensions[23].height = 24
-    ws.merge_cells("A23:E23")
+    ws.merge_cells("A23:F23")
 
     # Section 3 Headers (Shifted to Row 24)
     headers_s3 = ["Metric/Calculation", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Formula Description"]
@@ -286,12 +293,12 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_total_row else 20
 
-    # Section 4 Header (Shifted to Row 41, Merged A:E)
+    # Section 4 Header (Shifted to Row 41, Merged A:F)
     ws["A41"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
     ws["A41"].font = font_section
     ws["A41"].fill = fill_section
     ws.row_dimensions[41].height = 24
-    ws.merge_cells("A41:E41")
+    ws.merge_cells("A41:F41")
 
     # Row 42: Section 4 Headers
     headers_s4 = ["Volume / Projections", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Notes"]
@@ -342,20 +349,20 @@ def create_styled_calculator():
     ws_g["A1"].font = font_title
     ws_g.row_dimensions[1].height = 35
 
-    # Section 1 Overview Header (Merged A:E)
+    # Section 1 Overview Header (Merged A:F)
     ws_g["A3"] = "SECTION 1: GLOSSARY GENERATION PARAMETERS"
     ws_g["A3"].font = font_section
     ws_g["A3"].fill = fill_section
     ws_g.row_dimensions[3].height = 24
-    ws_g.merge_cells("A3:E3")
+    ws_g.merge_cells("A3:F3")
 
     # Table Header
-    headers_g1 = ["Parameter", "Value", "Description", "", ""]
+    headers_g1 = ["Parameter", "Value", "Description", "", "", "Pricing Reference"]
     for idx, h in enumerate(headers_g1):
         cell = ws_g.cell(row=4, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
-        cell.alignment = align_left
+        cell.alignment = align_left if idx in [0, 2, 5] else align_right
     ws_g.row_dimensions[4].height = 22
 
     # S1 Data rows
@@ -364,8 +371,8 @@ def create_styled_calculator():
         ("Glossary_Master_Term_Count", 500, "Number of standardized medical terms and phrases to translate for the session prompt context", "#,##0"),
         ("Input_Tokens_Per_Term", 25, "Average input tokens per term (source word + translation instructions + context guidelines)", "#,##0"),
         ("Output_Tokens_Per_Term", 50, "Average output tokens per term (translated word + pronunciation phonetics + contextual note)", "#,##0"),
-        ("Model_Input_Rate_Per_Million", 1.25, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,##0.00"),
-        ("Model_Output_Rate_Per_Million", 5.00, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,##0.00")
+        ("Model_Input_Rate_Per_Million", 1.25, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,,##0.00"),
+        ("Model_Output_Rate_Per_Million", 5.00, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,,##0.00")
     ]
     for r_idx, row_data in enumerate(data_g1, start=5):
         ws_g.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
@@ -375,16 +382,23 @@ def create_styled_calculator():
         ws_g.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular
         val_cell.number_format = row_data[3]
             
-        for col_idx in range(1, 4):
+        # Add Pricing Reference Link for Model Rates
+        if "Model_" in row_data[0]:
+            ref_cell = ws_g.cell(row=r_idx, column=6, value="Google AI Studio Pricing")
+            ref_cell.hyperlink = "https://ai.google.dev/pricing"
+            ref_cell.font = Font(name="Outfit", size=10, color="0000FF", underline="single")
+            ref_cell.alignment = align_left
+            
+        for col_idx in range(1, 7):
             ws_g.cell(row=r_idx, column=col_idx).border = border_all
         ws_g.row_dimensions[r_idx].height = 20
 
-    # Section 2 Header (Merged A:E) (Row 12)
+    # Section 2 Header (Merged A:F) (Row 12)
     ws_g["A12"] = "SECTION 2: ONE-TIME GLOSSARY CREATION COST (GEMINI 1.5 PRO)"
     ws_g["A12"].font = font_section
     ws_g["A12"].fill = fill_section
     ws_g.row_dimensions[12].height = 24
-    ws_g.merge_cells("A12:E12")
+    ws_g.merge_cells("A12:F12")
 
     # Section 2 Table Header (Row 13)
     headers_g2 = ["Calculation Metric", "Value", "Formula Description", "", ""]
@@ -427,7 +441,7 @@ def create_styled_calculator():
     ws_g["A21"].font = font_section
     ws_g["A21"].fill = fill_section
     ws_g.row_dimensions[21].height = 24
-    ws_g.merge_cells("A21:E21")
+    ws_g.merge_cells("A21:F21")
 
     # Section 3 Table Header (Row 22)
     headers_g3 = ["Maintenance Metric", "Value", "Formula Description", "", ""]
@@ -469,7 +483,7 @@ def create_styled_calculator():
     ws_g["A29"].font = font_section
     ws_g["A29"].fill = fill_section
     ws_g.row_dimensions[29].height = 24
-    ws_g.merge_cells("A29:E29")
+    ws_g.merge_cells("A29:F29")
 
     # Section 4 Table Header (Row 30)
     headers_g4 = ["Caching Parameter", "Value", "Formula Description", "", ""]
@@ -515,6 +529,8 @@ def create_styled_calculator():
             ws_g.column_dimensions[col_letter_g].width = 16
         elif col_letter_g == "C":
             ws_g.column_dimensions[col_letter_g].width = 75
+        elif col_letter_g == "F":
+            ws_g.column_dimensions[col_letter_g].width = 28
         else:
             ws_g.column_dimensions[col_letter_g].width = 12
 
@@ -539,6 +555,8 @@ def create_styled_calculator():
             ws.column_dimensions[col_letter].width = 32
         elif col_letter == "E":
             ws.column_dimensions[col_letter].width = 48
+        elif col_letter == "F":
+            ws.column_dimensions[col_letter].width = 28
         else:
             ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
 
