@@ -12,13 +12,13 @@ This plan outlines the sequential steps to perform the API audit, calculate empi
 - [x] Task: Conductor - User Manual Verification 'Phase 1: API Audit & Unit Pricing Research' (Protocol in workflow.md)
 
 ## Phase 2: Dialogue Token Audit & Empirical Cost Calculations
-- [~] Task: Audit Sample Conversations for Token & Duration Metrics
-    - [~] Analyze the duration and transcript word/character counts of our existing sample presets (German, Spanish, Arabic, Vietnamese).
-    - [~] Run test simulations or parse metadata to measure or calculate the precise input and output token counts when processed by the Gemini Live API.
-- [ ] Task: Calculate Cumulative Preset Costs
-    - [ ] Compute the exact cost for running each preset playthrough, showing the individual cost of STT, Gemini Live (input/output), and TTS.
-    - [ ] Summarize these costs in a comparative table.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Dialogue Token Audit & Empirical Cost Calculations' (Protocol in workflow.md)
+- [x] Task: Audit Sample Conversations for Token & Duration Metrics
+    - [x] Analyze the duration and transcript word/character counts of our existing sample presets (German, Spanish, Arabic, Vietnamese).
+    - [x] Run test simulations or parse metadata to measure or calculate the precise input and output token counts when processed by the Gemini Live API.
+- [x] Task: Calculate Cumulative Preset Costs
+    - [x] Compute the exact cost for running each preset playthrough, showing the individual cost of STT, Gemini Live (input/output), and TTS.
+    - [x] Summarize these costs in a comparative table.
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Dialogue Token Audit & Empirical Cost Calculations' (Protocol in workflow.md)
 
 ## Phase 3: Google Sheets Projection Calculator CSV Design
 - [ ] Task: Design and Populate ready-to-import CSV Template
