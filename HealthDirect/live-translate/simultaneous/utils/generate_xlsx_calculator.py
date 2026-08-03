@@ -4,13 +4,8 @@ from openpyxl.utils import get_column_letter
 
 def create_styled_calculator():
     wb = openpyxl.Workbook()
-    ws = wb.active
-    ws.title = "Cost Calculator"
-
-    # Ensure grid lines are visible
-    ws.views.sheetView[0].showGridLines = True
-
-    # ---- PALETTE & STYLES ----
+    
+    # ---- PALETTE & STYLES (Shared across sheets) ----
     # Colors
     NAVY_BLUE = "1E3A8A"       # Primary Title/Headers
     ICE_BLUE = "E0F2FE"        # Section Header backgrounds
@@ -18,7 +13,7 @@ def create_styled_calculator():
     BORDER_COLOR = "D1D5DB"    # Clean borders
     
     # Fonts
-    font_title = Font(name="Segoe UI", size=16, bold=True, color=NAVY_BLUE)
+    font_title = Font(name="Segoe UI", size=15, bold=True, color=NAVY_BLUE)
     font_section = Font(name="Segoe UI", size=11, bold=True, color="1E293B")
     font_header = Font(name="Segoe UI", size=10, bold=True, color="FFFFFF")
     font_bold = Font(name="Segoe UI", size=10, bold=True)
@@ -42,23 +37,107 @@ def create_styled_calculator():
     border_all = Border(left=thin_border_side, right=thin_border_side, top=thin_border_side, bottom=thin_border_side)
     border_total = Border(top=thin_border_side, bottom=double_border_side)
 
-    # ---- WRITE DATA ----
-    
-    # Row 1: Title
+    # ==========================================
+    # ---- TAB 1: MODEL EXPLAINER ----
+    # ==========================================
+    ws_explainer = wb.active
+    ws_explainer.title = "Model Explainer"
+    ws_explainer.views.sheetView[0].showGridLines = True
+
+    # Title
+    ws_explainer["A1"] = "HealthDirect Simultaneous Interpreter: Model Architecture & Roles"
+    ws_explainer["A1"].font = font_title
+    ws_explainer.row_dimensions[1].height = 35
+
+    # Section 1 Overview
+    ws_explainer["A3"] = "SECTION 1: OVERVIEW & STRATEGIC HIGHLIGHTS"
+    ws_explainer["A3"].font = font_section
+    ws_explainer.row_dimensions[3].height = 24
+    for col in ["A", "B", "C", "D"]:
+        ws_explainer[f"{col}3"].fill = fill_section
+
+    desc_text = (
+        "This workbook provides a rigorous, data-driven cost and performance model comparing three alternative "
+        "deployment approaches for real-time translation on HealthDirect Video Call, as well as the new post-call clinical summary workflow.\n\n"
+        "Model projections are based on official scale parameters (1.8 Million annual consultations, rounded 30-minute average, and 5% to 10% translation target)."
+    )
+    ws_explainer["A4"] = desc_text
+    ws_explainer["A4"].font = font_italic
+    ws_explainer["A4"].alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+    ws_explainer.row_dimensions[4].height = 50
+    ws_explainer.merge_cells("A4:D4")
+
+    # Section 2 Matrix Header
+    ws_explainer["A6"] = "SECTION 2: MODEL ARCHITECTURE MATRIX"
+    ws_explainer["A6"].font = font_section
+    ws_explainer.row_dimensions[6].height = 24
+    for col in ["A", "B", "C", "D"]:
+        ws_explainer[f"{col}6"].fill = fill_section
+
+    headers_explainer = ["Model / Approach", "Primary Role in System", "Pacing & Audio Streaming Profile", "Financial & Operational Implications"]
+    for idx, h in enumerate(headers_explainer):
+        cell = ws_explainer.cell(row=7, column=idx+1, value=h)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_left
+    ws_explainer.row_dimensions[7].height = 22
+
+    # Explainer Data
+    data_explainer = [
+        ("Approach A:\nNative Translation Baseline\n(gemini-3.5-live-translate-preview)", 
+         "Handles real-time Patient-to-Nurse and Nurse-to-Patient simultaneous translation natively using Google's dedicated live-translate preview API config.",
+         "Hardware-accelerated native translation pacing. No custom prompt guidelines needed. Continuous bidirectional streaming.",
+         "RECOMMENDED BASELINE.\nSaves 7.5% to 8.5% on total session costs compared to Approach B/C by avoiding any prompt-driven audio duration expansion (saves ~$120,000 to ~$240,000 AUD annually across HealthDirect's scale)."),
+         
+        ("Approach B:\nPrompt-Driven Flash 3.1\n(gemini-3.1-flash)",
+         "Alternative translation approach where translation and pacing are guided using developer system instructions on standard Gemini Live streams.",
+         "Requires custom pacing guidelines and manual turn timeouts. Adds a ~12.5% duration overhead to streaming audio output to prevent over-talk.",
+         "High reasoning capability but moderately more expensive due to prompt instruction overhead and pacing audio duration expansion."),
+         
+        ("Approach C:\nPrompt-Driven Flash 2.5\n(gemini-2.5-flash)",
+         "Legacy translation approach using previous-generation Gemini Live streams with developer system instruction prompts for pacing.",
+         "Requires identical custom pacing guidelines as Approach B, adding a +12.5% pacing duration overhead to spoken outputs.",
+         "Lowest unit text-token rate, but this minor saving is completely offset by the high audio streaming rates and pacing duration overhead."),
+         
+        ("Clinical Summary Feature:\nPost-Call Summarization\n(gemini-3.5-flash)",
+         "Compiles the completed session transcript and generates a structured clinical SOAP note / summary immediately after the call is finished.",
+         "Standard non-streaming unary text-to-text call triggered once upon call completion. No real-time audio streaming involved.",
+         "VIRTUALLY FREE.\nCosts less than 1/10th of a single cent ($0.00096 USD) per call, adding a negligible 0.14% cost overhead to the live stream.")
+    ]
+
+    for r_idx, row_data in enumerate(data_explainer, start=8):
+        for c_idx, val in enumerate(row_data):
+            cell = ws_explainer.cell(row=r_idx, column=c_idx+1, value=val)
+            cell.font = font_bold if c_idx == 0 else font_regular
+            cell.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+            cell.border = border_all
+        ws_explainer.row_dimensions[r_idx].height = 85
+
+    # Explainer Column Widths
+    ws_explainer.column_dimensions["A"].width = 38
+    ws_explainer.column_dimensions["B"].width = 45
+    ws_explainer.column_dimensions["C"].width = 45
+    ws_explainer.column_dimensions["D"].width = 50
+
+    # ==========================================
+    # ---- TAB 2: COST CALCULATOR ----
+    # ==========================================
+    ws = wb.create_sheet(title="Cost Calculator")
+    ws.views.sheetView[0].showGridLines = True
+
+    # Title
     ws["A1"] = "HealthDirect Simultaneous Translation Cost Calculator"
     ws["A1"].font = font_title
     ws.row_dimensions[1].height = 35
 
-    # Row 2: Blank
-
-    # Row 3: Section 1 Header
+    # Section 1 Header
     ws["A3"] = "SECTION 1: GLOBAL PARAMETERS"
     ws["A3"].font = font_section
     ws.row_dimensions[3].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}3"].fill = fill_section
 
-    # Row 4: Parameter Table Header
+    # Parameter Table Header
     headers_s1 = ["Parameter", "Value", "Description", "", ""]
     for idx, h in enumerate(headers_s1):
         cell = ws.cell(row=4, column=idx+1, value=h)
@@ -70,8 +149,8 @@ def create_styled_calculator():
     # S1 Data rows
     data_s1 = [
         ("AUD_USD_Exchange_Rate", 1.515, "Indicative exchange rate (1 USD = 1.515 AUD)"),
-        ("Average_Session_Duration_Minutes", 20, "Adjustable production clinical session length in minutes"),
-        ("Weekly_Session_Volume", 1000, "Adjustable volume parameter (number of sessions per week)")
+        ("Average_Session_Duration_Minutes", 30, "Adjustable production clinical session length in minutes (rounded to 30 mins)"),
+        ("Weekly_Session_Volume", 1730, "Adjustable volume parameter (5% low target is 1,730/week; 10% high target is 3,460/week)")
     ]
     for r_idx, row_data in enumerate(data_s1, start=5):
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
@@ -92,16 +171,14 @@ def create_styled_calculator():
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Row 8: Blank
-
-    # Row 9: Section 2 Header
+    # Section 2 Header
     ws["A9"] = "SECTION 2: MODEL UNIT RATES (USD)"
     ws["A9"].font = font_section
     ws.row_dimensions[9].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}9"].fill = fill_section
 
-    # Row 10: Section 2 Headers
+    # Section 2 Headers
     headers_s2 = ["Service/Item", "gemini-3.5-live-translate-preview", "gemini-3.1-flash", "gemini-2.5-flash", "Unit"]
     for idx, h in enumerate(headers_s2):
         cell = ws.cell(row=10, column=idx+1, value=h)
@@ -131,16 +208,14 @@ def create_styled_calculator():
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Row 17: Blank
-
-    # Row 18: Section 3 Header
+    # Section 3 Header
     ws["A18"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
     ws["A18"].font = font_section
     ws.row_dimensions[18].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}18"].fill = fill_section
 
-    # Row 19: Section 3 Headers
+    # Section 3 Headers
     headers_s3 = ["Metric/Calculation", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Formula Description"]
     for idx, h in enumerate(headers_s3):
         cell = ws.cell(row=19, column=idx+1, value=h)
@@ -201,9 +276,7 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_total_row else 20
 
-    # Row 32: Blank
-
-    # Row 33: Section 4 Header
+    # Section 4 Header
     ws["A33"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
     ws["A33"].font = font_section
     ws.row_dimensions[33].height = 24
@@ -222,11 +295,11 @@ def create_styled_calculator():
     # S4 Projections
     data_s4 = [
         ("Weekly Cost (USD)", "=B30*$B$7", "=C30*$B$7", "=D30*$B$7", "Sessions/Week * Session Cost", "$#,##0.00"),
-        ("Weekly Cost (AUD)", "=B31*$B$7", "=C31*$B$7", "=D31*$B$7", "Weekly USD * Exchange Rate", "$#,##0.00"),
+        ("Weekly Cost (AUD)", "=B35*$B$5", "=C35*$B$5", "=D35*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
         ("Monthly Cost (USD)", "=B35*4.33", "=C35*4.33", "=D35*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
-        ("Monthly Cost (AUD)", "=B36*4.33", "=C36*4.33", "=D36*4.33", "Monthly USD * Exchange Rate", "$#,##0.00"),
+        ("Monthly Cost (AUD)", "=B37*$B$5", "=C37*$B$5", "=D37*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
         ("Annual Cost (USD)", "=B35*52", "=C35*52", "=D35*52", "Weekly Cost * 52 weeks", "$#,##0.00"),
-        ("Annual Cost (AUD)", "=B36*52", "=C36*52", "=D36*52", "Annual USD * Exchange Rate", "$#,##0.00")
+        ("Annual Cost (AUD)", "=B39*$B$5", "=C39*$B$5", "=D39*$B$5", "Annual USD * Exchange Rate", "$#,##0.00")
     ]
 
     for r_idx, row_data in enumerate(data_s4, start=35):
@@ -248,7 +321,7 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_annual_aud else 20
 
-    # ---- AUTO-FIT COLUMN WIDTHS ----
+    # ---- AUTO-FIT CALCULATOR COLUMN WIDTHS ----
     for col in ws.columns:
         max_len = 0
         col_letter = get_column_letter(col[0].column)
