@@ -102,7 +102,7 @@ def create_styled_calculator():
         ("Clinical Summary Feature:\nPost-Call Summarization\n(Dynamic Family Mirroring)",
          "Compiles the completed session transcript and generates a structured clinical SOAP note / summary immediately after the call is finished.",
          "Dynamic family matching: Uses 3.5 Flash for Approach A, 3.1 Flash for Approach B, and 2.5 Flash for Approach C to maintain system-wide architectural consistency.",
-         "VIRTUALLY FREE.\nCosts less than 1/10th of a single cent per call across all model families, adding a negligible 0.14% cost overhead to the total session cost.")
+         "Highly Cost-Efficient.\nCosts under 1/10th of a single cent per call across all model families, representing a minor 0.14% session cost overhead.")
     ]
 
     for r_idx, row_data in enumerate(data_explainer, start=8):
