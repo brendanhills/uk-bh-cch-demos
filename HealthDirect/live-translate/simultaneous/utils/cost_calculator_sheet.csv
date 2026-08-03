@@ -2,8 +2,8 @@
 ## SECTION 1: GLOBAL PARAMETERS,,,,
 Parameter,Value,Description,,
 AUD_USD_Exchange_Rate,1.515,Indicative exchange rate (1 USD = 1.515 AUD),,
-Average_Session_Duration_Minutes,20,Adjustable production clinical session length in minutes,,
-Weekly_Session_Volume,1000,Adjustable volume parameter (number of sessions per week),,
+Average_Session_Duration_Minutes,30,Adjustable production clinical session length in minutes (rounded to 30 mins),,
+Weekly_Session_Volume,1730,Adjustable volume parameter (5% low target is 1,730/week; 10% high target is 3,460/week),,
 ,,,,
 ## SECTION 2: MODEL UNIT RATES (USD),,,,
 Service/Item,gemini-3.5-live-translate-preview,gemini-3.1-flash,gemini-2.5-flash,Unit
