@@ -3,18 +3,18 @@
 This plan outlines the sequential steps to perform the API audit, calculate empirical costs, build the Google Sheets projection template, and deliver actionable cost-reduction recommendations.
 
 ## Phase 1: API Audit & Unit Pricing Research
-- [ ] Task: Perform Codebase API Call Audit
-    - [ ] Search the repository (`live-translate/simultaneous/`) for all external Google Cloud client and endpoint invocations.
-    - [ ] Document all called API services (Gemini Live API, Cloud STT, Cloud TTS, Cloud Translation, etc.) and their specific models/voices in use.
-- [ ] Task: Compile Official Unit Pricing Rate Sheet
-    - [ ] Retrieve and verify current public pricing rates for each audited GCP service.
-    - [ ] Compile rates into a structured table (with units like per 1M characters, per audio minute, or per 1M tokens).
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: API Audit & Unit Pricing Research' (Protocol in workflow.md)
+- [x] Task: Perform Codebase API Call Audit
+    - [x] Search the repository (`live-translate/simultaneous/`) for all external Google Cloud client and endpoint invocations.
+    - [x] Document all called API services (Gemini Live API, Cloud STT, Cloud TTS, Cloud Translation, etc.) and their specific models/voices in use.
+- [x] Task: Compile Official Unit Pricing Rate Sheet
+    - [x] Retrieve and verify current public pricing rates for each audited GCP service.
+    - [x] Compile rates into a structured table (with units like per 1M characters, per audio minute, or per 1M tokens).
+- [x] Task: Conductor - User Manual Verification 'Phase 1: API Audit & Unit Pricing Research' (Protocol in workflow.md)
 
 ## Phase 2: Dialogue Token Audit & Empirical Cost Calculations
-- [ ] Task: Audit Sample Conversations for Token & Duration Metrics
-    - [ ] Analyze the duration and transcript word/character counts of our existing sample presets (German, Spanish, Arabic, Vietnamese).
-    - [ ] Run test simulations or parse metadata to measure or calculate the precise input and output token counts when processed by the Gemini Live API.
+- [~] Task: Audit Sample Conversations for Token & Duration Metrics
+    - [~] Analyze the duration and transcript word/character counts of our existing sample presets (German, Spanish, Arabic, Vietnamese).
+    - [~] Run test simulations or parse metadata to measure or calculate the precise input and output token counts when processed by the Gemini Live API.
 - [ ] Task: Calculate Cumulative Preset Costs
     - [ ] Compute the exact cost for running each preset playthrough, showing the individual cost of STT, Gemini Live (input/output), and TTS.
     - [ ] Summarize these costs in a comparative table.
