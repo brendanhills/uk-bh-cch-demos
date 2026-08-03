@@ -91,16 +91,19 @@ There is a fundamental architectural and cost distinction between utilizing the 
 
 ### Approach A: Native Translation Engine (`gemini-3.5-live-translate-preview`)
 This approach leverages the native translation framework specified in `types.TranslationConfig`.
-1. **Low Context / Prompt Size:** Because the model natively understands simultaneous translation, it does not require heavy, multi-paragraph guiding prompts in the `system_instruction`. The instructions only need to contain clinical rules and the glossary. 
-   - *Est. Cached Prompt Size:* **~1,000 tokens** (highly cost-effective).
+1. **No System Instruction or Custom Glossary Support (CRITICAL CON):** 
+   Under Developer API mode, `gemini-3.5-live-translate-preview` does NOT support the `system_instruction` parameter in `LiveConnectConfig` when used in tandem with `translation_config`. Passing both results in an immediate WebSocket 1011 connection crash. 
+   - *Est. Cached Prompt Size:* **0 tokens** (no static system prompt can be read or cached).
+   - *Functional Impact:* **The spoken synthesized audio output cannot natively enforce our custom clinical glossary or custom instructions.**
 2. **Native Silence & Pacing Optimization:** Handling speech output natively at the engine level results in extremely tight, well-paced voice packets with zero trailing silence or filler phrasing.
    - *Est. Audio Output Duration:* Highly optimized (base length, no custom pacing overhead).
 3. **Zero Translation Logic Overhead:** Native mapping minimizes reasoning/logic token overhead on output.
 
 ### Approaches B & C: Custom Prompt-Driven Translation (`gemini-3.1-flash` & `gemini-2.5-flash`)
 These approaches do not support native `TranslationConfig`, and must rely on standard multi-turn `system_instruction` prompts to dictate translation rules.
-1. **High Context / Prompt Size:** Requires a complex, multi-paragraph translation guide outlining pacing, dual-channel handling, and translation formatting rules, in addition to the glossary.
-   - *Est. Cached Prompt Size:* **~3,000 tokens** (3x context caching read overhead compared to native).
+1. **Full Custom Instruction & Glossary Support (CRITICAL PRO):**
+   These standard models support custom `system_instruction` blocks and Gemini Context Caching. This enables full injection and strict enforcement of the custom HealthDirect medical glossary list directly within the active audio-to-audio websocket stream.
+   - *Est. Cached Prompt Size:* **~3,000 tokens** (including the clinical glossary and pacing rules, cached at an 80% to 90% discount).
 2. **Manual Audio Pacing Overhead:** Requires manual streaming pacing (`pacing_mode='paced'`) and prompt instruction guidance to prevent the model from interrupting or rushing. This adds a slight padding to output packets.
    - *Est. Audio Output Duration:* **10% to 15% audio output token expansion** due to filler padding or manual prompt pacing boundaries.
 

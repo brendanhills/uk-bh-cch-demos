@@ -85,14 +85,14 @@ def create_styled_calculator():
     # Explainer Data
     data_explainer = [
         ("Approach A:\nNative Translation Baseline\n(gemini-3.5-live-translate-preview)", 
-         "Handles real-time Patient-to-Nurse and Nurse-to-Patient simultaneous translation natively.\n\nPost-call summary dynamically uses gemini-3.5-flash to align model families.",
-         "Hardware-accelerated native translation pacing. Summary is triggered as a single non-streaming unary text-to-text call immediately after session closure.",
-         "RECOMMENDED BASELINE.\nSaves 7.5% to 8.5% on streaming costs. Dynamic post-call summarization adds only $0.00096 USD per session (0.14% overhead), fully integrated in totals."),
+         "Handles real-time Patient-to-Nurse and Nurse-to-Patient simultaneous translation natively.\n\n[CON] Does NOT support custom system instructions or dynamic glossary injection in synthesized spoken audio.\n\nPost-call summary dynamically uses gemini-3.5-flash.",
+         "Hardware-accelerated native translation pacing. System instructions are omitted completely to prevent WebSocket connection crashes.",
+         "RECOMMENDED BASELINE FOR RAW SPEED.\nSaves 7.5% to 8.5% on streaming costs but cannot enforce a spoken clinical glossary. Post-call summary adds only $0.00096 USD (0.14% overhead)."),
          
         ("Approach B:\nPrompt-Driven Flash 3.1\n(gemini-3.1-flash)",
-         "Alternative translation approach where translation and pacing are guided via custom developer prompts.\n\nPost-call summary dynamically uses gemini-3.1-flash to align model families.",
-         "Requires custom pacing prompts and manual turn buffers, adding a +12.5% duration overhead to streaming audio outputs.",
-         "Incurs higher streaming and text fees due to the pacing expansion and prompt instruction size. Dynamic post-call summarization is fully integrated."),
+         "Alternative translation approach where translation and pacing are guided via custom system prompts.\n\n[PRO] FULLY supports custom system instructions and dynamic clinical glossary enforcement in synthesized spoken audio.\n\nPost-call summary dynamically uses gemini-3.1-flash.",
+         "Requires custom pacing prompts and manual turn buffers, adding a +12.5% duration overhead to streaming audio outputs. System instruction includes the full clinical glossary, cached via Context Caching.",
+         "RECOMMENDED FOR COMPLIANCE & GLOSSARIES.\nIncurs slightly higher streaming fees due to the pacing expansion, but enforces medical terminology perfectly. Fully integrated with prompt caching."),
          
         ("Approach C:\nPrompt-Driven Flash 2.5\n(gemini-2.5-flash)",
          "Legacy translation approach where translation and pacing are guided via legacy custom system instructions.\n\nPost-call summary dynamically uses gemini-2.5-flash to align model families.",
@@ -229,7 +229,7 @@ def create_styled_calculator():
     # S3 Formulas & Data (Dividing rates by 1,000,000) (Shifted to Row 25 onwards)
     data_s3 = [
         # Row 25
-        ("Prompt Cache Read Size (Tokens)", 1000, 3000, 3000, "Static instructions + glossary context", "#,##0"),
+        ("Prompt Cache Read Size (Tokens)", 0, 3000, 3000, "Static instructions + glossary context (N/A for Approach A)", "#,##0"),
         # Row 26
         ("Prompt Cache Read Cost (USD)", "=B25*(B20/1000000)", "=C25*(C20/1000000)", "=D25*(D20/1000000)", "Tokens * (Cache Read Rate / 1,000,000)", "$#,##0.00000"),
         # Row 27
