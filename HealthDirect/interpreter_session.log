@@ -1,8 +1,0 @@
-2026-07-14 14:10:13,573 [INFO] Client connected to interpreter WebSocket.
-2026-07-14 14:10:13,579 [INFO] Received starting handshake payload from client: {'action': 'start', 'preset': 'german', 'pacing': 'auto', 'model': 'gemini-3.1-flash-live-preview'}
-2026-07-14 14:10:13,580 [INFO] Starting real-time interpretation call. Language: German (de) File: samples/de_fever_session.wav
-2026-07-14 14:10:13,584 [INFO] Using model: gemini-3.1-flash-live-preview (Glossary Enforced: True)
-2026-07-14 14:10:13,676 [INFO] Connecting to dual live sessions using model: gemini-3.1-flash-live-preview
-2026-07-14 14:10:13,678 [INFO] Connected fresh session for patient_to_nurse
-2026-07-14 14:10:13,678 [INFO] Connected fresh session for nurse_to_patient
-2026-07-14 14:10:13,679 [INFO] Parallel Gemini translation sessions successfully established.

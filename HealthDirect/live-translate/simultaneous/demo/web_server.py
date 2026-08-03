@@ -63,7 +63,7 @@ def parse_args(args: list = None) -> argparse.Namespace:
     
     parser.add_argument(
         "--model",
-        default=config.get("model_name", "gemini-3.5-live-translate-preview"),
+        default=os.getenv("LIVE_TRANSLATE_MODEL", config.get("model_name", "gemini-3.5-live-translate-preview")),
         help="Gemini Live model name"
     )
     parser.add_argument(
@@ -183,7 +183,8 @@ class ActiveSession:
         self.nurse_ws: Optional[WebSocket] = None
         self.patient_ws: Optional[WebSocket] = None
         self.preset_key: str = "german"
-        self.model_name: str = "gemini-3.5-live-translate-preview"
+        config = load_config()
+        self.model_name: str = os.getenv("LIVE_TRANSLATE_MODEL", config.get("model_name", "gemini-3.5-live-translate-preview"))
         self.language: str = "German"
         self.is_active: bool = False
         self.streaming_task: Optional[asyncio.Task] = None
@@ -196,6 +197,11 @@ class ActiveSession:
         self.prewarmed_ctx_n_to_p = None
         self.prewarm_task = None
         self.prewarm_status = "disconnected"
+        
+        # Ephemeral transcript, summary, and purge worker state
+        self.transcript_history = []
+        self.generated_summary = None
+        self.purge_timer_task = None
         
         try:
             cmd_args = parse_args(sys.argv[1:])
@@ -220,6 +226,11 @@ class ActiveSession:
                 "language": self.language,
                 "is_active": self.is_active
             })
+            if self.generated_summary:
+                await websocket.send_json({
+                    "type": "summary_generated",
+                    "summary": self.generated_summary
+                })
             if self.enable_prewarming:
                 await websocket.send_json({
                     "type": "prewarm_status",
@@ -315,6 +326,9 @@ class ActiveSession:
         """Stops any active stream, resets coordinator state, and broadcasts a reset command."""
         async with self.lock:
             await self.stop_stream_unsafe()
+            self.transcript_history = []
+            self.generated_summary = None
+            self.cancel_purge_timer_unsafe()
             reset_msg = {
                 "type": "reset"
             }
@@ -465,6 +479,9 @@ class ActiveSession:
         """Starts the simultaneous continuous audio stream task safely."""
         async with self.lock:
             await self.stop_stream_unsafe()
+            self.transcript_history = []
+            self.generated_summary = None
+            self.cancel_purge_timer_unsafe()
             self.is_active = True
             self.streaming_task = asyncio.create_task(
                 self.run_simultaneous_stream()
@@ -483,6 +500,232 @@ class ActiveSession:
             logger.info("Cancelled running simultaneous streaming task.")
         self.streaming_task = None
 
+    def _get_genai_client(self):
+        """Returns an initialized google-genai Client."""
+        api_key = os.getenv("GEMINI_API_KEY")
+        if api_key:
+            return genai.Client(api_key=api_key)
+        else:
+            project_id = (
+                os.environ.get("PROJECT_ID") or
+                os.environ.get("GOOGLE_CLOUD_PROJECT")
+            )
+            location = os.environ.get("LOCATION", "us-central1")
+            return genai.Client(
+                vertexai=True, project=project_id, location=location
+            )
+
+    def initialize_transcript_file(self, language: str, model_name: str):
+        """Initializes the physical transcript file and resets state."""
+        self.transcript_history = []
+        self.generated_summary = None
+        self.cancel_purge_timer_unsafe()
+        
+        try:
+            with open("conversation_transcript.log", "w", encoding="utf-8") as f:
+                f.write("SESSION TRANSCRIPT START\n")
+                f.write(f"Language: {language}\n")
+                f.write(f"Model: {model_name}\n")
+                f.write("Pacing: auto\n")
+                f.write("========================================\n")
+            logger.info("Initialized conversation_transcript.log on disk.")
+        except Exception as e:
+            logger.error(f"Failed to initialize conversation_transcript.log: {e}")
+
+    def add_transcript_turn(self, speaker: str, orig: str, trans: str):
+        """Caches a finished transcript turn in-memory and appends it to conversation_transcript.log."""
+        orig = orig.strip()
+        trans = trans.strip()
+        if not orig and not trans:
+            return
+            
+        # Append to in-memory history
+        self.transcript_history.append({
+            "speaker": speaker,
+            "said": orig,
+            "translated_to": trans
+        })
+        
+        # Format the turn and append to disk log
+        msg = (
+            f"\n========================================\n"
+            f"WHO: {speaker.upper()}\n"
+            f"SAID: {orig}\n"
+            f"TRANSLATED TO: {trans}\n"
+            f"========================================\n"
+        )
+        logger.info(msg)
+        try:
+            with open("conversation_transcript.log", "a", encoding="utf-8") as f:
+                f.write(msg)
+        except Exception as e:
+            logger.error(f"Failed to append to conversation_transcript.log: {e}")
+
+    async def generate_and_send_summary(self):
+        """Generates a clinical conversation summary and sends it to the nurse."""
+        if not self.transcript_history:
+            logger.info("No transcript history available to generate summary.")
+            return
+
+        # Format transcript into a clean text prompt
+        convo_text = ""
+        for turn in self.transcript_history:
+            speaker = turn.get("speaker", "unknown").upper()
+            said = turn.get("said", "").strip()
+            trans = turn.get("translated_to", "").strip()
+            convo_text += f"WHO: {speaker}\nSAID: {said}\nTRANSLATED TO: {trans}\n"
+            convo_text += "========================================\n"
+
+        logger.info(f"Generating summary with input length {len(convo_text)} chars...")
+
+        # Broadcast generation started to Nurse (loading state)
+        if self.nurse_ws:
+            try:
+                await self.nurse_ws.send_json({
+                    "type": "summary_generating"
+                })
+            except Exception as e:
+                logger.warning(f"Failed to send summary_generating state to Nurse: {e}")
+
+        # Assemble prompt template
+        prompt = (
+            "You are an expert clinical summarizer for HealthDirect Australia.\n"
+            "Below is a dual-channel text transcript from a live patient-nurse tele-triage call.\n"
+            "Your job is to generate a beautiful, concise clinical summary formatted in standard Markdown.\n"
+            "Include exactly the following 4 sections with their titles as headings:\n\n"
+            "### Chief Complaint / Reason for Call\n"
+            "(Identify the primary symptom or clinical reason why the caller is seeking help, with any immediate risk context)\n\n"
+            "### Symptom History / Timeline\n"
+            "(Detail the duration, frequency, onset, severity, and development of symptoms described by the patient)\n\n"
+            "### Key Clinical Details & Discussion\n"
+            "(Summarize other relevant clinical observations, vital cues mentioned, patient replies to nurse questions)\n\n"
+            "### Action Plan / Next Steps\n"
+            "(List the clinical disposition, triage recommendation, advice given, and clear next steps)\n\n"
+            "Format the output strictly as professional Markdown. Avoid generic commentary. Keep it concise, clinical, and precise.\n\n"
+            f"Here is the call transcript:\n\n{convo_text}"
+        )
+
+        try:
+            config = load_config()
+            env_override = os.getenv("SUMMARY_MODEL")
+            if env_override:
+                model_name = env_override
+            else:
+                active_translation = self.model_name or ""
+                if "3.5" in active_translation:
+                    model_name = "gemini-3.5-flash"
+                elif "3.1" in active_translation:
+                    model_name = "gemini-3.1-flash"
+                elif "2.5" in active_translation:
+                    model_name = "gemini-2.5-flash"
+                else:
+                    model_name = config.get("summary_model_name", "gemini-3.5-flash")
+            
+            client = self._get_genai_client()
+            
+            # Use run_in_executor to avoid blocking the asyncio event loop for sync client calls
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
+            )
+            
+            summary_markdown = response.text
+            self.generated_summary = summary_markdown
+            logger.info("Summary successfully generated.")
+
+            if self.nurse_ws:
+                await self.nurse_ws.send_json({
+                    "type": "summary_generated",
+                    "summary": summary_markdown
+                })
+        except Exception as e:
+            logger.error(f"Failed to generate conversation summary: {e}")
+            if self.nurse_ws:
+                try:
+                    await self.nurse_ws.send_json({
+                        "type": "summary_error",
+                        "message": f"Summary generation failed: {str(e)}"
+                    })
+                except Exception:
+                    pass
+
+    async def purge_session_data(self):
+        """Wipes all session-related PII (in-memory cached transcripts, generated summaries, and logs)."""
+        async with self.lock:
+            # 1. Clear in-memory state
+            self.transcript_history = []
+            self.generated_summary = None
+            self.cancel_purge_timer_unsafe()
+            
+            # 2. Delete the transcript disk log
+            log_file = "conversation_transcript.log"
+            if os.path.exists(log_file):
+                try:
+                    os.remove(log_file)
+                    logger.info(f"Successfully deleted {log_file}")
+                except Exception as e:
+                    logger.error(f"Failed to delete {log_file}: {e}")
+                    
+            logger.info("Session data successfully purged.")
+            
+            # 3. Broadcast purge/deletion to Nurse WebSocket
+            if self.nurse_ws:
+                try:
+                    await self.nurse_ws.send_json({
+                        "type": "summary_deleted"
+                    })
+                except Exception as e:
+                    logger.warning(f"Failed to send summary_deleted broadcast to Nurse: {e}")
+
+    async def on_call_finished(self):
+        """Callback executed when the stream ends (normal complete or manual stop/disconnect)."""
+        async with self.lock:
+            if self.is_active:
+                self.is_active = False
+
+        # Broadcast complete status to update UI buttons
+        await self.broadcast_to_both({
+            "type": "status",
+            "status": "completed"
+        })
+
+        # Generate summary asynchronously
+        asyncio.create_task(self.generate_and_send_summary())
+
+        # Start auto-purge timer
+        await self.start_purge_timer()
+
+    async def start_purge_timer(self):
+        """Schedules the background auto-purge task after configured TTL seconds."""
+        async with self.lock:
+            self.cancel_purge_timer_unsafe()
+            
+            config = load_config()
+            ttl_seconds = float(config.get("session_purge_ttl_seconds", 300))
+            
+            logger.info(f"Scheduling session auto-purge in {ttl_seconds} seconds...")
+            self.purge_timer_task = asyncio.create_task(self._purge_timer_worker(ttl_seconds))
+
+    def cancel_purge_timer_unsafe(self):
+        """Cancels any scheduled auto-purge task."""
+        if hasattr(self, "purge_timer_task") and self.purge_timer_task and not self.purge_timer_task.done():
+            self.purge_timer_task.cancel()
+            logger.info("Cancelled scheduled auto-purge timer.")
+        self.purge_timer_task = None
+
+    async def _purge_timer_worker(self, delay: float):
+        """Asynchronous worker that waits for the delay and then triggers purge."""
+        try:
+            await asyncio.sleep(delay)
+            logger.info("Auto-purge TTL expired. Automatically purging session data...")
+            await self.purge_session_data()
+        except asyncio.CancelledError:
+            logger.info("Purge timer worker cancelled.")
+
     async def run_simultaneous_stream(self):
         """Streams the dual audio channels and connects to Gemini Live."""
         self.is_active = True
@@ -495,6 +738,9 @@ class ActiveSession:
         file_path = preset["file"]
         lang_code = preset["code"]
         language = preset["language"]
+
+        # Initialize the transcript cache and write initial session metadata to file
+        self.initialize_transcript_file(language, self.model_name)
 
         # Load and split audio channels
         try:
@@ -663,8 +909,14 @@ class ActiveSession:
 
     async def execute_streaming_loop(self, session_p_to_n, session_n_to_p, patient_bytes, nurse_bytes, chunk_size, language, lang_code):
         """Executes the dual-channel audio streaming and receiver synchronization loops."""
-        config = load_config()
-        chunk_ms = config.get("chunk_ms", 40)
+        chunk_ms = int(chunk_size / 32) if chunk_size > 0 else 40
+        
+        p_convo_state = {"orig": "", "trans": ""}
+        n_convo_state = {"orig": "", "trans": ""}
+        
+        rec_p_task = None
+        rec_n_task = None
+        
         async def receive_p_to_n():
             """Listens to Patient-to-Nurse translated audio/text."""
             try:
@@ -687,6 +939,8 @@ class ActiveSession:
                         if server_content.input_transcription:
                             text = server_content.input_transcription.text or ""
                             is_final = bool(server_content.input_transcription.finished)
+                            if text:
+                                p_convo_state["orig"] += text
                             if text or is_final:
                                 logger.info(f"[SIMUL-TRANSCRIPT ORIGINAL][PATIENT] {text} (final={is_final})")
                                 await self.broadcast_to_both({
@@ -699,6 +953,8 @@ class ActiveSession:
                         if server_content.output_transcription:
                             text = server_content.output_transcription.text or ""
                             is_final = bool(server_content.output_transcription.finished)
+                            if text:
+                                p_convo_state["trans"] += text
                             if text or is_final:
                                 logger.info(f"[SIMUL-TRANSCRIPT TRANSLATED][PATIENT -> English] {text} (final={is_final})")
                                 await self.broadcast_to_both({
@@ -710,6 +966,9 @@ class ActiveSession:
                                 })
                         if server_content.turn_complete:
                             logger.info("[SIMUL-TURN COMPLETE][PATIENT]")
+                            self.add_transcript_turn("patient", p_convo_state["orig"], p_convo_state["trans"])
+                            p_convo_state["orig"] = ""
+                            p_convo_state["trans"] = ""
                             await self.broadcast_to_both({
                                 "type": "turn_complete",
                                 "speaker": "patient"
@@ -748,6 +1007,8 @@ class ActiveSession:
                         if server_content.input_transcription:
                             text = server_content.input_transcription.text or ""
                             is_final = bool(server_content.input_transcription.finished)
+                            if text:
+                                n_convo_state["orig"] += text
                             if text or is_final:
                                 logger.info(f"[SIMUL-TRANSCRIPT ORIGINAL][NURSE] {text} (final={is_final})")
                                 await self.broadcast_to_both({
@@ -760,6 +1021,8 @@ class ActiveSession:
                         if server_content.output_transcription:
                             text = server_content.output_transcription.text or ""
                             is_final = bool(server_content.output_transcription.finished)
+                            if text:
+                                n_convo_state["trans"] += text
                             if text or is_final:
                                 logger.info(f"[SIMUL-TRANSCRIPT TRANSLATED][NURSE -> {language}] {text} (final={is_final})")
                                 await self.broadcast_to_both({
@@ -771,6 +1034,9 @@ class ActiveSession:
                                 })
                         if server_content.turn_complete:
                             logger.info("[SIMUL-TURN COMPLETE][NURSE]")
+                            self.add_transcript_turn("nurse", n_convo_state["orig"], n_convo_state["trans"])
+                            n_convo_state["orig"] = ""
+                            n_convo_state["trans"] = ""
                             await self.broadcast_to_both({
                                 "type": "turn_complete",
                                 "speaker": "nurse"
@@ -787,80 +1053,79 @@ class ActiveSession:
                 if self.streaming_task and not self.streaming_task.done():
                     self.streaming_task.cancel()
 
-        rec_p_task = asyncio.create_task(receive_p_to_n())
-        rec_n_task = asyncio.create_task(receive_n_to_p())
+        try:
+            rec_p_task = asyncio.create_task(receive_p_to_n())
+            rec_n_task = asyncio.create_task(receive_n_to_p())
 
-        start_time = asyncio.get_event_loop().time()
-        chunks_sent = 0
-        max_len = max(len(patient_bytes), len(nurse_bytes))
+            start_time = asyncio.get_event_loop().time()
+            chunks_sent = 0
+            max_len = max(len(patient_bytes), len(nurse_bytes))
 
-        await self.broadcast_to_both({
-            "type": "status",
-            "status": "ready",
-            "language": language,
-            "code": lang_code,
-            "duration_ms": max_len // 32
-        })
-
-        for i in range(0, max_len, chunk_size):
-            if not self.is_active:
-                logger.warning("Session deactivated during streaming. Aborting sending loop.")
-                break
-
-            chunk_p = patient_bytes[i : i + chunk_size]
-            chunk_n = nurse_bytes[i : i + chunk_size]
-
-            if chunk_p:
-                encoded_p = base64.b64encode(chunk_p).decode("utf-8")
-                async with self.lock:
-                    if self.patient_ws:
-                        await self.patient_ws.send_json({
-                            "type": "original_audio",
-                            "speaker": "patient",
-                            "data": encoded_p
-                        })
-                await safe_send_realtime_input(session_p_to_n, chunk_p)
-
-            if chunk_n:
-                encoded_n = base64.b64encode(chunk_n).decode("utf-8")
-                async with self.lock:
-                    if self.nurse_ws:
-                        await self.nurse_ws.send_json({
-                            "type": "original_audio",
-                            "speaker": "nurse",
-                            "data": encoded_n
-                        })
-                await safe_send_realtime_input(session_n_to_p, chunk_n)
-
-            chunks_sent += 1
-
-            elapsed_ms = chunks_sent * chunk_ms
             await self.broadcast_to_both({
-                "type": "playhead",
-                "elapsed_ms": elapsed_ms,
+                "type": "status",
+                "status": "ready",
+                "language": language,
+                "code": lang_code,
                 "duration_ms": max_len // 32
             })
 
-            expected_time = start_time + (chunks_sent * (chunk_ms / 1000.0))
-            sleep_time = expected_time - asyncio.get_event_loop().time()
-            if sleep_time > 0:
-                await asyncio.sleep(sleep_time)
+            for i in range(0, max_len, chunk_size):
+                if not self.is_active:
+                    logger.warning("Session deactivated during streaming. Aborting sending loop.")
+                    break
 
-        if self.is_active:
-            logger.info("Streaming complete. Waiting 5s for translations...")
-            try:
-                await asyncio.sleep(5.0)
-            except asyncio.CancelledError:
-                pass
+                chunk_p = patient_bytes[i : i + chunk_size]
+                chunk_n = nurse_bytes[i : i + chunk_size]
 
-        rec_p_task.cancel()
-        rec_n_task.cancel()
+                if chunk_p:
+                    encoded_p = base64.b64encode(chunk_p).decode("utf-8")
+                    async with self.lock:
+                        if self.patient_ws:
+                            await self.patient_ws.send_json({
+                                "type": "original_audio",
+                                "speaker": "patient",
+                                "data": encoded_p
+                            })
+                    await safe_send_realtime_input(session_p_to_n, chunk_p)
 
-        if self.is_active:
-            await self.broadcast_to_both({
-                "type": "status",
-                "status": "completed"
-            })
+                if chunk_n:
+                    encoded_n = base64.b64encode(chunk_n).decode("utf-8")
+                    async with self.lock:
+                        if self.nurse_ws:
+                            await self.nurse_ws.send_json({
+                                "type": "original_audio",
+                                "speaker": "nurse",
+                                "data": encoded_n
+                            })
+                    await safe_send_realtime_input(session_n_to_p, chunk_n)
+
+                chunks_sent += 1
+
+                elapsed_ms = chunks_sent * chunk_ms
+                await self.broadcast_to_both({
+                    "type": "playhead",
+                    "elapsed_ms": elapsed_ms,
+                    "duration_ms": max_len // 32
+                })
+
+                expected_time = start_time + (chunks_sent * (chunk_ms / 1000.0))
+                sleep_time = expected_time - asyncio.get_event_loop().time()
+                if sleep_time > 0:
+                    await asyncio.sleep(sleep_time)
+
+            if self.is_active:
+                logger.info("Streaming complete. Waiting 5s for translations...")
+                try:
+                    await asyncio.sleep(5.0)
+                except asyncio.CancelledError:
+                    pass
+
+        finally:
+            if rec_p_task:
+                rec_p_task.cancel()
+            if rec_n_task:
+                rec_n_task.cancel()
+            asyncio.create_task(self.on_call_finished())
 
 session_coordinator = ActiveSession()
 
@@ -1409,6 +1674,8 @@ async def ws_nurse_endpoint(websocket: WebSocket):
                 await session_coordinator.stop_stream()
             elif action == "reset":
                 await session_coordinator.reset()
+            elif action == "delete_summary" or action == "purge":
+                await session_coordinator.purge_session_data()
             elif action == "ping":
                 pass
     except WebSocketDisconnect:

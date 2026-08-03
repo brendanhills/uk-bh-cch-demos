@@ -6,6 +6,8 @@
   "enable_playback": false,
   "enable_stats": false,
   "enable_glossary": true,
+  "session_purge_ttl_seconds": 300,
+  "summary_model_name": "gemini-3.5-flash",
   "pacing": {
     "turn_timeout_sec": 15.0,
     "ceased_audio_threshold": 4.5,

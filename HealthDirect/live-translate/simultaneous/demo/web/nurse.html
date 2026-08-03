@@ -224,6 +224,11 @@
             width: 0%;
             transition: width 0.2s linear;
         }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -321,14 +326,31 @@
                 </div>
             </div>
 
-            <!-- Right Side: Real-Time Australian Glossary highlights -->
+            <!-- Right Side: Real-Time Australian Glossary highlights & Conversation Summary -->
             <div class="sidebar-panel">
                 <div class="sidebar-header">
                     🇦🇺 Real-Time Clinical References
                 </div>
-                <div id="glossary-sidebar" class="sidebar-content">
-                    <div class="system-message" style="text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 0.8rem;">
+                <div id="glossary-sidebar" class="sidebar-content" style="max-height: 35%; border-bottom: 1px solid var(--border-color);">
+                    <div class="system-message" style="text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 0.8rem;">
                         Terms detected in transcription will appear here with approved translations and clinical advice.
+                    </div>
+                </div>
+                
+                <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; background-color: #f8fafc; border-top: 1px solid var(--border-color);">
+                    <span style="display: flex; align-items: center; gap: 6px;">📋 Clinical Conversation Summary</span>
+                    <button id="btn-delete-summary" class="btn-danger" style="display: none; font-size: 0.72rem; padding: 4px 10px; border-radius: 4px; border: none; cursor: pointer; background-color: var(--danger-red); color: white; font-family: 'Inter', sans-serif; font-weight: 600; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2); transition: all 0.2s ease;">Delete / Purge</button>
+                </div>
+                <div id="summary-sidebar" class="sidebar-content" style="background-color: #fafbfc; flex: 1; display: flex; flex-direction: column;">
+                    <div id="summary-placeholder" class="system-message" style="text-align: center; color: var(--text-muted); margin-top: 30px; font-size: 0.8rem; line-height: 1.4;">
+                        No summary available yet. Live-translated turns will accumulate here and a summary will be generated within 60 seconds after the call ends.
+                    </div>
+                    <div id="summary-loading" style="display: none; text-align: center; margin-top: 40px; color: var(--text-secondary);">
+                        <div class="spinner" style="border: 3px solid rgba(0, 0, 0, 0.1); border-left-color: var(--brand-navy, #1e3a8a); border-radius: 50%; width: 28px; height: 28px; display: inline-block; animation: spin 0.8s linear infinite; margin-bottom: 12px;"></div>
+                        <div style="font-size: 0.8rem; font-weight: 500;">Analyzing conversation...</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Generating clinical summary using Gemini</div>
+                    </div>
+                    <div id="summary-content" style="display: none; font-size: 0.85rem; line-height: 1.5; color: var(--text-primary); padding: 5px 0; overflow-y: auto; flex: 1;">
                     </div>
                 </div>
             </div>

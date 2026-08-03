@@ -110,6 +110,17 @@ function initSimultaneousClient(role) {
                 }));
             });
         }
+
+        const btnDeleteSummary = document.getElementById("btn-delete-summary");
+        if (btnDeleteSummary) {
+            btnDeleteSummary.addEventListener("click", () => {
+                if (confirm("Are you sure you want to permanently delete this clinical summary and purge all patient session data? This cannot be undone.")) {
+                    socket.send(JSON.stringify({
+                        action: "delete_summary"
+                    }));
+                }
+            });
+        }
     }
 
     connectWebSocket();
@@ -306,6 +317,72 @@ function handleServerMessage(msg) {
         case "reset":
             console.log("[WebSocket] Received reset command from server. Performing cache-busted page reload...");
             window.location.href = window.location.origin + window.location.pathname + "?t=" + Date.now() + window.location.hash;
+            break;
+
+        case "summary_generating":
+            console.log("[Summary] Generation in progress...");
+            const placeholderGen = document.getElementById("summary-placeholder");
+            const loadingGen = document.getElementById("summary-loading");
+            const contentGen = document.getElementById("summary-content");
+            const btnDeleteGen = document.getElementById("btn-delete-summary");
+            
+            if (placeholderGen) placeholderGen.style.display = "none";
+            if (loadingGen) loadingGen.style.display = "block";
+            if (contentGen) contentGen.style.display = "none";
+            if (btnDeleteGen) btnDeleteGen.style.display = "none";
+            break;
+
+        case "summary_generated":
+            console.log("[Summary] Generation complete.");
+            const placeholderDone = document.getElementById("summary-placeholder");
+            const loadingDone = document.getElementById("summary-loading");
+            const contentDone = document.getElementById("summary-content");
+            const btnDeleteDone = document.getElementById("btn-delete-summary");
+            
+            if (placeholderDone) placeholderDone.style.display = "none";
+            if (loadingDone) loadingDone.style.display = "none";
+            if (contentDone) {
+                contentDone.innerHTML = renderMarkdown(msg.summary);
+                contentDone.style.display = "block";
+            }
+            if (btnDeleteDone && currentRole === "nurse") {
+                btnDeleteDone.style.display = "block";
+            }
+            break;
+
+        case "summary_deleted":
+            console.log("[Summary] Session data and summary permanently purged.");
+            const placeholderDel = document.getElementById("summary-placeholder");
+            const loadingDel = document.getElementById("summary-loading");
+            const contentDel = document.getElementById("summary-content");
+            const btnDeleteDel = document.getElementById("btn-delete-summary");
+            
+            if (placeholderDel) {
+                placeholderDel.innerText = "No summary available. Start and end a call to generate a clinical conversation summary.";
+                placeholderDel.style.display = "block";
+            }
+            if (loadingDel) loadingDel.style.display = "none";
+            if (contentDel) {
+                contentDel.innerHTML = "";
+                contentDel.style.display = "none";
+            }
+            if (btnDeleteDel) btnDeleteDel.style.display = "none";
+            break;
+
+        case "summary_error":
+            console.error("[Summary] Generation error:", msg.message);
+            const placeholderErr = document.getElementById("summary-placeholder");
+            const loadingErr = document.getElementById("summary-loading");
+            const contentErr = document.getElementById("summary-content");
+            const btnDeleteErr = document.getElementById("btn-delete-summary");
+            
+            if (placeholderErr) {
+                placeholderErr.innerText = `Summary generation failed: ${msg.message}`;
+                placeholderErr.style.display = "block";
+            }
+            if (loadingErr) loadingErr.style.display = "none";
+            if (contentErr) contentErr.style.display = "none";
+            if (btnDeleteErr) btnDeleteErr.style.display = "none";
             break;
 
         case "error":
@@ -930,4 +1007,47 @@ function updatePrewarmUI(status) {
             text.innerText = "Standby: Off";
         }
     }
+}
+
+/**
+ * Renders clinical markdown into clean, premium HTML.
+ * Supports headers, bold text, and lists.
+ */
+function renderMarkdown(md) {
+    if (!md) return "";
+    let html = md;
+    
+    // HTML escape to prevent XSS
+    html = html
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+        
+    // Headers
+    html = html.replace(/^### (.*?)$/gm, "<h3 style='font-family: \"Outfit\", sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--brand-navy); margin: 12px 0 6px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;'>$1</h3>");
+    html = html.replace(/^## (.*?)$/gm, "<h2 style='font-family: \"Outfit\", sans-serif; font-size: 1rem; font-weight: 700; color: var(--brand-navy); margin: 16px 0 8px 0;'>$1</h2>");
+    html = html.replace(/^# (.*?)$/gm, "<h1 style='font-family: \"Outfit\", sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--brand-navy); margin: 20px 0 10px 0;'>$1</h1>");
+    
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    
+    // Bullet points (grouping nested lists is nice, but simple line replacement works perfectly for display)
+    html = html.replace(/^\s*-\s+(.*?)$/gm, "<li style='margin-bottom: 4px;'>$1</li>");
+    html = html.replace(/^\s*\*\s+(.*?)$/gm, "<li style='margin-bottom: 4px;'>$1</li>");
+    
+    // Wrap lists
+    html = html.replace(/(<li.*?>.*?<\/li>)+/gs, "<ul style='padding-left: 20px; margin: 8px 0;'>$&</ul>");
+    
+    // Replace double newlines with paragraphs, excluding blocks already wrapped in headers/lists/paragraphs
+    let blocks = html.split(/\n{2,}/);
+    html = blocks.map(block => {
+        let trimmed = block.trim();
+        if (!trimmed) return "";
+        if (trimmed.startsWith("<h") || trimmed.startsWith("<ul") || trimmed.startsWith("<li")) {
+            return trimmed;
+        }
+        return `<p style='margin: 8px 0; color: var(--text-primary);'>${trimmed.replace(/\n/g, "<br>")}</p>`;
+    }).join("");
+    
+    return html;
 }

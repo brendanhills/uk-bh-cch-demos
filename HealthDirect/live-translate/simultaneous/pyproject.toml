@@ -13,6 +13,7 @@ dependencies = [
     "google-cloud-texttospeech>=2.36.0",
     "google-cloud-translate>=3.27.0",
     "google-genai>=1.63",
+    "openpyxl>=3.1.5",
     "pydub>=0.25.1",
     "pytest>=9.0.2",
     "pytest-order>=1.4.0",

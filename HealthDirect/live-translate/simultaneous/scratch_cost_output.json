@@ -1,0 +1,72 @@
+[
+  {
+    "key": "arabic",
+    "lang": "Arabic",
+    "duration": 86.43,
+    "audio_in_tokens": 43215.0,
+    "audio_in_cost": 0.129645,
+    "audio_out_tokens": 16160.0,
+    "audio_out_cost": 0.19392,
+    "text_out_tokens": 406.44800000000004,
+    "text_out_cost": 0.0018290160000000001,
+    "cache_read_tokens": 6000,
+    "cache_read_cost": 0.0009,
+    "total_cost": 0.326294016
+  },
+  {
+    "key": "german",
+    "lang": "German",
+    "duration": 64.3,
+    "audio_in_tokens": 32150.0,
+    "audio_in_cost": 0.09645,
+    "audio_out_tokens": 14319.999999999998,
+    "audio_out_cost": 0.17183999999999996,
+    "text_out_tokens": 362.026,
+    "text_out_cost": 0.001629117,
+    "cache_read_tokens": 6000,
+    "cache_read_cost": 0.0009,
+    "total_cost": 0.270819117
+  },
+  {
+    "key": "spanish",
+    "lang": "Spanish",
+    "duration": 70.43,
+    "audio_in_tokens": 35215.0,
+    "audio_in_cost": 0.10564500000000002,
+    "audio_out_tokens": 15860.0,
+    "audio_out_cost": 0.19032,
+    "text_out_tokens": 399.79800000000006,
+    "text_out_cost": 0.001799091,
+    "cache_read_tokens": 6000,
+    "cache_read_cost": 0.0009,
+    "total_cost": 0.298664091
+  },
+  {
+    "key": "hindi",
+    "lang": "Hindi",
+    "duration": 108.63,
+    "audio_in_tokens": 54315.0,
+    "audio_in_cost": 0.162945,
+    "audio_out_tokens": 25000.0,
+    "audio_out_cost": 0.30000000000000004,
+    "text_out_tokens": 633.08,
+    "text_out_cost": 0.0028488600000000004,
+    "cache_read_tokens": 6000,
+    "cache_read_cost": 0.0009,
+    "total_cost": 0.46669386000000007
+  },
+  {
+    "key": "vietnamese",
+    "lang": "Vietnamese",
+    "duration": 68.72,
+    "audio_in_tokens": 34360.0,
+    "audio_in_cost": 0.10308,
+    "audio_out_tokens": 15939.999999999998,
+    "audio_out_cost": 0.19128,
+    "text_out_tokens": 406.182,
+    "text_out_cost": 0.001827819,
+    "cache_read_tokens": 6000,
+    "cache_read_cost": 0.0009,
+    "total_cost": 0.29708781900000003
+  }
+]

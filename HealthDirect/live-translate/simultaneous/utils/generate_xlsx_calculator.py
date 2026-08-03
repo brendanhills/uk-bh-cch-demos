@@ -49,12 +49,12 @@ def create_styled_calculator():
     ws_explainer["A1"].font = font_title
     ws_explainer.row_dimensions[1].height = 35
 
-    # Section 1 Overview
+    # Section 1 Overview (Merged A:D)
     ws_explainer["A3"] = "SECTION 1: OVERVIEW & STRATEGIC HIGHLIGHTS"
     ws_explainer["A3"].font = font_section
+    ws_explainer["A3"].fill = fill_section
     ws_explainer.row_dimensions[3].height = 24
-    for col in ["A", "B", "C", "D"]:
-        ws_explainer[f"{col}3"].fill = fill_section
+    ws_explainer.merge_cells("A3:D3")
 
     desc_text = (
         "This workbook provides a rigorous, data-driven cost and performance model comparing three alternative "
@@ -67,12 +67,12 @@ def create_styled_calculator():
     ws_explainer.row_dimensions[4].height = 50
     ws_explainer.merge_cells("A4:D4")
 
-    # Section 2 Matrix Header
+    # Section 2 Matrix Header (Merged A:D)
     ws_explainer["A6"] = "SECTION 2: MODEL ARCHITECTURE MATRIX"
     ws_explainer["A6"].font = font_section
+    ws_explainer["A6"].fill = fill_section
     ws_explainer.row_dimensions[6].height = 24
-    for col in ["A", "B", "C", "D"]:
-        ws_explainer[f"{col}6"].fill = fill_section
+    ws_explainer.merge_cells("A6:D6")
 
     headers_explainer = ["Model / Approach", "Primary Role in System", "Pacing & Audio Streaming Profile", "Financial & Operational Implications"]
     for idx, h in enumerate(headers_explainer):
@@ -148,9 +148,14 @@ def create_styled_calculator():
 
     # S1 Data rows
     data_s1 = [
-        ("AUD_USD_Exchange_Rate", 1.515, "Indicative exchange rate (1 USD = 1.515 AUD)"),
-        ("Average_Session_Duration_Minutes", 30, "Adjustable production clinical session length in minutes (rounded to 30 mins)"),
-        ("Weekly_Session_Volume", 1730, "Adjustable volume parameter (5% low target is 1,730/week; 10% high target is 3,460/week)")
+        ("AUD_USD_Exchange_Rate", 1.515, "Indicative exchange rate (1 USD = 1.515 AUD)", "0.000"),
+        ("Average_Session_Duration_Minutes", 30, "Adjustable production clinical session length in minutes (rounded to 30 mins)", "#,##0"),
+        ("Annual_Total_Call_Volume", 1800000, "HealthDirect FY Video Call total consultation scale", "#,##0"),
+        ("Target_Translation_Percentage", 0.05, "Estimated percentage of total call volume benefiting from translation (Low: 5%, High: 10%)", "0.0%"),
+        ("Weeks_Per_Year", 52, "Standard billing weeks per calendar year", "#,##0"),
+        ("Active_Speech_Duty_Cycle", 0.40, "Estimated percentage per channel of active speech (microphones only stream when active)", "0.0%"),
+        ("Barge_In_Overlap_Overhead", 0.05, "Estimated streaming & playback duration overhead to account for overlap and barge-in", "0.0%"),
+        ("Weekly_Session_Volume", "=B7*B8/B9", "Dynamic weekly session volume: (Annual Volume * Target Rate) / Weeks Per Year", "#,##0")
     ]
     for r_idx, row_data in enumerate(data_s1, start=5):
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
@@ -158,36 +163,29 @@ def create_styled_calculator():
         val_cell.font = font_bold
         val_cell.alignment = align_right
         ws.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular
-        
-        # Apply formatting
-        if row_data[0] == "AUD_USD_Exchange_Rate":
-            val_cell.number_format = "0.000"
-        elif row_data[0] == "Average_Session_Duration_Minutes":
-            val_cell.number_format = "#,##0"
-        else:
-            val_cell.number_format = "#,##0"
+        val_cell.number_format = row_data[3]
             
         for col_idx in range(1, 4):
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 2 Header (Merged A:E)
-    ws["A9"] = "SECTION 2: MODEL UNIT RATES (USD per Million Tokens)"
-    ws["A9"].font = font_section
-    ws["A9"].fill = fill_section
-    ws.row_dimensions[9].height = 24
-    ws.merge_cells("A9:E9")
+    # Section 2 Header (Merged A:E) (Shifted to Row 14)
+    ws["A14"] = "SECTION 2: MODEL UNIT RATES (USD per Million Tokens)"
+    ws["A14"].font = font_section
+    ws["A14"].fill = fill_section
+    ws.row_dimensions[14].height = 24
+    ws.merge_cells("A14:E14")
 
-    # Section 2 Headers
+    # Section 2 Headers (Shifted to Row 15)
     headers_s2 = ["Service/Item", "gemini-3.5-live-translate-preview", "gemini-3.1-flash", "gemini-2.5-flash", "Unit"]
     for idx, h in enumerate(headers_s2):
-        cell = ws.cell(row=10, column=idx+1, value=h)
+        cell = ws.cell(row=15, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
-    ws.row_dimensions[10].height = 22
+    ws.row_dimensions[15].height = 22
 
-    # S2 Data rows (USD per Million Tokens)
+    # S2 Data rows (USD per Million Tokens) (Shifted to Row 16 onwards)
     data_s2 = [
         ("Audio Input", 3.00, 3.00, 3.00, "per Million Tokens"),
         ("Audio Output", 12.00, 12.00, 12.00, "per Million Tokens"),
@@ -196,7 +194,7 @@ def create_styled_calculator():
         ("Cached Read", 0.15, 0.15, 0.015, "per Million Tokens"),
         ("Cache Storage", 1.00, 1.00, 0.10, "per Million Tokens")
     ]
-    for r_idx, row_data in enumerate(data_s2, start=11):
+    for r_idx, row_data in enumerate(data_s2, start=16):
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
         for c in range(1, 4):
             val_cell = ws.cell(row=r_idx, column=c+1, value=row_data[c])
@@ -212,59 +210,59 @@ def create_styled_calculator():
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 3 Header (Merged A:E)
-    ws["A18"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
-    ws["A18"].font = font_section
-    ws["A18"].fill = fill_section
-    ws.row_dimensions[18].height = 24
-    ws.merge_cells("A18:E18")
+    # Section 3 Header (Merged A:E) (Shifted to Row 23)
+    ws["A23"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
+    ws["A23"].font = font_section
+    ws["A23"].fill = fill_section
+    ws.row_dimensions[23].height = 24
+    ws.merge_cells("A23:E23")
 
-    # Section 3 Headers
+    # Section 3 Headers (Shifted to Row 24)
     headers_s3 = ["Metric/Calculation", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Formula Description"]
     for idx, h in enumerate(headers_s3):
-        cell = ws.cell(row=19, column=idx+1, value=h)
+        cell = ws.cell(row=24, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
-    ws.row_dimensions[19].height = 22
+    ws.row_dimensions[24].height = 22
 
-    # S3 Formulas & Data (Dividing rates by 1,000,000)
+    # S3 Formulas & Data (Dividing rates by 1,000,000) (Shifted to Row 25 onwards)
     data_s3 = [
-        # Row 20
-        ("Prompt Cache Read Size (Tokens)", 1000, 3000, 3000, "Static instructions + glossary context", "#,##0"),
-        # Row 21
-        ("Prompt Cache Read Cost (USD)", "=B20*(B15/1000000)", "=C20*(C15/1000000)", "=D20*(D15/1000000)", "Tokens * (Cache Read Rate / 1,000,000)", "$#,##0.00000"),
-        # Row 22
-        ("Audio Input Tokens per Session", "=2*$B$6*60*250", "=2*$B$6*60*250", "=2*$B$6*60*250", "2 connections * Duration in seconds * 250 tokens/sec", "#,##0"),
-        # Row 23
-        ("Audio Input Cost (USD)", "=B22*(B11/1000000)", "=C22*(C11/1000000)", "=D22*(D11/1000000)", "Tokens * (Audio Input Rate / 1,000,000)", "$#,##0.00"),
-        # Row 24
-        ("Spoken Dialogue Word Count (Est.)", "=$B$6*200", "=$B$6*200", "=$B$6*200", "Estimated transcript words (200 words/min average)", "#,##0"),
         # Row 25
-        ("Audio Output Pacing Duration (Sec)", "=(B24/2.5)", "=(C24/2.5)*1.125", "=(D24/2.5)*1.125", "150 words/min spoken rate + pacing overhead", "#,##0"),
+        ("Prompt Cache Read Size (Tokens)", 1000, 3000, 3000, "Static instructions + glossary context", "#,##0"),
         # Row 26
-        ("Audio Output Tokens per Session", "=B25*250", "=C25*250", "=D25*250", "Spoken seconds * 250 tokens/sec", "#,##0"),
+        ("Prompt Cache Read Cost (USD)", "=B25*(B20/1000000)", "=C25*(C20/1000000)", "=D25*(D20/1000000)", "Tokens * (Cache Read Rate / 1,000,000)", "$#,##0.00000"),
         # Row 27
-        ("Audio Output Cost (USD)", "=B26*(B12/1000000)", "=C26*(C12/1000000)", "=D26*(D12/1000000)", "Tokens * (Audio Output Rate / 1,000,000)", "$#,##0.00"),
+        ("Audio Input Tokens per Session", "=2*$B$6*60*250*$B$10*(1+$B$11)", "=2*$B$6*60*250*$B$10*(1+$B$11)", "=2*$B$6*60*250*$B$10*(1+$B$11)", "2 connections * Duration in seconds * 250 tokens/sec * Duty Cycle * (1 + Overlap Overhead)", "#,##0"),
         # Row 28
-        ("Transcription Text Output (Tokens)", "=(B24*2.2)*1.33", "=(C24*2.2)*1.33", "=(D24*2.2)*1.33", "(Spoken + Translated words) * 1.33 tokens/word", "#,##0"),
+        ("Audio Input Cost (USD)", "=B27*(B16/1000000)", "=C27*(C16/1000000)", "=D27*(D16/1000000)", "Tokens * (Audio Input Rate / 1,000,000)", "$#,##0.00"),
         # Row 29
-        ("Transcription Text Cost (USD)", "=B28*(B14/1000000)", "=C28*(C14/1000000)", "=D28*(D14/1000000)", "Tokens * (Text Output Rate / 1,000,000)", "$#,##0.0000"),
+        ("Spoken Dialogue Word Count (Est.)", "=$B$6*$B$10*150", "=$B$6*$B$10*150", "=$B$6*$B$10*150", "Duration * Active Duty Cycle * 150 words/min average speaking pace", "#,##0"),
+        # Row 30
+        ("Audio Output Pacing Duration (Sec)", "=(B29/2.5)*(1+$B$11)", "=(C29/2.5)*1.125*(1+$B$11)", "=(D29/2.5)*1.125*(1+$B$11)", "Words / 2.5 words/sec * Pacing modifier * (1 + Overlap Overhead)", "#,##0"),
+        # Row 31
+        ("Audio Output Tokens per Session", "=B30*250", "=C30*250", "=D30*250", "Spoken seconds * 250 tokens/sec", "#,##0"),
+        # Row 32
+        ("Audio Output Cost (USD)", "=B31*(B17/1000000)", "=C31*(C17/1000000)", "=D31*(D17/1000000)", "Tokens * (Audio Output Rate / 1,000,000)", "$#,##0.00"),
+        # Row 33
+        ("Transcription Text Output (Tokens)", "=(B29*2.2)*1.33", "=(C29*2.2)*1.33", "=(D29*2.2)*1.33", "(Spoken + Translated words) * 1.33 tokens/word", "#,##0"),
+        # Row 34
+        ("Transcription Text Cost (USD)", "=B33*(B19/1000000)", "=C33*(C19/1000000)", "=D33*(D19/1000000)", "Tokens * (Text Output Rate / 1,000,000)", "$#,##0.0000"),
         
         # New Post-Call Summary Rows
-        # Row 30
-        ("Post-Call Summary Input (Tokens)", "=B28", "=C28", "=D28", "Input size of the compiled transcript text (matched to Row 28)", "#,##0"),
-        # Row 31
+        # Row 35
+        ("Post-Call Summary Input (Tokens)", "=B33", "=C33", "=D33", "Input size of the compiled transcript text (matched to Row 33)", "#,##0"),
+        # Row 36
         ("Post-Call Summary Output (Tokens)", 1200, 1200, 1200, "Output size of the generated structured clinical SOAP note", "#,##0"),
-        # Row 32
-        ("Post-Call Summary Cost (USD)", "=(B30*(B13/1000000))+(B31*(B14/1000000))", "=(C30*(C13/1000000))+(C31*(C14/1000000))", "=(D30*(D13/1000000))+(D31*(D14/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
+        # Row 37
+        ("Post-Call Summary Cost (USD)", "=(B35*(B18/1000000))+(B36*(B19/1000000))", "=(C35*(C18/1000000))+(C36*(C19/1000000))", "=(D35*(D18/1000000))+(D36*(D19/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
         
-        # Shifted Totals Rows (Row 33 & 34)
-        ("Total Session Cost (USD)", "=B21+B23+B27+B29+B32", "=C21+C23+C27+C29+C32", "=D21+D23+D27+D29+D32", "Sum of all live streaming & summary costs", "$#,##0.00"),
-        ("Total Session Cost (AUD)", "=B33*$B$5", "=C33*$B$5", "=D33*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
+        # Shifted Totals Rows (Row 38 & 39)
+        ("Total Session Cost (USD)", "=B26+B28+B32+B34+B37", "=C26+C28+C32+C34+C37", "=D26+D28+D32+D34+D37", "Sum of all live streaming & summary costs", "$#,##0.00"),
+        ("Total Session Cost (AUD)", "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
     ]
 
-    for r_idx, row_data in enumerate(data_s3, start=20):
+    for r_idx, row_data in enumerate(data_s3, start=25):
         # Calculation name
         is_total_row = (row_data[0] in ["Total Session Cost (USD)", "Total Session Cost (AUD)"])
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total_row else font_regular
@@ -288,33 +286,33 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_total_row else 20
 
-    # Section 4 Header (Shifted to Row 36, Merged A:E)
-    ws["A36"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
-    ws["A36"].font = font_section
-    ws["A36"].fill = fill_section
-    ws.row_dimensions[36].height = 24
-    ws.merge_cells("A36:E36")
+    # Section 4 Header (Shifted to Row 41, Merged A:E)
+    ws["A41"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
+    ws["A41"].font = font_section
+    ws["A41"].fill = fill_section
+    ws.row_dimensions[41].height = 24
+    ws.merge_cells("A41:E41")
 
-    # Row 37: Section 4 Headers
+    # Row 42: Section 4 Headers
     headers_s4 = ["Volume / Projections", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Notes"]
     for idx, h in enumerate(headers_s4):
-        cell = ws.cell(row=37, column=idx+1, value=h)
+        cell = ws.cell(row=42, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
-    ws.row_dimensions[37].height = 22
+    ws.row_dimensions[42].height = 22
 
-    # S4 Projections (Shifted to Row 38 onwards)
+    # S4 Projections (Shifted to Row 43 onwards)
     data_s4 = [
-        ("Weekly Cost (USD)", "=B33*$B$7", "=C33*$B$7", "=D33*$B$7", "Sessions/Week * Session Cost (Row 33)", "$#,##0.00"),
-        ("Weekly Cost (AUD)", "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
-        ("Monthly Cost (USD)", "=B38*4.33", "=C38*4.33", "=D38*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
-        ("Monthly Cost (AUD)", "=B40*$B$5", "=C40*$B$5", "=D40*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
-        ("Annual Cost (USD)", "=B38*52", "=C38*52", "=D38*52", "Weekly Cost * 52 weeks", "$#,##0.00"),
-        ("Annual Cost (AUD)", "=B42*$B$5", "=C42*$B$5", "=D42*$B$5", "Annual USD * Exchange Rate", "$#,##0.00")
+        ("Weekly Cost (USD)", "=B38*$B$12", "=C38*$B$12", "=D38*$B$12", "Sessions/Week * Session Cost (Row 38)", "$#,##0.00"),
+        ("Weekly Cost (AUD)", "=B43*$B$5", "=C43*$B$5", "=D43*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
+        ("Monthly Cost (USD)", "=B43*4.33", "=C43*4.33", "=D43*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
+        ("Monthly Cost (AUD)", "=B45*$B$5", "=C45*$B$5", "=D45*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
+        ("Annual Cost (USD)", "=B43*52", "=C43*52", "=D43*52", "Weekly Cost * 52 weeks", "$#,##0.00"),
+        ("Annual Cost (AUD)", "=B47*$B$5", "=C47*$B$5", "=D47*$B$5", "Annual USD * Exchange Rate", "$#,##0.00")
     ]
 
-    for r_idx, row_data in enumerate(data_s4, start=38):
+    for r_idx, row_data in enumerate(data_s4, start=43):
         is_annual_aud = (row_data[0] == "Annual Cost (AUD)")
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_annual_aud else font_regular
         for c in range(1, 4):
@@ -332,6 +330,193 @@ def create_styled_calculator():
             if is_annual_aud:
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_annual_aud else 20
+
+    # ==========================================
+    # ---- TAB 3: GLOSSARY MANAGEMENT ----
+    # ==========================================
+    ws_g = wb.create_sheet(title="Glossary Management")
+    ws_g.views.sheetView[0].showGridLines = True
+
+    # Title
+    ws_g["A1"] = "HealthDirect Clinical Glossary Generator & Management"
+    ws_g["A1"].font = font_title
+    ws_g.row_dimensions[1].height = 35
+
+    # Section 1 Overview Header (Merged A:E)
+    ws_g["A3"] = "SECTION 1: GLOSSARY GENERATION PARAMETERS"
+    ws_g["A3"].font = font_section
+    ws_g["A3"].fill = fill_section
+    ws_g.row_dimensions[3].height = 24
+    ws_g.merge_cells("A3:E3")
+
+    # Table Header
+    headers_g1 = ["Parameter", "Value", "Description", "", ""]
+    for idx, h in enumerate(headers_g1):
+        cell = ws_g.cell(row=4, column=idx+1, value=h)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_left
+    ws_g.row_dimensions[4].height = 22
+
+    # S1 Data rows
+    data_g1 = [
+        ("Number_of_Active_Languages", 5, "Number of localized language dialects (Spanish, Arabic, Vietnamese, Hindi, Cantonese)", "#,##0"),
+        ("Glossary_Master_Term_Count", 500, "Number of standardized medical terms and phrases to translate for the session prompt context", "#,##0"),
+        ("Input_Tokens_Per_Term", 25, "Average input tokens per term (source word + translation instructions + context guidelines)", "#,##0"),
+        ("Output_Tokens_Per_Term", 50, "Average output tokens per term (translated word + pronunciation phonetics + contextual note)", "#,##0"),
+        ("Model_Input_Rate_Per_Million", 1.25, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,##0.00"),
+        ("Model_Output_Rate_Per_Million", 5.00, "Unit cost rate of Gemini 1.5 Pro to generate high-quality clinical translations (USD / Million)", "$#,##0.00")
+    ]
+    for r_idx, row_data in enumerate(data_g1, start=5):
+        ws_g.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
+        val_cell = ws_g.cell(row=r_idx, column=2, value=row_data[1])
+        val_cell.font = font_bold
+        val_cell.alignment = align_right
+        ws_g.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular
+        val_cell.number_format = row_data[3]
+            
+        for col_idx in range(1, 4):
+            ws_g.cell(row=r_idx, column=col_idx).border = border_all
+        ws_g.row_dimensions[r_idx].height = 20
+
+    # Section 2 Header (Merged A:E) (Row 12)
+    ws_g["A12"] = "SECTION 2: ONE-TIME GLOSSARY CREATION COST (GEMINI 1.5 PRO)"
+    ws_g["A12"].font = font_section
+    ws_g["A12"].fill = fill_section
+    ws_g.row_dimensions[12].height = 24
+    ws_g.merge_cells("A12:E12")
+
+    # Section 2 Table Header (Row 13)
+    headers_g2 = ["Calculation Metric", "Value", "Formula Description", "", ""]
+    for idx, h in enumerate(headers_g2):
+        cell = ws_g.cell(row=13, column=idx+1, value=h)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_left if idx == 0 or idx == 2 else align_right
+    ws_g.row_dimensions[13].height = 22
+
+    # S2 Calculations (Row 14-19)
+    data_g2 = [
+        ("Total Generation Input Tokens", "=B6*B7*B5", "Master Term Count (B6) * Input Tokens (B7) * Languages (B5)", "#,##0"),
+        ("Total Generation Output Tokens", "=B6*B8*B5", "Master Term Count (B6) * Output Tokens (B8) * Languages (B5)", "#,##0"),
+        ("Input Translation Cost (USD)", "=B14*(B9/1000000)", "Total Input Tokens * (Model Input Rate / 1,000,000)", "$#,##0.00"),
+        ("Output Translation Cost (USD)", "=B15*(B10/1000000)", "Total Output Tokens * (Model Output Rate / 1,000,000)", "$#,##0.00"),
+        ("Total One-Time Cost (USD)", "=B16+B17", "Sum of input and output translation costs", "$#,##0.00"),
+        ("Total One-Time Cost (AUD)", "=B18*'Cost Calculator'!$B$5", "Total USD Cost * Indicative Exchange Rate (Cost Calculator B5)", "$#,##0.00")
+    ]
+    for r_idx, row_data in enumerate(data_g2, start=14):
+        is_total = (row_data[0] in ["Total One-Time Cost (USD)", "Total One-Time Cost (AUD)"])
+        ws_g.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total else font_regular
+        val_cell = ws_g.cell(row=r_idx, column=2, value=row_data[1])
+        val_cell.font = font_bold if is_total else font_regular
+        val_cell.alignment = align_right
+        val_cell.number_format = row_data[3]
+        if is_total:
+            val_cell.fill = fill_total
+            
+        ws_g.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular if not is_total else font_bold
+        for col_idx in range(1, 4):
+            cell = ws_g.cell(row=r_idx, column=col_idx)
+            cell.border = border_total if is_total else border_all
+            if is_total:
+                cell.fill = fill_total
+        ws_g.row_dimensions[r_idx].height = 22 if is_total else 20
+
+    # Section 3 Header (Merged A:E) (Row 21)
+    ws_g["A21"] = "SECTION 3: ANNUAL CLINICAL MAINTENANCE (50 TERMS ADDED/UPDATED)"
+    ws_g["A21"].font = font_section
+    ws_g["A21"].fill = fill_section
+    ws_g.row_dimensions[21].height = 24
+    ws_g.merge_cells("A21:E21")
+
+    # Section 3 Table Header (Row 22)
+    headers_g3 = ["Maintenance Metric", "Value", "Formula Description", "", ""]
+    for idx, h in enumerate(headers_g3):
+        cell = ws_g.cell(row=22, column=idx+1, value=h)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_left if idx == 0 or idx == 2 else align_right
+    ws_g.row_dimensions[22].height = 22
+
+    # S3 Calculations (Row 23-27)
+    data_g3 = [
+        ("Annual_New_Term_Maintenance", 50, "Average number of new clinical concepts/acronyms/guidelines added annually", "#,##0"),
+        ("Maintenance Input Tokens (Annual)", "=B23*B7*B5", "New Terms (B23) * Input Tokens (B7) * Languages (B5)", "#,##0"),
+        ("Maintenance Output Tokens (Annual)", "=B23*B8*B5", "New Terms (B23) * Output Tokens (B8) * Languages (B5)", "#,##0"),
+        ("Annual Maintenance Cost (USD)", "=(B24*(B9/1000000))+(B25*(B10/1000000))", "Annual (InputTokens*InputRate + OutputTokens*OutputRate) / 1,000,000", "$#,##0.00"),
+        ("Annual Maintenance Cost (AUD)", "=B26*'Cost Calculator'!$B$5", "Annual USD Cost * Indicative Exchange Rate (Cost Calculator B5)", "$#,##0.00")
+    ]
+    for r_idx, row_data in enumerate(data_g3, start=23):
+        is_total = (row_data[0] in ["Annual Maintenance Cost (USD)", "Annual Maintenance Cost (AUD)"])
+        ws_g.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total else font_regular
+        val_cell = ws_g.cell(row=r_idx, column=2, value=row_data[1])
+        val_cell.font = font_bold if is_total else font_regular
+        val_cell.alignment = align_right
+        val_cell.number_format = row_data[3]
+        if is_total:
+            val_cell.fill = fill_total
+            
+        ws_g.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular if not is_total else font_bold
+        for col_idx in range(1, 4):
+            cell = ws_g.cell(row=r_idx, column=col_idx)
+            cell.border = border_total if is_total else border_all
+            if is_total:
+                cell.fill = fill_total
+        ws_g.row_dimensions[r_idx].height = 22 if is_total else 20
+
+    # Section 4 Header (Merged A:E) (Row 29)
+    ws_g["A29"] = "SECTION 4: REAL-TIME CONTEXT CACHING INTEGRATION (PROMPT CACHING)"
+    ws_g["A29"].font = font_section
+    ws_g["A29"].fill = fill_section
+    ws_g.row_dimensions[29].height = 24
+    ws_g.merge_cells("A29:E29")
+
+    # Section 4 Table Header (Row 30)
+    headers_g4 = ["Caching Parameter", "Value", "Formula Description", "", ""]
+    for idx, h in enumerate(headers_g4):
+        cell = ws_g.cell(row=30, column=idx+1, value=h)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.alignment = align_left if idx == 0 or idx == 2 else align_right
+    ws_g.row_dimensions[30].height = 22
+
+    # S4 Calculations (Row 31-35)
+    data_g4 = [
+        ("Glossary Size in Session Cache (Tokens)", "=B6*B8", "Glossary size per language: Master Term Count (B6) * Output Tokens (B8)", "#,##0"),
+        ("Cache TTL / Inactivity Expiry (Hours)", 1.0, "Prompt Cache storage TTL: cached context is retained for 1 hour from last read", "0.0"),
+        ("Prompt Cache Storage Cost per Hour (USD)", "=B31*('Cost Calculator'!B21/1000000)", "Total Cached Tokens * (Cost Calculator Cache Storage Rate B21 / 1,000,000)", "$#,##0.0000"),
+        ("Prompt Cache Storage Cost per Hour (AUD)", "=B33*'Cost Calculator'!$B$5", "Cache Storage USD * Indicative Exchange Rate (Cost Calculator B5)", "$#,##0.0000"),
+        ("Active Call Prompt Cache Read Savings (AUD)", "=(3000-B31)*('Cost Calculator'!B20/1000000)*'Cost Calculator'!$B$5", "Saves up to $2.20 AUD per hour by avoiding uncached text reads across sessions", "$#,##0.00")
+    ]
+    for r_idx, row_data in enumerate(data_g4, start=31):
+        is_total = (row_data[0] in ["Prompt Cache Storage Cost per Hour (USD)", "Prompt Cache Storage Cost per Hour (AUD)"])
+        ws_g.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total else font_regular
+        val_cell = ws_g.cell(row=r_idx, column=2, value=row_data[1])
+        val_cell.font = font_bold if is_total else font_regular
+        val_cell.alignment = align_right
+        val_cell.number_format = row_data[3]
+        if is_total:
+            val_cell.fill = fill_total
+            
+        ws_g.cell(row=r_idx, column=3, value=row_data[2]).font = font_regular if not is_total else font_bold
+        for col_idx in range(1, 4):
+            cell = ws_g.cell(row=r_idx, column=col_idx)
+            cell.border = border_total if is_total else border_all
+            if is_total:
+                cell.fill = fill_total
+        ws_g.row_dimensions[r_idx].height = 22 if is_total else 20
+
+    # Auto-fit Glossary Columns Width
+    for col_g in ws_g.columns:
+        col_letter_g = get_column_letter(col_g[0].column)
+        if col_letter_g == "A":
+            ws_g.column_dimensions[col_letter_g].width = 42
+        elif col_letter_g == "B":
+            ws_g.column_dimensions[col_letter_g].width = 16
+        elif col_letter_g == "C":
+            ws_g.column_dimensions[col_letter_g].width = 75
+        else:
+            ws_g.column_dimensions[col_letter_g].width = 12
 
     # ---- AUTO-FIT CALCULATOR COLUMN WIDTHS ----
     for col in ws.columns:
