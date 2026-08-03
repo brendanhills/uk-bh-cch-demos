@@ -85,24 +85,24 @@ def create_styled_calculator():
     # Explainer Data
     data_explainer = [
         ("Approach A:\nNative Translation Baseline\n(gemini-3.5-live-translate-preview)", 
-         "Handles real-time Patient-to-Nurse and Nurse-to-Patient simultaneous translation natively using Google's dedicated live-translate preview API config.",
-         "Hardware-accelerated native translation pacing. No custom prompt guidelines needed. Continuous bidirectional streaming.",
-         "RECOMMENDED BASELINE.\nSaves 7.5% to 8.5% on total session costs compared to Approach B/C by avoiding any prompt-driven audio duration expansion (saves ~$120,000 to ~$240,000 AUD annually across HealthDirect's scale)."),
+         "Handles real-time Patient-to-Nurse and Nurse-to-Patient simultaneous translation natively.\n\nPost-call summary dynamically uses gemini-3.5-flash to align model families.",
+         "Hardware-accelerated native translation pacing. Summary is triggered as a single non-streaming unary text-to-text call immediately after session closure.",
+         "RECOMMENDED BASELINE.\nSaves 7.5% to 8.5% on streaming costs. Dynamic post-call summarization adds only $0.00096 USD per session (0.14% overhead), fully integrated in totals."),
          
         ("Approach B:\nPrompt-Driven Flash 3.1\n(gemini-3.1-flash)",
-         "Alternative translation approach where translation and pacing are guided using developer system instructions on standard Gemini Live streams.",
-         "Requires custom pacing guidelines and manual turn timeouts. Adds a ~12.5% duration overhead to streaming audio output to prevent over-talk.",
-         "High reasoning capability but moderately more expensive due to prompt instruction overhead and pacing audio duration expansion."),
+         "Alternative translation approach where translation and pacing are guided via custom developer prompts.\n\nPost-call summary dynamically uses gemini-3.1-flash to align model families.",
+         "Requires custom pacing prompts and manual turn buffers, adding a +12.5% duration overhead to streaming audio outputs.",
+         "Incurs higher streaming and text fees due to the pacing expansion and prompt instruction size. Dynamic post-call summarization is fully integrated."),
          
         ("Approach C:\nPrompt-Driven Flash 2.5\n(gemini-2.5-flash)",
-         "Legacy translation approach using previous-generation Gemini Live streams with developer system instruction prompts for pacing.",
-         "Requires identical custom pacing guidelines as Approach B, adding a +12.5% pacing duration overhead to spoken outputs.",
-         "Lowest unit text-token rate, but this minor saving is completely offset by the high audio streaming rates and pacing duration overhead."),
+         "Legacy translation approach where translation and pacing are guided via legacy custom system instructions.\n\nPost-call summary dynamically uses gemini-2.5-flash to align model families.",
+         "Requires identical custom pacing guidelines as Approach B, adding a +12.5% duration overhead to streaming audio outputs.",
+         "Lowest unit text-token rate, but this minor saving is completely offset by high streaming rates. Dynamic post-call summarization is fully integrated."),
          
-        ("Clinical Summary Feature:\nPost-Call Summarization\n(gemini-3.5-flash)",
+        ("Clinical Summary Feature:\nPost-Call Summarization\n(Dynamic Family Mirroring)",
          "Compiles the completed session transcript and generates a structured clinical SOAP note / summary immediately after the call is finished.",
-         "Standard non-streaming unary text-to-text call triggered once upon call completion. No real-time audio streaming involved.",
-         "VIRTUALLY FREE.\nCosts less than 1/10th of a single cent ($0.00096 USD) per call, adding a negligible 0.14% cost overhead to the live stream.")
+         "Dynamic family matching: Uses 3.5 Flash for Approach A, 3.1 Flash for Approach B, and 2.5 Flash for Approach C to maintain system-wide architectural consistency.",
+         "VIRTUALLY FREE.\nCosts less than 1/10th of a single cent per call across all model families, adding a negligible 0.14% cost overhead to the total session cost.")
     ]
 
     for r_idx, row_data in enumerate(data_explainer, start=8):
