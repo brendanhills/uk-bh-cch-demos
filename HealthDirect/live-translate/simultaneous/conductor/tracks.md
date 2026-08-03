@@ -46,7 +46,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Browser-Side WebSocket Migration & Mic Streaming**
+- [ ] **Track: Browser-Side WebSocket Migration & Mic Streaming** (ON HOLD — Major Re-design)
   *Link: [./tracks/browser_websocket_20260701/](./tracks/browser_websocket_20260701/)*
 
 ---
