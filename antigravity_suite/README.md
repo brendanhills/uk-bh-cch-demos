@@ -3,8 +3,8 @@
 A consolidated, premium, and unified developer extension, diagnostics, and maintenance suite for **Antigravity** and **Jetski**.
 
 > [!WARNING]
-> **Do NOT use the Conductor extension in this project.**
-> The Conductor submodule and its skills are tracked solely for diagnostic and backwards-compatibility check-ups, but must never be executed or active.
+> **Do NOT use the Conductor extension inside this project itself.**
+> Because this project's purpose is to install, configure, and improve Conductor, creating or running a Conductor track within this repository would create a highly confusing circular development loop.
 
 ---
 
