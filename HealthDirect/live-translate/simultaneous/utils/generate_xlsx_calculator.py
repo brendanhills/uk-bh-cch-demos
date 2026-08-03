@@ -130,12 +130,13 @@ def create_styled_calculator():
     ws["A1"].font = font_title
     ws.row_dimensions[1].height = 35
 
-    # Section 1 Header
+    # Section 1 Header (Merged A:E)
     ws["A3"] = "SECTION 1: GLOBAL PARAMETERS"
     ws["A3"].font = font_section
     ws.row_dimensions[3].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}3"].fill = fill_section
+    ws.merge_cells("A3:E3")
 
     # Parameter Table Header
     headers_s1 = ["Parameter", "Value", "Description", "", ""]
@@ -171,12 +172,13 @@ def create_styled_calculator():
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 2 Header
-    ws["A9"] = "SECTION 2: MODEL UNIT RATES (USD)"
+    # Section 2 Header (Merged A:E)
+    ws["A9"] = "SECTION 2: MODEL UNIT RATES (USD per Million Tokens)"
     ws["A9"].font = font_section
     ws.row_dimensions[9].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}9"].fill = fill_section
+    ws.merge_cells("A9:E9")
 
     # Section 2 Headers
     headers_s2 = ["Service/Item", "gemini-3.5-live-translate-preview", "gemini-3.1-flash", "gemini-2.5-flash", "Unit"]
@@ -187,14 +189,14 @@ def create_styled_calculator():
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
     ws.row_dimensions[10].height = 22
 
-    # S2 Data rows
+    # S2 Data rows (USD per Million Tokens)
     data_s2 = [
-        ("Audio Input", 0.00000300, 0.00000300, 0.00000300, "per token ($3.00 per 1M)"),
-        ("Audio Output", 0.00001200, 0.00001200, 0.00001200, "per token ($12.00 per 1M)"),
-        ("Text Input", 0.00000075, 0.00000075, 0.000000075, "per token ($0.75/$0.075 per 1M)"),
-        ("Text Output", 0.00000450, 0.00000450, 0.000000300, "per token ($4.50/$0.30 per 1M)"),
-        ("Cached Read", 0.00000015, 0.00000015, 0.000000015, "per token ($0.15/$0.015 per 1M)"),
-        ("Cache Storage", 0.00000100, 0.00000100, 0.000000100, "per token ($1.00/$0.10 per 1M)")
+        ("Audio Input", 3.00, 3.00, 3.00, "per Million Tokens"),
+        ("Audio Output", 12.00, 12.00, 12.00, "per Million Tokens"),
+        ("Text Input", 0.75, 0.75, 0.075, "per Million Tokens"),
+        ("Text Output", 4.50, 4.50, 0.30, "per Million Tokens"),
+        ("Cached Read", 0.15, 0.15, 0.015, "per Million Tokens"),
+        ("Cache Storage", 1.00, 1.00, 0.10, "per Million Tokens")
     ]
     for r_idx, row_data in enumerate(data_s2, start=11):
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold
@@ -202,18 +204,23 @@ def create_styled_calculator():
             val_cell = ws.cell(row=r_idx, column=c+1, value=row_data[c])
             val_cell.font = font_regular
             val_cell.alignment = align_right
-            val_cell.number_format = "$0.00000000"
+            # Dynamic decimals formatting
+            if abs(row_data[c] - round(row_data[c], 2)) > 1e-9:
+                val_cell.number_format = "$#,##0.000"
+            else:
+                val_cell.number_format = "$#,##0.00"
         ws.cell(row=r_idx, column=5, value=row_data[4]).font = font_regular
         for col_idx in range(1, 6):
             ws.cell(row=r_idx, column=col_idx).border = border_all
         ws.row_dimensions[r_idx].height = 20
 
-    # Section 3 Header
+    # Section 3 Header (Merged A:E)
     ws["A18"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
     ws["A18"].font = font_section
     ws.row_dimensions[18].height = 24
     for col in ["A", "B", "C", "D", "E"]:
         ws[f"{col}18"].fill = fill_section
+    ws.merge_cells("A18:E18")
 
     # Section 3 Headers
     headers_s3 = ["Metric/Calculation", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Formula Description"]
@@ -224,16 +231,16 @@ def create_styled_calculator():
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
     ws.row_dimensions[19].height = 22
 
-    # S3 Formulas & Data
+    # S3 Formulas & Data (Dividing rates by 1,000,000)
     data_s3 = [
         # Row 20
         ("Prompt Cache Read Size (Tokens)", 1000, 3000, 3000, "Static instructions + glossary context", "#,##0"),
         # Row 21
-        ("Prompt Cache Read Cost (USD)", "=B20*B15", "=C20*C15", "=D20*D15", "Tokens * Cache Read Rate", "$#,##0.00000"),
+        ("Prompt Cache Read Cost (USD)", "=B20*(B15/1000000)", "=C20*(C15/1000000)", "=D20*(D15/1000000)", "Tokens * (Cache Read Rate / 1,000,000)", "$#,##0.00000"),
         # Row 22
         ("Audio Input Tokens per Session", "=2*$B$6*60*250", "=2*$B$6*60*250", "=2*$B$6*60*250", "2 connections * Duration in seconds * 250 tokens/sec", "#,##0"),
         # Row 23
-        ("Audio Input Cost (USD)", "=B22*B11", "=C22*C11", "=D22*D11", "Tokens * Audio Input Rate", "$#,##0.00"),
+        ("Audio Input Cost (USD)", "=B22*(B11/1000000)", "=C22*(C11/1000000)", "=D22*(D11/1000000)", "Tokens * (Audio Input Rate / 1,000,000)", "$#,##0.00"),
         # Row 24
         ("Spoken Dialogue Word Count (Est.)", "=$B$6*200", "=$B$6*200", "=$B$6*200", "Estimated transcript words (200 words/min average)", "#,##0"),
         # Row 25
@@ -241,11 +248,11 @@ def create_styled_calculator():
         # Row 26
         ("Audio Output Tokens per Session", "=B25*250", "=C25*250", "=D25*250", "Spoken seconds * 250 tokens/sec", "#,##0"),
         # Row 27
-        ("Audio Output Cost (USD)", "=B26*B12", "=C26*C12", "=D26*D12", "Tokens * Audio Output Rate", "$#,##0.00"),
+        ("Audio Output Cost (USD)", "=B26*(B12/1000000)", "=C26*(C12/1000000)", "=D26*(D12/1000000)", "Tokens * (Audio Output Rate / 1,000,000)", "$#,##0.00"),
         # Row 28
         ("Transcription Text Output (Tokens)", "=(B24*2.2)*1.33", "=(C24*2.2)*1.33", "=(D24*2.2)*1.33", "(Spoken + Translated words) * 1.33 tokens/word", "#,##0"),
         # Row 29
-        ("Transcription Text Cost (USD)", "=B28*B14", "=C28*C14", "=D28*D14", "Tokens * Text Output Rate", "$#,##0.0000"),
+        ("Transcription Text Cost (USD)", "=B28*(B14/1000000)", "=C28*(C14/1000000)", "=D28*(D14/1000000)", "Tokens * (Text Output Rate / 1,000,000)", "$#,##0.0000"),
         
         # New Post-Call Summary Rows
         # Row 30
@@ -253,7 +260,7 @@ def create_styled_calculator():
         # Row 31
         ("Post-Call Summary Output (Tokens)", 1200, 1200, 1200, "Output size of the generated structured clinical SOAP note", "#,##0"),
         # Row 32
-        ("Post-Call Summary Cost (USD)", "=B30*B13+B31*B14", "=C30*C13+C31*C14", "=D30*D13+D31*D14", "Summary Input & Output * Model Text Rates (Row 13 & 14)", "$#,##0.00000"),
+        ("Post-Call Summary Cost (USD)", "=(B30*(B13/1000000))+(B31*(B14/1000000))", "=(C30*(C13/1000000))+(C31*(C14/1000000))", "=(D30*(D13/1000000))+(D31*(D14/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
         
         # Shifted Totals Rows (Row 33 & 34)
         ("Total Session Cost (USD)", "=B21+B23+B27+B29+B32", "=C21+C23+C27+C29+C32", "=D21+D23+D27+D29+D32", "Sum of all live streaming & summary costs", "$#,##0.00"),
