@@ -110,6 +110,10 @@ These approaches do not support native `TranslationConfig`, and must rely on sta
 
 To establish a concrete, empirical baseline of translation costs, we audited the actual clinical dialogue scripts and high-fidelity stereo WAV files inside the `samples/` directory.
 
+> [!NOTE]
+> **A Note on Session Lengths:**
+> The 5 audited presets inside our codebase are short, 1-to-2 minute synthetic playbacks designed for developer verification and demo execution. **A typical live clinical session on HealthDirect averages 20+ minutes.** We model these longer production session projections in our upcoming Sheets calculator, while utilizing the short playbacks here to map exact, sub-cent model performance trends.
+
 ### 1. Dialogue Script & Audio Audit
 Below are the exact measurements of speech duration, conversational turns, word count, and estimated Gemini Live tokenization bounds for each medical dialogue preset. 
 
@@ -138,7 +142,7 @@ We compare the total cost (USD) of running a full playthrough of each preset dia
 | **Hindi Cough** | 108.63s | **$0.46609** | $0.50419 | $0.50072 |
 | **Vietnamese Paediatric**| 68.72s | **$0.29649** | $0.32100 | $0.31848 |
 
-### Key Takeaways from Comparative Cost Audit:
+### Core Takeaways from Comparative Cost Audit:
 1. **`gemini-3.5-live-translate-preview` is the Most Cost-Effective Option:** Across all presets, the native translation model is **`7.5% to 8.5%` cheaper** than the other models, despite Gemini 2.5 Flash having significantly lower text input/output rates.
 2. **Audio Streaming Rates Dominate:** Because Gemini Live continuously streams audio ($3.00/1M input, $12.00/1M output), the text token pricing differences are entirely drowned out. The overhead of prompt-driven pacing (which expands spoken output audio duration by `12.5%`) adds far more cost than the cheaper text rate of 2.5 Flash can recover.
 3. **Glossary Caching is Crucial:** For all models, utilizing Gemini Context Caching for our medical glossary and prompt rules cuts input reading costs by **`80% to 90%`**, saving several cents per session.
@@ -156,12 +160,12 @@ We model this future transaction utilizing standard, cost-efficient text-based G
   - **Output Tokens:** $0.300 / 1 Million tokens
 
 ### Projected Summary Costs per Session (Example):
-For a standard 15-minute dialogue (approx. 3,000 words / ~4,000 tokens input, and ~800 tokens output):
-* **Input cost:** 4,000 input tokens * $0.000000075 / token = $0.00030 USD
-* **Output cost:** 800 output tokens * $0.000000300 / token = $0.00024 USD (Assuming **No Thinking / Low Thinking** model settings)
-* **High Thinking Overhead Adjustment:** If standard summary generation utilizes a high thinking level (e.g. adding 1,500 thinking tokens for clinical clinical validation), output tokens increase to 2,300 tokens:
-  - *Adjusted Output Cost:* 2,300 output tokens * $0.000000300 / token = $0.00069 USD
-* **Total Summary Cost per Session:** **$0.00054 USD to $0.00099 USD** (approx. 1/10th of a cent)
+For a standard **20-minute clinical dialogue** (approx. 4,000 words / ~5,300 tokens input, and ~1,100 tokens output):
+* **Input cost:** 5,300 input tokens * $0.000000075 / token = $0.000398 USD
+* **Output cost:** 1,100 output tokens * $0.000000300 / token = $0.000330 USD (Assuming **No Thinking / Low Thinking** model settings)
+* **High Thinking Overhead Adjustment:** If standard summary generation utilizes a high thinking level (e.g. adding 2,000 thinking tokens for thorough clinical clinical validation), output tokens increase to 3,100 tokens:
+  - *Adjusted Output Cost:* 3,100 output tokens * $0.000000300 / token = $0.000930 USD
+* **Total Summary Cost per Session:** **$0.00073 USD to $0.00133 USD** (approx. 1/10th of a cent)
 
 ---
 
