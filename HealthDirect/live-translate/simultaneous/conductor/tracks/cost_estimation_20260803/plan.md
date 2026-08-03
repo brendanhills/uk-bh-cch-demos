@@ -18,17 +18,17 @@ This plan outlines the sequential steps to perform the API audit, calculate empi
 - [x] Task: Calculate Cumulative Preset Costs
     - [x] Compute the exact cost for running each preset playthrough, showing the individual cost of STT, Gemini Live (input/output), and TTS.
     - [x] Summarize these costs in a comparative table.
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Dialogue Token Audit & Empirical Cost Calculations' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Dialogue Token Audit & Empirical Cost Calculations' (Protocol in workflow.md)
 
 ## Phase 3: Google Sheets Projection Calculator CSV Design
-- [ ] Task: Design and Populate ready-to-import CSV Template
-    - [ ] Create `utils/cost_calculator_sheet.csv` inside the repository.
-    - [ ] Format Tab 1 (Rate Sheet) as CSV blocks.
-    - [ ] Format Tab 2 (Sample Conversions) with formulas referencing the rate sheet blocks.
-    - [ ] Format Tab 3 (Volume Projections) with custom input variables and SUM/PRODUCT formulas to automatically scale totals over weeks, months, and years.
-- [ ] Task: Verify Google Sheet Compatibility
-    - [ ] Manually verify that all written formulas are fully compatible with Google Sheets and parse correctly when uploaded.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Google Sheets Projection Calculator CSV Design' (Protocol in workflow.md)
+- [x] Task: Design and Populate ready-to-import CSV Template
+    - [x] Create `utils/cost_calculator_sheet.csv` inside the repository.
+    - [x] Format Tab 1 (Rate Sheet) as CSV blocks.
+    - [x] Format Tab 2 (Sample Conversions) with formulas referencing the rate sheet blocks.
+    - [x] Format Tab 3 (Volume Projections) with custom input variables and SUM/PRODUCT formulas to automatically scale totals over weeks, months, and years.
+- [x] Task: Verify Google Sheet Compatibility
+    - [x] Manually verify that all written formulas are fully compatible with Google Sheets and parse correctly when uploaded.
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Google Sheets Projection Calculator CSV Design' (Protocol in workflow.md)
 
 ## Phase 4: Cost Optimization Analysis & Recommendations Report
 - [ ] Task: Document Findings and Recommendations
