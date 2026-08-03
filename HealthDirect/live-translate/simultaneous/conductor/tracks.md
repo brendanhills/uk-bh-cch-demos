@@ -146,6 +146,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Conversation summary - needs to be presented within 60 seconds of the call finishing and we need that the nurse can delete it so no PII is stored**
+- [~] **Track: Conversation summary - needs to be presented within 60 seconds of the call finishing and we need that the nurse can delete it so no PII is stored**
   *Link: [./tracks/conversation_summary_20260803/](./tracks/conversation_summary_20260803/)*
 
