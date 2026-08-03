@@ -133,9 +133,8 @@ def create_styled_calculator():
     # Section 1 Header (Merged A:E)
     ws["A3"] = "SECTION 1: GLOBAL PARAMETERS"
     ws["A3"].font = font_section
+    ws["A3"].fill = fill_section
     ws.row_dimensions[3].height = 24
-    for col in ["A", "B", "C", "D", "E"]:
-        ws[f"{col}3"].fill = fill_section
     ws.merge_cells("A3:E3")
 
     # Parameter Table Header
@@ -175,9 +174,8 @@ def create_styled_calculator():
     # Section 2 Header (Merged A:E)
     ws["A9"] = "SECTION 2: MODEL UNIT RATES (USD per Million Tokens)"
     ws["A9"].font = font_section
+    ws["A9"].fill = fill_section
     ws.row_dimensions[9].height = 24
-    for col in ["A", "B", "C", "D", "E"]:
-        ws[f"{col}9"].fill = fill_section
     ws.merge_cells("A9:E9")
 
     # Section 2 Headers
@@ -217,9 +215,8 @@ def create_styled_calculator():
     # Section 3 Header (Merged A:E)
     ws["A18"] = "SECTION 3: EMPIRICAL BASES & FORMULAS (PER SESSION)"
     ws["A18"].font = font_section
+    ws["A18"].fill = fill_section
     ws.row_dimensions[18].height = 24
-    for col in ["A", "B", "C", "D", "E"]:
-        ws[f"{col}18"].fill = fill_section
     ws.merge_cells("A18:E18")
 
     # Section 3 Headers
@@ -291,12 +288,12 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_total_row else 20
 
-    # Section 4 Header (Shifted to Row 36)
+    # Section 4 Header (Shifted to Row 36, Merged A:E)
     ws["A36"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
     ws["A36"].font = font_section
+    ws["A36"].fill = fill_section
     ws.row_dimensions[36].height = 24
-    for col in ["A", "B", "C", "D", "E"]:
-        ws[f"{col}36"].fill = fill_section
+    ws.merge_cells("A36:E36")
 
     # Row 37: Section 4 Headers
     headers_s4 = ["Volume / Projections", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Notes"]
