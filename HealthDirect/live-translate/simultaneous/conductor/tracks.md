@@ -139,6 +139,12 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: ModelArmor PII & Safety Guardrails**
   *Link: [./tracks/model_armor_pii_20260715/](./tracks/model_armor_pii_20260715/)*
 
+---
+
+- [ ] **Track: Cost-Estimation & Optimization**
+  *Link: [./tracks/cost_estimation_20260803/](./tracks/cost_estimation_20260803/)*
+
+
 
 
 
