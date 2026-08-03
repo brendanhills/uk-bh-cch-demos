@@ -155,6 +155,7 @@ def create_styled_calculator():
         ("Weeks_Per_Year", 52, "Standard billing weeks per calendar year", "#,##0"),
         ("Active_Speech_Duty_Cycle", 0.40, "Estimated percentage of session with active speech (Client-Side VAD assumes microphones only stream when speech is detected, suppressing silence)", "0.0%"),
         ("Barge_In_Overlap_Overhead", 0.05, "Estimated streaming & playback duration overhead to account for overlap and barge-in", "0.0%"),
+        ("Linguistic_Transcript_Expansion_Factor", 2.20, "Estimated ratio of total transcribed words (spoken + translated) over original spoken words", "0.00"),
         ("Weekly_Session_Volume", "=B7*B8/B9", "Dynamic weekly session volume: (Annual Volume * Target Rate) / Weeks Per Year", "#,##0")
     ]
     for r_idx, row_data in enumerate(data_s1, start=5):
@@ -252,7 +253,7 @@ def create_styled_calculator():
         # Row 32
         ("Audio Output Cost (USD)", "=B31*(B17/1000000)", "=C31*(C17/1000000)", "=D31*(D17/1000000)", "Tokens * (Audio Output Rate / 1,000,000)", "$#,##0.00"),
         # Row 33
-        ("Transcription Text Output (Tokens)", "=(B29*2.2)*1.33", "=(C29*2.2)*1.33", "=(D29*2.2)*1.33", "(Spoken + Translated words) * 1.33 tokens/word", "#,##0"),
+        ("Transcription Text Output (Tokens)", "=(B29*$B$12)*1.33", "=(C29*$B$12)*1.33", "=(D29*$B$12)*1.33", "Spoken words * Linguistic Expansion (Cell B12) * 1.33 tokens/word", "#,##0"),
         # Row 34
         ("Transcription Text Cost (USD)", "=B33*(B19/1000000)", "=C33*(C19/1000000)", "=D33*(D19/1000000)", "Tokens * (Text Output Rate / 1,000,000)", "$#,##0.0000"),
         
@@ -260,18 +261,20 @@ def create_styled_calculator():
         # Row 35
         ("Post-Call Summary Input (Tokens)", "=B33", "=C33", "=D33", "Input size of the compiled transcript text (matched to Row 33)", "#,##0"),
         # Row 36
-        ("Post-Call Summary Output (Tokens)", 1200, 1200, 1200, "Output size of the generated structured clinical SOAP note", "#,##0"),
+        ("Post-Call Summary Output (Words)", 900, 900, 900, "Clinician SOAP note target length in words", "#,##0"),
         # Row 37
-        ("Post-Call Summary Cost (USD)", "=(B35*(B18/1000000))+(B36*(B19/1000000))", "=(C35*(C18/1000000))+(C36*(C19/1000000))", "=(D35*(D18/1000000))+(D36*(D19/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
+        ("Post-Call Summary Output (Tokens)", "=B36*1.33", "=C36*1.33", "=D36*1.33", "Output size in tokens based on 1.33 tokens/word", "#,##0"),
+        # Row 38
+        ("Post-Call Summary Cost (USD)", "=(B35*(B18/1000000))+(B37*(B19/1000000))", "=(C35*(C18/1000000))+(C37*(C19/1000000))", "=(D35*(D18/1000000))+(D37*(D19/1000000))", "Summary (Input*InputRate + Output*OutputRate) / 1,000,000", "$#,##0.00000"),
         
-        # Shifted Totals Rows (Row 38 & 39)
-        ('="Total Session Cost (USD) - Per average session length: "&B6&" mins"', "=B26+B28+B32+B34+B37", "=C26+C28+C32+C34+C37", "=D26+D28+D32+D34+D37", "Sum of all live streaming & summary costs", "$#,##0.00"),
-        ('="Total Session Cost (AUD) - Per average session length: "&B6&" mins"', "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
+        # Shifted Totals Rows (Row 39 & 40)
+        ('="Total Session Cost (USD) - Per average session length: "&B6&" mins"', "=B26+B28+B32+B34+B38", "=C26+C28+C32+C34+C38", "=D26+D28+D32+D34+D38", "Sum of all live streaming & summary costs", "$#,##0.00"),
+        ('="Total Session Cost (AUD) - Per average session length: "&B6&" mins"', "=B39*$B$5", "=C39*$B$5", "=D39*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
     ]
 
     for r_idx, row_data in enumerate(data_s3, start=25):
         # Calculation name
-        is_total_row = (r_idx in [38, 39])
+        is_total_row = (r_idx in [39, 40])
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_total_row else font_regular
         
         # Columns B, C, D
@@ -303,15 +306,15 @@ def create_styled_calculator():
     # Row 42: Section 4 Headers
     headers_s4 = ["Volume / Projections", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Notes"]
     for idx, h in enumerate(headers_s4):
-        cell = ws.cell(row=42, column=idx+1, value=h)
-        cell.font = font_header
-        cell.fill = fill_header
-        cell.alignment = align_left if idx == 0 or idx == 4 else align_right
+         cell = ws.cell(row=42, column=idx+1, value=h)
+         cell.font = font_header
+         cell.fill = fill_header
+         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
     ws.row_dimensions[42].height = 22
 
     # S4 Projections (Shifted to Row 43 onwards)
     data_s4 = [
-        ("Weekly Cost (USD)", "=B38*$B$12", "=C38*$B$12", "=D38*$B$12", "Sessions/Week * Session Cost (Row 38)", "$#,##0.00"),
+        ("Weekly Cost (USD)", "=B39*$B$13", "=C39*$B$13", "=D39*$B$13", "Sessions/Week * Session Cost (Row 39)", "$#,##0.00"),
         ("Weekly Cost (AUD)", "=B43*$B$5", "=C43*$B$5", "=D43*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
         ("Monthly Cost (USD)", "=B43*4.33", "=C43*4.33", "=D43*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
         ("Monthly Cost (AUD)", "=B45*$B$5", "=C45*$B$5", "=D45*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
