@@ -20,7 +20,7 @@ Prompt Cache Read Size (Tokens),1000,3000,3000,Static instructions + glossary co
 Prompt Cache Read Cost (USD),=B19*B14,=C19*C14,=D19*D14,Tokens * Cache Read Rate
 Audio Input Tokens per Session,=2*$B$5*60*250,=2*$B$5*60*250,=2*$B$5*60*250,2 connections * Duration in seconds * 250 tokens/sec
 Audio Input Cost (USD),=B21*B10,=C21*C10,=D21*D10,Tokens * Audio Input Rate
-Spoken Dialogue Word Count (Est.),=B5*200,=C5*200,=D5*200,Estimated transcript words (200 words/min average)
+Spoken Dialogue Word Count (Est.),=$B$5*200,=$B$5*200,=$B$5*200,Estimated transcript words (200 words/min average)
 Audio Output Pacing Duration (Sec),=(B23/2.5),=(C23/2.5)*1.125,=(D23/2.5)*1.125,150 words/min spoken rate + pacing overhead
 Audio Output Tokens per Session,=B24*250,=C24*250,=D24*250,Spoken seconds * 250 tokens/sec
 Audio Output Cost (USD),=B25*B11,=C25*C11,=D25*D11,Tokens * Audio Output Rate
