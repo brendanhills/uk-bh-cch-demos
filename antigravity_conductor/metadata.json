@@ -1,6 +1,0 @@
-{
-  "name": "antigravity-conductor-workflows",
-  "version": "1.0.0",
-  "last_updated": "2026-07-15T16:33:00+10:00",
-  "description": "Custom Conductor extension with agile bug tracking, automated validations, and end-of-session checkpoints."
-}
