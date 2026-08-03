@@ -246,10 +246,18 @@ def create_styled_calculator():
         ("Transcription Text Output (Tokens)", "=(B24*2.2)*1.33", "=(C24*2.2)*1.33", "=(D24*2.2)*1.33", "(Spoken + Translated words) * 1.33 tokens/word", "#,##0"),
         # Row 29
         ("Transcription Text Cost (USD)", "=B28*B14", "=C28*C14", "=D28*D14", "Tokens * Text Output Rate", "$#,##0.0000"),
+        
+        # New Post-Call Summary Rows
         # Row 30
-        ("Total Session Cost (USD)", "=B21+B23+B27+B29", "=C21+C23+C27+C29", "=D21+D23+D27+D29", "Sum of all sub-costs", "$#,##0.00"),
+        ("Post-Call Summary Input (Tokens)", "=B28", "=C28", "=D28", "Input size of the compiled transcript text (matched to Row 28)", "#,##0"),
         # Row 31
-        ("Total Session Cost (AUD)", "=B30*$B$5", "=C30*$B$5", "=D30*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
+        ("Post-Call Summary Output (Tokens)", 1200, 1200, 1200, "Output size of the generated structured clinical SOAP note", "#,##0"),
+        # Row 32
+        ("Post-Call Summary Cost (USD)", "=B30*B13+B31*B14", "=C30*C13+C31*C14", "=D30*D13+D31*D14", "Summary Input & Output * Model Text Rates (Row 13 & 14)", "$#,##0.00000"),
+        
+        # Shifted Totals Rows (Row 33 & 34)
+        ("Total Session Cost (USD)", "=B21+B23+B27+B29+B32", "=C21+C23+C27+C29+C32", "=D21+D23+D27+D29+D32", "Sum of all live streaming & summary costs", "$#,##0.00"),
+        ("Total Session Cost (AUD)", "=B33*$B$5", "=C33*$B$5", "=D33*$B$5", "USD Cost * Exchange Rate", "$#,##0.00")
     ]
 
     for r_idx, row_data in enumerate(data_s3, start=20):
@@ -276,33 +284,33 @@ def create_styled_calculator():
                 cell.fill = fill_total
         ws.row_dimensions[r_idx].height = 22 if is_total_row else 20
 
-    # Section 4 Header
-    ws["A33"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
-    ws["A33"].font = font_section
-    ws.row_dimensions[33].height = 24
+    # Section 4 Header (Shifted to Row 36)
+    ws["A36"] = "SECTION 4: VOLUME PROJECTION CALCULATOR"
+    ws["A36"].font = font_section
+    ws.row_dimensions[36].height = 24
     for col in ["A", "B", "C", "D", "E"]:
-        ws[f"{col}33"].fill = fill_section
+        ws[f"{col}36"].fill = fill_section
 
-    # Row 34: Section 4 Headers
+    # Row 37: Section 4 Headers
     headers_s4 = ["Volume / Projections", "Approach A: Native 3.5", "Approach B: 3.1 Flash Prompt-driven", "Approach C: 2.5 Flash Prompt-driven", "Notes"]
     for idx, h in enumerate(headers_s4):
-        cell = ws.cell(row=34, column=idx+1, value=h)
+        cell = ws.cell(row=37, column=idx+1, value=h)
         cell.font = font_header
         cell.fill = fill_header
         cell.alignment = align_left if idx == 0 or idx == 4 else align_right
-    ws.row_dimensions[34].height = 22
+    ws.row_dimensions[37].height = 22
 
-    # S4 Projections
+    # S4 Projections (Shifted to Row 38 onwards)
     data_s4 = [
-        ("Weekly Cost (USD)", "=B30*$B$7", "=C30*$B$7", "=D30*$B$7", "Sessions/Week * Session Cost", "$#,##0.00"),
-        ("Weekly Cost (AUD)", "=B35*$B$5", "=C35*$B$5", "=D35*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
-        ("Monthly Cost (USD)", "=B35*4.33", "=C35*4.33", "=D35*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
-        ("Monthly Cost (AUD)", "=B37*$B$5", "=C37*$B$5", "=D37*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
-        ("Annual Cost (USD)", "=B35*52", "=C35*52", "=D35*52", "Weekly Cost * 52 weeks", "$#,##0.00"),
-        ("Annual Cost (AUD)", "=B39*$B$5", "=C39*$B$5", "=D39*$B$5", "Annual USD * Exchange Rate", "$#,##0.00")
+        ("Weekly Cost (USD)", "=B33*$B$7", "=C33*$B$7", "=D33*$B$7", "Sessions/Week * Session Cost (Row 33)", "$#,##0.00"),
+        ("Weekly Cost (AUD)", "=B38*$B$5", "=C38*$B$5", "=D38*$B$5", "Weekly USD * Exchange Rate", "$#,##0.00"),
+        ("Monthly Cost (USD)", "=B38*4.33", "=C38*4.33", "=D38*4.33", "Weekly Cost * 4.33 weeks/month", "$#,##0.00"),
+        ("Monthly Cost (AUD)", "=B40*$B$5", "=C40*$B$5", "=D40*$B$5", "Monthly USD * Exchange Rate", "$#,##0.00"),
+        ("Annual Cost (USD)", "=B38*52", "=C38*52", "=D38*52", "Weekly Cost * 52 weeks", "$#,##0.00"),
+        ("Annual Cost (AUD)", "=B42*$B$5", "=C42*$B$5", "=D42*$B$5", "Annual USD * Exchange Rate", "$#,##0.00")
     ]
 
-    for r_idx, row_data in enumerate(data_s4, start=35):
+    for r_idx, row_data in enumerate(data_s4, start=38):
         is_annual_aud = (row_data[0] == "Annual Cost (AUD)")
         ws.cell(row=r_idx, column=1, value=row_data[0]).font = font_bold if is_annual_aud else font_regular
         for c in range(1, 4):
