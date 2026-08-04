@@ -154,4 +154,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 - [ ] **Track: Explicit Gemini Context Caching**
   *Link: [./tracks/explicit_context_caching_20260804/](./tracks/explicit_context_caching_20260804/)*
 
+---
+
+- [ ] **Track: Server Hold-Loop Silence Frame Pacing**
+  *Link: [./tracks/hold_loop_pacing_20260804/](./tracks/hold_loop_pacing_20260804/)*
+
+
 
