@@ -1,0 +1,2606 @@
+[
+  {
+    "start_sec": 0.091,
+    "end_sec": 0.441,
+    "speaker": 1,
+    "text": "Oh.",
+    "timestamp": "00:00:00.091"
+  },
+  {
+    "start_sec": 1.021,
+    "end_sec": 1.481,
+    "speaker": 1,
+    "text": "Okay.",
+    "timestamp": "00:00:01.021"
+  },
+  {
+    "start_sec": 2.111,
+    "end_sec": 3.691,
+    "speaker": 1,
+    "text": "Okay, this is really screwy.",
+    "timestamp": "00:00:02.111"
+  },
+  {
+    "start_sec": 4.621,
+    "end_sec": 5.531,
+    "speaker": 1,
+    "text": "Very interesting.",
+    "timestamp": "00:00:04.621"
+  },
+  {
+    "start_sec": 5.531,
+    "end_sec": 6.251,
+    "speaker": 1,
+    "text": "So, how are you?",
+    "timestamp": "00:00:05.531"
+  },
+  {
+    "start_sec": 6.491,
+    "end_sec": 7.501,
+    "speaker": 2,
+    "text": "Okay, how are you?",
+    "timestamp": "00:00:06.491"
+  },
+  {
+    "start_sec": 7.591,
+    "end_sec": 9.381,
+    "speaker": 1,
+    "text": "I'm fine. How's everything in Philadelphia?",
+    "timestamp": "00:00:07.591"
+  },
+  {
+    "start_sec": 9.901,
+    "end_sec": 12.391,
+    "speaker": 2,
+    "text": "Oh, pretty good. Just kind of busy working.",
+    "timestamp": "00:00:09.901"
+  },
+  {
+    "start_sec": 12.631,
+    "end_sec": 13.061,
+    "speaker": 1,
+    "text": "Oh, that's good.",
+    "timestamp": "00:00:12.631"
+  },
+  {
+    "start_sec": 13.561,
+    "end_sec": 14.071,
+    "speaker": 2,
+    "text": "But that's it.",
+    "timestamp": "00:00:13.561"
+  },
+  {
+    "start_sec": 14.651,
+    "end_sec": 15.011,
+    "speaker": 2,
+    "text": "How about you?",
+    "timestamp": "00:00:14.651"
+  },
+  {
+    "start_sec": 15.541,
+    "end_sec": 17.521,
+    "speaker": 1,
+    "text": "Oh, same thing. Just working. Yeah.",
+    "timestamp": "00:00:15.541"
+  },
+  {
+    "start_sec": 17.521,
+    "end_sec": 18.001,
+    "speaker": 2,
+    "text": "At Kinko's?",
+    "timestamp": "00:00:17.521"
+  },
+  {
+    "start_sec": 18.001,
+    "end_sec": 18.341,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:00:18.001"
+  },
+  {
+    "start_sec": 19.001,
+    "end_sec": 20.671,
+    "speaker": 2,
+    "text": "Is it the same job that you had when I left?",
+    "timestamp": "00:00:19.001"
+  },
+  {
+    "start_sec": 20.891,
+    "end_sec": 24.301,
+    "speaker": 1,
+    "text": "Um, well, I'm I'm almost out of my job.",
+    "timestamp": "00:00:20.891"
+  },
+  {
+    "start_sec": 24.301,
+    "end_sec": 24.751,
+    "speaker": 2,
+    "text": "What does that mean?",
+    "timestamp": "00:00:24.301"
+  },
+  {
+    "start_sec": 24.751,
+    "end_sec": 27.531,
+    "speaker": 1,
+    "text": "They they gave me a promotion to supervisor.",
+    "timestamp": "00:00:24.751"
+  },
+  {
+    "start_sec": 27.791,
+    "end_sec": 28.321,
+    "speaker": 2,
+    "text": "Wow.",
+    "timestamp": "00:00:27.791"
+  },
+  {
+    "start_sec": 28.771,
+    "end_sec": 32.741,
+    "speaker": 1,
+    "text": "Yeah, but I haven't I can't um I can't change out of it until they um until the 10th of August.",
+    "timestamp": "00:00:28.771"
+  },
+  {
+    "start_sec": 33.321,
+    "end_sec": 33.601,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:00:33.321"
+  },
+  {
+    "start_sec": 33.721,
+    "end_sec": 37.071,
+    "speaker": 1,
+    "text": "So, but I've been working like on on Sundays",
+    "timestamp": "00:00:33.721"
+  },
+  {
+    "start_sec": 37.311,
+    "end_sec": 38.311,
+    "speaker": 2,
+    "text": "Uh-huh.",
+    "timestamp": "00:00:37.311"
+  },
+  {
+    "start_sec": 38.311,
+    "end_sec": 38.921,
+    "speaker": 1,
+    "text": "as a supervisor.",
+    "timestamp": "00:00:38.311"
+  },
+  {
+    "start_sec": 39.261,
+    "end_sec": 39.521,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:00:39.261"
+  },
+  {
+    "start_sec": 39.521,
+    "end_sec": 41.561,
+    "speaker": 1,
+    "text": "So like I've sort of been the supervisor, but I still have my other jobs in the during the week.",
+    "timestamp": "00:00:39.521"
+  },
+  {
+    "start_sec": 41.871,
+    "end_sec": 42.191,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:00:41.871"
+  },
+  {
+    "start_sec": 42.191,
+    "end_sec": 42.861,
+    "speaker": 2,
+    "text": "Do you like being supervisor?",
+    "timestamp": "00:00:42.191"
+  },
+  {
+    "start_sec": 43.041,
+    "end_sec": 43.611,
+    "speaker": 1,
+    "text": "Yeah, I do.",
+    "timestamp": "00:00:43.041"
+  },
+  {
+    "start_sec": 43.831,
+    "end_sec": 44.201,
+    "speaker": 2,
+    "text": "Oh good.",
+    "timestamp": "00:00:43.831"
+  },
+  {
+    "start_sec": 45.391,
+    "end_sec": 45.681,
+    "speaker": 1,
+    "text": "So.",
+    "timestamp": "00:00:45.391"
+  },
+  {
+    "start_sec": 45.681,
+    "end_sec": 45.991,
+    "speaker": 2,
+    "text": "Well, that's good.",
+    "timestamp": "00:00:45.681"
+  },
+  {
+    "start_sec": 46.281,
+    "end_sec": 49.371,
+    "speaker": 1,
+    "text": "And then I can work like evenings during school. I don't have to work in the day.",
+    "timestamp": "00:00:46.281"
+  },
+  {
+    "start_sec": 49.521,
+    "end_sec": 49.801,
+    "speaker": 2,
+    "text": "Uh-huh.",
+    "timestamp": "00:00:49.521"
+  },
+  {
+    "start_sec": 51.271,
+    "end_sec": 52.011,
+    "speaker": 2,
+    "text": "Oh, very good.",
+    "timestamp": "00:00:51.271"
+  },
+  {
+    "start_sec": 53.031,
+    "end_sec": 53.691,
+    "speaker": 2,
+    "text": "And how's Leroy?",
+    "timestamp": "00:00:53.031"
+  },
+  {
+    "start_sec": 54.221,
+    "end_sec": 57.251,
+    "speaker": 1,
+    "text": "He's okay. Um he moved into Felipe's apartment.",
+    "timestamp": "00:00:54.221"
+  },
+  {
+    "start_sec": 57.861,
+    "end_sec": 58.261,
+    "speaker": 2,
+    "text": "Uh-huh.",
+    "timestamp": "00:00:57.861"
+  },
+  {
+    "start_sec": 58.461,
+    "end_sec": 59.951,
+    "speaker": 1,
+    "text": "And um that was about what, a week ago?",
+    "timestamp": "00:00:58.461"
+  },
+  {
+    "start_sec": 60.311,
+    "end_sec": 60.591,
+    "speaker": 2,
+    "text": "Uh-huh.",
+    "timestamp": "00:01:00.311"
+  },
+  {
+    "start_sec": 60.851,
+    "end_sec": 63.381,
+    "speaker": 1,
+    "text": "And he I haven't seen much of him since.",
+    "timestamp": "00:01:00.851"
+  },
+  {
+    "start_sec": 63.761,
+    "end_sec": 65.811,
+    "speaker": 2,
+    "text": "See, I I heard that that they split up again.",
+    "timestamp": "00:01:03.761"
+  },
+  {
+    "start_sec": 66.251,
+    "end_sec": 68.181,
+    "speaker": 1,
+    "text": "They had for like a month and a half.",
+    "timestamp": "00:01:06.251"
+  },
+  {
+    "start_sec": 68.391,
+    "end_sec": 68.741,
+    "speaker": 2,
+    "text": "Oh, oh.",
+    "timestamp": "00:01:08.391"
+  },
+  {
+    "start_sec": 68.991,
+    "end_sec": 71.501,
+    "speaker": 1,
+    "text": "And then um, they were seeing some other guy named Dan.",
+    "timestamp": "00:01:08.991"
+  },
+  {
+    "start_sec": 71.861,
+    "end_sec": 72.131,
+    "speaker": 2,
+    "text": "Oh my.",
+    "timestamp": "00:01:11.861"
+  },
+  {
+    "start_sec": 72.131,
+    "end_sec": 73.841,
+    "speaker": 1,
+    "text": "And what it wasn't really serious. And then um,",
+    "timestamp": "00:01:12.131"
+  },
+  {
+    "start_sec": 74.371,
+    "end_sec": 75.921,
+    "speaker": 1,
+    "text": "for the for- like for the Fourth of July,",
+    "timestamp": "00:01:14.371"
+  },
+  {
+    "start_sec": 76.101,
+    "end_sec": 76.241,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:01:16.101"
+  },
+  {
+    "start_sec": 76.241,
+    "end_sec": 77.201,
+    "speaker": 1,
+    "text": "before we went to Las Vegas, I guess, um, Felipe came over.",
+    "timestamp": "00:01:16.241"
+  },
+  {
+    "start_sec": 77.701,
+    "end_sec": 77.941,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:01:17.701"
+  },
+  {
+    "start_sec": 78.101,
+    "end_sec": 80.481,
+    "speaker": 1,
+    "text": "And Leroy was like, no, I'm never going to talk to him again, you know.",
+    "timestamp": "00:01:18.101"
+  },
+  {
+    "start_sec": 80.481,
+    "end_sec": 81.331,
+    "speaker": 2,
+    "text": "<laughter> you know how that is.",
+    "timestamp": "00:01:20.481"
+  },
+  {
+    "start_sec": 81.331,
+    "end_sec": 82.511,
+    "speaker": 2,
+    "text": "He said that a few times.",
+    "timestamp": "00:01:21.331"
+  },
+  {
+    "start_sec": 82.511,
+    "end_sec": 82.721,
+    "speaker": 1,
+    "text": "Oh yeah.",
+    "timestamp": "00:01:22.511"
+  },
+  {
+    "start_sec": 82.721,
+    "end_sec": 83.151,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:01:22.721"
+  },
+  {
+    "start_sec": 83.151,
+    "end_sec": 85.341,
+    "speaker": 1,
+    "text": "But this time it was for sure because it was over a month and",
+    "timestamp": "00:01:23.151"
+  },
+  {
+    "start_sec": 85.581,
+    "end_sec": 85.741,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:01:25.581"
+  },
+  {
+    "start_sec": 85.741,
+    "end_sec": 86.831,
+    "speaker": 1,
+    "text": "and he was over him already.",
+    "timestamp": "00:01:25.741"
+  },
+  {
+    "start_sec": 86.831,
+    "end_sec": 87.791,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:01:26.831"
+  },
+  {
+    "start_sec": 87.791,
+    "end_sec": 89.281,
+    "speaker": 1,
+    "text": "But then I don't know, I guess they were calling each other",
+    "timestamp": "00:01:27.791"
+  },
+  {
+    "start_sec": 89.281,
+    "end_sec": 90.171,
+    "speaker": 2,
+    "text": "cuz we went to Las Vegas for the Fourth of July.",
+    "timestamp": "00:01:29.281"
+  },
+  {
+    "start_sec": 90.171,
+    "end_sec": 90.521,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:01:30.171"
+  },
+  {
+    "start_sec": 90.521,
+    "end_sec": 92.201,
+    "speaker": 2,
+    "text": "and I guess Felipe called when we were there to talk to Leroy.",
+    "timestamp": "00:01:30.521"
+  },
+  {
+    "start_sec": 92.421,
+    "end_sec": 92.831,
+    "speaker": 1,
+    "text": "Oh.",
+    "timestamp": "00:01:32.421"
+  },
+  {
+    "start_sec": 92.831,
+    "end_sec": 94.271,
+    "speaker": 2,
+    "text": "And then when we came back from the Fourth of July, Felipe was like waiting at our house for Leroy.",
+    "timestamp": "00:01:32.831"
+  },
+  {
+    "start_sec": 94.671,
+    "end_sec": 95.001,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:01:34.671"
+  },
+  {
+    "start_sec": 95.121,
+    "end_sec": 97.231,
+    "speaker": 2,
+    "text": "And ever since then, they've been like going out again.",
+    "timestamp": "00:01:35.121"
+  },
+  {
+    "start_sec": 97.431,
+    "end_sec": 97.711,
+    "speaker": 1,
+    "text": "Oh.",
+    "timestamp": "00:01:37.431"
+  },
+  {
+    "start_sec": 97.711,
+    "end_sec": 98.631,
+    "speaker": 2,
+    "text": "And then, um,",
+    "timestamp": "00:01:37.711"
+  },
+  {
+    "start_sec": 98.991,
+    "end_sec": 100.081,
+    "speaker": 2,
+    "text": "he he just moved in with him.",
+    "timestamp": "00:01:38.991"
+  },
+  {
+    "start_sec": 100.081,
+    "end_sec": 100.411,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:01:40.081"
+  },
+  {
+    "start_sec": 100.561,
+    "end_sec": 101.441,
+    "speaker": 2,
+    "text": "I guess Felipe was bothering him about him about moving in, so.",
+    "timestamp": "00:01:40.561"
+  },
+  {
+    "start_sec": 101.811,
+    "end_sec": 102.131,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:01:41.811"
+  },
+  {
+    "start_sec": 102.941,
+    "end_sec": 105.021,
+    "speaker": 1,
+    "text": "Well I mean if you haven't seen him then it's probably going well.",
+    "timestamp": "00:01:42.941"
+  },
+  {
+    "start_sec": 105.511,
+    "end_sec": 106.631,
+    "speaker": 2,
+    "text": "Yeah, well I went to go visit him yesterday.",
+    "timestamp": "00:01:45.511"
+  },
+  {
+    "start_sec": 106.631,
+    "end_sec": 106.901,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:01:46.631"
+  },
+  {
+    "start_sec": 106.901,
+    "end_sec": 109.281,
+    "speaker": 2,
+    "text": "And Leroy's like, this isn't a good time, Steph, can you leave?",
+    "timestamp": "00:01:46.901"
+  },
+  {
+    "start_sec": 109.281,
+    "end_sec": 109.911,
+    "speaker": 1,
+    "text": "<laughter>",
+    "timestamp": "00:01:49.281"
+  },
+  {
+    "start_sec": 110.151,
+    "end_sec": 110.741,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:01:50.151"
+  },
+  {
+    "start_sec": 110.741,
+    "end_sec": 111.451,
+    "speaker": 1,
+    "text": "<laughter> I was like,",
+    "timestamp": "00:01:50.741"
+  },
+  {
+    "start_sec": 111.451,
+    "end_sec": 113.881,
+    "speaker": 2,
+    "text": "and I just like, I mean he just like pushed me out the door. I don't know what was going on.",
+    "timestamp": "00:01:51.451"
+  },
+  {
+    "start_sec": 114.181,
+    "end_sec": 115.171,
+    "speaker": 1,
+    "text": "They weren't having sex or anything?",
+    "timestamp": "00:01:54.181"
+  },
+  {
+    "start_sec": 115.341,
+    "end_sec": 116.511,
+    "speaker": 2,
+    "text": "No, they were in a fight.",
+    "timestamp": "00:01:55.341"
+  },
+  {
+    "start_sec": 116.851,
+    "end_sec": 116.991,
+    "speaker": 1,
+    "text": "Oh.",
+    "timestamp": "00:01:56.851"
+  },
+  {
+    "start_sec": 117.151,
+    "end_sec": 120.481,
+    "speaker": 2,
+    "text": "Cuz they were like both angry and like, Steph, this isn't a good time, they just like pushed me out.",
+    "timestamp": "00:01:57.151"
+  },
+  {
+    "start_sec": 120.591,
+    "end_sec": 120.901,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:02:00.591"
+  },
+  {
+    "start_sec": 120.901,
+    "end_sec": 122.951,
+    "speaker": 2,
+    "text": "I was like, okay. And I haven't talked to him since then, so.",
+    "timestamp": "00:02:00.901"
+  },
+  {
+    "start_sec": 123.081,
+    "end_sec": 123.271,
+    "speaker": 1,
+    "text": "Oh.",
+    "timestamp": "00:02:03.081"
+  },
+  {
+    "start_sec": 123.271,
+    "end_sec": 125.751,
+    "speaker": 2,
+    "text": "I don't know, but they're always getting into stupid little fights, so I don't know.",
+    "timestamp": "00:02:03.271"
+  },
+  {
+    "start_sec": 125.991,
+    "end_sec": 126.701,
+    "speaker": 1,
+    "text": "Well, that's too bad.",
+    "timestamp": "00:02:05.991"
+  },
+  {
+    "start_sec": 127.691,
+    "end_sec": 128.091,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:02:07.691"
+  },
+  {
+    "start_sec": 128.931,
+    "end_sec": 129.231,
+    "speaker": 1,
+    "text": "Hmm.",
+    "timestamp": "00:02:08.931"
+  },
+  {
+    "start_sec": 130.491,
+    "end_sec": 131.621,
+    "speaker": 1,
+    "text": "So, who are you living with right now?",
+    "timestamp": "00:02:10.491"
+  },
+  {
+    "start_sec": 132.551,
+    "end_sec": 133.511,
+    "speaker": 2,
+    "text": "It's just me and Henry now.",
+    "timestamp": "00:02:12.551"
+  },
+  {
+    "start_sec": 133.511,
+    "end_sec": 133.821,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:02:13.511"
+  },
+  {
+    "start_sec": 133.911,
+    "end_sec": 137.601,
+    "speaker": 2,
+    "text": "Um, I have, we only have until the 31st here.",
+    "timestamp": "00:02:13.911"
+  },
+  {
+    "start_sec": 137.601,
+    "end_sec": 137.891,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:02:17.601"
+  },
+  {
+    "start_sec": 138.161,
+    "end_sec": 141.051,
+    "speaker": 2,
+    "text": "Because um, well, um Henry's going to Las Vegas, Nevada.",
+    "timestamp": "00:02:18.161"
+  },
+  {
+    "start_sec": 141.521,
+    "end_sec": 141.801,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:02:21.521"
+  },
+  {
+    "start_sec": 141.801,
+    "end_sec": 143.511,
+    "speaker": 2,
+    "text": "And Leroy, well he moved in with Felipe, so.",
+    "timestamp": "00:02:21.801"
+  },
+  {
+    "start_sec": 143.511,
+    "end_sec": 143.761,
+    "speaker": 1,
+    "text": "Right.",
+    "timestamp": "00:02:23.511"
+  },
+  {
+    "start_sec": 144.021,
+    "end_sec": 146.611,
+    "speaker": 2,
+    "text": "And I already got another apartment for when I move out.",
+    "timestamp": "00:02:24.021"
+  },
+  {
+    "start_sec": 146.901,
+    "end_sec": 147.241,
+    "speaker": 1,
+    "text": "Oh, you did?",
+    "timestamp": "00:02:26.901"
+  },
+  {
+    "start_sec": 147.361,
+    "end_sec": 147.601,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:02:27.361"
+  },
+  {
+    "start_sec": 147.781,
+    "end_sec": 148.061,
+    "speaker": 1,
+    "text": "Where?",
+    "timestamp": "00:02:27.781"
+  },
+  {
+    "start_sec": 148.421,
+    "end_sec": 150.621,
+    "speaker": 2,
+    "text": "It's on the corner of Columbia and Cole.",
+    "timestamp": "00:02:28.421"
+  },
+  {
+    "start_sec": 150.911,
+    "end_sec": 151.211,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:02:30.911"
+  },
+  {
+    "start_sec": 151.491,
+    "end_sec": 157.901,
+    "speaker": 2,
+    "text": "And it's a one bedroom, and so I had to put down like a deposit and um, you know, and pay the rent for it so I could hold it.",
+    "timestamp": "00:02:31.491"
+  },
+  {
+    "start_sec": 158.071,
+    "end_sec": 158.421,
+    "speaker": 1,
+    "text": "Mhm. But that's okay.",
+    "timestamp": "00:02:38.071"
+  },
+  {
+    "start_sec": 158.851,
+    "end_sec": 159.201,
+    "speaker": 1,
+    "text": "Oh, good.",
+    "timestamp": "00:02:38.851"
+  },
+  {
+    "start_sec": 159.711,
+    "end_sec": 162.771,
+    "speaker": 2,
+    "text": "Then I won't have to, you know how all the people are looking for houses now.",
+    "timestamp": "00:02:39.711"
+  },
+  {
+    "start_sec": 163.071,
+    "end_sec": 163.451,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:02:43.071"
+  },
+  {
+    "start_sec": 164.831,
+    "end_sec": 165.651,
+    "speaker": 2,
+    "text": "Yeah, I'm sure they are.",
+    "timestamp": "00:02:44.831"
+  },
+  {
+    "start_sec": 166.451,
+    "end_sec": 167.311,
+    "speaker": 1,
+    "text": "Well, that's good.",
+    "timestamp": "00:02:46.451"
+  },
+  {
+    "start_sec": 168.011,
+    "end_sec": 169.901,
+    "speaker": 1,
+    "text": "Well, so what have you been doing other than work?",
+    "timestamp": "00:02:48.011"
+  },
+  {
+    "start_sec": 169.901,
+    "end_sec": 173.081,
+    "speaker": 2,
+    "text": "Um, not really much of anything. Um, I usually, I just come home from work and like stay home.",
+    "timestamp": "00:02:49.901"
+  },
+  {
+    "start_sec": 173.081,
+    "end_sec": 175.761,
+    "speaker": 1,
+    "text": "<laughter> And I don't know, we haven't done much.",
+    "timestamp": "00:02:53.081"
+  },
+  {
+    "start_sec": 176.321,
+    "end_sec": 177.621,
+    "speaker": 2,
+    "text": "Uh-huh. We went to Santa Fe yesterday with it.",
+    "timestamp": "00:02:56.321"
+  },
+  {
+    "start_sec": 177.781,
+    "end_sec": 178.081,
+    "speaker": 1,
+    "text": "Oh yeah?",
+    "timestamp": "00:02:57.781"
+  },
+  {
+    "start_sec": 178.211,
+    "end_sec": 178.961,
+    "speaker": 2,
+    "text": "Yeah, me and Henry.",
+    "timestamp": "00:02:58.211"
+  },
+  {
+    "start_sec": 179.351,
+    "end_sec": 179.801,
+    "speaker": 1,
+    "text": "Well, that's cool.",
+    "timestamp": "00:02:59.351"
+  },
+  {
+    "start_sec": 180.291,
+    "end_sec": 182.491,
+    "speaker": 2,
+    "text": "Yeah, but otherwise, it's been kind of a boring summer.",
+    "timestamp": "00:03:00.291"
+  },
+  {
+    "start_sec": 182.721,
+    "end_sec": 182.971,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:03:02.721"
+  },
+  {
+    "start_sec": 183.171,
+    "end_sec": 184.811,
+    "speaker": 2,
+    "text": "Like nobody's here, just like Henry and me were.",
+    "timestamp": "00:03:03.171"
+  },
+  {
+    "start_sec": 185.121,
+    "end_sec": 185.391,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:03:05.121"
+  },
+  {
+    "start_sec": 186.201,
+    "end_sec": 187.311,
+    "speaker": 1,
+    "text": "Yeah, it's been boring for me too.",
+    "timestamp": "00:03:06.201"
+  },
+  {
+    "start_sec": 188.421,
+    "end_sec": 190.871,
+    "speaker": 1,
+    "text": "But at least I'm saving money, I guess. Yeah.",
+    "timestamp": "00:03:08.421"
+  },
+  {
+    "start_sec": 190.871,
+    "end_sec": 191.431,
+    "speaker": 2,
+    "text": "When are you coming back?",
+    "timestamp": "00:03:10.871"
+  },
+  {
+    "start_sec": 191.801,
+    "end_sec": 192.421,
+    "speaker": 1,
+    "text": "The 19th.",
+    "timestamp": "00:03:11.801"
+  },
+  {
+    "start_sec": 192.681,
+    "end_sec": 192.831,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:03:12.681"
+  },
+  {
+    "start_sec": 193.581,
+    "end_sec": 194.021,
+    "speaker": 2,
+    "text": "When does school start?",
+    "timestamp": "00:03:13.581"
+  },
+  {
+    "start_sec": 194.241,
+    "end_sec": 194.881,
+    "speaker": 1,
+    "text": "The 22nd.",
+    "timestamp": "00:03:14.241"
+  },
+  {
+    "start_sec": 195.141,
+    "end_sec": 197.801,
+    "speaker": 2,
+    "text": "Oh, okay. <laughter> I don't even know. I just knew it was around the 20s.",
+    "timestamp": "00:03:15.141"
+  },
+  {
+    "start_sec": 198.371,
+    "end_sec": 198.661,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:03:18.371"
+  },
+  {
+    "start_sec": 199.301,
+    "end_sec": 200.061,
+    "speaker": 1,
+    "text": "I think it's the 22nd.",
+    "timestamp": "00:03:19.301"
+  },
+  {
+    "start_sec": 200.221,
+    "end_sec": 200.491,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:03:20.221"
+  },
+  {
+    "start_sec": 200.831,
+    "end_sec": 201.121,
+    "speaker": 1,
+    "text": "But",
+    "timestamp": "00:03:20.831"
+  },
+  {
+    "start_sec": 202.431,
+    "end_sec": 202.731,
+    "speaker": 2,
+    "text": "yeah.",
+    "timestamp": "00:03:22.431"
+  },
+  {
+    "start_sec": 203.351,
+    "end_sec": 204.101,
+    "speaker": 1,
+    "text": "Have you talked to Leith?",
+    "timestamp": "00:03:23.351"
+  },
+  {
+    "start_sec": 204.691,
+    "end_sec": 207.251,
+    "speaker": 2,
+    "text": "Um, yes. I haven't talked to him since I think like Tuesday.",
+    "timestamp": "00:03:24.691"
+  },
+  {
+    "start_sec": 207.451,
+    "end_sec": 207.691,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:03:27.451"
+  },
+  {
+    "start_sec": 207.691,
+    "end_sec": 208.611,
+    "speaker": 2,
+    "text": "But he's coming back to Albuquerque tomorrow.",
+    "timestamp": "00:03:27.691"
+  },
+  {
+    "start_sec": 209.001,
+    "end_sec": 209.431,
+    "speaker": 1,
+    "text": "Oh, he is?",
+    "timestamp": "00:03:29.001"
+  },
+  {
+    "start_sec": 209.521,
+    "end_sec": 210.871,
+    "speaker": 2,
+    "text": "Yeah. I thought he was going to Philadelphia.",
+    "timestamp": "00:03:29.521"
+  },
+  {
+    "start_sec": 211.231,
+    "end_sec": 213.671,
+    "speaker": 1,
+    "text": "No, no, he he doesn't have the money.",
+    "timestamp": "00:03:31.231"
+  },
+  {
+    "start_sec": 213.911,
+    "end_sec": 214.331,
+    "speaker": 2,
+    "text": "Oh, okay.",
+    "timestamp": "00:03:33.911"
+  },
+  {
+    "start_sec": 214.331,
+    "end_sec": 215.751,
+    "speaker": 1,
+    "text": "And then I couldn't get off work.",
+    "timestamp": "00:03:34.331"
+  },
+  {
+    "start_sec": 215.951,
+    "end_sec": 216.201,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:03:35.951"
+  },
+  {
+    "start_sec": 216.201,
+    "end_sec": 217.381,
+    "speaker": 1,
+    "text": "So if he came, then like I would still have to go to work.",
+    "timestamp": "00:03:36.201"
+  },
+  {
+    "start_sec": 217.581,
+    "end_sec": 217.961,
+    "speaker": 2,
+    "text": "Oh, okay.",
+    "timestamp": "00:03:37.581"
+  },
+  {
+    "start_sec": 218.011,
+    "end_sec": 219.061,
+    "speaker": 1,
+    "text": "So we decided that that was a waste.",
+    "timestamp": "00:03:38.011"
+  },
+  {
+    "start_sec": 219.261,
+    "end_sec": 224.281,
+    "speaker": 2,
+    "text": "Cuz when he went to Oregon, he told me that he he wasn't going to be back until like August, cuz he was going to like visit you.",
+    "timestamp": "00:03:39.261"
+  },
+  {
+    "start_sec": 224.631,
+    "end_sec": 225.041,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:03:44.631"
+  },
+  {
+    "start_sec": 226.191,
+    "end_sec": 232.741,
+    "speaker": 1,
+    "text": "Yeah, that was originally the plan, but then like apparently my mom agreed that I would work for this place for exactly three months. <laughter> Like and I didn't know that.",
+    "timestamp": "00:03:46.191"
+  },
+  {
+    "start_sec": 232.741,
+    "end_sec": 233.151,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:03:52.741"
+  },
+  {
+    "start_sec": 233.561,
+    "end_sec": 235.151,
+    "speaker": 1,
+    "text": "So I'm required to work until the 16th.",
+    "timestamp": "00:03:53.561"
+  },
+  {
+    "start_sec": 235.151,
+    "end_sec": 235.531,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:03:55.151"
+  },
+  {
+    "start_sec": 236.421,
+    "end_sec": 239.351,
+    "speaker": 1,
+    "text": "So, it's kind of a bummer. Well, that sucks.",
+    "timestamp": "00:03:56.421"
+  },
+  {
+    "start_sec": 239.351,
+    "end_sec": 241.051,
+    "speaker": 2,
+    "text": "Wait, you guys are staying in the house, right?",
+    "timestamp": "00:03:59.351"
+  },
+  {
+    "start_sec": 241.051,
+    "end_sec": 241.251,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:04:01.051"
+  },
+  {
+    "start_sec": 241.251,
+    "end_sec": 243.601,
+    "speaker": 2,
+    "text": "Yeah, that's what Leith said, I forgot. Yeah. But who's gonna live with you?",
+    "timestamp": "00:04:01.251"
+  },
+  {
+    "start_sec": 243.601,
+    "end_sec": 244.201,
+    "speaker": 1,
+    "text": "I don't know.",
+    "timestamp": "00:04:03.601"
+  },
+  {
+    "start_sec": 244.591,
+    "end_sec": 245.891,
+    "speaker": 1,
+    "text": "I was hoping it was gonna be you.",
+    "timestamp": "00:04:04.591"
+  },
+  {
+    "start_sec": 246.121,
+    "end_sec": 246.361,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:04:06.121"
+  },
+  {
+    "start_sec": 246.361,
+    "end_sec": 246.591,
+    "speaker": 1,
+    "text": "But",
+    "timestamp": "00:04:06.361"
+  },
+  {
+    "start_sec": 247.381,
+    "end_sec": 250.721,
+    "speaker": 2,
+    "text": "Oh well, Leith said that that you guys wanted to try to live by yourself.",
+    "timestamp": "00:04:07.381"
+  },
+  {
+    "start_sec": 250.841,
+    "end_sec": 251.781,
+    "speaker": 1,
+    "text": "No, that's what he wanted.",
+    "timestamp": "00:04:10.841"
+  },
+  {
+    "start_sec": 251.971,
+    "end_sec": 252.321,
+    "speaker": 2,
+    "text": "Oh, okay.",
+    "timestamp": "00:04:11.971"
+  },
+  {
+    "start_sec": 252.321,
+    "end_sec": 259.981,
+    "speaker": 2,
+    "text": "Cuz he told me, cuz he told me, you know, that you guys, cuz Susie was moving out and then he said, if I want, if I needed a place to stay I could stay there, but you guys had wanted to like try and live just you two.",
+    "timestamp": "00:04:12.321"
+  },
+  {
+    "start_sec": 260.271,
+    "end_sec": 264.441,
+    "speaker": 1,
+    "text": "Uh well that wa- that was his plan. And I said to him, no, I want to live with Stephanie. <laughter>",
+    "timestamp": "00:04:20.271"
+  },
+  {
+    "start_sec": 264.441,
+    "end_sec": 266.361,
+    "speaker": 2,
+    "text": "Oh really? I didn't know that. I wouldn't have gotten like my apartment.",
+    "timestamp": "00:04:24.441"
+  },
+  {
+    "start_sec": 266.361,
+    "end_sec": 266.861,
+    "speaker": 1,
+    "text": "Oh, really?",
+    "timestamp": "00:04:26.361"
+  },
+  {
+    "start_sec": 266.861,
+    "end_sec": 267.121,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:04:26.861"
+  },
+  {
+    "start_sec": 267.431,
+    "end_sec": 269.171,
+    "speaker": 1,
+    "text": "Oh. Well I'm sorry, we'll blame him.",
+    "timestamp": "00:04:27.431"
+  },
+  {
+    "start_sec": 269.171,
+    "end_sec": 271.741,
+    "speaker": 2,
+    "text": "<laughter> Maybe you could get your money back now. <laughter>",
+    "timestamp": "00:04:29.171"
+  },
+  {
+    "start_sec": 271.741,
+    "end_sec": 274.001,
+    "speaker": 1,
+    "text": "I don't know. I mean, it's it's a month-to-month lease, so I'm sure",
+    "timestamp": "00:04:31.741"
+  },
+  {
+    "start_sec": 274.001,
+    "end_sec": 274.331,
+    "speaker": 2,
+    "text": "Oh, really?",
+    "timestamp": "00:04:34.001"
+  },
+  {
+    "start_sec": 274.331,
+    "end_sec": 274.581,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:04:34.331"
+  },
+  {
+    "start_sec": 274.841,
+    "end_sec": 275.291,
+    "speaker": 2,
+    "text": "How much?",
+    "timestamp": "00:04:34.841"
+  },
+  {
+    "start_sec": 275.521,
+    "end_sec": 276.711,
+    "speaker": 1,
+    "text": "It's 295 a month.",
+    "timestamp": "00:04:35.521"
+  },
+  {
+    "start_sec": 276.711,
+    "end_sec": 278.431,
+    "speaker": 2,
+    "text": "Mhm. which is pretty good.",
+    "timestamp": "00:04:36.711"
+  },
+  {
+    "start_sec": 278.431,
+    "end_sec": 279.721,
+    "speaker": 1,
+    "text": "Yeah, that's good for a one bedroom.",
+    "timestamp": "00:04:38.431"
+  },
+  {
+    "start_sec": 279.881,
+    "end_sec": 281.811,
+    "speaker": 2,
+    "text": "I might, I don't know, I think that I want to live by myself though.",
+    "timestamp": "00:04:39.881"
+  },
+  {
+    "start_sec": 282.011,
+    "end_sec": 282.201,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:04:42.011"
+  },
+  {
+    "start_sec": 282.201,
+    "end_sec": 283.821,
+    "speaker": 1,
+    "text": "Well, you've wanted that for a while.",
+    "timestamp": "00:04:42.201"
+  },
+  {
+    "start_sec": 284.051,
+    "end_sec": 288.751,
+    "speaker": 2,
+    "text": "Yeah, so And now that I have But I didn't I wouldn't have done that if I would have known it was like definite that you wanted me to live with you.",
+    "timestamp": "00:04:44.051"
+  },
+  {
+    "start_sec": 288.751,
+    "end_sec": 293.181,
+    "speaker": 1,
+    "text": "<laughter> Well, that but I said to him, I don't know if Stephanie could live with me cause I'm such a slob. <laughter>",
+    "timestamp": "00:04:48.751"
+  },
+  {
+    "start_sec": 293.761,
+    "end_sec": 294.061,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:04:53.761"
+  },
+  {
+    "start_sec": 294.061,
+    "end_sec": 299.781,
+    "speaker": 1,
+    "text": "<laughter> I can't live with Henry and Leory because they're slobs and they're and they don't listen to me.",
+    "timestamp": "00:04:54.061"
+  },
+  {
+    "start_sec": 300.001,
+    "end_sec": 302.991,
+    "speaker": 2,
+    "text": "Yeah, see I thought you would you might have like gotten used to living with slobs. Oh. Since they were. <laughter>",
+    "timestamp": "00:05:00.001"
+  },
+  {
+    "start_sec": 302.991,
+    "end_sec": 306.051,
+    "speaker": 1,
+    "text": "Well, no, it's just that they like, I mean, I'm sure you'd respect my like cleanliness, but they don't, so.",
+    "timestamp": "00:05:02.991"
+  },
+  {
+    "start_sec": 306.051,
+    "end_sec": 308.201,
+    "speaker": 2,
+    "text": "Yeah. No, I I try and keep it all in my room.",
+    "timestamp": "00:05:06.051"
+  },
+  {
+    "start_sec": 308.201,
+    "end_sec": 310.271,
+    "speaker": 1,
+    "text": "<laughter>",
+    "timestamp": "00:05:08.201"
+  },
+  {
+    "start_sec": 310.271,
+    "end_sec": 312.231,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:05:10.271"
+  },
+  {
+    "start_sec": 312.871,
+    "end_sec": 313.161,
+    "speaker": 1,
+    "text": "But",
+    "timestamp": "00:05:12.871"
+  },
+  {
+    "start_sec": 314.181,
+    "end_sec": 315.421,
+    "speaker": 2,
+    "text": "what is Anne gonna do?",
+    "timestamp": "00:05:14.181"
+  },
+  {
+    "start_sec": 316.271,
+    "end_sec": 320.151,
+    "speaker": 1,
+    "text": "Um, I don't know. But I know that she won't live with me because I hate John.",
+    "timestamp": "00:05:16.271"
+  },
+  {
+    "start_sec": 320.651,
+    "end_sec": 321.841,
+    "speaker": 2,
+    "text": "Oh, I forgot about him.",
+    "timestamp": "00:05:20.651"
+  },
+  {
+    "start_sec": 321.841,
+    "end_sec": 323.751,
+    "speaker": 1,
+    "text": "Yeah. That that was like the last thing she said to me before I left.",
+    "timestamp": "00:05:21.841"
+  },
+  {
+    "start_sec": 323.951,
+    "end_sec": 324.231,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:05:23.951"
+  },
+  {
+    "start_sec": 324.451,
+    "end_sec": 325.291,
+    "speaker": 1,
+    "text": "Was that we could never live together because of him.",
+    "timestamp": "00:05:24.451"
+  },
+  {
+    "start_sec": 325.791,
+    "end_sec": 326.851,
+    "speaker": 1,
+    "text": "Which is fine by me. Yeah.",
+    "timestamp": "00:05:25.791"
+  },
+  {
+    "start_sec": 326.851,
+    "end_sec": 329.131,
+    "speaker": 1,
+    "text": "Cuz you know when he comes, he comes for like three weeks. Yeah. And I would just go insane.",
+    "timestamp": "00:05:26.851"
+  },
+  {
+    "start_sec": 331.421,
+    "end_sec": 331.811,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:05:31.421"
+  },
+  {
+    "start_sec": 332.141,
+    "end_sec": 332.531,
+    "speaker": 1,
+    "text": "So, so I I really hate him.",
+    "timestamp": "00:05:32.141"
+  },
+  {
+    "start_sec": 332.531,
+    "end_sec": 332.881,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:05:32.531"
+  },
+  {
+    "start_sec": 332.961,
+    "end_sec": 336.561,
+    "speaker": 1,
+    "text": "I had to I had totally forgot about him. I guess I could sort of like blocked him out. <laughter>",
+    "timestamp": "00:05:32.961"
+  },
+  {
+    "start_sec": 336.561,
+    "end_sec": 338.481,
+    "speaker": 2,
+    "text": "I think most people do. <laughter>",
+    "timestamp": "00:05:36.561"
+  },
+  {
+    "start_sec": 338.481,
+    "end_sec": 339.681,
+    "speaker": 1,
+    "text": "<laughter>",
+    "timestamp": "00:05:38.481"
+  },
+  {
+    "start_sec": 340.911,
+    "end_sec": 341.221,
+    "speaker": 1,
+    "text": "But",
+    "timestamp": "00:05:40.911"
+  },
+  {
+    "start_sec": 342.121,
+    "end_sec": 342.431,
+    "speaker": 1,
+    "text": "yeah.",
+    "timestamp": "00:05:42.121"
+  },
+  {
+    "start_sec": 343.831,
+    "end_sec": 346.041,
+    "speaker": 1,
+    "text": "So, that's kind of that.",
+    "timestamp": "00:05:43.831"
+  },
+  {
+    "start_sec": 346.611,
+    "end_sec": 348.161,
+    "speaker": 1,
+    "text": "But it's weird, I haven't heard from her all summer.",
+    "timestamp": "00:05:46.611"
+  },
+  {
+    "start_sec": 348.331,
+    "end_sec": 348.721,
+    "speaker": 2,
+    "text": "Really?",
+    "timestamp": "00:05:48.331"
+  },
+  {
+    "start_sec": 348.721,
+    "end_sec": 350.271,
+    "speaker": 1,
+    "text": "Yeah, I wrote her, but she didn't write back.",
+    "timestamp": "00:05:48.721"
+  },
+  {
+    "start_sec": 350.561,
+    "end_sec": 350.771,
+    "speaker": 2,
+    "text": "Hmm.",
+    "timestamp": "00:05:50.561"
+  },
+  {
+    "start_sec": 350.911,
+    "end_sec": 352.541,
+    "speaker": 1,
+    "text": "But her birthday's Thursday, so I should probably call.",
+    "timestamp": "00:05:50.911"
+  },
+  {
+    "start_sec": 354.001,
+    "end_sec": 354.511,
+    "speaker": 1,
+    "text": "I think.",
+    "timestamp": "00:05:54.001"
+  },
+  {
+    "start_sec": 355.841,
+    "end_sec": 356.341,
+    "speaker": 1,
+    "text": "I don't know.",
+    "timestamp": "00:05:55.841"
+  },
+  {
+    "start_sec": 357.171,
+    "end_sec": 357.941,
+    "speaker": 2,
+    "text": "Have you talked to Nettie?",
+    "timestamp": "00:05:57.171"
+  },
+  {
+    "start_sec": 358.551,
+    "end_sec": 358.911,
+    "speaker": 1,
+    "text": "No.",
+    "timestamp": "00:05:58.551"
+  },
+  {
+    "start_sec": 359.181,
+    "end_sec": 359.391,
+    "speaker": 2,
+    "text": "Hm.",
+    "timestamp": "00:05:59.181"
+  },
+  {
+    "start_sec": 359.731,
+    "end_sec": 360.271,
+    "speaker": 1,
+    "text": "No, I haven't.",
+    "timestamp": "00:05:59.731"
+  },
+  {
+    "start_sec": 360.771,
+    "end_sec": 363.301,
+    "speaker": 2,
+    "text": "We we played pool with him like on Saturday night.",
+    "timestamp": "00:06:00.771"
+  },
+  {
+    "start_sec": 363.301,
+    "end_sec": 363.571,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:06:03.301"
+  },
+  {
+    "start_sec": 363.571,
+    "end_sec": 365.941,
+    "speaker": 2,
+    "text": "With her and Andres and some guy named Mica.",
+    "timestamp": "00:06:03.571"
+  },
+  {
+    "start_sec": 366.861,
+    "end_sec": 368.741,
+    "speaker": 1,
+    "text": "Oh, that's, oh, I know him. He's my my friend Media's brother.",
+    "timestamp": "00:06:06.861"
+  },
+  {
+    "start_sec": 369.311,
+    "end_sec": 370.081,
+    "speaker": 2,
+    "text": "That's Media's brother?",
+    "timestamp": "00:06:09.311"
+  },
+  {
+    "start_sec": 370.081,
+    "end_sec": 371.391,
+    "speaker": 1,
+    "text": "Yeah. Oh, wow. Yeah.",
+    "timestamp": "00:06:10.081"
+  },
+  {
+    "start_sec": 371.391,
+    "end_sec": 372.101,
+    "speaker": 2,
+    "text": "They don't look like each other.",
+    "timestamp": "00:06:11.391"
+  },
+  {
+    "start_sec": 372.631,
+    "end_sec": 376.101,
+    "speaker": 1,
+    "text": "I've I've actually, I don't know if I've ever, I've only seen him from afar. Oh, he looks like John Travolta, but he has like curly blonde hair.",
+    "timestamp": "00:06:12.631"
+  },
+  {
+    "start_sec": 376.101,
+    "end_sec": 376.541,
+    "speaker": 2,
+    "text": "Oh, really?",
+    "timestamp": "00:06:16.101"
+  },
+  {
+    "start_sec": 376.541,
+    "end_sec": 376.711,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:06:16.541"
+  },
+  {
+    "start_sec": 377.101,
+    "end_sec": 378.111,
+    "speaker": 2,
+    "text": "He's supposed to be pretty cool.",
+    "timestamp": "00:06:17.101"
+  },
+  {
+    "start_sec": 378.331,
+    "end_sec": 379.791,
+    "speaker": 1,
+    "text": "Yeah, he is. He was real nice. Yeah.",
+    "timestamp": "00:06:18.331"
+  },
+  {
+    "start_sec": 379.791,
+    "end_sec": 380.051,
+    "speaker": 2,
+    "text": "He is?",
+    "timestamp": "00:06:19.791"
+  },
+  {
+    "start_sec": 380.401,
+    "end_sec": 380.851,
+    "speaker": 1,
+    "text": "Oh, that's good.",
+    "timestamp": "00:06:20.401"
+  },
+  {
+    "start_sec": 382.021,
+    "end_sec": 382.591,
+    "speaker": 2,
+    "text": "Well, that's nice.",
+    "timestamp": "00:06:22.021"
+  },
+  {
+    "start_sec": 382.781,
+    "end_sec": 383.741,
+    "speaker": 1,
+    "text": "Andres doesn't live with him, does he?",
+    "timestamp": "00:06:22.781"
+  },
+  {
+    "start_sec": 384.181,
+    "end_sec": 386.321,
+    "speaker": 2,
+    "text": "No, um he's like Nick's friend or something.",
+    "timestamp": "00:06:24.181"
+  },
+  {
+    "start_sec": 386.951,
+    "end_sec": 388.941,
+    "speaker": 1,
+    "text": "Oh, Nick or what's that guy, May's boyfriend?",
+    "timestamp": "00:06:26.951"
+  },
+  {
+    "start_sec": 389.371,
+    "end_sec": 390.661,
+    "speaker": 2,
+    "text": "I don't know. Nick. Yeah, Nick.",
+    "timestamp": "00:06:29.371"
+  },
+  {
+    "start_sec": 390.961,
+    "end_sec": 397.021,
+    "speaker": 1,
+    "text": "And I guess like Nick and May were gonna go but they didn't, but they asked this guy, Mica to come. I don't know.",
+    "timestamp": "00:06:30.961"
+  },
+  {
+    "start_sec": 397.021,
+    "end_sec": 398.241,
+    "speaker": 2,
+    "text": "Now, do Nettie and Andres live together?",
+    "timestamp": "00:06:37.021"
+  },
+  {
+    "start_sec": 398.661,
+    "end_sec": 401.551,
+    "speaker": 1,
+    "text": "No, um Andres was living at like on Wesley. I don't know if he lived there before.",
+    "timestamp": "00:06:38.661"
+  },
+  {
+    "start_sec": 401.551,
+    "end_sec": 402.191,
+    "speaker": 2,
+    "text": "still with that guy Mark.",
+    "timestamp": "00:06:41.551"
+  },
+  {
+    "start_sec": 402.321,
+    "end_sec": 404.091,
+    "speaker": 1,
+    "text": "Right. Yeah.",
+    "timestamp": "00:06:42.321"
+  },
+  {
+    "start_sec": 404.091,
+    "end_sec": 407.281,
+    "speaker": 2,
+    "text": "And um and Nettie like started living in this place on Gerard.",
+    "timestamp": "00:06:44.091"
+  },
+  {
+    "start_sec": 407.501,
+    "end_sec": 409.831,
+    "speaker": 1,
+    "text": "Uh-huh.",
+    "timestamp": "00:06:47.501"
+  },
+  {
+    "start_sec": 409.831,
+    "end_sec": 410.741,
+    "speaker": 2,
+    "text": "You know, like going to your house?",
+    "timestamp": "00:06:49.831"
+  },
+  {
+    "start_sec": 411.081,
+    "end_sec": 411.661,
+    "speaker": 1,
+    "text": "Oh, okay.",
+    "timestamp": "00:06:51.081"
+  },
+  {
+    "start_sec": 411.831,
+    "end_sec": 415.021,
+    "speaker": 2,
+    "text": "And um, you know, across the street from Jefferson Jefferson Middle School?",
+    "timestamp": "00:06:51.831"
+  },
+  {
+    "start_sec": 415.351,
+    "end_sec": 415.711,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:06:55.351"
+  },
+  {
+    "start_sec": 415.821,
+    "end_sec": 416.481,
+    "speaker": 2,
+    "text": "That's going to your house, right?",
+    "timestamp": "00:06:55.821"
+  },
+  {
+    "start_sec": 416.481,
+    "end_sec": 416.741,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:06:56.481"
+  },
+  {
+    "start_sec": 416.941,
+    "end_sec": 418.571,
+    "speaker": 2,
+    "text": "She lives right across the street from there.",
+    "timestamp": "00:06:56.941"
+  },
+  {
+    "start_sec": 418.891,
+    "end_sec": 419.641,
+    "speaker": 1,
+    "text": "Oh, well, that's nice.",
+    "timestamp": "00:06:58.891"
+  },
+  {
+    "start_sec": 419.641,
+    "end_sec": 423.821,
+    "speaker": 2,
+    "text": "And she lives with somebody named Christine and Yeah. Lily or something?",
+    "timestamp": "00:06:59.641"
+  },
+  {
+    "start_sec": 424.161,
+    "end_sec": 425.961,
+    "speaker": 1,
+    "text": "Yeah, they were in one of my classes with her.",
+    "timestamp": "00:07:04.161"
+  },
+  {
+    "start_sec": 426.231,
+    "end_sec": 426.541,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:07:06.231"
+  },
+  {
+    "start_sec": 426.541,
+    "end_sec": 427.761,
+    "speaker": 1,
+    "text": "I remember. Like Christine, she's kind of big.",
+    "timestamp": "00:07:06.541"
+  },
+  {
+    "start_sec": 427.761,
+    "end_sec": 428.161,
+    "speaker": 2,
+    "text": "Yeah. Yeah.",
+    "timestamp": "00:07:07.761"
+  },
+  {
+    "start_sec": 428.161,
+    "end_sec": 430.761,
+    "speaker": 1,
+    "text": "And then, Lily is like, has blonde hair. I don't know if you know her.",
+    "timestamp": "00:07:08.161"
+  },
+  {
+    "start_sec": 431.281,
+    "end_sec": 432.741,
+    "speaker": 2,
+    "text": "I don't think I know her, but I've heard of her.",
+    "timestamp": "00:07:11.281"
+  },
+  {
+    "start_sec": 434.121,
+    "end_sec": 438.351,
+    "speaker": 1,
+    "text": "Yeah, and it's like, when did she move in there, like in June, I think? Uh-huh.",
+    "timestamp": "00:07:14.121"
+  },
+  {
+    "start_sec": 438.741,
+    "end_sec": 439.291,
+    "speaker": 2,
+    "text": "Is it nice?",
+    "timestamp": "00:07:18.741"
+  },
+  {
+    "start_sec": 439.461,
+    "end_sec": 441.561,
+    "speaker": 1,
+    "text": "It's okay. It's kind of gross. Like",
+    "timestamp": "00:07:19.461"
+  },
+  {
+    "start_sec": 441.561,
+    "end_sec": 441.831,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:07:21.561"
+  },
+  {
+    "start_sec": 441.831,
+    "end_sec": 442.921,
+    "speaker": 1,
+    "text": "it's like roaches all over the place and stuff.",
+    "timestamp": "00:07:21.831"
+  },
+  {
+    "start_sec": 442.921,
+    "end_sec": 443.341,
+    "speaker": 2,
+    "text": "Oh god.",
+    "timestamp": "00:07:22.921"
+  },
+  {
+    "start_sec": 443.831,
+    "end_sec": 444.821,
+    "speaker": 1,
+    "text": "Nettie would hate that, I think. Yeah, she was going like quite crazy.",
+    "timestamp": "00:07:23.831"
+  },
+  {
+    "start_sec": 444.821,
+    "end_sec": 445.691,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:07:24.821"
+  },
+  {
+    "start_sec": 446.211,
+    "end_sec": 450.931,
+    "speaker": 1,
+    "text": "And like I guess the girl who had it before like didn't know how to clean like period and it was all gross and stuff. Uh-huh.",
+    "timestamp": "00:07:26.211"
+  },
+  {
+    "start_sec": 451.131,
+    "end_sec": 454.491,
+    "speaker": 1,
+    "text": "But they we went on Saturday and they had fit they put new carpet and stuff, so.",
+    "timestamp": "00:07:31.131"
+  },
+  {
+    "start_sec": 454.761,
+    "end_sec": 455.081,
+    "speaker": 2,
+    "text": "Mhm.",
+    "timestamp": "00:07:34.761"
+  },
+  {
+    "start_sec": 455.331,
+    "end_sec": 456.021,
+    "speaker": 1,
+    "text": "I guess it's okay.",
+    "timestamp": "00:07:35.331"
+  },
+  {
+    "start_sec": 456.841,
+    "end_sec": 457.651,
+    "speaker": 2,
+    "text": "Oh, well, that's good.",
+    "timestamp": "00:07:36.841"
+  },
+  {
+    "start_sec": 459.181,
+    "end_sec": 459.391,
+    "speaker": 1,
+    "text": "Hmm.",
+    "timestamp": "00:07:39.181"
+  },
+  {
+    "start_sec": 460.591,
+    "end_sec": 461.351,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:07:40.591"
+  },
+  {
+    "start_sec": 461.351,
+    "end_sec": 462.671,
+    "speaker": 1,
+    "text": "The only person I talked to was Mark Diener.",
+    "timestamp": "00:07:41.351"
+  },
+  {
+    "start_sec": 462.881,
+    "end_sec": 464.331,
+    "speaker": 2,
+    "text": "How how many times have you talked to him?",
+    "timestamp": "00:07:42.881"
+  },
+  {
+    "start_sec": 464.491,
+    "end_sec": 465.511,
+    "speaker": 1,
+    "text": "He calls every Thursday.",
+    "timestamp": "00:07:44.491"
+  },
+  {
+    "start_sec": 465.511,
+    "end_sec": 465.801,
+    "speaker": 2,
+    "text": "Really?",
+    "timestamp": "00:07:45.511"
+  },
+  {
+    "start_sec": 465.911,
+    "end_sec": 466.191,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:07:45.911"
+  },
+  {
+    "start_sec": 466.191,
+    "end_sec": 466.861,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:07:46.191"
+  },
+  {
+    "start_sec": 467.111,
+    "end_sec": 468.961,
+    "speaker": 1,
+    "text": "He's just so cute. I can't say no.",
+    "timestamp": "00:07:47.111"
+  },
+  {
+    "start_sec": 468.961,
+    "end_sec": 471.181,
+    "speaker": 2,
+    "text": "<laughter> And he's gotten much better too.",
+    "timestamp": "00:07:48.961"
+  },
+  {
+    "start_sec": 471.421,
+    "end_sec": 471.791,
+    "speaker": 1,
+    "text": "Oh, really?",
+    "timestamp": "00:07:51.421"
+  },
+  {
+    "start_sec": 471.791,
+    "end_sec": 472.931,
+    "speaker": 2,
+    "text": "Yeah, he doesn't get on my nerves.",
+    "timestamp": "00:07:51.791"
+  },
+  {
+    "start_sec": 473.341,
+    "end_sec": 474.701,
+    "speaker": 1,
+    "text": "But he gets on my mom's nerves.",
+    "timestamp": "00:07:53.341"
+  },
+  {
+    "start_sec": 474.701,
+    "end_sec": 477.561,
+    "speaker": 2,
+    "text": "Oh really? Cuz when she answers the phone, he like wants to talk to her for like a half an hour.",
+    "timestamp": "00:07:54.701"
+  },
+  {
+    "start_sec": 478.101,
+    "end_sec": 480.971,
+    "speaker": 1,
+    "text": "And she's always like, I have to go, I have to go. <laughter>",
+    "timestamp": "00:07:58.101"
+  },
+  {
+    "start_sec": 481.541,
+    "end_sec": 482.481,
+    "speaker": 2,
+    "text": "Typical Mark.",
+    "timestamp": "00:08:01.541"
+  },
+  {
+    "start_sec": 482.481,
+    "end_sec": 485.491,
+    "speaker": 1,
+    "text": "I told him that my mom's like afraid of the telephone and she doesn't like to talk. <laughter>",
+    "timestamp": "00:08:02.481"
+  },
+  {
+    "start_sec": 485.491,
+    "end_sec": 487.681,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:08:05.491"
+  },
+  {
+    "start_sec": 490.171,
+    "end_sec": 490.491,
+    "speaker": 1,
+    "text": "But",
+    "timestamp": "00:08:10.171"
+  },
+  {
+    "start_sec": 491.561,
+    "end_sec": 492.361,
+    "speaker": 1,
+    "text": "he's the only one.",
+    "timestamp": "00:08:11.561"
+  },
+  {
+    "start_sec": 492.511,
+    "end_sec": 493.591,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:08:12.511"
+  },
+  {
+    "start_sec": 494.391,
+    "end_sec": 494.611,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:08:14.391"
+  },
+  {
+    "start_sec": 495.271,
+    "end_sec": 495.481,
+    "speaker": 2,
+    "text": "Hmm.",
+    "timestamp": "00:08:15.271"
+  },
+  {
+    "start_sec": 496.441,
+    "end_sec": 497.801,
+    "speaker": 1,
+    "text": "Does anyone hang out with Suzy?",
+    "timestamp": "00:08:16.441"
+  },
+  {
+    "start_sec": 498.241,
+    "end_sec": 498.711,
+    "speaker": 2,
+    "text": "no.",
+    "timestamp": "00:08:18.241"
+  },
+  {
+    "start_sec": 498.711,
+    "end_sec": 499.111,
+    "speaker": 1,
+    "text": "No, that's good.",
+    "timestamp": "00:08:18.711"
+  },
+  {
+    "start_sec": 499.111,
+    "end_sec": 501.991,
+    "speaker": 2,
+    "text": "I guess um, I guess little Felipe is staying at your house.",
+    "timestamp": "00:08:19.111"
+  },
+  {
+    "start_sec": 502.431,
+    "end_sec": 503.221,
+    "speaker": 1,
+    "text": "Yeah, I heard that might happen.",
+    "timestamp": "00:08:22.431"
+  },
+  {
+    "start_sec": 503.221,
+    "end_sec": 504.601,
+    "speaker": 2,
+    "text": "Yeah, and um I bet she loves that.",
+    "timestamp": "00:08:23.221"
+  },
+  {
+    "start_sec": 504.601,
+    "end_sec": 509.841,
+    "speaker": 1,
+    "text": "Oh yeah. And every time I ask like cuz I've seen that Kinkos all the time. Uh-huh. And um, he's like, she never leaves the house. All she does is bitch.",
+    "timestamp": "00:08:24.601"
+  },
+  {
+    "start_sec": 509.841,
+    "end_sec": 510.971,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:08:29.841"
+  },
+  {
+    "start_sec": 511.961,
+    "end_sec": 513.121,
+    "speaker": 1,
+    "text": "But it's so true.",
+    "timestamp": "00:08:31.961"
+  },
+  {
+    "start_sec": 513.121,
+    "end_sec": 515.151,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:08:33.121"
+  },
+  {
+    "start_sec": 515.261,
+    "end_sec": 518.771,
+    "speaker": 1,
+    "text": "He said that she just like goes for a bike ride and then stays home like the rest of the day.",
+    "timestamp": "00:08:35.261"
+  },
+  {
+    "start_sec": 518.771,
+    "end_sec": 519.121,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:08:38.771"
+  },
+  {
+    "start_sec": 519.641,
+    "end_sec": 520.891,
+    "speaker": 1,
+    "text": "Why am I not surprised?",
+    "timestamp": "00:08:39.641"
+  },
+  {
+    "start_sec": 520.891,
+    "end_sec": 521.611,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:08:40.891"
+  },
+  {
+    "start_sec": 521.611,
+    "end_sec": 523.511,
+    "speaker": 1,
+    "text": "Yeah. When I was thinking of who I was gonna call,",
+    "timestamp": "00:08:41.611"
+  },
+  {
+    "start_sec": 523.511,
+    "end_sec": 524.381,
+    "speaker": 2,
+    "text": "Cuz you know this phone call is free.",
+    "timestamp": "00:08:43.511"
+  },
+  {
+    "start_sec": 524.621,
+    "end_sec": 524.961,
+    "speaker": 1,
+    "text": "Oh, it is?",
+    "timestamp": "00:08:44.621"
+  },
+  {
+    "start_sec": 525.021,
+    "end_sec": 526.961,
+    "speaker": 2,
+    "text": "Yeah, and so we can talk as long as we want.",
+    "timestamp": "00:08:45.021"
+  },
+  {
+    "start_sec": 527.201,
+    "end_sec": 530.121,
+    "speaker": 1,
+    "text": "Well actually, it's supposed to turn off in 15 minutes. I think the whole thing's screwy.",
+    "timestamp": "00:08:47.201"
+  },
+  {
+    "start_sec": 530.341,
+    "end_sec": 530.601,
+    "speaker": 2,
+    "text": "Oh.",
+    "timestamp": "00:08:50.341"
+  },
+  {
+    "start_sec": 531.061,
+    "end_sec": 536.001,
+    "speaker": 1,
+    "text": "But you know, my dad was like, well why don't you call Suzy? And I was like, that is the last person I would want to talk to.",
+    "timestamp": "00:08:51.061"
+  },
+  {
+    "start_sec": 536.001,
+    "end_sec": 538.151,
+    "speaker": 2,
+    "text": "<laughter> for 15 minutes. <laughter>",
+    "timestamp": "00:08:56.001"
+  },
+  {
+    "start_sec": 538.741,
+    "end_sec": 545.981,
+    "speaker": 1,
+    "text": "I mean, I talked to her like three weeks ago and all she did was bitch that I never paid some phone bill, which I did. But she just forgot cuz she spent the money on something else.",
+    "timestamp": "00:08:58.741"
+  },
+  {
+    "start_sec": 546.521,
+    "end_sec": 548.161,
+    "speaker": 1,
+    "text": "And I was just like, whatever. <laughter>",
+    "timestamp": "00:09:06.521"
+  },
+  {
+    "start_sec": 549.031,
+    "end_sec": 551.901,
+    "speaker": 1,
+    "text": "She's totally nutty. If she like ends up trying to stay, I'm going to have a nervous breakdown.",
+    "timestamp": "00:09:09.031"
+  },
+  {
+    "start_sec": 552.281,
+    "end_sec": 553.841,
+    "speaker": 2,
+    "text": "Well, I think she's already determined to leave, isn't she?",
+    "timestamp": "00:09:12.281"
+  },
+  {
+    "start_sec": 553.841,
+    "end_sec": 558.111,
+    "speaker": 1,
+    "text": "Yeah, but see it's just like her at the last minute to be too lazy Right. to go through with it.",
+    "timestamp": "00:09:13.841"
+  },
+  {
+    "start_sec": 558.621,
+    "end_sec": 561.421,
+    "speaker": 1,
+    "text": "You know, I mean that's just generally speaking her personality.",
+    "timestamp": "00:09:18.621"
+  },
+  {
+    "start_sec": 561.641,
+    "end_sec": 561.851,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:09:21.641"
+  },
+  {
+    "start_sec": 561.851,
+    "end_sec": 564.381,
+    "speaker": 1,
+    "text": "Cuz you know she was telling us she was going to move out last January.",
+    "timestamp": "00:09:21.851"
+  },
+  {
+    "start_sec": 564.551,
+    "end_sec": 564.801,
+    "speaker": 2,
+    "text": "Hm.",
+    "timestamp": "00:09:24.551"
+  },
+  {
+    "start_sec": 564.801,
+    "end_sec": 565.651,
+    "speaker": 1,
+    "text": "And she was too lazy to do it.",
+    "timestamp": "00:09:24.801"
+  },
+  {
+    "start_sec": 566.681,
+    "end_sec": 569.211,
+    "speaker": 1,
+    "text": "So, maybe Felipe will drive her out. <laughter>",
+    "timestamp": "00:09:26.681"
+  },
+  {
+    "start_sec": 569.211,
+    "end_sec": 570.671,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:09:29.211"
+  },
+  {
+    "start_sec": 571.861,
+    "end_sec": 573.541,
+    "speaker": 1,
+    "text": "Oh God, I can't stand her.",
+    "timestamp": "00:09:31.861"
+  },
+  {
+    "start_sec": 574.071,
+    "end_sec": 577.291,
+    "speaker": 1,
+    "text": "And she was like bitching that Lath didn't buy cat food before he left.",
+    "timestamp": "00:09:34.071"
+  },
+  {
+    "start_sec": 578.101,
+    "end_sec": 580.601,
+    "speaker": 1,
+    "text": "But he like fed her cat while she was away that whole month of June. Yeah.",
+    "timestamp": "00:09:38.101"
+  },
+  {
+    "start_sec": 580.601,
+    "end_sec": 581.561,
+    "speaker": 1,
+    "text": "You know, and she's just such a weirdo.",
+    "timestamp": "00:09:40.601"
+  },
+  {
+    "start_sec": 582.681,
+    "end_sec": 584.091,
+    "speaker": 1,
+    "text": "She's just totally crazy.",
+    "timestamp": "00:09:42.681"
+  },
+  {
+    "start_sec": 584.971,
+    "end_sec": 586.851,
+    "speaker": 1,
+    "text": "I've never met a more strange person in my whole life.",
+    "timestamp": "00:09:44.971"
+  },
+  {
+    "start_sec": 587.391,
+    "end_sec": 590.231,
+    "speaker": 2,
+    "text": "I know. and she seems so like normal from the outside.",
+    "timestamp": "00:09:47.391"
+  },
+  {
+    "start_sec": 590.231,
+    "end_sec": 590.581,
+    "speaker": 1,
+    "text": "<laughter>",
+    "timestamp": "00:09:50.231"
+  },
+  {
+    "start_sec": 590.871,
+    "end_sec": 593.181,
+    "speaker": 1,
+    "text": "Yeah. But she's really not. Yeah.",
+    "timestamp": "00:09:50.871"
+  },
+  {
+    "start_sec": 593.591,
+    "end_sec": 595.691,
+    "speaker": 1,
+    "text": "You know, she's one of the most unpleasant people I've ever met.",
+    "timestamp": "00:09:53.591"
+  },
+  {
+    "start_sec": 596.531,
+    "end_sec": 601.271,
+    "speaker": 2,
+    "text": "I've been tempted several times to call her up and ask her if I could use her ID, but I I would doubt that she would let me.",
+    "timestamp": "00:09:56.531"
+  },
+  {
+    "start_sec": 601.271,
+    "end_sec": 603.261,
+    "speaker": 1,
+    "text": "<laughter> I think she'd get she gets like so stressed.",
+    "timestamp": "00:10:01.271"
+  },
+  {
+    "start_sec": 603.261,
+    "end_sec": 603.661,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:10:03.261"
+  },
+  {
+    "start_sec": 603.951,
+    "end_sec": 605.991,
+    "speaker": 1,
+    "text": "You know, and then you'd owe her for the rest of your life.",
+    "timestamp": "00:10:03.951"
+  },
+  {
+    "start_sec": 605.991,
+    "end_sec": 606.271,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:10:05.991"
+  },
+  {
+    "start_sec": 606.271,
+    "end_sec": 608.621,
+    "speaker": 1,
+    "text": "That's the thing. The minute she does you a favor, she'll remind you three years later.",
+    "timestamp": "00:10:06.271"
+  },
+  {
+    "start_sec": 608.621,
+    "end_sec": 609.521,
+    "speaker": 2,
+    "text": "<laughter>",
+    "timestamp": "00:10:08.621"
+  },
+  {
+    "start_sec": 610.151,
+    "end_sec": 610.741,
+    "speaker": 1,
+    "text": "Yeah, that's why I didn't ask her.",
+    "timestamp": "00:10:10.151"
+  },
+  {
+    "start_sec": 611.361,
+    "end_sec": 611.591,
+    "speaker": 2,
+    "text": "Yeah.",
+    "timestamp": "00:10:11.361"
+  },
+  {
+    "start_sec": 611.591,
+    "end_sec": 612.821,
+    "speaker": 1,
+    "text": "Cuz I could I could pass for her, but",
+    "timestamp": "00:10:11.591"
+  },
+  {
+    "start_sec": 612.981,
+    "end_sec": 613.621,
+    "speaker": 2,
+    "text": "Oh, I think you could.",
+    "timestamp": "00:10:12.981"
+  },
+  {
+    "start_sec": 614.071,
+    "end_sec": 614.331,
+    "speaker": 1,
+    "text": "Yeah.",
+    "timestamp": "00:10:14.071"
+  },
+  {
+    "start_sec": 614.331,
+    "end_sec": 617.511,
+    "speaker": 2,
+    "text": "I know, okay. I'll just have to work on the fake ID thing, I guess. <laughter>",
+    "timestamp": "00:10:14.331"
+  },
+  {
+    "start_sec": 617.811,
+    "end_sec": 618.961,
+    "speaker": 1,
+    "text": "I lost my other one.",
+    "timestamp": "00:10:17.811"
+  },
+  {
+    "start_sec": 619.161,
+    "end_sec": 620.471,
+    "speaker": 2,
+    "text": "Yeah, but your other one looked real good.",
+    "timestamp": "00:10:19.161"
+  },
+  {
+    "start_sec": 620.631,
+    "end_sec": 624.411,
+    "speaker": 1,
+    "text": "Yeah, I I just have to, I haven't had a chance to make another one.",
+    "timestamp": "00:10:20.631"
+  },
+  {
+    "start_sec": 624.411,
+    "end_sec": 625.321,
+    "speaker": 2,
+    "text": "Mhmm.",
+    "timestamp": "00:10:24.411"
+  },
+  {
+    "start_sec": 625.681,
+    "end_sec": 627.311,
+    "speaker": 1,
+    "text": "Not that it's that important, but",
+    "timestamp": "00:10:25.681"
+  },
+  {
+    "start_sec": 627.461,
+    "end_sec": 627.781,
+    "speaker": 2,
+    "text": "Right.",
+    "timestamp": "00:10:27.461"
+  },
+  {
+    "start_sec": 628.711,
+    "end_sec": 629.071,
+    "speaker": 1,
+    "text": "Hmm.",
+    "timestamp": "00:10:28.711"
+  },
+  {
+    "start_sec": 630.221,
+    "end_sec": 632.141,
+    "speaker": 1,
+    "text": "But soon enough. Have you seen Francy?",
+    "timestamp": "00:10:30.221"
+  },
+  {
+    "start_sec": 632.611,
+    "end_sec": 635.861,
+    "speaker": 2,
+    "text": "I saw her once and I said hi to her at Kinkos, but then that was a long time ago though.",
+    "timestamp": "00:10:32.611"
+  },
+  {
+    "start_sec": 636.001,
+    "end_sec": 636.571,
+    "speaker": 1,
+    "text": "Mhm.",
+    "timestamp": "00:10:36.001"
+  },
+  {
+    "start_sec": 636.571,
+    "end_sec": 637.281,
+    "speaker": 1,
+    "text": "Hmm. I don't know.",
+    "timestamp": "00:10:36.571"
+  },
+  {
+    "start_sec": 637.761,
+    "end_sec": 639.261,
+    "speaker": 1,
+    "text": "Apparently she and George are having problems.",
+    "timestamp": "00:10:37.761"
+  },
+  {
+    "start_sec": 639.261,
+    "end_sec": 639.691,
+    "speaker": 2,
+    "text": "Oh, really?",
+    "timestamp": "00:10:39.261"
+  },
+  {
+    "start_sec": 639.991,
+    "end_sec": 640.401,
+    "speaker": 1,
+    "text": "Weren't they leaving?",
+    "timestamp": "00:10:39.991"
+  }
+]

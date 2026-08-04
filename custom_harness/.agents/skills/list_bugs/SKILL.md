@@ -19,13 +19,17 @@ Read and parse `.agents/bugs.json`. If no bugs exist in the file, or if the filt
 and halt.
 
 ## 3. Sort and Group
-Sort the filtered bugs by priority: `P0` first, then `P1`, `P2`, `P3`. Within each priority tier, sort chronologically by `id` (or `date_reported`).
+Group bugs by status into distinct sections so outstanding bugs are clearly separated:
+1. **Outstanding / Needs Fix** (status: `"Reported"`, `"Investigated"`, `"Fix Proposed"`)
+2. **Fix Implemented / Resolved** (status: `"Fix Implemented"`, `"Fix Verified"`, `"Closed"`, `"Obsolete"`)
+
+Within each status group, sort the bugs by priority: `P0` first, then `P1`, `P2`, `P3`. Within each priority tier, sort chronologically by `id` (or `date_reported`).
 
 ## 4. Format Output
-Render a clear, structured markdown table. For each bug, display:
+Render clear, structured markdown tables for each status group (or sub-tables under distinct section headers). For each bug, display:
 - **ID**: `#<id>`
 - **Priority**: Bolded (e.g. **P0**, **P1**)
 - **Impact**: e.g., Critical, High
-- **Status**: e.g., New, Investigating, Fix Implemented
+- **Status**: e.g., New, Investigated, Fix Implemented
 - **Description**: The summary description
 - **Date**: Format as `YYYY-MM-DD` (if available)

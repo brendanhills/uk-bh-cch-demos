@@ -1,0 +1,18 @@
+[
+  {
+    "start_sec": 0.2,
+    "end_sec": 13.1,
+    "speaker": 2,
+    "text": "Hello, good morning. Good morning. So tell me what's going on. Uh sure. So um I will catch probably 3 or 4 days ago which uh waiting and short of breath. Okay. Um yeah I talked to inflation today but no chest pain.",
+    "timestamp": "07:41:26.3",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 13.4,
+    "end_sec": 21.4,
+    "speaker": 2,
+    "text": "Have you been exposed to anyone know? And I also took a test which was negative you should getting worse or better. Uh, it has been getting a lot worse.",
+    "timestamp": "07:41:39.5",
+    "event_type": "transcript"
+  }
+]

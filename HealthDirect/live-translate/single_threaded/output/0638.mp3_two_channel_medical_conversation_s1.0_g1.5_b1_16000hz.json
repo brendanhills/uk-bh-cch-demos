@@ -1,0 +1,34 @@
+[
+  {
+    "start_sec": 0.0,
+    "end_sec": 6.8,
+    "speaker": 1,
+    "text": "Oh , okay . Okay , this is really screwy . Very interesting . So , how are you ?",
+    "timestamp": "07:18:36.5",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 7.4,
+    "end_sec": 9.0,
+    "speaker": 1,
+    "text": "I'm fine .",
+    "timestamp": "07:18:43.9",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 3.4,
+    "end_sec": 4.4,
+    "speaker": 2,
+    "text": ".",
+    "timestamp": "07:18:39.9",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 6.7,
+    "end_sec": 9.9,
+    "speaker": 2,
+    "text": "Okay , how are you ? . How's everything",
+    "timestamp": "07:18:43.2",
+    "event_type": "transcript"
+  }
+]
