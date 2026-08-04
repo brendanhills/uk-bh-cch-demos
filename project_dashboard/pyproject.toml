@@ -1,0 +1,13 @@
+[project]
+name = "project-dashboard-mockup"
+version = "0.1.0"
+description = "Project Dashboard Streamlit UI Mockup for Risk and Issue tracking"
+authors = [
+    { name = "Brendan Hills", email = "brendanhills@google.com" }
+]
+dependencies = [
+    "streamlit>=1.36.0",
+    "pandas>=2.2.0",
+    "plotly>=5.22.0"
+]
+requires-python = ">=3.11"

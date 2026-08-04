@@ -14,3 +14,5 @@
     - **Without Argument (`/fix_bug`)**: Read `.agents/bugs.json`, identify all remaining open/unverified bugs (status not `"Fix Verified"`), sort chronologically by priority (`P0` -> `P1` -> `P2` -> `P3`), and present a recommended sequence of resolution.
 
 - **checkpoint**: When requested with "checkpoint" (or when you say "checkpoint" or "Finish for the day" or "finish for the day"), update the README.md and Resume.md (compaction summary), track status, check for any untracked project source files/directories in the active workspace (confirming .gitignore is clean), stage and commit all relevant modified and untracked project files with a descriptive message, and push the branch to the remote repository to ensure complete machine portability.
+
+- **Python Package Management & Execution (`uv`)**: Always use `uv` commands (`uv sync`, `uv run`, `uv add`, `uv pip install`) for all Python package management, virtual environment creation, and script execution across all projects. Do not use standard `pip`, `python -m venv`, or direct binary invocation when `uv` is available.
