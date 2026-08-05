@@ -10,6 +10,7 @@ When the user runs `/list_bugs` (or `/list bugs`):
 ## 1. Determine Scope
 Check if the user specified a filter in their request:
 - Type filters: "fr" / "feature" (show only Feature Requests), "bug" (show only Bugs).
+- Reporter filters: "my" / "mine" (show items reported by current user), or "reporter:<name>" / "<name>" (show items reported by specific user).
 - Status filters: "all" (include all items), "resolved" (include only items with status `"Fix Verified"`, `"Closed"`, or `"Obsolete"`).
 - Default: include active unresolved items (status is NOT `"Fix Verified"`, `"Closed"`, or `"Obsolete"`).
 
@@ -29,6 +30,7 @@ Within each status group, sort the items by priority: `P0` first, then `P1`, `P2
 Render clear, structured markdown tables for each status group (or sub-tables under distinct section headers). For each item, display:
 - **ID**: `#<id>`
 - **Type**: `Bug` or `FR`
+- **Reporter**: e.g. Brendan Hills (from `reporter`)
 - **Priority**: Bolded (e.g. **P0**, **P1**)
 - **Impact**: e.g., Critical, High
 - **Status**: e.g., New, Investigated, Fix Implemented
