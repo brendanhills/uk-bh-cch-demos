@@ -22,7 +22,7 @@ When the user runs `/bug_review`:
    - **Active Bug -> Fix Verified**: If targeted tests now pass or code changes resolved the issue completely, update status to `"Fix Verified"`.
 
 4. **Database & Record Updates**:
-   - Update `<workspace-root>/.agents/bugs.json` with new status and record rationale in a `"review_notes"` field (with timestamp and review reason).
+   - Update `<workspace-root>/.agents/bugs.json` with new status, refresh `"date_triaged"` to current date (`YYYY-MM-DD`), and record rationale in a `"review_notes"` field (with timestamp and review reason).
 
 5. **Summary Reporting**:
    - Render a structured markdown table in the conversation summarizing reviewed bugs, status changes, and review rationale.

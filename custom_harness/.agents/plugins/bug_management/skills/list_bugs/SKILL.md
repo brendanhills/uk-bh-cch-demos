@@ -33,4 +33,5 @@ Render clear, structured markdown tables for each status group (or sub-tables un
 - **Impact**: e.g., Critical, High
 - **Status**: e.g., New, Investigated, Fix Implemented
 - **Description**: The summary description
-- **Date**: Format as `YYYY-MM-DD` (if available)
+- **Date Reported**: `YYYY-MM-DD` (from `date_reported` or `date`)
+- **Date Resolved**: `YYYY-MM-DD` (from `date_resolved` if resolved)
