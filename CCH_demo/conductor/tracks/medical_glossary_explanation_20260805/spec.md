@@ -1,7 +1,7 @@
 # Track Specification: HealthDirect Medical Glossary & Term Translation Support
 
-## Overview
-Integrates the HealthDirect pediatric/medical terminology glossary from `~/dev/uk-bh-experiments/HealthDirect/live-translate/simultaneous/glossary/` into the Cymbal Children's Hospital assistant. This enables Jennie to naturally explain complex medical jargon found in discharge documents using clear, empathetic, informal layman explanations in English, Arabic, and Hindi.
+## Dependencies
+- **Depends on Track**: [`adk2_multi_agent_workflow_20260806`](../adk2_multi_agent_workflow_20260806/index.md) (ADK 2.0 Multi-Agent Concierge Workflow). Glossary explanation guidelines will be integrated into the `document_scanner` and `visit_scheduler` sub-agents.
 
 ## Functional Requirements
 1. **Medical Glossary Module (`app/glossary.py`)**:

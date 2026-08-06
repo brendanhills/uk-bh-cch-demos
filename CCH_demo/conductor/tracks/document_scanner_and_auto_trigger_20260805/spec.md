@@ -1,7 +1,7 @@
 # Specification: Document Scanner & Agentic Auto-Trigger (#BUG-42 & #BUG-48)
 
-## Overview
-Simplify and stabilize the Document Scanner (#BUG-42) by replacing brittle client-side JS pixel/edge/color heuristics with a clean guided viewfinder overlay and Gemini multimodal vision AI. Implement an agentic ADK tool (`request_document_scan`) that Jennie invokes during workflow steps requiring clinical documents, automatically opening the camera viewfinder (#BUG-48).
+## Dependencies
+- **Depends on Track**: [`adk2_multi_agent_workflow_20260806`](../adk2_multi_agent_workflow_20260806/index.md) (ADK 2.0 Multi-Agent Concierge Workflow). The `request_document_scan` tool will be added directly to the `document_scanner` sub-agent.
 
 ## Functional Requirements
 1. **Guided Viewfinder UI (#BUG-42)**:
