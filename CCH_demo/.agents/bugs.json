@@ -586,5 +586,19 @@
     "phase": "",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "is that added? if not raise an FR to add caching"
+  },
+  {
+    "id": "BUG-51",
+    "type": "FR",
+    "title": "Proactive Agent Opening Call Greeting Trigger for Live Demo Initiation",
+    "description": "Implement a seamless call initiation mechanism so Jennie automatically picks up the phone and delivers the warm hospital opening greeting ('Hello, thank you for calling Cymbal Children's Hospital. My name is Jennie...') as soon as the session starts, without requiring the user to speak first ('hi').",
+    "date": "2026-08-06",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "I want a better way to initiate the conversation in a demo - rather than saying hi. In a real scenario the call would start with Jennie picking up the phone and greeting the caller"
   }
 ]
