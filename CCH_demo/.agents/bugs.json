@@ -572,5 +572,19 @@
     "phase": "",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "the switch to portait and switch to landscape buttons are too big . Use simple icons only"
+  },
+  {
+    "id": "BUG-50",
+    "type": "FR",
+    "title": "Add Gemini Context Caching for Document Vision & Clinical System Instructions",
+    "description": "Integrate Gemini Context Caching (`CachedContent` / `caches.create`) into the ADK Runner / Agent configuration for document vision frames and shared clinical system instructions to reduce Live API TTFT latency by 40-60%.",
+    "date": "2026-08-06",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "is that added? if not raise an FR to add caching"
   }
 ]
