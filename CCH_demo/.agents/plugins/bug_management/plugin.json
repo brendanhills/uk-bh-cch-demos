@@ -1,0 +1,14 @@
+{
+  "name": "bug_management",
+  "version": "1.0.0",
+  "description": "Comprehensive bug reporting, feature request tracking, triage, planning, review, and resolution skill suite.",
+  "skills": [
+    "bug",
+    "fr",
+    "list_bugs",
+    "triage_bug",
+    "bug_plan",
+    "bug_review",
+    "fix_bug"
+  ]
+}
