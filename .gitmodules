@@ -17,3 +17,6 @@
 [submodule "monash/StudyOSMaterials"]
 	path = monash/StudyOSMaterials
 	url = https://github.com/cloud-gtm/StudyOSMaterials.git
+[submodule "advanced_agent_patterns/adk_tutorial"]
+	path = advanced_agent_patterns/adk_tutorial
+	url = https://github.com/brendanhills/adk_tutorial.git
