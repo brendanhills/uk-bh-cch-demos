@@ -238,7 +238,7 @@ class TestNotebookLMScenarios(unittest.TestCase):
         ]
         
         safe_msg = f"✔ Step 4: Admin successfully set Clara ({new_employee_email}) as OWNER and revoked Alice's access"
-        print(safe_msg.replace("ya29.", "ya29.***"))
+        print(safe_msg)
 
         # ---------------------------------------------------------------------
         # Step 5: Verify access permissions as New Employee Clara

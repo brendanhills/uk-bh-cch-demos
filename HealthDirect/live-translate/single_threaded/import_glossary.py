@@ -272,7 +272,7 @@ def parse_search_results(html: str) -> list[dict]:
                 
         # Exclude Google's own internal URLs
         domain = urlparse(href).netloc.lower()
-        if domain.endswith("google.com") or domain == "google.com" or not href.startswith("http"):
+        if domain == "google.com" or domain.endswith(".google.com") or not href.startswith("http"):
             continue
             
         # Extract snippet
