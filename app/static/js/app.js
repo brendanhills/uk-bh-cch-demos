@@ -7,7 +7,14 @@ import { startAudioRecorderWorklet } from "./audio-recorder.js";
 
 // Connect the server with a WebSocket connection
 const userId = "demo-user";
-let sessionId = "demo-session-" + Math.random().toString(36).substring(7);
+
+function generateSecureSessionId() {
+  const array = new Uint32Array(1);
+  (window.crypto || window.msCrypto).getRandomValues(array);
+  return array[0].toString(36);
+}
+
+let sessionId = "demo-session-" + generateSecureSessionId();
 let isFreshSession = true;
 let websocket = null;
 let is_audio = false;
@@ -19,7 +26,7 @@ const resetSessionBtn = document.getElementById("resetSessionBtn");
 
 // Reset session for a fresh practice run
 function resetSession() {
-  sessionId = "demo-session-" + Math.random().toString(36).substring(7);
+  sessionId = "demo-session-" + generateSecureSessionId();
   isFreshSession = true;
   
   if (messagesDiv) {

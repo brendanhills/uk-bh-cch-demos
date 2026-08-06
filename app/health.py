@@ -52,12 +52,17 @@ Create uptime check:
 
 import asyncio
 import json
+import logging
 import os
 import uuid
 
 import websockets
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 CCH_DEMO_URL = os.getenv("CCH_DEMO_URL", "ws://localhost:7072")
 HEALTH_CHECK_TIMEOUT = 20
@@ -123,7 +128,8 @@ async def health_live():
             content={"status": "error", "error": "Model response timed out"},
         )
     except Exception as e:
+        logger.exception("Error occurred during end-to-end health check live stream")
         return JSONResponse(
             status_code=503,
-            content={"status": "error", "error": str(e)},
+            content={"status": "error", "error": "Internal server error during health check"},
         )
