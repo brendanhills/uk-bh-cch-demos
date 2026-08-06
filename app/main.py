@@ -27,7 +27,7 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
-from google_search_agent.agent import agent
+from cch_agent.agent import agent
 
 
 # Configure main application logger

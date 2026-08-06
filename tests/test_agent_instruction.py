@@ -1,7 +1,7 @@
 """Unit test verifying agent system instruction rules and initial engagement flow for BUG-015."""
 
 import pytest
-from app.google_search_agent.agent import CCH_SYSTEM_INSTRUCTION
+from app.cch_agent.agent import CCH_SYSTEM_INSTRUCTION
 
 
 def test_initial_engagement_no_premature_document_demand():

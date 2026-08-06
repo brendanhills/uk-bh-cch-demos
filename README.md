@@ -157,7 +157,7 @@ From the `src/cch-demo` directory, first change to the `app` subdirectory:
 cd app
 ```
 
-> **Note:** You must run from inside the `app` directory so Python can find the `google_search_agent` module. Running from the parent directory will fail with `ModuleNotFoundError: No module named 'google_search_agent'`.
+> **Note:** You must run from inside the `app` directory so Python can find the `cch_agent` module. Running from the parent directory will fail with `ModuleNotFoundError: No module named 'cch_agent'`.
 
 **Using uv (recommended):**
 
@@ -269,7 +269,7 @@ ws://127.0.0.1:8000/ws/{user_id}/{session_id}
 ```
 cch-demo/
 ├── app/
-│   ├── google_search_agent/      # Agent definition module
+│   ├── cch_agent/                # Agent definition module
 │   │   ├── __init__.py           # Package exports
 │   │   └── agent.py              # Agent configuration
 │   ├── main.py                   # FastAPI application and WebSocket endpoint
@@ -297,7 +297,7 @@ cch-demo/
 
 ## Code Overview
 
-### Agent Definition (app/google_search_agent/agent.py)
+### Agent Definition (app/cch_agent/agent.py)
 
 The agent is defined in a separate module following ADK best practices:
 
@@ -313,7 +313,7 @@ agent = Agent(
 ### Application Initialization (app/main.py:37-50)
 
 ```python
-from google_search_agent.agent import agent
+from cch_agent.agent import agent
 
 app = FastAPI()
 session_service = InMemorySessionService()
@@ -352,7 +352,7 @@ The demo supports any Gemini model compatible with Live API:
 - `gemini-2.5-flash-native-audio-preview-12-2025` (Gemini Live API)
 - `gemini-live-2.5-flash-native-audio` (Vertex AI)
 
-Set the model via `DEMO_AGENT_MODEL` in `.env` or modify `app/google_search_agent/agent.py`.
+Set the model via `DEMO_AGENT_MODEL` in `.env` or modify `app/cch_agent/agent.py`.
 
 For the latest model availability and features:
 - **Gemini Live API**: Check the [official Gemini API models documentation](https://ai.google.dev/gemini-api/docs/models)
@@ -565,7 +565,7 @@ Browser ──ws──► Cloud Run (proxy) ──SDK──► Agent Engine (age
 
 Three scripts in `agent_engine/` manage the Agent Engine lifecycle. All read configuration from `app/.env`.
 
-**`agent_engine/deploy.py`** — Wraps the existing agent from `app/google_search_agent/agent.py` in an `AdkApp`, then deploys it to Agent Engine with `EXPERIMENTAL` server mode (required for bidi streaming). The deployed agent's resource name is saved to `agent_resource_name.txt` for use by the other scripts.
+**`agent_engine/deploy.py`** — Wraps the existing agent from `app/cch_agent/agent.py` in an `AdkApp`, then deploys it to Agent Engine with `EXPERIMENTAL` server mode (required for bidi streaming). The deployed agent's resource name is saved to `agent_resource_name.txt` for use by the other scripts.
 
 **`agent_engine/test.py`** — Connects to the deployed agent via `client.aio.live.agent_engines.connect()` and sends text queries as `LiveRequest` objects over a WebSocket. Supports two modes: automated (runs preset queries) and interactive (`--interactive` flag for a chat loop). Responses arrive as ADK `Event` objects containing audio or text.
 

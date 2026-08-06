@@ -308,8 +308,11 @@ def create_presentation():
             p_b.space_after = Pt(8)
 
     # Save Presentation
-    prs.save("/home/brendanhills/dev/RCH-EBC/cch_problem_framing.pptx")
-    print("Successfully re-compiled presentation focused purely on high-level problem framing!")
+    from pathlib import Path
+    output_path = Path(__file__).parent.parent / "docs" / "cch_problem_framing.pptx"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    prs.save(output_path)
+    print(f"Successfully re-compiled presentation focused purely on high-level problem framing at {output_path}!")
 
 if __name__ == "__main__":
     create_presentation()

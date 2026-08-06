@@ -65,3 +65,8 @@
 2026-08-05 18:48:13,646 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-zy9rmc: Attached document image (39696 bytes)
 2026-08-06 09:41:48,270 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
 2026-08-06 09:49:40,454 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-06 12:59:32,784 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-06 13:18:45,281 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-06 13:20:12,215 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-06 13:25:06,357 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-fkzt08: hi
+2026-08-06 13:28:24,931 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
