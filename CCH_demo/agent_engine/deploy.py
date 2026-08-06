@@ -28,7 +28,7 @@ STAGING_BUCKET = os.environ["STAGING_BUCKET"]
 
 
 def main():
-    from google_search_agent.agent import agent
+    from cch_agent.agent import agent
 
     vertexai.init(project=PROJECT_ID, location=LOCATION)
     client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
