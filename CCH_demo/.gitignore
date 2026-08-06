@@ -1,4 +1,6 @@
 app/server.log
+.env
 app/.env
 */__pycache__/*
 *.pyc
+.uv_cache/
