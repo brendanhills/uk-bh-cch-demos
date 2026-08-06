@@ -1,0 +1,4 @@
+app/server.log
+app/.env
+*/__pycache__/*
+*.pyc

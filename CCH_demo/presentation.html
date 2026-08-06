@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Framing the Problem - CCH Home Care Concierge</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #070913;
+            --bg-card-dark: rgba(13, 17, 34, 0.7);
+            --border-glow-red: rgba(239, 68, 68, 0.2);
+            --border-glow-green: rgba(16, 185, 129, 0.25);
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+            --accent-red: #EF4444;
+            --accent-green: #10B981;
+            --accent-blue: #3B82F6;
+            --accent-violet: #8B5CF6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --font-outfit: 'Outfit', sans-serif;
+            --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: var(--font-jakarta);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Ambient Glow Backgrounds */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        header {
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hospital-badge {
+            background: linear-gradient(135deg, #FF4B4B, #FF8000);
+            color: white;
+            font-weight: 800;
+            font-family: var(--font-outfit);
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        }
+
+        h1 {
+            font-family: var(--font-outfit);
+            font-weight: 700;
+            font-size: 24px;
+            background: linear-gradient(to right, #FFFFFF, #E5E7EB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-tag {
+            font-family: var(--font-mono);
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 40px;
+            flex-grow: 1;
+            z-index: 10;
+            align-items: stretch;
+        }
+
+        /* SECTION 1: THE CAREGIVER'S BURDEN (LEFT) */
+        .problem-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .section-title-wrap {
+            margin-bottom: 5px;
+        }
+
+        .pre-title {
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pre-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            box-shadow: 0 0 8px var(--accent-red);
+        }
+
+        .section-headline {
+            font-family: var(--font-outfit);
+            font-weight: 800;
+            font-size: 32px;
+            line-height: 1.2;
+            color: #FFFFFF;
+            margin-top: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .problem-card {
+            background: var(--bg-card-dark);
+            border: 1px solid var(--border-glow-red);
+            border-radius: 12px;
+            padding: 18px 24px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            height: 70%;
+            width: 4px;
+            background-color: var(--accent-red);
+            border-radius: 0 4px 4px 0;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateX(8px);
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.03);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.05);
+        }
+
+        .problem-card:hover::before {
+            opacity: 1;
+            height: 85%;
+            top: 7.5%;
+        }
+
+        .card-num {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 28px;
+            color: rgba(239, 68, 68, 0.3);
+            line-height: 1;
+            min-width: 40px;
+        }
+
+        .problem-card:hover .card-num {
+            color: var(--accent-red);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-family: var(--font-outfit);
+            font-weight: 600;
+            font-size: 18px;
+            color: #FFFFFF;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* SECTION 2: THE DIGITAL SOLUTION BRIDGE (RIGHT) */
+        .solution-side {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pre-title-sol {
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pre-title-sol::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .glass-solution-box {
+            background: rgba(13, 22, 38, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .specialist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 18px;
+        }
+
+        .specialist-identity {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .specialist-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #3B82F6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            position: relative;
+        }
+
+        .avatar-pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            animation: radar 2s infinite;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .specialist-name-role {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .spec-name {
+            font-family: var(--font-outfit);
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+        }
+
+        .spec-role {
+            font-size: 12px;
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .interactive-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            color: var(--accent-green);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        .voice-interface {
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .voice-bubble {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 0 12px 12px 0;
+            max-width: 100%;
+            align-self: flex-start;
+        }
+
+        .voice-bubble p {
+            font-size: 13.5px;
+            color: #E5E7EB;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .waveform-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 50px;
+            width: 100%;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 15px;
+            background: linear-gradient(to top, var(--accent-green), var(--accent-blue));
+            border-radius: 3px;
+            animation: bounce 1.2s ease-in-out infinite alternate;
+        }
+
+        .wave-bar:nth-child(2) { animation-delay: 0.15s; height: 30px; }
+        .wave-bar:nth-child(3) { animation-delay: 0.3s; height: 45px; }
+        .wave-bar:nth-child(4) { animation-delay: 0.45s; height: 20px; }
+        .wave-bar:nth-child(5) { animation-delay: 0.6s; height: 35px; }
+        .wave-bar:nth-child(6) { animation-delay: 0.75s; height: 10px; }
+        .wave-bar:nth-child(7) { animation-delay: 0.9s; height: 40px; }
+        .wave-bar:nth-child(8) { animation-delay: 1.05s; height: 25px; }
+        .wave-bar:nth-child(9) { animation-delay: 0.2s; height: 15px; }
+        .wave-bar:nth-child(10) { animation-delay: 0.35s; height: 48px; }
+
+        .tools-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 18px;
+        }
+
+        .tool-pill {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tool-pill.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #34D399;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+        }
+
+        /* SECTION 3: TECH BREAKTHROUGH & LATENCY FOOTER */
+        footer {
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 20px;
+            margin-top: 25px;
+            align-items: center;
+        }
+
+        .tech-badge-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tech-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tech-p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .tech-p strong {
+            color: white;
+            font-weight: 600;
+        }
+
+        .latency-comp {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .latency-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .lat-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .lat-val {
+            font-family: var(--font-outfit);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .lat-val.bad {
+            color: var(--accent-red);
+        }
+
+        .lat-val.good {
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .latency-separator {
+            width: 1px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ANIMATIONS */
+        @keyframes bounce {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1.1); }
+        }
+
+        @keyframes radar {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Interactive script connections */
+        .problem-card:hover ~ .solution-side .tool-pill {
+            opacity: 0.3;
+        }
+
+        /* Hover bindings to simulate connection in slides */
+        body[data-hover="p1"] #p1 { border-color: rgba(239, 68, 68, 0.7); background: rgba(239, 68, 68, 0.05); }
+        body[data-hover="p1"] #tp1 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+        body[data-hover="p2"] #p2 { border-color: rgba(239, 68, 68, 0.7); background: rgba(239, 68, 68, 0.05); }
+        body[data-hover="p2"] #tp4 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+        body[data-hover="p2"] #tp5 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+        body[data-hover="p3"] #p3 { border-color: rgba(239, 68, 68, 0.7); background: rgba(239, 68, 68, 0.05); }
+        body[data-hover="p3"] #tp2 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+        body[data-hover="p3"] #tp3 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+        body[data-hover="p4"] #p4 { border-color: rgba(239, 68, 68, 0.7); background: rgba(239, 68, 68, 0.05); }
+        body[data-hover="p4"] #tp6 { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: white; }
+    </style>
+</head>
+<body id="slideBody">
+
+    <header>
+        <div class="logo-section">
+            <span class="hospital-badge">CCH Concierge</span>
+            <h1>Cymbal Children's Hospital</h1>
+        </div>
+        <span class="slide-tag">Framing The Problem</span>
+    </header>
+
+    <div class="main-grid">
+        
+        <!-- LEFT COLUMN: THE PROBLEMS -->
+        <section class="problem-side">
+            <div class="section-title-wrap">
+                <span class="pre-title">The Caregiver's Burden</span>
+                <h2 class="section-headline">The Anxiety of Hospital-to-Home Pediatric Recovery</h2>
+            </div>
+            
+            <div class="cards-list">
+                
+                <div class="problem-card" id="p1" onmouseenter="setHover('p1')" onmouseleave="clearHover()">
+                    <span class="card-num">01</span>
+                    <div class="card-info">
+                        <h3 class="card-title">Complex Discharge Overload</h3>
+                        <p class="card-desc">Parents are handed complex, jargon-heavy instructions and medication dosing schedules for respiratory illnesses like Asthma/RSV during periods of peak emotional stress.</p>
+                    </div>
+                </div>
+
+                <div class="problem-card" id="p2" onmouseenter="setHover('p2')" onmouseleave="clearHover()">
+                    <span class="card-num">02</span>
+                    <div class="card-info">
+                        <h3 class="card-title">Fragmented Clinical Scheduling</h3>
+                        <p class="card-desc">Securing post-discharge home care support or clinical nurse visits is historically administrative, disconnected, and slow—leaving families feeling abandoned in the crucial first 48 hours.</p>
+                    </div>
+                </div>
+
+                <div class="problem-card" id="p3" onmouseenter="setHover('p3')" onmouseleave="clearHover()">
+                    <span class="card-num">03</span>
+                    <div class="card-info">
+                        <h3 class="card-title">Opaque Cost & Subsidy Barriers</h3>
+                        <p class="card-desc">Parents struggle to calculate home care fees, navigate complex NDIS or Medicare rules, and apply funding eligibility while focused purely on their child's recovery.</p>
+                    </div>
+                </div>
+
+                <div class="problem-card" id="p4" onmouseenter="setHover('p4')" onmouseleave="clearHover()">
+                    <span class="card-num">04</span>
+                    <div class="card-info">
+                        <h3 class="card-title">The Home Information Black Hole</h3>
+                        <p class="card-desc">Valuable clinical insights, vital sign readings, and nursing actions taken at home are rarely integrated back into the hospital's Electronic Medical Record (EMR).</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: THE SOLUTION BRIDGE -->
+        <section class="solution-side">
+            <div class="section-title-wrap">
+                <span class="pre-title-sol">The Voice Bridge</span>
+                <h2 class="section-headline">Real-Time Interactive Clinical Support</h2>
+            </div>
+
+            <div class="glass-solution-box">
+                <div class="specialist-header">
+                    <div class="specialist-identity">
+                        <div class="specialist-avatar">
+                            <span>J</span>
+                            <div class="avatar-pulse"></div>
+                        </div>
+                        <div class="specialist-name-role">
+                            <span class="spec-name">Jennie</span>
+                            <span class="spec-role">Home Care Specialist AI</span>
+                        </div>
+                    </div>
+                    <div class="interactive-status-badge">
+                        <span class="live-dot"></span>
+                        <span>LIVE AUDIO CHANNEL</span>
+                    </div>
+                </div>
+
+                <div class="voice-interface">
+                    <div class="voice-bubble">
+                        <p id="dialogueText">"Hello Sarah. I've booked Nurse Sarah to visit Leo tomorrow at 9 AM. I have also applied a 15% NDIS subsidy to cover this visit, and successfully updated Leo's primary hospital EMR."</p>
+                    </div>
+                    <div class="waveform-container">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+
+                <div class="tools-cloud">
+                    <span class="tool-pill" id="tp1">get_home_care_cost_estimate()</span>
+                    <span class="tool-pill" id="tp2">approve_funding_subsidy()</span>
+                    <span class="tool-pill" id="tp3">apply_subsidy_to_support_plan()</span>
+                    <span class="tool-pill" id="tp4">get_available_support_times()</span>
+                    <span class="tool-pill" id="tp5">schedule_home_care_visit()</span>
+                    <span class="tool-pill" id="tp6">update_hospital_emr()</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER: NATIVE AUDIO VS TRADITIONAL CASCADE LATENCY -->
+    <footer>
+        <div class="tech-badge-container">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#3B82F6"/>
+            </svg>
+            <div class="tech-text">
+                <p class="tech-p">Powered natively by <strong>Gemini 2.5 Live API</strong> via Google's <strong>Agent Development Kit (ADK)</strong></p>
+                <p class="tech-p" style="font-size: 11px; color: var(--text-secondary);">Features interactive toggles: <strong>Proactivity</strong> (agent turn-taking) and <strong>Affective Dialog</strong> (stress-sensing tone adjustment)</p>
+            </div>
+        </div>
+
+        <div class="latency-comp">
+            <div class="latency-pill">
+                <span class="lat-label">Traditional STT-LLM-TTS Cascade</span>
+                <span class="lat-val bad">> 3.5s Latency</span>
+            </div>
+            <div class="latency-separator"></div>
+            <div class="latency-pill">
+                <span class="lat-label">Gemini 2.5 Live (Audio-to-Audio)</span>
+                <span class="lat-val good">&lt; 0.9s Latency</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const dialogueMap = {
+            'default': '"Hello Sarah. I\'ve booked Nurse Sarah to visit Leo tomorrow at 9 AM. I have also applied a 15% NDIS subsidy to cover this visit, and successfully updated Leo\'s primary hospital EMR."',
+            'p1': '"I see you\'re looking over Leo\'s asthma discharge papers, Sarah. Let me explain the spacer guidelines and the twice-daily budesonide schedule in simple, reassuring terms so you feel completely confident."',
+            'p2': '"I\'m checking our pediatric clinical database now. We have Nurse Sarah open tomorrow morning at 9:00 AM or Nurse Patrick at 1:30 PM. Let\'s schedule Sarah to do a quick in-home RSV follow-up."',
+            'p3': '"We can model funding packages directly. I\'m checking NDIS eligibility and can approve a 15% hospital care subsidy immediately to reduce your out-of-pocket costs."',
+            'p4': '"I\'ve fully synchronized Leo\'s scheduled visit, NDIS subsidy details, and our clinical conversation notes straight back to the hospital EMR system so his pediatrician stays fully in the loop."'
+        };
+
+        const bodyEl = document.getElementById('slideBody');
+        const textEl = document.getElementById('dialogueText');
+
+        function setHover(id) {
+            bodyEl.setAttribute('data-hover', id);
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = dialogueMap[id];
+                textEl.style.opacity = 1;
+            }, 150);
+            
+            // Highlight specific active pills manually
+            document.querySelectorAll('.tool-pill').forEach(el => el.classList.remove('active'));
+            if (id === 'p1') {
+                // No tool call for paperwork explanation (direct conversation)
+            } else if (id === 'p2') {
+                document.getElementById('tp4').classList.add('active');
+                document.getElementById('tp5').classList.add('active');
+            } else if (id === 'p3') {
+                document.getElementById('tp1').classList.add('active');
+                document.getElementById('tp2').classList.add('active');
+                document.getElementById('tp3').classList.add('active');
+            } else if (id === 'p4') {
+                document.getElementById('tp6').classList.add('active');
+            }
+        }
+
+        function clearHover() {
+            bodyEl.removeAttribute('data-hover');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = dialogueMap['default'];
+                textEl.style.opacity = 1;
+            }, 150);
+            document.querySelectorAll('.tool-pill').forEach(el => el.classList.remove('active'));
+        }
+    </script>
+</body>
+</html>
