@@ -39,9 +39,10 @@ def test_sub_agents_instantiation():
 
 
 def test_visit_scheduler_domain_tools():
-    """Verify visit_scheduler sub-agent is equipped with all 6 existing domain function tools."""
-    assert len(visit_scheduler.tools) == 6
+    """Verify visit_scheduler sub-agent is equipped with all domain function tools."""
+    assert len(visit_scheduler.tools) == 7
     tool_names = [getattr(tool, "__name__", str(tool)) for tool in visit_scheduler.tools]
+    assert "calculate_home_care_financials" in tool_names
     assert "get_home_care_cost_estimate" in tool_names
     assert "approve_funding_subsidy" in tool_names
     assert "apply_subsidy_to_support_plan" in tool_names

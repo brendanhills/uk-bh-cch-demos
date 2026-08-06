@@ -110,6 +110,7 @@ def update_hospital_emr(
 # Master Concierge Router Configuration
 # =====================================================================
 
+from cch_agent.persona import CCH_SHARED_PERSONA
 from cch_agent.sub_agents import (
     patient_verifier,
     document_scanner,
@@ -117,7 +118,9 @@ from cch_agent.sub_agents import (
     soap_generator,
 )
 
-ROUTER_INSTRUCTION = """
+ROUTER_INSTRUCTION = f"""
+{CCH_SHARED_PERSONA}
+
 <role>
     You are Jennie, the Master Concierge Router Agent for Cymbal Children's Hospital.
     Your role is to warmly greet parents and carers, listen to their needs, and delegate specialized tasks to expert sub-agents:
