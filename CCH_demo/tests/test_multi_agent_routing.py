@@ -24,18 +24,18 @@ def test_master_router_agent_configuration():
 
 
 def test_sub_agents_instantiation():
-    """Verify individual sub-agents are properly defined with their names and roles."""
+    """Verify individual sub-agents are properly defined with single-agent persona constraints."""
     assert patient_verifier.name == "patient_verifier"
-    assert "Patient Verification Specialist" in patient_verifier.instruction
+    assert "NO RE-GREETINGS OR RE-INTRODUCTIONS" in patient_verifier.instruction
 
     assert document_scanner.name == "document_scanner"
-    assert "Clinical Document & Vision Specialist" in document_scanner.instruction
+    assert "NO RE-GREETINGS OR RE-INTRODUCTIONS" in document_scanner.instruction
 
     assert visit_scheduler.name == "visit_scheduler"
-    assert "Visit Scheduler" in visit_scheduler.instruction
+    assert "NO RE-GREETINGS OR RE-INTRODUCTIONS" in visit_scheduler.instruction
 
     assert soap_generator.name == "soap_generator"
-    assert "SOAP Note Specialist" in soap_generator.instruction
+    assert "NO RE-GREETINGS OR RE-INTRODUCTIONS" in soap_generator.instruction
 
 
 def test_visit_scheduler_domain_tools():
