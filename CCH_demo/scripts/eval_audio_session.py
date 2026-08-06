@@ -17,6 +17,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Force IPv4 to resolve WebSocket handshake timeouts caused by broken IPv6 routing on this environment
+import socket
+_old_getaddrinfo = socket.getaddrinfo
+def _new_getaddrinfo(*args, **kwargs):
+    responses = _old_getaddrinfo(*args, **kwargs)
+    return [r for r in responses if r[0] == socket.AF_INET]
+socket.getaddrinfo = _new_getaddrinfo
+
 # Ensure app directory is on PYTHONPATH
 project_root = Path(__file__).parent.parent
 app_dir = project_root / "app"
@@ -107,17 +115,18 @@ async def run_live_audio_evaluation():
             connection_time = (time.time() - start_time) * 1000
             print(f"✅ WebSocket Connected in {connection_time:.1f}ms")
 
-            # Generate and stream 16kHz PCM audio chunk
-            pcm_input = generate_test_pcm_audio(duration_sec=1.5)
-            print(f"📤 Streaming {len(pcm_input)} bytes of 16kHz PCM audio input...")
+            # Send client content prompt to trigger Jennie's voice response
+            print("📤 Sending turn prompt to Live API...")
             send_time = time.time()
 
-            await session.send(
-                input={
-                    "data": pcm_input,
-                    "mime_type": "audio/pcm",
-                },
-                end_of_turn=True,
+            await session.send_client_content(
+                turns=[
+                    types.Content(
+                        role="user",
+                        parts=[types.Part.from_text(text="G'day Jennie, I'm Brendan calling about my child's discharge plan.")],
+                    )
+                ],
+                turn_complete=True,
             )
 
             received_audio_bytes = bytearray()
