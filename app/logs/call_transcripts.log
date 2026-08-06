@@ -88,3 +88,5 @@
 2026-08-06 17:16:25,881 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
 2026-08-06 17:18:44,122 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
 2026-08-06 17:34:21,950 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-06 17:37:18,600 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-fddmkf: Attached document image (43746 bytes)
+2026-08-06 17:37:46,075 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
