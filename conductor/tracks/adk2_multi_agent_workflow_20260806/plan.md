@@ -1,10 +1,10 @@
 # Implementation Plan - ADK 2.0 Multi-Agent Concierge Workflow
 
 ## Phase 1: ADK 2.0 Sub-Agent Architecture & Routing (`app/cch_agent/`)
-- [ ] Task: Create sub-agent modules in `app/cch_agent/sub_agents/`: `patient_verifier.py`, `document_scanner.py`, `visit_scheduler.py`, and `soap_generator.py` (#BUG-43)
-- [ ] Task: Configure root `cch_concierge_router` agent in `app/cch_agent/agent.py` equipped with sub-agent delegation tools (#BUG-43)
-- [ ] Task: Add Australian phone number validation rules to `patient_verifier` sub-agent instruction (#BUG-46)
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Create sub-agent modules in `app/cch_agent/sub_agents/`: `patient_verifier.py`, `document_scanner.py`, `visit_scheduler.py`, and `soap_generator.py` (#BUG-43)
+- [x] Task: Configure root `cch_concierge_router` agent in `app/cch_agent/agent.py` equipped with sub-agent delegation tools (#BUG-43)
+- [x] Task: Add Australian phone number validation rules to `patient_verifier` sub-agent instruction (#BUG-46)
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Document Snapshot Attachment Persistence (`#BUG-45`)
 - [ ] Task: Update WebSocket image upload handler in `app/main.py` to persist incoming base64 document frames to `app/logs/attachments/<session_id>_<timestamp>.jpg` (#BUG-45)

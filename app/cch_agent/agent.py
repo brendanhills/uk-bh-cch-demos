@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 from google.adk.agents import Agent
+from google.adk.tools import AgentTool
 
 # =====================================================================
 # Specialized CCH Clinical & Financial Tools
@@ -268,21 +269,45 @@ CCH_SYSTEM_INSTRUCTION = """
 </taskflow>
 """
 
-# Default models for Live API with native audio support:
-# - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
-# - Vertex AI Live API: gemini-live-2.5-flash-native-audio
+from cch_agent.sub_agents import (
+    patient_verifier,
+    document_scanner,
+    visit_scheduler,
+    soap_generator,
+)
+
+ROUTER_INSTRUCTION = """
+<role>
+    You are Jennie, the Master Concierge Router Agent for Cymbal Children's Hospital.
+    Your role is to warmly greet parents and carers, listen to their needs, and delegate specialized tasks to expert sub-agents:
+    - `patient_verifier`: For patient identity confirmation and contact phone number verification.
+    - `document_scanner`: For inspecting, reading, and explaining clinical discharge summary paperwork and test results.
+    - `visit_scheduler`: For nurse visit appointment availability, scheduling, cost estimates, funding subsidies, and EMR updates.
+    - `soap_generator`: For generating clinical SOAP note export summaries.
+</role>
+
+<persona>
+    Maintain a warm, empathetic, professional Australian pediatric healthcare tone. Speak naturally and listen attentively without using canned or patronizing scripts.
+</persona>
+
+<instructions>
+    1. **Initial Greeting**: When the parent begins the conversation, welcome them as Jennie and confirm who you are speaking with and their phone number. Delegate identity confirmation to `patient_verifier`.
+    2. **Flexible Routing**: If the parent asks about discharge paperwork, delegate to `document_scanner`. If they ask about booking visits, costs, or subsidies, delegate to `visit_scheduler`.
+</instructions>
+"""
+
+# Master Concierge Router Agent
 agent = Agent(
-    name="cch_home_care_specialist",
+    name="cch_concierge_router",
     model=os.getenv(
         "DEMO_AGENT_MODEL", "gemini-live-2.5-flash-native-audio"
     ),
     tools=[
-        get_home_care_cost_estimate,
-        approve_funding_subsidy,
-        apply_subsidy_to_support_plan,
-        get_available_support_times,
-        schedule_home_care_visit,
-        update_hospital_emr
+        AgentTool(patient_verifier),
+        AgentTool(document_scanner),
+        AgentTool(visit_scheduler),
+        AgentTool(soap_generator),
     ],
-    instruction=CCH_SYSTEM_INSTRUCTION,
+    instruction=ROUTER_INSTRUCTION,
 )
+
