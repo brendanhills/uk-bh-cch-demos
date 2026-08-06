@@ -600,5 +600,19 @@
     "phase": "",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "I want a better way to initiate the conversation in a demo - rather than saying hi. In a real scenario the call would start with Jennie picking up the phone and greeting the caller"
+  },
+  {
+    "id": "BUG-52",
+    "type": "Bug",
+    "title": "Document camera viewfinder prematurely auto-opens during initial identity verification when agent mentions 'discharge papers'",
+    "description": "When the agent mentions 'discharge papers' during the opening identity verification prompt ('To check those discharge papers, could you please share your name...'), the text phrase trigger in app.js immediately auto-opens the Document Scanner camera overlay before the user has asked to scan a document.",
+    "date": "2026-08-06",
+    "status": "Reported",
+    "priority": "P2",
+    "impact": "Medium",
+    "risk": "Low",
+    "phase": "Phase 1",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "the agent asked for my name and number then opened the camera"
   }
 ]
