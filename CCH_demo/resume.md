@@ -15,7 +15,7 @@
      - Created `app/static/favicon.ico` and `app/static/favicon.svg` featuring Cymbal Children's Hospital teal badge, white medical cross, and blue accent center.
      - Served via `@app.get("/favicon.ico")` in `app/main.py`.
   4. **Conductor Track Initialization**:
-     - Initialized and committed Conductor track [`document_scanner_and_auto_trigger_20260805`](file:///home/brendanhills/dev/RCH-EBC/conductor/tracks/document_scanner_and_auto_trigger_20260805/index.md) for the future ADK tool-driven upgrade.
+     - Initialized and committed Conductor track [`document_scanner_and_auto_trigger_20260805`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/conductor/tracks/document_scanner_and_auto_trigger_20260805/index.md) for the future ADK tool-driven upgrade.
   5. **Installed Agent Skill**:
      - Installed `google-cloud-solution-agentic-ai-data-science-workflow` to `~/.agents/skills/`.
 
@@ -24,8 +24,8 @@
   - All verified changes committed cleanly to git (`[PSN b40d1c9]`).
 
 ## 📌 Current Context & Progress
-- **Active Track**: [`document_scanner_and_auto_trigger_20260805`](file:///home/brendanhills/dev/RCH-EBC/conductor/tracks/document_scanner_and_auto_trigger_20260805/index.md)
-- **Last Active Task**: Verified current document scanner and auto-camera trigger working end-to-end; initialized track for ADK tool-driven upgrade.
+- **Active Track**: [`adk2_multi_agent_workflow_20260806`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/conductor/tracks/adk2_multi_agent_workflow_20260806/index.md)
+- **Last Active Task**: Initialized Conductor track for ADK 2.0 Multi-Agent Concierge Workflow (#BUG-23, #BUG-25, #BUG-43, #BUG-45, #BUG-46).
 
 ## 🚦 Remaining Tasks & Blockers
 - **`BUG-46`**: Recognize & Validate Australian Phone Number Formats (`P1`, `Phase 2`).

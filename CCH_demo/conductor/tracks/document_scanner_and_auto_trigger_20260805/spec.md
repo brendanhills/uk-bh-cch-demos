@@ -11,7 +11,7 @@ Simplify and stabilize the Document Scanner (#BUG-42) by replacing brittle clien
    - Chrome Window Style Header: Display a Chrome window titlebar with `📷 Document Scanner` title, `🗖` orientation toggle, and top-right `✕` close button.
 
 2. **Agentic Tool-Driven Auto-Camera Trigger (#BUG-48)**:
-   - Define a custom ADK tool `request_document_scan(document_type, prompt_reason)` in `app/google_search_agent/agent.py`.
+   - Define a custom ADK tool `request_document_scan(document_type, prompt_reason)` in `app/cch_agent/agent.py`.
    - Update system instruction procedures so Jennie invokes `request_document_scan` whenever a procedure workflow step requires a clinical document (discharge papers, prescriptions, lab results).
    - In `app/static/js/app.js`, listen for the `request_document_scan` function call event and automatically open the camera viewfinder.
 
