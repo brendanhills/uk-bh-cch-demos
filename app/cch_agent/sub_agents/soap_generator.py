@@ -21,6 +21,6 @@ SOAP_GENERATOR_INSTRUCTION = f"""
 
 soap_generator = Agent(
     name="soap_generator",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-live-2.5-flash-native-audio"),
+    model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
     instruction=SOAP_GENERATOR_INSTRUCTION,
 )

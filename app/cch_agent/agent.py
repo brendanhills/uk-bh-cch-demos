@@ -33,9 +33,7 @@ ROUTER_INSTRUCTION = f"""
 # Master Concierge Router Agent
 agent = Agent(
     name="cch_concierge_router",
-    model=os.getenv(
-        "DEMO_AGENT_MODEL", "gemini-live-2.5-flash-native-audio"
-    ),
+    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash"),
     tools=[
         AgentTool(patient_verifier),
         AgentTool(document_scanner),
