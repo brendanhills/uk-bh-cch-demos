@@ -14,8 +14,9 @@ All resources, submodules, rules, and maintenance scripts reside inside:
 
 ---
 
-## 🛠️ Multi-Project Git Branch Management Plan
-For managing Git branches across multiple sub-projects/customers concurrently in Antigravity and Jetski without cross-project commit pollution, see the [WORKTREE_PLAN.md](file:///home/brendanhills/dev/uk-bh-experiments/WORKTREE_PLAN.md) strategy document.
+## 🛠️ Single `dev` Branch & Subfolder Workflow
+For documentation on working in this repository (single `dev` branch, per-project Conductor, subfolder tagging, and path-scoped restores), see the root [README.md](file:///home/brendanhills/dev/uk-bh-experiments/README.md).
+
 
 
 

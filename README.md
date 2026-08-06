@@ -1,7 +1,77 @@
-Various experiments, training, learning, and customer demos.  None of this code is ready for production, but you're welcome to make use of it.
+# UK BH Experiments Monorepo (`uk-bh-experiments`)
+
+A multi-project monorepo containing customer demos, prototypes, learning environments, and experimental harnesses.
 
 ---
 
-## 🛠️ Multi-Project Git Branch Management Plan
-For managing Git branches across multiple sub-projects/customers concurrently in Antigravity and Jetski without cross-project commit pollution, see the [WORKTREE_PLAN.md](file:///home/brendanhills/dev/uk-bh-experiments/WORKTREE_PLAN.md) strategy document.
+## 🏛️ Monorepo Architecture
 
+Each subfolder under `~/dev/uk-bh-experiments/*` represents an independent customer demo or project workspace (e.g. `capita`, `BudgetDemo`, `custom_harness`, `HealthDirect`, `belron`).
+
+To keep development clean, isolated, and easy to roll back across 40+ project subfolders, this repository enforces a **Single `dev` Branch + Path-Scoped Subfolder Tagging** workflow.
+
+---
+
+## 🌿 Core Development Workflow
+
+### 1. Single `dev` Branch
+- **All work occurs on the `dev` branch**.
+- We do **not** create temporary feature or session branches.
+- Commits are pushed directly to `origin/dev`.
+
+### 2. Per-Project Conductor Setup
+- Each customer or demo subfolder maintains its own independent `conductor/` directory (e.g. `capita/conductor/`, `custom_harness/conductor/`).
+- Conductor tracks, specifications, implementation plans, and registry entries are isolated strictly within that subfolder.
+
+### 3. Subfolder-Prefixed Git Tagging
+Checkpoints, track starts, phase completions, and track finishes automatically create subfolder-prefixed Git tags on `dev`:
+
+| Event | Tag Format Example | Purpose |
+| :--- | :--- | :--- |
+| **Session Checkpoint** | `capita/checkpoint-20260806-1400` | Mark end-of-session work for a subfolder |
+| **Track Start** | `capita/auth-feature-start` | Record state before starting a track |
+| **Phase Completion** | `capita/auth-feature-phase-1` | Record milestone at phase completion |
+| **Track Completion** | `capita/auth-feature-complete` | Record state when track is fully verified |
+
+---
+
+## ↺ Path-Scoped Subfolder Restores & Reverts
+
+Because all projects share the single `dev` branch, **repository-wide `git reset --hard` is strictly prohibited**. 
+
+If something goes wrong in a specific project subfolder, bring only that project subfolder back to a former state without affecting any other project:
+
+### Manual Path-Scoped Restore
+```bash
+# 1. Restore the project subfolder to a previous tag or commit SHA
+git restore --source=<tag_or_sha> -- <subfolder_path>
+
+# 2. Stage and commit the restored state on dev
+git add <subfolder_path>
+git commit -m "revert(<subfolder_path>): restore state to <tag_or_sha>"
+git push origin dev
+```
+
+### Automated Reverts via Conductor
+Run `/conductor:revert` inside the project. Conductor will present path-scoped restore/revert options targeted specifically to that subfolder.
+
+---
+
+## 🛠️ Slash Commands & Session Helpers
+
+| Command / Skill | Description |
+| :--- | :--- |
+| `/checkpoint` | Commits work directly on `dev`, creates tag `<project>/checkpoint-YYYYMMDD-HHMM`, updates `resume.md` / `README.md`, and pushes `dev` + tags. |
+| `/resume` | Verifies `dev` branch state, parses recent subfolder tags, and provides immediate onboarding to pick up work. |
+| `/conductor:setup` | Initializes Conductor scaffolding inside the active subfolder (`<subfolder>/conductor/`). |
+| `/conductor:new-track` | Plans a new track (spec + plan) and tags `<subfolder>/<track_id>-start`. |
+| `/conductor:implement` | Executes track tasks, tags phase milestones, and tags `<subfolder>/<track_id>-complete`. |
+| `/conductor:revert` | Path-scoped rollback/restore for a specific subfolder. |
+| `/bug`, `/fix_bug`, `/list_bugs` | Bug management protocol (requires explicit `/fix_bug` for code edits). |
+
+---
+
+## 🐍 Python & Dependency Management
+
+- **Always use `uv` and `pyproject.toml`** for Python environments and dependencies.
+- **Never use `pip` and `requirements.txt`**.
