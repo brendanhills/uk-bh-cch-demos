@@ -11,7 +11,11 @@ from cch_agent.tools.scheduling import (
     schedule_home_care_visit,
     update_hospital_emr,
 )
-from cch_agent.tools.phone_validator import validate_phone_number, validate_phone_number as validate_australian_phone_number
+from cch_agent.tools.phone_validator import (
+    validate_phone_number,
+    record_patient_identity,
+    validate_phone_number as validate_australian_phone_number,
+)
 
 __all__ = [
     "calculate_home_care_financials",
@@ -23,4 +27,5 @@ __all__ = [
     "update_hospital_emr",
     "validate_phone_number",
     "validate_australian_phone_number",
+    "record_patient_identity",
 ]
