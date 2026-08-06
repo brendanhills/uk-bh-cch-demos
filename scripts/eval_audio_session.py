@@ -7,10 +7,15 @@ and saves the output WAV audio file to app/logs/eval_output_audio.wav.
 
 import asyncio
 import os
+import subprocess
 import sys
 import time
 import wave
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Ensure app directory is on PYTHONPATH
 project_root = Path(__file__).parent.parent
@@ -22,8 +27,28 @@ from google import genai
 from google.genai import types
 
 
-def generate_test_pcm_audio(duration_sec: float = 1.0, sample_rate: int = 16000) -> bytes:
-    """Generate a 1-second 16kHz PCM 16-bit mono sine wave audio chunk for testing live audio input streaming."""
+def get_default_gcp_project() -> str:
+    """Detect default GCP project ID from environment or gcloud config."""
+    project = os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("PROJECT_ID")
+    if project:
+        return project
+    try:
+        res = subprocess.run(
+            ["gcloud", "config", "get-value", "project"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        detected = res.stdout.strip().split()[-1] if res.stdout.strip() else ""
+        if detected and not detected.startswith("WARNING"):
+            return detected
+    except Exception:
+        pass
+    return "uk-bh-experiments-argolis"
+
+
+def generate_test_pcm_audio(duration_sec: float = 1.5, sample_rate: int = 16000) -> bytes:
+    """Generate a 1.5-second 16kHz PCM 16-bit mono sine wave audio chunk for testing live audio input streaming."""
     import math
     import struct
 
@@ -54,28 +79,20 @@ async def run_live_audio_evaluation():
     print("=" * 75)
 
     api_key = os.getenv("GEMINI_API_KEY")
-    gcp_project = os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("PROJECT_ID")
+    gcp_project = get_default_gcp_project()
+    location = os.getenv("LOCATION", "us-central1")
 
-    if not api_key and not gcp_project:
-        print("\n⚠️ NO LIVE API CREDENTIALS DETECTED IN ENVIRONMENT!")
-        print("   To stream live audio and record real-time PCM voice responses:")
-        print("   1. Export your Gemini API Key or Vertex AI GCP Project:")
-        print("      export GEMINI_API_KEY='your-api-key'")
-        print("      # OR for Vertex AI:")
-        print("      export GOOGLE_CLOUD_PROJECT='your-project-id'")
-        print("   2. Re-run: uv run python scripts/eval_audio_session.py")
-        print("\n" + "=" * 75)
-        return
+    print(f"🔑 Authentication: {'Gemini API Key' if api_key else f'Vertex AI Project ({gcp_project})'}")
 
     try:
         if api_key:
             client = genai.Client(api_key=api_key)
         else:
-            client = genai.Client(vertexai=True, project=gcp_project, location=os.getenv("LOCATION", "us-central1"))
+            client = genai.Client(vertexai=True, project=gcp_project, location=location)
 
-        model_id = os.getenv("LIVE_MODEL_ID", "gemini-2.5-flash")
+        model_id = os.getenv("LIVE_MODEL_ID", "gemini-live-2.5-flash-native-audio")
         config = types.LiveConnectConfig(
-            response_modalities=[types.LiveClientContentModality.AUDIO],
+            response_modalities=["AUDIO"],
             speech_config=types.SpeechConfig(
                 voice_config=types.VoiceConfig(
                     prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Puck")
