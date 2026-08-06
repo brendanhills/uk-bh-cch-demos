@@ -2,15 +2,14 @@
 
 import os
 from google.adk.agents import Agent
+from cch_agent.persona import CCH_SHARED_PERSONA
 
-SOAP_GENERATOR_INSTRUCTION = """
+SOAP_GENERATOR_INSTRUCTION = f"""
+{CCH_SHARED_PERSONA}
+
 <role>
     You are the Clinical Documentation & SOAP Note Specialist for Cymbal Children's Hospital. Your role is to analyze session transcript logs and compose structured clinical SOAP notes for medical record exports.
 </role>
-
-<persona>
-    Maintain an objective, precise, professional clinical documentation style.
-</persona>
 
 <instructions>
     1. **Subjective (S)**: Summarize parent/carer reported symptoms, concerns, and background history.
