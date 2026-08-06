@@ -38,7 +38,7 @@ Executive summary and risk-balanced execution roadmap for resolving all active b
 
 | ID | Title | Root Cause / Scope | Fix Strategy | Risk | Impact | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **#BUG-41** | Codebase Refactoring & Folder Reorganization | Disorganized directory structure (`google_search_agent.py`) | Rename `google_search_agent/agent.py` to `hospital_agent/agent.py`, organize `docs/`, `scripts/`, `logs/` | Low | Medium | **Active** |
+| **#BUG-41** | Codebase Refactoring & Folder Reorganization | Disorganized directory structure (`google_search_agent.py`) | Rename `google_search_agent/agent.py` to `hospital_agent/agent.py`, organize `docs/`, `scripts/`, `logs/` | Low | Medium | **Fix Verified** |
 | **#BUG-42** | Camera Input Mode Simplification | Simplify camera controls for inspecting medical documents | Inline portrait viewfinder, Google Pixel round shutter, Google Drive focus guide, and privacy auto-off | Low | Medium | **Fix Implemented** |
 | **#BUG-32** | Gemini Live API WebSocket 1011 Recovery | Upstream 1011 service unavailable drops connection | Wrap `runner.run_live()` in `try...except APIError` to handle reconnects gracefully without crashing | Low | High | **Fix Implemented** |
 | **#BUG-34** | OpenTelemetry Context Detach Warning | OpenTelemetry raises context error on GeneratorExit | Suppress context detachment warnings gracefully in `main.py` on session disconnect | Low | Low | **Fix Implemented** |

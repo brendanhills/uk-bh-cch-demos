@@ -6,7 +6,7 @@
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: System Instruction & Prompt Integration
-- [ ] Task: Update `CCH_SYSTEM_INSTRUCTION` in `app/google_search_agent/agent.py` with natural medical explanation rules (explain formal clinical terms using informal layman equivalents)
+- [ ] Task: Update `CCH_SYSTEM_INSTRUCTION` in `app/cch_agent/agent.py` with natural medical explanation rules (explain formal clinical terms using informal layman equivalents)
 - [ ] Task: Add test in `tests/test_agent_instruction.py` verifying medical term explanation prompt rules
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 

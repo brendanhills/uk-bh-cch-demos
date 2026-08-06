@@ -11,7 +11,7 @@ Integrates the HealthDirect pediatric/medical terminology glossary from `~/dev/u
      - **Arabic**: Formal term $\rightarrow$ Arabic formal & informal translations.
      - **Hindi**: Formal term $\rightarrow$ Hindi formal & informal Devanagari translations.
 2. **Context-Aware Prompt Integration**:
-   - Update `CCH_SYSTEM_INSTRUCTION` in `app/google_search_agent/agent.py` with medical explanation guidelines:
+   - Update `CCH_SYSTEM_INSTRUCTION` in `app/cch_agent/agent.py` with medical explanation guidelines:
      - *"When medical jargon or formal clinical terms appear in discharge documents or EMR records (e.g., otitis media, pyrexia, analgesic), naturally use the informal layman translation to explain the formal term to the family in their preferred language (English, Arabic, or Hindi)."*
      - Adapt explanation complexity to match the user's communication style.
 3. **Glossary Highlight & Visual Cue Helper (`app/glossary_highlighter.py`)**:

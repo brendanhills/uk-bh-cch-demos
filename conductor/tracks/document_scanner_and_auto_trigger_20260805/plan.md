@@ -1,7 +1,7 @@
 # Implementation Plan: Document Scanner & Agentic Auto-Trigger (#BUG-42 & #BUG-48)
 
 ## Phase 1: Custom ADK Tool & Agent System Instruction Update
-- [ ] Task: Define `request_document_scan(document_type, prompt_reason)` ADK tool in `app/google_search_agent/agent.py`
+- [ ] Task: Define `request_document_scan(document_type, prompt_reason)` ADK tool in `app/cch_agent/agent.py`
 - [ ] Task: Update system instruction procedures in `agent.py` to enforce calling `request_document_scan` during clinical document workflow steps
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
