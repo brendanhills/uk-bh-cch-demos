@@ -21,6 +21,6 @@ DOCUMENT_SCANNER_INSTRUCTION = f"""
 
 document_scanner = Agent(
     name="document_scanner",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-live-2.5-flash-native-audio"),
+    model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
     instruction=DOCUMENT_SCANNER_INSTRUCTION,
 )

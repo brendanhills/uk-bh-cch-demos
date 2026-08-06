@@ -21,6 +21,6 @@ PATIENT_VERIFIER_INSTRUCTION = f"""
 
 patient_verifier = Agent(
     name="patient_verifier",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-live-2.5-flash-native-audio"),
+    model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
     instruction=PATIENT_VERIFIER_INSTRUCTION,
 )
