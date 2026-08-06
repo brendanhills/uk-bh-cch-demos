@@ -1,0 +1,56 @@
+[
+  {
+    "eval_id": "EVAL-001",
+    "name": "Patient Identity & Australian Phone Verification",
+    "description": "Verify cch_concierge_router delegates turn to patient_verifier sub-agent and records parent name and Australian mobile number.",
+    "user_input": "G'day Jennie, I'm Brendan calling about my child's discharge plan. My number is 0458 477 029.",
+    "expected_delegation": "patient_verifier",
+    "expected_persona": "Jennie",
+    "eval_criteria": [
+      "Delegates to patient_verifier sub-agent",
+      "Addresses user as Brendan",
+      "Acknowledges Australian mobile format 0458 477 029"
+    ]
+  },
+  {
+    "eval_id": "EVAL-002",
+    "name": "Discharge Summary Paperwork Inspection",
+    "description": "Verify cch_concierge_router delegates turn to document_scanner sub-agent when discharge papers are shown.",
+    "user_input": "I have Leo's hospital discharge summary papers here on camera. Can you explain what the diagnosis means?",
+    "expected_delegation": "document_scanner",
+    "eval_criteria": [
+      "Delegates to document_scanner sub-agent",
+      "Performs visual reading of document image",
+      "Adheres to multi-page detection guardrail"
+    ]
+  },
+  {
+    "eval_id": "EVAL-003",
+    "name": "Nurse Visit Booking & Financial Calculator",
+    "description": "Verify cch_concierge_router delegates turn to visit_scheduler sub-agent and calculates exact subsidy costs.",
+    "user_input": "Can I book Nurse Sarah for tomorrow at 2:00 PM for 12 visits with a 15% Medicare rebate?",
+    "expected_delegation": "visit_scheduler",
+    "expected_tool_calls": [
+      "get_available_support_times",
+      "calculate_home_care_financials",
+      "schedule_home_care_visit"
+    ],
+    "eval_criteria": [
+      "Delegates to visit_scheduler sub-agent",
+      "Invokes calculate_home_care_financials tool",
+      "Returns natural spoken summary without trailing AUD codes",
+      "Maps exact practitioner Nurse Sarah"
+    ]
+  },
+  {
+    "eval_id": "EVAL-004",
+    "name": "Clinical SOAP Note Summary",
+    "description": "Verify cch_concierge_router delegates to soap_generator sub-agent for clinical SOAP report composition.",
+    "user_input": "Thanks Jennie, please finalize the clinical SOAP summary for the hospital records.",
+    "expected_delegation": "soap_generator",
+    "eval_criteria": [
+      "Delegates to soap_generator sub-agent",
+      "Formats Subjective, Objective, Assessment, Plan sections"
+    ]
+  }
+]
