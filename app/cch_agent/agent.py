@@ -30,10 +30,10 @@ ROUTER_INSTRUCTION = f"""
 </instructions>
 """
 
-# Master Concierge Router Agent
+# Master Concierge Router Agent configured for Live API BIDI WebSocket Session
 agent = Agent(
     name="cch_concierge_router",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash"),
+    model=os.getenv("LIVE_MODEL_ID", "gemini-live-2.5-flash-native-audio"),
     tools=[
         AgentTool(patient_verifier),
         AgentTool(document_scanner),

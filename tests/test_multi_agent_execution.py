@@ -10,6 +10,18 @@ from app.cch_agent.sub_agents import (
 )
 
 
+def test_master_router_model_is_live_api_compatible():
+    """Verify master router agent uses Live API BIDI WebSocket compatible model (gemini-live-2.5-flash-native-audio).
+    
+    This regression test prevents 'gemini-2.5-flash is not supported in the live api' 1007 WebSocket errors.
+    """
+    assert router_agent.model is not None
+    assert "live" in router_agent.model.lower(), (
+        f"Master router agent 'cch_concierge_router' is configured with '{router_agent.model}'. "
+        f"Master router executed via runner.run_live() MUST use Live API WebSocket models (e.g. 'gemini-live-2.5-flash-native-audio')."
+    )
+
+
 def test_sub_agent_models_are_unary_api_compatible():
     """Verify sub-agents use unary generateContent API compatible models (e.g., gemini-2.5-flash) and NOT WebSocket-only live models (gemini-live-2.5-flash-native-audio).
     
