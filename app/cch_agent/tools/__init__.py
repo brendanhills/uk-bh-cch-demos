@@ -13,9 +13,9 @@ from cch_agent.tools.scheduling import (
 )
 from cch_agent.tools.phone_validator import (
     validate_phone_number,
-    record_patient_identity,
     validate_phone_number as validate_australian_phone_number,
 )
+from cch_agent.tools.identity import record_patient_identity
 
 __all__ = [
     "calculate_home_care_financials",
