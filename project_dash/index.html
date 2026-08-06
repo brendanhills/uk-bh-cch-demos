@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk and Issue Interactive Dashboard - AI Studio</title>
+    <!-- Google Fonts & Tailwind CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8f9fa;
+            color: #202124;
+        }
+        
+        .nav-tab.active {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+            font-weight: 600;
+            background-color: #e8f0fe;
+        }
+
+        .hm-cell {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+        .hm-cell:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+
+        .hm-circle {
+            background-color: rgba(0, 0, 0, 0.25);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        /* Heatmap Color Palette */
+        .bg-hm-green-1 { background-color: #4caf50; color: white; }
+        .bg-hm-green-2 { background-color: #66bb6a; color: white; }
+        .bg-hm-green-3 { background-color: #81c784; color: white; }
+        .bg-hm-yellow-1 { background-color: #fff176; color: #202124; }
+        .bg-hm-yellow-2 { background-color: #ffee58; color: #202124; }
+        .bg-hm-orange-1 { background-color: #ffa726; color: white; }
+        .bg-hm-orange-2 { background-color: #fb8c00; color: white; }
+        .bg-hm-red-1 { background-color: #ef5350; color: white; }
+        .bg-hm-red-2 { background-color: #e53935; color: white; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-6">
+
+    <!-- AI Studio Header Bar -->
+    <header class="bg-white rounded-xl border border-gray-200 p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-red-50 p-2.5 rounded-lg border border-red-100 text-red-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">Risk and Issue Interactive Dashboard</h1>
+                <p class="text-xs text-gray-500">AI Studio Web Application Platform • F-DSE Governance</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full text-xs font-medium">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>DASHBOARD LAST UPDATED: <strong class="text-gray-800">Risk Reg: 29 Jul 2026</strong> | <strong class="text-gray-800">Issue Reg: 29 Jul 2026</strong></span>
+        </div>
+    </header>
+
+    <!-- Main AI Studio Tabs -->
+    <nav class="bg-white rounded-xl border border-gray-200 mb-6 shadow-sm overflow-x-auto">
+        <div class="flex border-b border-gray-200 min-w-max">
+            <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab active px-5 py-3.5 text-sm font-medium text-gray-700 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Overview Dashboard
+            </button>
+            <button onclick="switchTab('trends')" id="tab-trends" class="nav-tab px-5 py-3.5 text-sm font-medium text-gray-600 hover:text-blue-600 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                Performance Trends
+            </button>
+            <button onclick="switchTab('driver')" id="tab-driver" class="nav-tab px-5 py-3.5 text-sm font-medium text-gray-600 hover:text-blue-600 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                CD1 Driver Tree
+            </button>
+            <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab px-5 py-3.5 text-sm font-medium text-gray-600 hover:text-blue-600 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                Issue Dashboard
+            </button>
+            <button onclick="switchTab('ledger')" id="tab-ledger" class="nav-tab px-5 py-3.5 text-sm font-medium text-gray-600 hover:text-blue-600 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Whole Register Ledger
+            </button>
+        </div>
+    </nav>
+
+    <!-- TAB 1: OVERVIEW DASHBOARD CONTENT -->
+    <main id="content-overview" class="space-y-6">
+        
+        <!-- Section Title & Filter Toolbar -->
+        <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">5x5 Risk Heatmap (93 Risks)</h2>
+                    <p class="text-xs text-gray-500">Tap any cell to inspect linked risks</p>
+                </div>
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="bg-gray-100 p-1 rounded-lg flex text-xs font-medium text-gray-600">
+                        <button onclick="filterStatus('Open')" id="btn-open" class="px-3 py-1.5 rounded-md bg-blue-600 text-white font-semibold shadow-xs">Open (93)</button>
+                        <button onclick="filterStatus('Active')" id="btn-active" class="px-3 py-1.5 rounded-md hover:text-gray-900">Active (75)</button>
+                        <button onclick="filterStatus('Eventuated')" id="btn-eventuated" class="px-3 py-1.5 rounded-md hover:text-gray-900">Eventuated (18)</button>
+                        <button onclick="filterStatus('All')" id="btn-all" class="px-3 py-1.5 rounded-md hover:text-gray-900">All (101)</button>
+                    </div>
+                    <div class="bg-gray-100 p-1 rounded-lg flex text-xs font-medium text-gray-600">
+                        <button onclick="toggleRating('Inherent')" id="btn-inherent" class="px-3 py-1.5 rounded-md hover:text-gray-900">Inherent</button>
+                        <button onclick="toggleRating('Residual')" id="btn-residual" class="px-3 py-1.5 rounded-md bg-blue-600 text-white font-semibold shadow-xs">Residual</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Highlight Metric Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div class="bg-red-50 border border-red-200 border-l-4 border-l-red-600 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <div class="text-xs font-bold text-red-800 tracking-wider">🔴 EXTREME TOP RISKS</div>
+                        <div class="text-2xl font-extrabold text-gray-900 mt-1">1 <span class="text-sm font-normal text-gray-600">Active</span></div>
+                    </div>
+                    <span class="bg-red-200 text-red-900 text-xs font-bold px-2.5 py-1 rounded-md">Score 23-25</span>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <div class="text-xs font-bold text-amber-800 tracking-wider">🟡 IDLE / UNACTIONED RISKS</div>
+                        <div class="text-2xl font-extrabold text-gray-900 mt-1">10 <span class="text-sm font-normal text-gray-600">Active</span></div>
+                    </div>
+                    <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-md">>7 Days Idle</span>
+                </div>
+            </div>
+
+            <!-- 5x5 HEATMAP MATRIX GRID -->
+            <div class="pt-4 overflow-x-auto">
+                <div class="min-w-[650px]">
+                    <div class="grid grid-cols-6 gap-2 mb-2 text-xs font-bold text-gray-600 text-center">
+                        <div class="text-left font-bold text-gray-800">Consequence ↓</div>
+                        <div>1 RARE</div>
+                        <div>2 IMPROBABLE</div>
+                        <div>3 OCCASIONAL</div>
+                        <div>4 PROBABLE</div>
+                        <div>5 ALMOST CERTAIN</div>
+                    </div>
+
+                    <!-- Row 5: Catastrophic -->
+                    <div class="grid grid-cols-6 gap-2 mb-2 items-center">
+                        <div class="text-xs font-bold text-gray-800">Catastrophic</div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm">12</div>
+                        <div class="hm-cell bg-hm-yellow-1 p-3 rounded-lg text-center font-bold text-sm">17</div>
+                        <div class="hm-cell bg-hm-orange-1 p-3 rounded-lg text-center font-bold text-sm">22</div>
+                        <div class="hm-cell bg-hm-red-1 p-3 rounded-lg text-center font-bold text-sm">24</div>
+                        <div class="hm-cell bg-hm-red-2 p-3 rounded-lg text-center font-bold text-sm">25</div>
+                    </div>
+
+                    <!-- Row 4: Critical -->
+                    <div class="grid grid-cols-6 gap-2 mb-2 items-center">
+                        <div class="text-xs font-bold text-gray-800">Critical</div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm">11</div>
+                        <div class="hm-cell bg-hm-yellow-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">16 <span class="hm-circle">1</span></div>
+                        <div class="hm-cell bg-hm-orange-1 p-3 rounded-lg text-center font-bold text-sm">20</div>
+                        <div class="hm-cell bg-hm-orange-2 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">21 <span class="hm-circle">2</span></div>
+                        <div class="hm-cell bg-hm-red-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">23 <span class="hm-circle">1</span></div>
+                    </div>
+
+                    <!-- Row 3: Major -->
+                    <div class="grid grid-cols-6 gap-2 mb-2 items-center">
+                        <div class="text-xs font-bold text-gray-800">Major</div>
+                        <div class="hm-cell bg-hm-green-2 p-3 rounded-lg text-center font-bold text-sm">6</div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">10 <span class="hm-circle">1</span></div>
+                        <div class="hm-cell bg-hm-yellow-1 p-3 rounded-lg text-center font-bold text-sm">15</div>
+                        <div class="hm-cell bg-hm-orange-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">18 <span class="hm-circle">2</span></div>
+                        <div class="hm-cell bg-hm-orange-2 p-3 rounded-lg text-center font-bold text-sm">19</div>
+                    </div>
+
+                    <!-- Row 2: Moderate -->
+                    <div class="grid grid-cols-6 gap-2 mb-2 items-center">
+                        <div class="text-xs font-bold text-gray-800">Moderate</div>
+                        <div class="hm-cell bg-hm-green-2 p-3 rounded-lg text-center font-bold text-sm">4</div>
+                        <div class="hm-cell bg-hm-green-2 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">5 <span class="hm-circle">1</span></div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">9 <span class="hm-circle">2</span></div>
+                        <div class="hm-cell bg-hm-yellow-2 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">13 <span class="hm-circle">3</span></div>
+                        <div class="hm-cell bg-hm-yellow-2 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">14 <span class="hm-circle">1</span></div>
+                    </div>
+
+                    <!-- Row 1: Minor -->
+                    <div class="grid grid-cols-6 gap-2 mb-2 items-center">
+                        <div class="text-xs font-bold text-gray-800">Minor</div>
+                        <div class="hm-cell bg-hm-green-3 p-3 rounded-lg text-center font-bold text-sm">1</div>
+                        <div class="hm-cell bg-hm-green-3 p-3 rounded-lg text-center font-bold text-sm">2</div>
+                        <div class="hm-cell bg-hm-green-2 p-3 rounded-lg text-center font-bold text-sm">3</div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm">7</div>
+                        <div class="hm-cell bg-hm-green-1 p-3 rounded-lg text-center font-bold text-sm flex items-center justify-center">8 <span class="hm-circle">1</span></div>
+                    </div>
+
+                    <div class="text-center text-xs text-gray-500 mt-3 font-medium">
+                        ← Likelihood Axis (Horizontal) | Consequence Axis (Vertical) →
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KEY HIGHLIGHTS SECTION -->
+        <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+            <h3 class="text-base font-bold text-gray-900 mb-1">Key Highlights</h3>
+            <p class="text-xs text-gray-500 mb-4">Last 7 Days</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div class="text-xs font-bold text-gray-500 uppercase">DATE RAISED (LAST 7 DAYS) 🔗</div>
+                    <div class="text-2xl font-extrabold text-gray-900 mt-2">1 <span class="text-xs font-normal text-gray-600">Raised in Last 7 Days</span></div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div class="text-xs font-bold text-gray-500 uppercase">DATE CLOSED (LAST 7 DAYS) 🔗</div>
+                    <div class="text-2xl font-extrabold text-gray-900 mt-2">0 <span class="text-xs font-normal text-gray-600">Closed in Last 7 Days</span></div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div class="text-xs font-bold text-gray-500 uppercase">RISK LAST UPDATED (LAST 7 DAYS) 🔗</div>
+                    <div class="text-2xl font-extrabold text-gray-900 mt-2">0 <span class="text-xs font-normal text-gray-600">Updated in Last 7 Days</span></div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div class="text-xs font-bold text-gray-500 uppercase flex justify-between">
+                        <span>HIGHLIGHT TO / GOVERNANCE</span>
+                        <span class="text-[10px] text-gray-400 font-normal">Click cell to filter</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-xs font-semibold text-gray-800">
+                        <div>Internal Google: <span class="text-blue-600 font-bold">9</span></div>
+                        <div>Team Google: <span class="text-blue-600 font-bold">2</span></div>
+                        <div>PSG: <span class="text-blue-600 font-bold">8</span></div>
+                        <div>IPF: <span class="text-blue-600 font-bold">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- OTHER TAB SECTIONS (TRENDS, DRIVER, ISSUES, LEDGER) -->
+    <section id="content-trends" class="hidden bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">📈 Performance Trends</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Risk Category Distribution</h3>
+                <canvas id="chartCategories" class="max-h-[280px]"></canvas>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Residual vs Inherent Risk Score Reduction</h3>
+                <canvas id="chartScores" class="max-h-[280px]"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="content-driver" class="hidden bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">🌳 CD1 Driver Tree Alignment</h2>
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Select Driver Tree Section:</label>
+        <select id="driverSelect" onchange="renderDriverMeta()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full max-w-md mb-6">
+            <option value="1.10a">1.10a Infrastructure Ready (GDC Enterprise)</option>
+            <option value="1.10b" selected>1.10b Platform Ready (GDC Enterprise E.01)</option>
+            <option value="1.7a">1.7a DevSecOps Core (GCP O & Tenancy)</option>
+            <option value="sched5">Schedule 5 Governance & Contract Requirements</option>
+            <option value="export">Export Controls & ITAR Governance</option>
+        </select>
+
+        <div id="driverBanner" class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg mb-6">
+            <h3 class="font-bold text-blue-900 text-base" id="driverTitle">1.10b Platform Ready (GDC Enterprise E.01)</h3>
+            <p class="text-xs text-gray-700 mt-1"><b>Owner:</b> Tom Trobe / Scott Deacon &nbsp;|&nbsp; <b>Last Updated:</b> 2026-07-29</p>
+            <p class="text-xs font-semibold text-red-600 mt-1"><b>Status:</b> Red 🔴 - Critical build config delays impacting platform readiness.</p>
+        </div>
+    </section>
+
+    <section id="content-issues" class="hidden bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">⚠️ Issue Dashboard & Critical Escalations</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-gray-700">
+                <thead class="bg-gray-100 text-gray-800 uppercase font-bold">
+                    <tr>
+                        <th class="p-3">ID</th>
+                        <th class="p-3">Issue Name</th>
+                        <th class="p-3">Owner</th>
+                        <th class="p-3">Severity</th>
+                        <th class="p-3">Escalation</th>
+                        <th class="p-3">Trend</th>
+                        <th class="p-3">Action Plan</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr>
+                        <td class="p-3 font-bold text-blue-600">I-0001</td>
+                        <td class="p-3 font-semibold">Environment Ready platform config delay (GDC Enterprise E.01)</td>
+                        <td class="p-3">Tom Trobe</td>
+                        <td class="p-3"><span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold">Critical</span></td>
+                        <td class="p-3"><span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded">IPF</span></td>
+                        <td class="p-3 text-red-600 font-bold">Worse ↓</td>
+                        <td class="p-3">Validating schedule impacts with CD1 Gap Closure Plan.</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-bold text-blue-600">I-0002</td>
+                        <td class="p-3 font-semibold">Delayed build of E01 due to product build quality issues</td>
+                        <td class="p-3">Scott Deacon</td>
+                        <td class="p-3"><span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold">Critical</span></td>
+                        <td class="p-3"><span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded">PSG</span></td>
+                        <td class="p-3 text-red-600 font-bold">Worse ↓</td>
+                        <td class="p-3">Drive escalation with Product team.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="content-ledger" class="hidden bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-900">📋 Whole Register Ledger (101 Items)</h2>
+            <button onclick="alert('CSV Exporting...')" class="bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-blue-700">📥 Export CSV</button>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Complete searchable risk & issue register.</p>
+    </section>
+
+    <script>
+        function switchTab(tabId) {
+            ['overview', 'trends', 'driver', 'issues', 'ledger'].forEach(t => {
+                document.getElementById('content-' + t).classList.add('hidden');
+                document.getElementById('tab-' + t).classList.remove('active');
+            });
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            if(tabId === 'trends') renderCharts();
+        }
+
+        function renderCharts() {
+            if(window.trendsChartRendered) return;
+            window.trendsChartRendered = true;
+
+            new Chart(document.getElementById('chartCategories'), {
+                type: 'bar',
+                data: {
+                    labels: ['Cost', 'Scope', 'Schedule', 'Governance Assurance', 'Legal/Contract'],
+                    datasets: [{
+                        label: 'Active Risks',
+                        data: [28, 22, 25, 12, 6],
+                        backgroundColor: '#1a73e8'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            new Chart(document.getElementById('chartScores'), {
+                type: 'bar',
+                data: {
+                    labels: ['R-0001', 'R-0002', 'R-0003', 'R-0004', 'R-0005'],
+                    datasets: [
+                        { label: 'Inherent Score', data: [25, 16, 15, 9, 10], backgroundColor: '#ef5350' },
+                        { label: 'Residual Score', data: [15, 12, 6, 4, 4], backgroundColor: '#66bb6a' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+    </script>
+</body>
+</html>
