@@ -26,3 +26,16 @@
     - **Without Argument (`/fix_bug`)**: Read `.agents/bugs.json`, identify all remaining open/unverified bugs (status not `"Fix Verified"`), sort chronologically by priority (`P0` -> `P1` -> `P2` -> `P3`), and present a recommended sequence of resolution.
 
 - **checkpoint**: When requested with "checkpoint" (or when you say "checkpoint" or "Finish for the day" or "finish for the day"), ensure active branch is `dev` (switch to `dev` if needed), update the subfolder README.md and Resume.md, update active Conductor track status, detect modified customer/demo subfolder(s), stage and commit all relevant modified and untracked files on `dev`, create a subfolder-prefixed tag (`<project>/checkpoint-YYYYMMDD-HHMM`), and push `dev` with tags (`git push origin dev --tags`) to ensure machine portability.
+
+- **Methodical Subfolder Tagging Protocol**:
+  To ensure every customer/demo subfolder (`<subfolder>`) in `~/dev/uk-bh-experiments/*` can be brought back to exact milestone states on the single `dev` branch:
+  1. **Annotated Tags Only**: Always create annotated Git tags with a descriptive message (`git tag -a "<subfolder>/<tag_name>" -m "<descriptive message>"`).
+  2. **Standard Tag Taxonomy**: Use `<subfolder>/<category>-<identifier>` format:
+     - **Session Checkpoint**: `<subfolder>/checkpoint-YYYYMMDD-HHMM` (e.g. `capita/checkpoint-20260806-1400`)
+     - **Track Start**: `<subfolder>/<track_id>-start` (e.g. `capita/auth-feature-start`)
+     - **Phase Complete**: `<subfolder>/<track_id>-phase-<N>` (e.g. `capita/auth-feature-phase-1`)
+     - **Track Complete**: `<subfolder>/<track_id>-complete` (e.g. `capita/auth-feature-complete`)
+     - **Bug Fix Verification**: `<subfolder>/bugfix-<bug_id>` (e.g. `capita/bugfix-BUG-12`)
+     - **Stable Demo Release**: `<subfolder>/demo-v<version>` (e.g. `capita/demo-v1.0`)
+  3. **Automatic Push**: Always push tags along with commits (`git push origin dev --tags`).
+
