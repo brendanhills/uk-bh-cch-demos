@@ -151,7 +151,7 @@ def test_websocket_priming_injection(monkeypatch):
     mock_client.aio.live.connect = mock_connect
     
     # Patch genai.Client
-    monkeypatch.setattr(web_server.genai, "Client", lambda api_key: mock_client)
+    monkeypatch.setattr(web_server.genai, "Client", lambda *args, **kwargs: mock_client)
     
     # Mock load_and_split_channels to avoid file loading issues
     monkeypatch.setattr(web_server, "load_and_split_channels", lambda path: (b"dummy_p", b"dummy_n", 6400))

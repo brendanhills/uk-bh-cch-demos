@@ -147,3 +147,18 @@ def test_run_cli_exists():
     assert run_cli is not None, "run_cli function must be implemented in demo/web_server.py to drive the CLI mode"
 
 
+def test_active_session_custom_file_and_cli_args(monkeypatch):
+    """Verifies that ActiveSession initializes custom_file_path and CLI options from parse_args."""
+    from demo.web_server import ActiveSession
+    
+    test_args = ["web_server.py", "--file", "custom_sample.wav", "--preset", "spanish", "--language", "Spanish", "--language-code", "es"]
+    monkeypatch.setattr("sys.argv", test_args)
+    
+    session = ActiveSession()
+    assert session.custom_file_path == "custom_sample.wav"
+    assert session.preset_key == "spanish"
+    assert session.language == "Spanish"
+    assert session.language_code == "es"
+
+
+

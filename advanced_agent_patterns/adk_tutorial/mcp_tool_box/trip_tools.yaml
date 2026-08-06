@@ -1,0 +1,55 @@
+# trip_tools.yaml
+sources:
+  trip-db-source:
+    kind: sqlite
+    # Path is relative to the mcp-toolbox directory
+    database: ../destinations.db
+
+tools:
+  # Tool 1: Find destinations by their type in a specific city
+  find_destinations_by_type:
+    kind: sqlite-sql
+    source: trip-db-source
+    description: >
+      Search for travel destinations of a specific type (e.g., 'Museum', 'Park', 'Landmark')
+      in a given city.
+    parameters:
+      - name: city
+        type: string
+        description: The city to search in (e.g., 'Paris', 'Rome').
+      - name: type
+        type: string
+        description: The type of destination to find (e.g., 'Museum').
+    statement: SELECT name, type, rating FROM destinations WHERE city = $1 AND type = $2;
+
+  # Tool 2: Find top-rated destinations in a city
+  find_top_rated_in_city:
+    kind: sqlite-sql
+    source: trip-db-source
+    description: Gets the highest-rated destinations in a specific city.
+    parameters:
+      - name: city
+        type: string
+        description: The city to search in.
+    statement: SELECT name, rating, type FROM destinations WHERE city = $1 ORDER BY rating DESC LIMIT 5;
+
+  # Tool 3: Find affordable destinations based on a maximum cost
+  find_affordable_options:
+    kind: sqlite-sql
+    source: trip-db-source
+    description: Find affordable destinations in a city that are below a maximum average cost.
+    parameters:
+      - name: city
+        type: string
+        description: The city to search in.
+      - name: max_cost
+        type: integer
+        description: The maximum average cost for the activity.
+    statement: SELECT name, average_cost, type FROM destinations WHERE city = $1 AND average_cost <= $2 ORDER BY average_cost ASC;
+
+# Group all our new tools into a toolset
+toolsets:
+  trip-planner-tools:
+    - find_destinations_by_type
+    - find_top_rated_in_city
+    - find_affordable_options

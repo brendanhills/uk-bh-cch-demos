@@ -1,0 +1,21 @@
+[project]
+name = "budget-demo"
+version = "0.1.0"
+description = "Australian Budget Analysis Dashboard and Data Extraction Tool"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.30.0",
+    "pdfplumber>=0.10.0",
+    "openpyxl>=3.1.0",
+    "pandas>=2.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "google-genai>=0.1.0",
+    "plotly>=5.18.0",
+    "pyopenssl>=26.3.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "--cov=src --cov-report=term-missing"

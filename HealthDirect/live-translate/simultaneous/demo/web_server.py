@@ -17,7 +17,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 from pydub import AudioSegment
-from typing import Optional
+from google import genai
+from google.genai import types
 
 # Load environment variables
 load_dotenv()
@@ -172,6 +173,99 @@ file_handler = logging.FileHandler("interpreter_session.log", mode="w", encoding
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+def get_genai_client() -> genai.Client:
+    """Returns an initialized google-genai Client using Vertex AI (ADC) or API Key.
+    
+    If USE_VERTEXAI env var is set or GEMINI_API_KEY is omitted/empty, uses Vertex AI mode with ADC.
+    """
+    use_vertex = os.getenv("USE_VERTEXAI", "").lower() in ("1", "true", "yes")
+    api_key = os.getenv("GEMINI_API_KEY")
+    
+    if api_key and not use_vertex:
+        return genai.Client(api_key=api_key)
+    
+    project_id = (
+        os.environ.get("PROJECT_ID") or
+        os.environ.get("GOOGLE_CLOUD_PROJECT") or
+        "uk-bh-experiments-argolis"
+    )
+    location = os.environ.get("LOCATION", "us-central1")
+    return genai.Client(
+        vertexai=True, project=project_id, location=location
+    )
+
+def build_live_configs(client: genai.Client, model_name: str, preset: dict, language: str):
+    """Builds (model_name, config_p_to_n, config_n_to_p) compatible with either Vertex AI or Developer API mode."""
+    is_vertex = getattr(client, "vertexai", False)
+    
+    # Vertex AI mode does not support translation_config or gemini-3.5-live-translate-preview.
+    # Automatically switch to gemini-3.1-flash-live-preview for Vertex AI mode.
+    if is_vertex and ("live-translate" in model_name or not model_name):
+        model_name = "gemini-3.1-flash-live-preview"
+
+    use_system_instruction = is_vertex or (model_name in ["gemini-3.1-flash-live-preview"])
+    lang_code = preset.get("code", "de") if preset else "de"
+
+    if use_system_instruction:
+        patient_gender = preset.get("gender", "male") if preset else "male"
+        patient_voice = "Puck" if patient_gender == "male" else "Kore"
+        nurse_voice = "Kore"
+
+        glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=True)
+        glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=True)
+        sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str_p_to_n, is_flash_live=True)
+        sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str_n_to_p, is_flash_live=True)
+
+        config_p_to_n = types.LiveConnectConfig(
+            response_modalities=[types.Modality.AUDIO],
+            speech_config=types.SpeechConfig(
+                voice_config=types.VoiceConfig(
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=patient_voice)
+                )
+            ),
+            system_instruction=types.Content(
+                parts=[types.Part.from_text(text=sys_inst_p_to_n)]
+            ),
+            input_audio_transcription=types.AudioTranscriptionConfig(),
+            output_audio_transcription=types.AudioTranscriptionConfig(),
+        )
+
+        config_n_to_p = types.LiveConnectConfig(
+            response_modalities=[types.Modality.AUDIO],
+            speech_config=types.SpeechConfig(
+                voice_config=types.VoiceConfig(
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=nurse_voice)
+                )
+            ),
+            system_instruction=types.Content(
+                parts=[types.Part.from_text(text=sys_inst_n_to_p)]
+            ),
+            input_audio_transcription=types.AudioTranscriptionConfig(),
+            output_audio_transcription=types.AudioTranscriptionConfig(),
+        )
+    else:
+        config_p_to_n = types.LiveConnectConfig(
+            response_modalities=[types.Modality.AUDIO],
+            translation_config=types.TranslationConfig(
+                target_language_code="en",
+                echo_target_language=True
+            ),
+            input_audio_transcription=types.AudioTranscriptionConfig(),
+            output_audio_transcription=types.AudioTranscriptionConfig(),
+        )
+
+        config_n_to_p = types.LiveConnectConfig(
+            response_modalities=[types.Modality.AUDIO],
+            translation_config=types.TranslationConfig(
+                target_language_code=lang_code,
+                echo_target_language=True
+            ),
+            input_audio_transcription=types.AudioTranscriptionConfig(),
+            output_audio_transcription=types.AudioTranscriptionConfig(),
+        )
+
+    return model_name, config_p_to_n, config_n_to_p
+
 class ActiveSession:
     """Thread-safe, singleton-style room pairing session coordinator.
 
@@ -186,6 +280,8 @@ class ActiveSession:
         config = load_config()
         self.model_name: str = os.getenv("LIVE_TRANSLATE_MODEL", config.get("model_name", "gemini-3.5-live-translate-preview"))
         self.language: str = "German"
+        self.custom_file_path: Optional[str] = None
+        self.language_code: Optional[str] = None
         self.is_active: bool = False
         self.streaming_task: Optional[asyncio.Task] = None
         self.lock = asyncio.Lock()
@@ -206,6 +302,16 @@ class ActiveSession:
         try:
             cmd_args = parse_args(sys.argv[1:])
             self.enable_prewarming = not cmd_args.no_prewarm
+            if cmd_args.preset:
+                self.preset_key = cmd_args.preset
+            if cmd_args.file:
+                self.custom_file_path = cmd_args.file
+            if cmd_args.model:
+                self.model_name = cmd_args.model
+            if cmd_args.language:
+                self.language = cmd_args.language
+            if cmd_args.language_code:
+                self.language_code = cmd_args.language_code
         except Exception:
             config = load_config()
             self.enable_prewarming = config.get("enable_prewarming", True)
@@ -277,10 +383,13 @@ class ActiveSession:
             self.nurse_ws = None
             logger.info("Nurse disconnected.")
             if self.patient_ws:
-                await self.patient_ws.send_json({
-                    "type": "status",
-                    "status": "waiting_for_nurse"
-                })
+                try:
+                    await self.patient_ws.send_json({
+                        "type": "status",
+                        "status": "waiting_for_nurse"
+                    })
+                except Exception as e:
+                    logger.debug(f"Error notifying patient of nurse disconnect: {e}")
             await self.stop_stream_unsafe()
             await self.cancel_prewarm_unsafe()
 
@@ -290,10 +399,13 @@ class ActiveSession:
             self.patient_ws = None
             logger.info("Patient disconnected.")
             if self.nurse_ws:
-                await self.nurse_ws.send_json({
-                    "type": "status",
-                    "status": "patient_disconnected"
-                })
+                try:
+                    await self.nurse_ws.send_json({
+                        "type": "status",
+                        "status": "patient_disconnected"
+                    })
+                except Exception as e:
+                    logger.debug(f"Error notifying nurse of patient disconnect: {e}")
             await self.stop_stream_unsafe()
             await self.cancel_prewarm_unsafe()
 
@@ -388,45 +500,22 @@ class ActiveSession:
             await self.broadcast_prewarm_status()
             return
 
-        lang_code = preset["code"]
+        try:
+            client = get_genai_client()
+        except Exception as e:
+            logger.error(f"Failed to initialize GenAI client for pre-warming: {e}")
+            self.prewarm_status = "disconnected"
+            await self.broadcast_prewarm_status()
+            return
 
-        config_p_to_n = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            translation_config=types.TranslationConfig(
-                target_language_code="en",
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
+        model_name, config_p_to_n, config_n_to_p = build_live_configs(
+            client, self.model_name, preset, preset.get("language", "German")
         )
-
-        config_n_to_p = types.LiveConnectConfig(
-            response_modalities=[types.Modality.AUDIO],
-            translation_config=types.TranslationConfig(
-                target_language_code=lang_code,
-                echo_target_language=True
-            ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-        )
-
-        api_key = os.getenv("GEMINI_API_KEY")
-        if api_key:
-            client = genai.Client(api_key=api_key)
-        else:
-            project_id = (
-                os.environ.get("PROJECT_ID") or
-                os.environ.get("GOOGLE_CLOUD_PROJECT")
-            )
-            location = os.environ.get("LOCATION", "us-central1")
-            client = genai.Client(
-                vertexai=True, project=project_id, location=location
-            )
 
         try:
             logger.info("Connecting parallel pre-warmed Live sessions to Gemini...")
-            self.prewarmed_ctx_p_to_n = client.aio.live.connect(model=self.model_name, config=config_p_to_n)
-            self.prewarmed_ctx_n_to_p = client.aio.live.connect(model=self.model_name, config=config_n_to_p)
+            self.prewarmed_ctx_p_to_n = client.aio.live.connect(model=model_name, config=config_p_to_n)
+            self.prewarmed_ctx_n_to_p = client.aio.live.connect(model=model_name, config=config_n_to_p)
 
             self.prewarmed_session_p_to_n = await self.prewarmed_ctx_p_to_n.__aenter__()
             self.prewarmed_session_n_to_p = await self.prewarmed_ctx_n_to_p.__aenter__()
@@ -502,18 +591,7 @@ class ActiveSession:
 
     def _get_genai_client(self):
         """Returns an initialized google-genai Client."""
-        api_key = os.getenv("GEMINI_API_KEY")
-        if api_key:
-            return genai.Client(api_key=api_key)
-        else:
-            project_id = (
-                os.environ.get("PROJECT_ID") or
-                os.environ.get("GOOGLE_CLOUD_PROJECT")
-            )
-            location = os.environ.get("LOCATION", "us-central1")
-            return genai.Client(
-                vertexai=True, project=project_id, location=location
-            )
+        return get_genai_client()
 
     def initialize_transcript_file(self, language: str, model_name: str):
         """Initializes the physical transcript file and resets state."""
@@ -731,13 +809,13 @@ class ActiveSession:
         self.is_active = True
         logger.info("Initializing simultaneous streaming session...")
         preset = PRESETS.get(self.preset_key)
-        if not preset:
+        if not preset and not self.custom_file_path:
             logger.error(f"Unknown preset key: {self.preset_key}")
             return
 
-        file_path = preset["file"]
-        lang_code = preset["code"]
-        language = preset["language"]
+        file_path = self.custom_file_path or (preset["file"] if preset else "samples/de_fever_session.wav")
+        lang_code = self.language_code or (preset["code"] if preset else "de")
+        language = self.language or (preset["language"] if preset else "German")
 
         # Initialize the transcript cache and write initial session metadata to file
         self.initialize_transcript_file(language, self.model_name)
@@ -757,79 +835,19 @@ class ActiveSession:
             })
             return
 
-        # Prepare Gemini Configs based on selected model
-        is_flash_live = (self.model_name in ["gemini-3.1-flash-live-preview"])
-        if is_flash_live:
-            patient_gender = preset.get("gender", "male")
-            patient_voice = "Puck" if patient_gender == "male" else "Kore"
-            nurse_voice = "Kore"
+        try:
+            client = get_genai_client()
+        except Exception as e:
+            logger.error(f"Failed to initialize GenAI client: {e}")
+            await self.broadcast_to_both({
+                "type": "error",
+                "message": f"Failed to initialize GenAI client: {str(e)}"
+            })
+            return
 
-            glossary_str_p_to_n = load_and_format_glossary(language, direction="p_to_n", exclude_descriptions=True)
-            glossary_str_n_to_p = load_and_format_glossary(language, direction="n_to_p", exclude_descriptions=True)
-            sys_inst_p_to_n = assemble_system_instructions("p_to_n", language, glossary_str_p_to_n, is_flash_live=True)
-            sys_inst_n_to_p = assemble_system_instructions("n_to_p", language, glossary_str_n_to_p, is_flash_live=True)
-
-            config_p_to_n = types.LiveConnectConfig(
-                response_modalities=[types.Modality.AUDIO],
-                speech_config=types.SpeechConfig(
-                    voice_config=types.VoiceConfig(
-                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=patient_voice)
-                    )
-                ),
-                system_instruction=types.Content(
-                    parts=[types.Part.from_text(text=sys_inst_p_to_n)]
-                ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
-                output_audio_transcription=types.AudioTranscriptionConfig(),
-            )
-
-            config_n_to_p = types.LiveConnectConfig(
-                response_modalities=[types.Modality.AUDIO],
-                speech_config=types.SpeechConfig(
-                    voice_config=types.VoiceConfig(
-                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=nurse_voice)
-                    )
-                ),
-                system_instruction=types.Content(
-                    parts=[types.Part.from_text(text=sys_inst_n_to_p)]
-                ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
-                output_audio_transcription=types.AudioTranscriptionConfig(),
-            )
-        else:
-            # Prepare Gemini Configs (Live Translate Compatibility rule)
-            config_p_to_n = types.LiveConnectConfig(
-                response_modalities=[types.Modality.AUDIO],
-                translation_config=types.TranslationConfig(
-                    target_language_code="en",
-                    echo_target_language=True
-                ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
-                output_audio_transcription=types.AudioTranscriptionConfig(),
-            )
-
-            config_n_to_p = types.LiveConnectConfig(
-                response_modalities=[types.Modality.AUDIO],
-                translation_config=types.TranslationConfig(
-                    target_language_code=lang_code,
-                    echo_target_language=True
-                ),
-                input_audio_transcription=types.AudioTranscriptionConfig(),
-                output_audio_transcription=types.AudioTranscriptionConfig(),
-            )
-
-        api_key = os.getenv("GEMINI_API_KEY")
-        if api_key:
-            client = genai.Client(api_key=api_key)
-        else:
-            project_id = (
-                os.environ.get("PROJECT_ID") or
-                os.environ.get("GOOGLE_CLOUD_PROJECT")
-            )
-            location = os.environ.get("LOCATION", "us-central1")
-            client = genai.Client(
-                vertexai=True, project=project_id, location=location
-            )
+        model_name, config_p_to_n, config_n_to_p = build_live_configs(
+            client, self.model_name, preset, language
+        )
 
         logger.info("Connecting parallel Live Translate sessions to Gemini...")
         try:
@@ -885,10 +903,10 @@ class ActiveSession:
                 # On-demand standard connection creation fallback
                 logger.info("No hot sessions found or pre-warming inactive. Connecting on-demand...")
                 async with client.aio.live.connect(
-                    model=self.model_name, config=config_p_to_n
+                    model=model_name, config=config_p_to_n
                 ) as session_p_to_n, \
                            client.aio.live.connect(
-                    model=self.model_name, config=config_n_to_p
+                    model=model_name, config=config_n_to_p
                 ) as session_n_to_p:
 
                     logger.info("Parallel translation sessions connected.")
@@ -1216,7 +1234,15 @@ def load_and_split_channels(file_path: str, target_sample_rate: int = 16000, chu
     (patient_bytes, nurse_bytes, chunk_size).
     """
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Audio file not found at {file_path}")
+        parent_dir = os.path.dirname(BASE_DIR)
+        alt1 = os.path.join(parent_dir, file_path)
+        alt2 = os.path.join(BASE_DIR, file_path)
+        if os.path.exists(alt1):
+            file_path = alt1
+        elif os.path.exists(alt2):
+            file_path = alt2
+        else:
+            raise FileNotFoundError(f"Audio file not found at {file_path}")
 
     logger.info(f"Loading and processing audio file: {file_path}")
     seg = AudioSegment.from_file(file_path)
@@ -1679,10 +1705,16 @@ async def ws_nurse_endpoint(websocket: WebSocket):
             elif action == "ping":
                 pass
     except WebSocketDisconnect:
-        await session_coordinator.disconnect_nurse()
+        try:
+            await session_coordinator.disconnect_nurse()
+        except Exception:
+            pass
     except Exception as e:
         logger.error(f"Error in ws_nurse_endpoint: {e}")
-        await session_coordinator.disconnect_nurse()
+        try:
+            await session_coordinator.disconnect_nurse()
+        except Exception:
+            pass
 
 @app.websocket("/ws/patient")
 async def ws_patient_endpoint(websocket: WebSocket):
@@ -1694,23 +1726,28 @@ async def ws_patient_endpoint(websocket: WebSocket):
             # Patients are passive in routing controls, but keep connection alive
             await websocket.receive_text()
     except WebSocketDisconnect:
-        await session_coordinator.disconnect_patient()
+        try:
+            await session_coordinator.disconnect_patient()
+        except Exception:
+            pass
     except Exception as e:
         logger.error(f"Error in ws_patient_endpoint: {e}")
-        await session_coordinator.disconnect_patient()
+        try:
+            await session_coordinator.disconnect_patient()
+        except Exception:
+            pass
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     logger.info("Client connected to interpreter WebSocket.")
 
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        await websocket.send_json({"type": "error", "message": "GEMINI_API_KEY is not configured on the backend server."})
+    try:
+        client = get_genai_client()
+    except Exception as e:
+        await websocket.send_json({"type": "error", "message": f"Failed to initialize GenAI client: {str(e)}"})
         await websocket.close()
         return
-
-    client = genai.Client(api_key=api_key)
     active_tasks = []
 
     try:
@@ -2654,12 +2691,11 @@ async def run_cli(args: argparse.Namespace):
     """Runs the bidirectional translation interpreter as a command-line application in the terminal."""
     os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
     
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("❌ Error: GEMINI_API_KEY environment variable is not set. Please add it to your .env file.")
+    try:
+        client = get_genai_client()
+    except Exception as e:
+        print(f"❌ Error initializing GenAI client: {e}")
         sys.exit(1)
-        
-    client = genai.Client(api_key=api_key)
     
     file_path = args.file
     language = args.language or "German"
