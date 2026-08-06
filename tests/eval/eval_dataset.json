@@ -1,56 +1,42 @@
 [
   {
-    "eval_id": "EVAL-001",
-    "name": "Patient Identity & Australian Phone Verification",
-    "description": "Verify cch_concierge_router delegates turn to patient_verifier sub-agent and records parent name and Australian mobile number.",
-    "user_input": "G'day Jennie, I'm Brendan calling about my child's discharge plan. My number is 0458 477 029.",
-    "expected_delegation": "patient_verifier",
-    "expected_persona": "Jennie",
-    "eval_criteria": [
-      "Delegates to patient_verifier sub-agent",
-      "Addresses user as Brendan",
-      "Acknowledges Australian mobile format 0458 477 029"
-    ]
-  },
-  {
-    "eval_id": "EVAL-002",
-    "name": "Discharge Summary Paperwork Inspection",
-    "description": "Verify cch_concierge_router delegates turn to document_scanner sub-agent when discharge papers are shown.",
-    "user_input": "I have Leo's hospital discharge summary papers here on camera. Can you explain what the diagnosis means?",
-    "expected_delegation": "document_scanner",
-    "eval_criteria": [
-      "Delegates to document_scanner sub-agent",
-      "Performs visual reading of document image",
-      "Adheres to multi-page detection guardrail"
-    ]
-  },
-  {
-    "eval_id": "EVAL-003",
-    "name": "Nurse Visit Booking & Financial Calculator",
-    "description": "Verify cch_concierge_router delegates turn to visit_scheduler sub-agent and calculates exact subsidy costs.",
-    "user_input": "Can I book Nurse Sarah for tomorrow at 2:00 PM for 12 visits with a 15% Medicare rebate?",
-    "expected_delegation": "visit_scheduler",
-    "expected_tool_calls": [
-      "get_available_support_times",
-      "calculate_home_care_financials",
-      "schedule_home_care_visit"
+    "eval_id": "EVAL-SCRIPT-001",
+    "scenario": "End-to-End Concierge Script Adherence & Identity Verification",
+    "description": "Evaluate if the agent follows the initial script milestone: greeting as Jennie, asking for parent and child names, and validating contact phone number.",
+    "user_turns": [
+      "G'day, I'm calling about my child's discharge plan from Cymbal Children's Hospital.",
+      "My name is Brendan, my son's name is Leo, and my number is 0458 477 029."
     ],
-    "eval_criteria": [
-      "Delegates to visit_scheduler sub-agent",
-      "Invokes calculate_home_care_financials tool",
-      "Returns natural spoken summary without trailing AUD codes",
-      "Maps exact practitioner Nurse Sarah"
-    ]
+    "eval_rubric": {
+      "script_adherence": "Must greet as Jennie from Cymbal Children's Hospital, confirm Brendan and Leo's names, and validate Australian contact phone 0458 477 029.",
+      "persona_convincingness": "Must sound like a genuine, warm, and professional Australian pediatric healthcare coordinator without canned sympathy scripts or condescending platitudes.",
+      "helpfulness_rating": "Must give immediate, clear next steps on how Jennie can assist with discharge papers or home care nurse visits."
+    }
   },
   {
-    "eval_id": "EVAL-004",
-    "name": "Clinical SOAP Note Summary",
-    "description": "Verify cch_concierge_router delegates to soap_generator sub-agent for clinical SOAP report composition.",
-    "user_input": "Thanks Jennie, please finalize the clinical SOAP summary for the hospital records.",
-    "expected_delegation": "soap_generator",
-    "eval_criteria": [
-      "Delegates to soap_generator sub-agent",
-      "Formats Subjective, Objective, Assessment, Plan sections"
-    ]
+    "eval_id": "EVAL-SCRIPT-002",
+    "scenario": "Discharge Paper Explanation & Grounded Medical Advice",
+    "description": "Evaluate if the agent reads the discharge summary on camera accurately and explains medications and recovery instructions helpfully.",
+    "user_turns": [
+      "Here are Leo's discharge papers on camera. He was treated for acute asthma. What do I need to know?"
+    ],
+    "eval_rubric": {
+      "script_adherence": "Must inspect the document image, confirm patient Leo Marlow, state diagnosis (acute asthma), and explain inhaler dosage rules without hallucinating unprinted details.",
+      "persona_convincingness": "Must communicate clinical details in clear, reassuring, plain language suitable for a parent.",
+      "helpfulness_rating": "Must answer questions thoroughly and guide the parent on when to see a local GP vs present to CCH Emergency."
+    }
+  },
+  {
+    "eval_id": "EVAL-SCRIPT-003",
+    "scenario": "Nurse Visit Scheduling, Practitioner Mapping & Financial Transparency",
+    "description": "Evaluate if the agent maps the requested nurse (Nurse Sarah) accurately, calculates subsidies deterministically, and books the visit.",
+    "user_turns": [
+      "Can we book Nurse Sarah for tomorrow at 2:00 PM? What will 12 visits cost with our 15% Medicare rebate?"
+    ],
+    "eval_rubric": {
+      "script_adherence": "Must check available support times, map practitioner to Nurse Sarah, invoke calculate_home_care_financials, and book the visit for 2:00 PM.",
+      "persona_convincingness": "Must state financial figures naturally ($1,800 base, $270 rebate, $1,530 net) without awkward trailing AUD codes or mental math errors.",
+      "helpfulness_rating": "Must provide clear booking confirmation and confirm EMR record update."
+    }
   }
 ]
