@@ -39,21 +39,36 @@ Checkpoints, track starts, phase completions, and track finishes automatically c
 
 Because all projects share the single `dev` branch, **repository-wide `git reset --hard` is strictly prohibited**. 
 
-If something goes wrong in a specific project subfolder, bring only that project subfolder back to a former state without affecting any other project:
+If something goes wrong in a specific project subfolder, you can restore **only that subfolder** back to a former tag or commit SHA without affecting any other project:
 
-### Manual Path-Scoped Restore
+---
+
+### Option A: Manual Terminal Commands (Without Conductor)
+
+#### Step 1: Find the Tag (or Commit SHA)
 ```bash
-# 1. Restore the project subfolder to a previous tag or commit SHA
-git restore --source=<tag_or_sha> -- <subfolder_path>
+# List all tags for your specific subfolder:
+git tag -l "<subfolder>/*" --sort=-creatordate
+```
+> 💡 *If no tag was created, you can use `git log --oneline -- <subfolder>` to find any former commit SHA instead!*
 
-# 2. Stage and commit the restored state on dev
+#### Step 2: Restore the Subfolder
+```bash
+git restore --source=<tag_or_sha> -- <subfolder_path>
+```
+*Example:* `git restore --source=capita/checkpoint-20260806-1400 -- capita`
+
+#### Step 3: Stage, Commit, and Push
+```bash
 git add <subfolder_path>
 git commit -m "revert(<subfolder_path>): restore state to <tag_or_sha>"
 git push origin dev
 ```
 
-### Automated Reverts via Conductor
-Run `/conductor:revert` inside the project. Conductor will present path-scoped restore/revert options targeted specifically to that subfolder.
+---
+
+### Option B: Automated Reverts via Conductor
+Run `/conductor:revert` inside the project chat. Conductor will present an interactive menu of recent tags and commit SHAs for `<subfolder_path>` and execute the path-scoped restore automatically.
 
 ---
 
