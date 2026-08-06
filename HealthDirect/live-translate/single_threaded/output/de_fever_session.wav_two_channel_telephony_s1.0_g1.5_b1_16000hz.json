@@ -1,0 +1,34 @@
+[
+  {
+    "start_sec": 5.8,
+    "end_sec": 14.0,
+    "speaker": 2,
+    "text": "Hello. Thank you for calling healthdirect. I am sorry to hear you are feeling unwell. Do you have any next stiffness or sensitivity to Bright Light?",
+    "timestamp": "07:05:15.2",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 21.8,
+    "end_sec": 34.2,
+    "speaker": 2,
+    "text": "I understand light sensitivity can sometimes indicate a more serious condition. I recommend resting in a dark room and checking your temperature. If your fever goes above 39\u00b0, please visit the nearest clinic",
+    "timestamp": "07:05:31.2",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 38.9,
+    "end_sec": 43.2,
+    "speaker": 2,
+    "text": "You are very welcome. Take care and please call us back, if your symptoms worsen",
+    "timestamp": "07:05:48.3",
+    "event_type": "transcript"
+  },
+  {
+    "start_sec": 0.0,
+    "end_sec": 1.9,
+    "speaker": 1,
+    "text": "For.",
+    "timestamp": "07:05:09.4",
+    "event_type": "transcript"
+  }
+]

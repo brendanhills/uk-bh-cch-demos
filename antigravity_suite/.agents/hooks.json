@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "PreInvocation": [
+      {
+        "command": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/custom_harness/.agents/hooks/check_prompt_heuristics.py"
+      }
+    ]
+  }
+}

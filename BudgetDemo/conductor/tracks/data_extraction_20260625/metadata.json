@@ -1,0 +1,8 @@
+{
+  "track_id": "data_extraction_20260625",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-06-25T12:31:00Z",
+  "updated_at": "2026-06-25T12:31:00Z",
+  "description": "Implement core data extraction and parsing for budget PDFs and spreadsheets"
+}

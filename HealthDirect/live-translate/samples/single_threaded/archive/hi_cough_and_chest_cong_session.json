@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "language": "Hindi",
+    "code": "hi-IN",
+    "topic": "Cough and chest congestion",
+    "caller_gender": "male",
+    "caller_emotion": "anxious",
+    "nurse_gender": "female",
+    "preset_key": "hindi_cough"
+  },
+  "turns": [
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "HealthDirect, thank you for calling. My name is Nurse Sarah, how can I help you today?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 1000
+    },
+    {
+      "speaker": "caller",
+      "language": "hi-IN",
+      "text": "(trembling voice) नमस्ते नर्स... मुझे... मुझे बहुत डर लग रहा है। मेरी छाती में बहुत जकड़न है... और... और मुझे सांस लेने में भी तकलीफ हो रही है। *nervously* क्या... क्या यह कुछ गंभीर है?",
+      "english_translation": "(trembling voice) Hello Nurse... I... I am very scared. I have a lot of chest congestion... and... and I am also having trouble breathing. *nervously* Is... is it something serious?",
+      "original_target_lang": "(trembling voice) नमस्ते नर्स... मुझे... मुझे बहुत डर लग रहा है। मेरी छाती में बहुत जकड़न है... और... और मुझे सांस लेने में भी तकलीफ हो रही है। *nervously* क्या... क्या यह कुछ गंभीर है?",
+      "start_ms": 7860
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "I understand you're feeling anxious, Mr Sharma, but please try to take a slow, deep breath. I'm here to help you. Along with the chest congestion, do you have a persistent cough, or perhaps a fever? And are you experiencing any sharp chest pain when you breathe in?",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 21600
+    },
+    {
+      "speaker": "caller",
+      "language": "hi-IN",
+      "text": "*deep breath* हाँ... हाँ, मुझे बहुत तेज़ सूखी खांसी है... और... और मुझे हल्का बुखार भी महसूस हो रहा है। *nervously* लेकिन... लेकिन कोई तेज़ दर्द नहीं है, बस... बस छाती में भारीपन है। क्या मुझे... क्या मुझे अस्पताल जाना चाहिए?",
+      "english_translation": "*deep breath* Yes... yes, I have a very bad dry cough... and... and I am also feeling a mild fever. *nervously* But... but there is no sharp pain, just... just heaviness in my chest. Should I... should I go to the hospital?",
+      "original_target_lang": "*deep breath* हाँ... हाँ, मुझे बहुत तेज़ सूखी खांसी है... और... और मुझे हल्का बुखार भी महसूस हो रहा है। *nervously* लेकिन... लेकिन कोई तेज़ दर्द नहीं है, बस... बस छाती में भारीपन है। क्या मुझे... क्या मुझे अस्पताल जाना चाहिए?",
+      "start_ms": 41700
+    },
+    {
+      "speaker": "nurse",
+      "language": "en-AU",
+      "text": "Thank you for explaining that. Since there's no sharp chest pain, you likely don't need the Emergency Department right now. However, because of the chest congestion and breathing difficulty, you should see a GP today. For the fever, you can take some paracetamol from the chemist. If your breathing gets worse, please call triple zero immediately.",
+      "english_translation": "",
+      "original_target_lang": "",
+      "start_ms": 59280
+    },
+    {
+      "speaker": "caller",
+      "language": "hi-IN",
+      "text": "(trembling voice) ठीक है... ठीक है नर्स। मैं... मैं तुरंत डॉक्टर से अपॉइंटमेंट लेता हूँ। और... और केमिस्ट से पैरासिटामोल भी मँगवाता हूँ। *nervously* बहुत-बहुत धन्यवाद... आपकी मदद के लिए।",
+      "english_translation": "(trembling voice) Okay... okay Nurse. I... I will book a doctor's appointment immediately. And... and I will also get some paracetamol from the chemist. *nervously* Thank you so much... for your help.",
+      "original_target_lang": "(trembling voice) ठीक है... ठीक है नर्स। मैं... मैं तुरंत डॉक्टर से अपॉइंटमेंट लेता हूँ। और... और केमिस्ट से पैरासिटामोल भी मँगवाता हूँ। *nervously* बहुत-बहुत धन्यवाद... आपकी मदद के लिए।",
+      "start_ms": 83820
+    }
+  ],
+  "medical_terms": [
+    {
+      "english": "chest congestion",
+      "translation": "छाती में जकड़न",
+      "description": "A feeling of tightness or heaviness in the chest, often caused by an accumulation of fluid or mucus in the lungs or airways."
+    },
+    {
+      "english": "dry cough",
+      "translation": "सूखी खांसी",
+      "description": "A cough that does not produce phlegm or mucus, often irritating the throat."
+    },
+    {
+      "english": "paracetamol",
+      "translation": "पैरासिटामोल",
+      "description": "A common over-the-counter medication used to treat pain and reduce fever."
+    }
+  ]
+}

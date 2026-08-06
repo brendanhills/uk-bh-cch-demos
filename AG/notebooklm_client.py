@@ -39,37 +39,58 @@ class NotebookLMClient:
             self._log_info(f"Initialized NotebookLMClient in [ {self.mode.upper()} ] mode.")
             self._log_info(f"GCP Project: {self.project_number} | Location: {self.location} | Endpoint Region: {self.endpoint_location}")
 
-    def _log_info(self, msg: str):
-        print(f"\033[94m[NotebookLM SDK] {msg}\033[0m")
+    @staticmethod
+    def _sanitize_log(text: str) -> str:
+        """Sanitizes sensitive information from log output for CodeQL compliance."""
+        if not text:
+            return ""
+        import re
+        sanitized = re.sub(r'Bearer\s+[A-Za-z0-9._\-]+', 'Bearer ***[REDACTED]***', str(text))
+        sanitized = re.sub(r'ya29\.[A-Za-z0-9._\-]+', 'ya29.***[REDACTED]***', sanitized)
+        return sanitized
 
-    def _log_success(self, msg: str):
-        print(f"\033[92m[SDK SUCCESS] {msg}\033[0m")
+    @staticmethod
+    def _log_info(msg: str):
+        safe_msg = NotebookLMClient._sanitize_log(msg)
+        print(f"\033[94m[NotebookLM SDK] {safe_msg}\033[0m")
 
-    def _log_http(self, method: str, url: str, headers: Dict[str, str], payload: Any = None, curl_cmd: str = "", response_status: int = 200, response_body: Any = None):
+    @staticmethod
+    def _log_success(msg: str):
+        safe_msg = NotebookLMClient._sanitize_log(msg)
+        print(f"\033[92m[SDK SUCCESS] {safe_msg}\033[0m")
+
+    @staticmethod
+    def _log_http(method: str, url: str, headers: Dict[str, str], payload: Any = None, curl_cmd: str = "", response_status: int = 200, response_body: Any = None):
         """Pretty-prints details of the HTTP exchange for educational purposes."""
+        safe_url = NotebookLMClient._sanitize_log(url)
         print("\n" + "="*80)
-        print(f"\033[95mHTTP REQUEST: {method} {url}\033[0m")
+        print(f"\033[95mHTTP REQUEST: {method} {safe_url}\033[0m")
         print("="*80)
         print("\033[93mHEADERS:\033[0m")
         for k, v in headers.items():
-            # Mask authorization token for privacy
-            val = f"Bearer ya" + f"29.***[truncated]***" if k.lower() == "authorization" else v
-            print(f"  {k}: {val}")
+            if k.lower() in ("authorization", "token", "secret", "password", "api-key"):
+                print(f"  {k}: ***[REDACTED]***")
+            else:
+                safe_val = NotebookLMClient._sanitize_log(str(v))
+                print(f"  {k}: {safe_val}")
         
         if payload is not None:
             print("\033[93mBODY PAYLOAD:\033[0m")
-            print(json.dumps(payload, indent=2))
+            safe_payload = NotebookLMClient._sanitize_log(json.dumps(payload, indent=2))
+            print(safe_payload)
         
         if curl_cmd:
             print("\033[96mEQUIVALENT CURL COMMAND:\033[0m")
-            print(f"  {curl_cmd}")
+            safe_curl = NotebookLMClient._sanitize_log(curl_cmd)
+            print(f"  {safe_curl}")
             
         print("="*80)
         print(f"\033[95mHTTP RESPONSE STATUS: {response_status}\033[0m")
         print("="*80)
         if response_body is not None:
             print("\033[93mRESPONSE BODY:\033[0m")
-            print(json.dumps(response_body, indent=2))
+            safe_body = NotebookLMClient._sanitize_log(json.dumps(response_body, indent=2))
+            print(safe_body)
         print("="*80 + "\n")
 
     def _get_auth_token(self, token_override: Optional[str] = None) -> str:
@@ -172,7 +193,11 @@ class NotebookLMClient:
         if custom_headers:
             headers.update(custom_headers)
 
-        curl_cmd = self._generate_curl(method, url, headers, json_payload, is_upload, file_path)
+        # Create a safe copy of headers for curl generation to satisfy CodeQL static taint analysis
+        curl_headers = headers.copy()
+        if "Authorization" in curl_headers:
+            curl_headers["Authorization"] = "Bearer ***[REDACTED]***"
+        curl_cmd = self._generate_curl(method, url, curl_headers, json_payload, is_upload, file_path)
 
         try:
             if is_upload:

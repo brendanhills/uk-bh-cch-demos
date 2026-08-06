@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "description": "The glossary is empty and no terms are highlighted in the simultaneous simulator client.",
+    "date_reported": "2026-07-10T10:48:48+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Critical",
+    "priority": "P0"
+  },
+  {
+    "id": 2,
+    "description": "The transcripts need to mark the turns - perhaps by separate speech bubbles.",
+    "date_reported": "2026-07-10T10:50:12+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P1"
+  },
+  {
+    "id": 3,
+    "description": "The audio panning should indicate the languages (e.g. German --- English).",
+    "date_reported": "2026-07-10T10:51:01+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P2"
+  },
+  {
+    "id": 4,
+    "description": "The 'demo focus' button seemed to turn off all audio. Perhaps that's because I am using a single split tab?",
+    "date_reported": "2026-07-10T10:51:46+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Low",
+    "priority": "P3"
+  },
+  {
+    "id": 5,
+    "description": "We need a 'reset' button to clear the previous demo and start a new one.",
+    "date_reported": "2026-07-10T10:53:15+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P2"
+  },
+  {
+    "id": 6,
+    "description": "Redundant/incorrect translation feeds: Clinician window does not need 'Clinician (Translated)' bubbles, and Patient window does not need 'Patient (Translated)' bubbles.",
+    "date_reported": "2026-07-10T11:29:01+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P0"
+  },
+  {
+    "id": 7,
+    "description": "Offset speech bubbles on the nurse view so that the conversation flow is visually clearer.",
+    "date_reported": "2026-07-10T11:30:19+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P1"
+  },
+  {
+    "id": 8,
+    "description": "In the nurse window we seem to have only 1 speech bubble per speaker, not one per utterance.",
+    "date_reported": "2026-07-10T11:45:14+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Verified",
+    "impact": "High",
+    "priority": "P0"
+  },
+  {
+    "id": 9,
+    "description": "The Vietnamese sample doesn't play well - there are numerous long gaps.",
+    "date_reported": "2026-07-10T17:08:55+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P1"
+  },
+  {
+    "id": 10,
+    "description": "The arabic sample is missing",
+    "date_reported": "2026-07-10T17:09:04+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P1"
+  },
+  {
+    "id": 11,
+    "description": "It still breaks at random places in the audio",
+    "date_reported": "2026-07-14T13:17:52+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "High",
+    "priority": "P0"
+  },
+  {
+    "id": 12,
+    "description": "all the logging has disaapeared form stdoiut",
+    "date_reported": "2026-07-14T13:19:03+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P1"
+  },
+  {
+    "id": 13,
+    "description": "on_event is deprecated, use lifespan event handlers instead.",
+    "date_reported": "2026-07-14T13:46:34+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Investigated",
+    "impact": "Low",
+    "priority": "P3"
+  },
+  {
+    "id": 14,
+    "description": "the Gemini 3.1 Flash API prompts are not working correctly. IN the arabic sample Gemini answers the patient instead of translating.",
+    "date_reported": "2026-07-14T13:49:42+10:00",
+    "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/HealthDirect-simultaneous",
+    "status": "Fix Implemented",
+    "impact": "Critical",
+    "priority": "P0"
+  },
+  {
+    "id": 15,
+    "description": "enable the user to set the web_server port",
+    "date_reported": "2026-08-04T19:03:52+10:00",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/HealthDirect/live-translate/simultaneous",
+    "status": "Reported",
+    "impact": "",
+    "priority": ""
+  }
+]
