@@ -599,7 +599,7 @@
     "risk": "",
     "phase": "",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
-    "raw_report": "I want a better way to initiate the conversation in a demo - rather than saying hi. In a real scenario the call would start with Jennie picking up the phone and greeting the caller"
+    "raw_report": "I want a better way to initiate the conversation in a demo - rather than saying hi. In a real scenario the call would start with Jennie greeting the caller"
   },
   {
     "id": "BUG-52",
@@ -614,5 +614,19 @@
     "phase": "Phase 1",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "the agent asked for my name and number then opened the camera"
+  },
+  {
+    "id": "BUG-53",
+    "type": "FR",
+    "title": "Display active sub-agent name or executed tool name in UI Event Console",
+    "description": "Enhance the Event Console in the UI (app/static/js/app.js) to explicitly display the active sub-agent name (e.g. patient_verifier, visit_scheduler, document_scanner) and executed function tool names (e.g. record_patient_identity, validate_phone_number, calculate_home_care_financials) whenever a downstream event or tool execution occurs.",
+    "date": "2026-08-06",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "output which subagent or tool is being called in the Event Console."
   }
 ]
