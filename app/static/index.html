@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cymbal Children's Hospital - Your 24/7 assistant</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/app.js" type="module"></script>
+  </head>
+ 
+  <body>
+    <header>
+      <h1>Cymbal Children's Hospital - Your 24/7 assistant</h1>
+      <div class="subtitle">Real-time bidirectional streaming with Google AI</div>
+      <div class="header-options">
+        <label class="header-checkbox" title="Enable model to proactively respond without explicit prompts (Native audio models only)">
+          <input type="checkbox" id="enableProactivity">
+          <span>Proactivity</span>
+        </label>
+        <label class="header-checkbox" title="Enable model to detect and adapt to emotional cues (Native audio models only)">
+          <input type="checkbox" id="enableAffectiveDialog">
+          <span>Affective Dialog</span>
+        </label>
+        <button type="button" id="resetSessionBtn" class="reset-session-btn" style="background: #e8f0fe; color: #1a73e8; border: 1px solid #1a73e8; padding: 4px 12px; border-radius: 16px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 8px;">🔄 New Session</button>
+      </div>
+      <div class="connection-status">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <div class="container">
+        <div id="messages"></div>
+
+        <!-- Inline Viewfinder Container (Privacy-First Document Scanner) -->
+        <div id="viewfinderContainer" class="viewfinder-container viewfinder-portrait" style="display: none;">
+          <div class="viewfinder-header">
+            <span class="viewfinder-title">📷 Document Scanner</span>
+            <div class="viewfinder-header-controls">
+              <button type="button" id="orientationToggleBtn" class="window-control-btn" title="Toggle Portrait / Landscape Box">🗖</button>
+              <button type="button" id="closeCameraBtn" class="window-control-btn close-btn" title="Close Camera">✕</button>
+            </div>
+          </div>
+          <div class="viewfinder-preview-wrapper">
+            <video id="viewfinderVideo" autoplay playsinline muted></video>
+            <canvas id="viewfinderCanvas" style="display: none;"></canvas>
+            <div id="scanOverlay" class="scan-overlay">
+              <div id="scanBox" class="scan-box portrait-box">
+                <span id="scanGuideLabel" class="scan-guide-label">Align document inside box</span>
+              </div>
+            </div>
+          </div>
+          <div class="viewfinder-toolbar">
+            <div class="focus-status-banner" id="focusStatusBanner">
+              <span class="focus-indicator-dot"></span>
+              <span id="focusStatusText">Align document inside box and press Space bar to snap</span>
+            </div>
+            <div class="shutter-wrapper">
+              <button type="button" id="pixelShutterBtn" class="pixel-shutter-btn" title="Snap & Send Medical Document">
+                <span class="pixel-shutter-inner"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <form id="messageForm">
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="message"
+                name="message"
+                placeholder="Type your message here..."
+                autocomplete="off"
+              />
+              <button type="submit" id="sendButton" disabled>Send</button>
+              <button type="button" id="startAudioButton">Start Audio</button>
+              <button type="button" id="stopAudioButton" style="display: none; background: #dc3545; color: white;">🛑 Stop Mic</button>
+              <button type="button" id="cameraButton">📷 Camera</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="console-panel">
+        <div class="console-header">
+          <h2>Event Console</h2>
+          <div class="console-controls">
+            <label class="console-checkbox">
+              <input type="checkbox" id="showAudioEvents">
+              <span>Show audio</span>
+            </label>
+            <button id="clearConsole" class="console-clear-btn">Clear</button>
+          </div>
+        </div>
+        <div id="consoleContent" class="console-content"></div>
+      </div>
+    </div>
+  </body>
+</html>
