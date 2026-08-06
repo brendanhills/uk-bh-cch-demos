@@ -1,37 +1,24 @@
-# Working Session Handoff: 2026-08-05 18:57 AEST
+# Working Session Handoff: 2026-08-06 17:39 AEST
 
 ## 📝 Session Summary
-- **What we did**:
-  1. **#BUG-42 Document Scanner Simplification & Reliability**:
-     - Removed brittle client-side JS edge/pixel frame sampling loop (`checkDocumentFocus`).
-     - Added hands-free **Space bar / Enter key** photo capture shortcut when the document scanner is active.
-     - Added automatic camera hardware power-off (`track.stop()`) immediately upon photo capture for privacy.
-     - Styled Chrome window control header titlebar (`#2b2b30`) with `📷 Document Scanner` title, `🗖` orientation toggle, and top-right `✕` close button.
-     - Expanded dynamic document badge title mappings for `Discharge Medication Plan`, `Home Care Recovery Plan & Emergency Red Flags`, and `Pending & Follow-Up Needs`.
-  2. **#BUG-48 Auto-Camera Viewfinder Trigger**:
-     - Wired `checkDocumentRequestPhrases()` into agent speech/text chat message bubbles (`createMessageBubble` & `updateMessageBubble`).
-     - Whenever Jennie requests discharge papers or medical documents in chat, the camera viewfinder opens automatically.
-  3. **#BUG-47 Branded CCH Favicon**:
-     - Created `app/static/favicon.ico` and `app/static/favicon.svg` featuring Cymbal Children's Hospital teal badge, white medical cross, and blue accent center.
-     - Served via `@app.get("/favicon.ico")` in `app/main.py`.
-  4. **Conductor Track Initialization**:
-     - Initialized and committed Conductor track [`document_scanner_and_auto_trigger_20260805`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/conductor/tracks/document_scanner_and_auto_trigger_20260805/index.md) for the future ADK tool-driven upgrade.
-  5. **Installed Agent Skill**:
-     - Installed `google-cloud-solution-agentic-ai-data-science-workflow` to `~/.agents/skills/`.
-
-- **Workspace State**:
-  - Active Branch: `PSN`
-  - All verified changes committed cleanly to git (`[PSN b40d1c9]`).
+- **Single-Agent Persona & Answering Script**: Enforced strict single-agent persona ("Jennie") across all 4 sub-agents (`patient_verifier`, `document_scanner`, `visit_scheduler`, `soap_generator`) and configured mandatory warm hospital opening answering script (*"Hello, thank you for calling Cymbal Children's Hospital. My name is Jennie. How can I help you today?"*).
+- **ADK Short-Term Session Memory**: Refactored `record_patient_identity` into global module [`app/cch_agent/tools/identity.py`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/app/cch_agent/tools/identity.py). Persisted `caller_name`, `patient_name` ("Leo"), `phone_number`, and `phone_country` into ADK `tool_context.state`. Configured `patient_verifier` to check session memory and never ask for the child's name again if already present!
+- **Global Phone Number Validation & Verbal Confirmation**: Updated [`validate_phone_number`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/app/cch_agent/tools/phone_validator.py) with dynamic global country detection map (+44 UK, +1 US, +64 NZ, +65 SG, +91 IN). Fixed Australian 02/04 landline verification loops and instructed `patient_verifier` to verbally confirm country name with caller.
+- **Camera Vision Guardrail**: Added strict guardrail across [`agent.py`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/app/cch_agent/agent.py) and [`document_scanner.py`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/app/cch_agent/sub_agents/document_scanner.py) preventing the model from hallucinating seeing documents before a camera image is captured.
+- **Bug & FR Registry Updates**: Recorded and triaged bugs `#BUG-49` through `#BUG-53` in [`.agents/bugs.json`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/.agents/bugs.json).
+- **Code Explanation Artifact**: Created [`explanation.md`](file:///home/brendanhills/.gemini/antigravity/brain/5353fe9a-19e5-44fe-8226-c5a216a9c8a2/explanation.md) detailing exact ADK session state memory sharing across agents and tools with exact line references to `app/main.py`.
 
 ## 📌 Current Context & Progress
-- **Active Track**: [`adk2_multi_agent_workflow_20260806`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/conductor/tracks/adk2_multi_agent_workflow_20260806/index.md)
-- **Last Active Task**: Initialized Conductor track for ADK 2.0 Multi-Agent Concierge Workflow (#BUG-23, #BUG-25, #BUG-43, #BUG-45, #BUG-46).
+- **Active Branch**: `dev`
+- **Active Track**: [ADK 2.0 Multi-Agent Concierge Workflow (`adk2_multi_agent_workflow_20260806`)](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/conductor/tracks/adk2_multi_agent_workflow_20260806/index.md)
+- **Last Active Task**: Phase 1 Sub-Agent Architecture & Routing complete.
 
 ## 🚦 Remaining Tasks & Blockers
-- **`BUG-46`**: Recognize & Validate Australian Phone Number Formats (`P1`, `Phase 2`).
-- **`BUG-23`**: Clinical SOAP Note Export Modal & UI Clean-Up (`Phase 1`).
-- **`BUG-48 Phase 1 (Future Track)`**: Transition auto-camera trigger to explicit ADK tool `request_document_scan()` in `agent.py`.
+- **Phase 2**: Document Snapshot Attachment Persistence (`#BUG-45`).
+- **Phase 3**: Backend Clinical SOAP Note Endpoint (`#BUG-23`) & Google Search Grounding (`#BUG-25`).
+- **Phase 4**: Frontend Clinical SOAP Export Modal & UI Clean-Up (`#BUG-23`).
+- **Proactive Opening Call Greeting Trigger (`#BUG-51`)**: Initiate greeting automatically upon connection.
 
 ## 🚀 Immediate Next Steps
-1. Run `./run_demo.sh` to start the app on `http://127.0.0.1:8000`.
-2. Execute `conductor-implement` on track `document_scanner_and_auto_trigger_20260805` or begin `BUG-46` (Australian phone numbers).
+1. Execute Phase 2: Save captured document JPEG attachments to `app/logs/attachments/<session_id>_<timestamp>.jpg` and log file paths in `call_transcripts.log` (`#BUG-45`).
+2. Execute Phase 3: Implement `@app.post("/api/session/soap_note")` in `app/main.py` using `soap_generator` sub-agent (`#BUG-23`).
