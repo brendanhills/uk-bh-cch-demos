@@ -1,0 +1,273 @@
+{
+  "_description": "PURPOSE & USAGE: This firebase-blueprint.json serves as an Intermediate Representation (IR) defining the static data schema blueprint for the Risk Governance & Executive Dashboard. It models the core entities (RiskTicket and IssueTicket) and their Firestore collection path mappings. It is used as a static schema contract for data modeling, validation, and generating hardened Firestore Security Rules.",
+  "entities": {
+    "RiskTicket": {
+      "title": "Risk Ticket",
+      "description": "A risk governance ticket describing a specific risk threat, its likelihood/consequence metrics (inherent and residual), driver tree reference, treatment plan, and current status.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user-facing identifier, e.g., RSK-001"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Active", "Closed", "Transferred", "Retired", "Issue Eventuated"]
+        },
+        "riskOwner": {
+          "type": "string"
+        },
+        "bundle": {
+          "type": "string"
+        },
+        "driverTreeRef": {
+          "type": "string",
+          "description": "Reference to the CD1 Driver Tree node, e.g. 1.1, 2.1"
+        },
+        "riskName": {
+          "type": "string"
+        },
+        "riskDescription": {
+          "type": "string",
+          "description": "Formatted as IF [Event], THEN [Consequence]"
+        },
+        "causeDescription": {
+          "type": "string"
+        },
+        "causeCategory": {
+          "type": "string",
+          "enum": ["Schedule", "Governance", "Resourcing", "Environment", "Technical", "Financial", "Other"]
+        },
+        "consequenceDescription": {
+          "type": "string"
+        },
+        "trend": {
+          "type": "string",
+          "enum": ["Increasing", "Stable", "Decreasing"]
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["Immediate", "Urgent", "Prompt", "Not Urgent"]
+        },
+        "governanceLevel": {
+          "type": "string",
+          "enum": ["Google Only", "Team Google", "Defence DPN"]
+        },
+        "inherentLikelihood": {
+          "type": "number"
+        },
+        "inherentConsequence": {
+          "type": "number"
+        },
+        "inherentRiskScore": {
+          "type": "number"
+        },
+        "inherentRiskLevel": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High", "Critical", "Very High", "Very Low", "-"]
+        },
+        "treatmentOwner": {
+          "type": "string"
+        },
+        "treatmentPlan": {
+          "type": "string"
+        },
+        "targetDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "residualLikelihood": {
+          "type": "number"
+        },
+        "residualConsequence": {
+          "type": "number"
+        },
+        "residualRiskScore": {
+          "type": "number"
+        },
+        "residualRiskLevel": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High", "Critical", "Very High", "Very Low", "-"]
+        },
+        "dateRaised": {
+          "type": "string",
+          "format": "date"
+        },
+        "dateClosed": {
+          "type": "string",
+          "format": "date"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Associated Firebase user UID"
+        },
+        "relatedIssueId": {
+          "type": "string"
+        },
+        "riskLastUpdated": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "protectedIssueRisk": {
+          "type": "string"
+        },
+        "dpeRefNumber": {
+          "type": "string"
+        },
+        "timelines": {
+          "type": "string"
+        },
+        "signOffRequirement": {
+          "type": "string"
+        },
+        "executiveStatus": {
+          "type": "string"
+        },
+        "nextMitigationDueDate": {
+          "type": "string"
+        },
+        "mitigationStatus": {
+          "type": "string"
+        },
+        "strategy": {
+          "type": "string"
+        },
+        "whoRaised": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "riskOwner",
+        "bundle",
+        "riskName",
+        "riskDescription",
+        "causeCategory",
+        "inherentLikelihood",
+        "inherentConsequence",
+        "inherentRiskScore",
+        "inherentRiskLevel",
+        "residualLikelihood",
+        "residualConsequence",
+        "residualRiskScore",
+        "residualRiskLevel",
+        "dateRaised"
+      ]
+    },
+    "IssueTicket": {
+      "title": "Issue Ticket",
+      "description": "An active or historical issue ticket tracking real events, severity rating, escalation details, driver tree references, next action owner, and step-by-step mitigation action plans.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user-facing identifier, e.g., ISS-001"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Open", "In Progress", "Escalated", "Closed"]
+        },
+        "relatedRiskId": {
+          "type": "string"
+        },
+        "issueOwner": {
+          "type": "string"
+        },
+        "bundle": {
+          "type": "string"
+        },
+        "driverTreeRef": {
+          "type": "string",
+          "description": "Reference to the CD1 Driver Tree node, e.g. 1.1, 2.1"
+        },
+        "issueName": {
+          "type": "string"
+        },
+        "issueDescription": {
+          "type": "string"
+        },
+        "causeDescription": {
+          "type": "string"
+        },
+        "impactCategory": {
+          "type": "string"
+        },
+        "consequence": {
+          "type": "string"
+        },
+        "trend": {
+          "type": "string",
+          "enum": ["Increasing", "Stable", "Decreasing"]
+        },
+        "priorityRating": {
+          "type": "string",
+          "enum": ["Immediate", "Urgent", "Prompt", "Not Urgent"]
+        },
+        "escalateTo": {
+          "type": "string"
+        },
+        "severityRating": {
+          "type": "string",
+          "enum": ["Critical", "High", "Medium", "Low"]
+        },
+        "actionPlan": {
+          "type": "string",
+          "description": "Action Plan detailing What, When, Who"
+        },
+        "nextActionOwner": {
+          "type": "string",
+          "description": "Person responsible for the next action step"
+        },
+        "dateRaised": {
+          "type": "string",
+          "format": "date"
+        },
+        "raisedBy": {
+          "type": "string"
+        },
+        "dateClosed": {
+          "type": "string",
+          "format": "date"
+        },
+        "lastUpdated": {
+          "type": "string"
+        },
+        "protectedIssueRisk": {
+          "type": "string"
+        },
+        "dpeRefNumber": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Associated Firebase user UID"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "issueOwner",
+        "bundle",
+        "issueName",
+        "issueDescription",
+        "severityRating",
+        "priorityRating",
+        "actionPlan",
+        "dateRaised"
+      ]
+    }
+  },
+  "firestore": {
+    "tickets/{ticketId}": {
+      "schema": "RiskTicket",
+      "description": "Collection of all risk tickets registered in the Risk Governance Dashboard."
+    },
+    "issues/{issueId}": {
+      "schema": "IssueTicket",
+      "description": "Collection of all issue tickets registered in the companion Issue Register."
+    }
+  }
+}

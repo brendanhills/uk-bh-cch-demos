@@ -1,25 +1,38 @@
-# F-DSE Project Dashboard (Unified v1 & v2 App)
+# F-DSE Program Governance Dashboard (`project_dash`)
 
-Interactive executive dashboard application built with **Streamlit**, **Plotly**, and **Pandas** for the F-DSE Program.
-
-Both **v1 (Baseline Customer Specification)** and **v2 (Advanced Program Reporting Roadmap)** are served directly from the same single application with instant URL routing!
+A modern, high-contrast, exception-first executive governance platform for the F-DSE Program. Built with single-tech-stack vanilla HTML5, Tailwind CSS, Chart.js, and a native Python HTTP server with Google Drive report ingestion APIs.
 
 ---
 
-## 🚀 Running the App (Port 9000)
+## 🚀 Quick Start (Port 9000)
 
 ```bash
-cd /usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash
-uv run streamlit run app.py
+# Run server
+cd project_dash
+uv run python server.py
 ```
+Open **`http://localhost:9000`** in your browser (or forward port 9000 via SSH: `ssh -L 9000:localhost:9000 <host>`).
 
-### 🔗 URL Paths & Query Parameter Direct Links
-- **Default / Baseline View (v1):**  
-  👉 **`http://localhost:9000/?version=v1`**  
-  *(Contains 5x5 Heatmap, Top 5 Critical Tables with trend arrows, 7-Day Activity & Escalation Panel, and Driver Tree Explorer)*
+---
 
-- **Advanced Roadmap View (v2):**  
-  👉 **`http://localhost:9000/?version=v2`**  
-  *(Contains AI Executive Summary Generator, Stale SLA & Aging Risk Radar, Owner RACI Workload Matrix, 12-Week Trendlines, Sankey Dependency Graph, and 1-Click Deck Export)*
+## 🏛️ Core Architecture & Tabs
 
-*Note: Users can also seamlessly toggle between **v1** and **v2** using the top radio selector in the sidebar at any time.*
+1. **✨ Executive Summary (Tab 1)**:
+   - Exception-first Gemini 3.5 Pro Briefing, Top 3 Attention Items, Early Warning Sleeper Outlier (`Ref 1.15 PDR`), and Schedule Squeeze Warnings.
+   - Dual-host NotebookLM podcast player with neutral Australian voices (`en-AU-Neural2-A` & `B`), speed toggle, and direct audio download.
+   - Active Escalations 2×2 grid with 1-Cycle Resolution banner (`#3 I-129`) and real-time temporal clock.
+
+2. **📊 Risk Dashboard & Live Explorer (Tab 2)**:
+   - 5×5 Risk Heatmap Matrix (Inherent vs Residual toggle), quick preset chips (`📋 All Risks`, `🔴 Score ≥ 18`, `📈 Trending Worse`, `⚠️ Eventuated Issues`, `🏛️ Joint Exec Escalations`), and live search.
+
+3. **⚠️ Issue Register (Tab 3)**:
+   - Complete 29-issue register with root causes, priority badges, and active remediation plans.
+
+4. **📈 Performance Trends (Tab 4)**:
+   - Weekly, Bi-Weekly, and Monthly granularity burndown charts, and dynamic Risk Cause Category Concentration horizontal bar chart.
+
+5. **🌳 CD1 Driver Tree & Gap Close Horizon (Tab 5)**:
+   - Enterprise light theme Strategic Architecture overview (Pages 3–5 reference), Level 2 & 3 deliverable decomposition, and Gap Close Horizon cards.
+
+6. **📋 Whole Register Ledger (Tab 6)**:
+   - Searchable, exportable CSV table of the complete 107-risk register.

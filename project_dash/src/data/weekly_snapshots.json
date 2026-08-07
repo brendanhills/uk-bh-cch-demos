@@ -1,0 +1,341 @@
+{
+  "lastSynced": "2026-08-07T13:50:00+10:00",
+  "driveFolderId": "1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C",
+  "snapshots": {
+    "w26": {
+      "weekNumber": 26,
+      "weekLabel": "Week 26",
+      "date": "31 Jul 2026",
+      "isLatest": true,
+      "driveFileId": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC",
+      "driveFileName": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (85%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables Cth Acceptance",
+          "plan": "GAP closure report created to work with the Cth for acceptance of milestone 1 deliverables.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "Jul 2026",
+          "deltaNote": "Continuing Cth review of SRP, V&V, and IMS deliverable acceptance."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01/E.02 Facilities & Connectivity",
+          "plan": "Validating schedule impacts and mitigating delivery approach whilst connectivity is established.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Aug 2026",
+          "deltaNote": "Delivery target adjusted from Jul 2026 to Aug 2026 to mitigate site connectivity lead time."
+        },
+        {
+          "num": 3,
+          "status": "BLUE",
+          "ref": "1.10b (I-129)",
+          "title": "I-129 Delivered \u2022 GDC EE E.01 Test/Dev Ready",
+          "plan": "Platform successfully validated and environment build commenced, with early release provided to initial systems. Impact of 5 week delay under review.",
+          "owner": "Tom Trobe / Daryl James",
+          "target": "Delivered / Monitoring",
+          "deltaNote": "Successfully validated platform and commenced environment build. Upgraded from RED blocker."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR) Glide Path",
+          "plan": "Iterative approach to prioritise System Requirements for CD1.5, development of glide path similar to IBR.",
+          "owner": "Scott Deacon / Dan Wurzer",
+          "target": "Sep 2026",
+          "deltaNote": "SRR approval date moved from Jul 2026 to Sep 2026 to establish CD1.5 glide path."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report (ADR) Gap Closure",
+          "plan": "Address in the Apps Focus Groups, direct engagement with System Owners. Working on the gap closure plan.",
+          "owner": "Steve Peel / Team Google",
+          "target": "Jul/Aug 2026",
+          "deltaNote": "Escalated to direct stakeholder sessions via newly chartered Apps Focus Groups."
+        }
+      ]
+    },
+    "w25": {
+      "weekNumber": 25,
+      "weekLabel": "Week 25",
+      "date": "24 Jul 2026",
+      "isLatest": false,
+      "driveFileId": "13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz",
+      "driveFileName": "Weekly Reporting - Week 25 - 24 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (75%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables Cth Acceptance",
+          "plan": "GAP closure report created to work with the Cth for acceptance of milestone 1 deliverables.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "Jul 2026",
+          "deltaNote": "Cth review in progress."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01/E.02 Facilities & Connectivity",
+          "plan": "Validating schedule impacts and mitigating delivery approach whilst connectivity is established.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Jul/Aug 2026",
+          "deltaNote": "Facility connectivity lead time under assessment."
+        },
+        {
+          "num": 3,
+          "status": "BLUE",
+          "ref": "1.10b (I-129)",
+          "title": "I-129 Delivered \u2022 GDC EE E.01 Test/Dev Ready",
+          "plan": "Platform successfully validated and environment build commenced, with early release provided to initial systems.",
+          "owner": "Tom Trobe / Daryl James",
+          "target": "Delivered / Monitoring",
+          "deltaNote": "Platform validation complete."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR) Glide Path",
+          "plan": "Iterative approach to prioritise System Requirements for CD1.5, development of glide path similar to IBR.",
+          "owner": "Scott Deacon / Dan Wurzer",
+          "target": "Jul/Sep 2026",
+          "deltaNote": "Drafting SRR prioritization matrix."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report (ADR) Gap Closure",
+          "plan": "Address in the Apps Focus Groups, direct engagement with System Owners.",
+          "owner": "Steve Peel / Team Google",
+          "target": "Jul 2026",
+          "deltaNote": "Focus group charters established."
+        }
+      ]
+    },
+    "w24": {
+      "weekNumber": 24,
+      "weekLabel": "Week 24",
+      "date": "17 Jul 2026",
+      "isLatest": false,
+      "driveFileId": "100xnsVUDdlKVzxTgK26_lmjSYYUWnUhK",
+      "driveFileName": "Weekly Reporting - Week 24 - 17 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udd34 RED (Platform Blocker)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (60%)",
+        "ato": "\ud83d\udfe1 AMBER",
+        "escalations": "\ud83d\udd34 6 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables Cth Acceptance",
+          "plan": "GAP closure report created to work with the Cth for acceptance of milestone 1 deliverables.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "May/Jul 2026",
+          "deltaNote": "Initial milestone 1 acceptance delays."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01/E.02 Facilities & Connectivity",
+          "plan": "Validating schedule impacts whilst connectivity is established.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Jul 2026",
+          "deltaNote": "Facility physical access and links pending."
+        },
+        {
+          "num": 3,
+          "status": "RED",
+          "ref": "1.10b (I-129)",
+          "title": "GDC EE E.01 Test/Dev Platform Ready",
+          "plan": "Month 6.5 delivery blocked awaiting platform validation; 5-week schedule delay impact under escalation.",
+          "owner": "Darryl James / Grae Noble",
+          "target": "Jul 2026",
+          "deltaNote": "Critical blocker requiring executive intervention."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR)",
+          "plan": "SRR preparation delayed due to requirements baseline dependencies.",
+          "owner": "Team Google / Tim Minion",
+          "target": "Jun/Jul 2026",
+          "deltaNote": "Requirements scope alignment needed."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report (ADR)",
+          "plan": "Discovery hampered by system owner access constraints.",
+          "owner": "Team Google",
+          "target": "Jul 2026",
+          "deltaNote": "Access to external system owners delayed."
+        }
+      ]
+    },
+    "w23": {
+      "weekNumber": 23,
+      "weekLabel": "Week 23",
+      "date": "10 Jul 2026",
+      "isLatest": false,
+      "driveFileId": "1YRJuXlIIkYRYEsU41K_nuO9iIwrS9k0e",
+      "driveFileName": "Weekly Reporting - Week 23 - 10 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (50%)",
+        "ato": "\ud83d\udfe1 AMBER",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables",
+          "plan": "GAP closure report in drafting.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "May/Jul 2026",
+          "deltaNote": "Artefact delivery underway."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01 Facilities & Connectivity",
+          "plan": "Establishing site connectivity.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Jul 2026",
+          "deltaNote": "Awaiting telco link installations."
+        },
+        {
+          "num": 3,
+          "status": "RED",
+          "ref": "1.10b",
+          "title": "GDC EE E.01 Test/Dev Initialisation",
+          "plan": "Enabling services initialisation.",
+          "owner": "Darryl James / Grae Noble",
+          "target": "Jul 2026",
+          "deltaNote": "Initial test/dev environment setup."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR)",
+          "plan": "Planning SRR milestones.",
+          "owner": "Team Google / Tim Minion",
+          "target": "Jun/Jul 2026",
+          "deltaNote": "Baseline requirements drafting."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report",
+          "plan": "Initial survey of enterprise applications.",
+          "owner": "Team Google",
+          "target": "Jun/Jul 2026",
+          "deltaNote": "Discovery interviews starting."
+        }
+      ]
+    },
+    "w22": {
+      "weekNumber": 22,
+      "weekLabel": "Week 22",
+      "date": "03 Jul 2026",
+      "isLatest": false,
+      "driveFileId": "1kQiDQPF9DCUZ0vvbivToMoJWeZJoB0eREFnywRxpCHA",
+      "driveFileName": "Weekly Reporting - Week 22 - 03 Jul 2026 (Google Doc)",
+      "overallStatus": "\ud83d\udfe1 AMBER",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (40%)",
+        "ato": "\ud83d\udfe1 AMBER",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables",
+          "plan": "Milestone 1 deliverable review with Cth.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "May 2026",
+          "deltaNote": "Initial deliverable pack."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01 Facilities & Connectivity",
+          "plan": "Establishing facility access and link requirements.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Jul 2026",
+          "deltaNote": "Facilities survey completed."
+        },
+        {
+          "num": 3,
+          "status": "RED",
+          "ref": "1.10b",
+          "title": "GDC EE E.01 Test/Dev Initialisation",
+          "plan": "Month 3.5 enabling services platform build underway.",
+          "owner": "Darryl James / Grae Noble",
+          "target": "Jul 2026",
+          "deltaNote": "Enabling services platform build."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR)",
+          "plan": "Requirements capture workshops scheduled.",
+          "owner": "Team Google / Tim Minion",
+          "target": "Jun 2026",
+          "deltaNote": "Initial workshop series."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report",
+          "plan": "Initial survey of enterprise applications.",
+          "owner": "Team Google",
+          "target": "Jun 2026",
+          "deltaNote": "Survey sent to system owners."
+        }
+      ]
+    }
+  }
+}

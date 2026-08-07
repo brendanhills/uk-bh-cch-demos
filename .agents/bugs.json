@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "description": "The downloaded pptx and pdf docs are not valid files",
+    "type": "Bug",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "context": "project_dash"
+  },
+  {
+    "id": 2,
+    "description": "The exec summary is a bit bare.",
+    "type": "FR",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "context": "project_dash"
+  },
+  {
+    "id": 5,
+    "type": "Bug",
+    "title": "ATO-C Security Gate status text 'AMBER' is styled in green font color",
+    "description": "On Executive Summary tab 4-KPI banner, the ATO-C Security Gate status displays a yellow dot \ud83d\udfe1 but has the text 'AMBER' rendered in green font color (text-emerald-400) instead of amber/yellow (text-amber-400).",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/a4ce41a4-19d9-4bd7-b15e-afaa84c5a587/.user_uploaded/media_1786074673809.png"
+  },
+  {
+    "id": 6,
+    "type": "FR",
+    "title": "Make Gemini Executive Summary Prompt editable in Dashboard Settings",
+    "description": "Provide an interactive Prompt Editor in the Dashboard Settings / Workspace Sync modal allowing users to view, customize, and tweak the Gemini executive synthesis and podcast prompt templates live.",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
+  }
+]
