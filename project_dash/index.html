@@ -231,6 +231,114 @@
                 </div>
             </div>
 
+            
+            <!-- GEMINI AI EXECUTIVE SUMMARY & NOTEBOOKLM PODCAST DEEP DIVE -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left 7 Cols: Gemini Pro 1-Paragraph Executive Synthesis -->
+                <div class="lg:col-span-7 bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-indigo-800/60 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                                    <span>✨</span> <span>Gemini 1.5 Pro</span>
+                                </span>
+                                <span class="text-xs font-bold text-indigo-200">1-Paragraph Executive Synthesis</span>
+                            </div>
+                            <div class="flex items-center gap-1 bg-white/10 p-1 rounded-lg text-[11px] font-bold">
+                                <button onclick="setAiTone('executive')" id="toneExec" class="px-2 py-0.5 rounded bg-indigo-600 text-white shadow-xs cursor-pointer">Exec Concise</button>
+                                <button onclick="setAiTone('technical')" id="toneTech" class="px-2 py-0.5 rounded text-indigo-200 hover:text-white cursor-pointer">Technical</button>
+                                <button onclick="setAiTone('governance')" id="toneGov" class="px-2 py-0.5 rounded text-indigo-200 hover:text-white cursor-pointer">Steering Comm</button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic AI Paragraph Content -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-4.5 backdrop-blur-xs relative group">
+                            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed font-normal" id="geminiSummaryText">
+                                Program F-DSE maintains a stable <strong>AMBER</strong> posture in Week 26 as critical platform risk yields to delivery success while requirements baselines undergo proactive schedule realignment. The primary breakthrough is the <strong>delivery and validation of GDC Enterprise E.01 Platform (I-129 / Ref 1.10b)</strong>, resolving a former RED blocker into active system onboarding. Concurrently, leadership established a structured CD1.5 prioritisation glide path for <strong>Systems Requirements Review (SRR / Ref 1.14)</strong>, adjusting target completion to September 2026 to mirror the IBR methodology. Risk mitigation performance remains exceptionally robust, compressing average residual risk from <strong>15.4 to 8.4</strong> (Δ -7.0), with primary near-term executive attention focused on accelerating Commonwealth acceptance of Milestone 1 artefacts.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-white/10 text-xs text-indigo-200">
+                        <div class="flex items-center gap-2">
+                            <span>Synthesized from: <strong>107 Risks</strong>, <strong>29 Issues</strong>, <strong>24 Driver Gates</strong></span>
+                        </div>
+                        <button onclick="copyGeminiParagraph()" id="copyGeminiBtn" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                            <span>📋 Copy Synthesis</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right 5 Cols: NotebookLM-Style Deep Dive Podcast Player -->
+                <div class="lg:col-span-5 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-purple-100 text-purple-900 border border-purple-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                    <span>🎙️</span> <span>NotebookLM Audio</span>
+                                </span>
+                                <span class="text-xs font-bold text-slate-800">2-Min Executive Deep Dive</span>
+                            </div>
+                            <span class="text-[10px] font-mono font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Episode 26</span>
+                        </div>
+
+                        <!-- Podcast Meta & Controls -->
+                        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 rounded-xl p-4 space-y-3">
+                            <div class="flex items-center gap-3">
+                                <button onclick="togglePodcastPlayback()" id="podcastPlayBtn" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center text-xl shadow-md transition-all cursor-pointer shrink-0">
+                                    ▶
+                                </button>
+                                <div class="space-y-0.5 flex-1 min-w-0">
+                                    <h4 class="text-xs font-extrabold text-slate-900 truncate">The I-129 Breakthrough &amp; SRR Glide Path</h4>
+                                    <p class="text-[11px] text-slate-500 flex items-center gap-1">
+                                        <span>Co-Hosts: <strong>Alex</strong> &amp; <strong>Jordan</strong></span>
+                                        <span>•</span>
+                                        <span id="podcastTimeLabel" class="font-mono font-bold text-indigo-700">0:00 / 1:45</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Animated Waveform Bar -->
+                            <div class="h-6 flex items-center gap-1 px-1 bg-white/70 rounded-lg border border-purple-100" id="waveformContainer">
+                                <div class="h-2 w-1 bg-indigo-400 rounded-full transition-all duration-150"></div>
+                                <div class="h-4 w-1 bg-indigo-600 rounded-full transition-all duration-150"></div>
+                                <div class="h-3 w-1 bg-purple-500 rounded-full transition-all duration-150"></div>
+                                <div class="h-5 w-1 bg-indigo-500 rounded-full transition-all duration-150"></div>
+                                <div class="h-2 w-1 bg-indigo-400 rounded-full transition-all duration-150"></div>
+                                <div class="h-4 w-1 bg-purple-600 rounded-full transition-all duration-150"></div>
+                                <div class="h-6 w-1 bg-indigo-600 rounded-full transition-all duration-150"></div>
+                                <div class="h-3 w-1 bg-indigo-300 rounded-full transition-all duration-150"></div>
+                                <div class="h-5 w-1 bg-purple-500 rounded-full transition-all duration-150"></div>
+                                <div class="h-2 w-1 bg-indigo-400 rounded-full transition-all duration-150"></div>
+                                <div class="h-4 w-1 bg-indigo-500 rounded-full transition-all duration-150"></div>
+                                <div class="h-1 w-1 bg-purple-300 rounded-full transition-all duration-150"></div>
+                            </div>
+
+                            <!-- Speed selector -->
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                                <span>Speed:</span>
+                                <div class="flex items-center gap-1 font-bold">
+                                    <button onclick="setPodcastSpeed(1.0)" id="speed10" class="px-2 py-0.5 rounded bg-indigo-600 text-white cursor-pointer">1.0x</button>
+                                    <button onclick="setPodcastSpeed(1.25)" id="speed12" class="px-2 py-0.5 rounded bg-white text-slate-700 hover:bg-slate-100 cursor-pointer">1.25x</button>
+                                    <button onclick="setPodcastSpeed(1.5)" id="speed15" class="px-2 py-0.5 rounded bg-white text-slate-700 hover:bg-slate-100 cursor-pointer">1.5x</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                        <button onclick="toggleTranscriptModal()" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 cursor-pointer">
+                            <span>📜 View Full Co-Host Transcript</span>
+                        </button>
+                        <button onclick="copyPodcastScript()" id="copyScriptBtn" class="text-slate-500 hover:text-slate-800 font-semibold cursor-pointer">
+                            Copy Script
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
             <!-- "ACTIVE ISSUE/RISK OR ESCALATION BEING TRACKED WITH GAP CLOSE PLAN" (WITH DYNAMIC BASELINE COMPARATOR) -->
             <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-4">
                 <div class="flex flex-col md:flex-row md:items-center justify-between pb-3 border-b border-slate-100 gap-3">
@@ -1029,6 +1137,202 @@
             }
 
             if (tabKey === 'trends') renderTrendsCharts();
+        }
+
+        
+        // --- GEMINI AI SYNTHESIS & NOTEBOOKLM PODCAST LOGIC ---
+        const PODCAST_SCRIPTS = {
+            w26: [
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "Welcome back to the F-DSE Weekly Deep Dive. Today we're breaking down Week 26, ending July 31st, 2026. Jordan, huge week on the platform side—let's start with the big headline on I-129." },
+                { speaker: "Jordan", avatar: "👩‍💻", role: "Technical Lead", text: "Yeah, Alex, this is the milestone everyone was holding their breath for. Two weeks ago, the GDC Enterprise E.01 Test/Dev environment—Ref 1.10b—was sitting in RED with a 5-week schedule delay. Today? It is officially blue—delivered and validated! Tom Trobe and Daryl James' teams pulled off an incredible recovery, and initial system onboarding has already kicked off." },
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "That takes massive pressure off the Month 6.5 enabling services glide path. But looking across the rest of the board, our overall program posture is still holding at Amber. What's driving the caution?" },
+                { speaker: "Jordan", avatar: "👩‍💻", role: "Technical Lead", text: "A couple of deliberate, strategic schedule shifts. First is SRR—the Systems Requirements Review (Ref 1.14). Instead of rushing an unaligned baseline in July, leadership shifted the gate to September to build a prioritized CD1.5 glide path, exactly like we did for IBR. And second is facility connectivity on E.01 and E.02 (Ref 1.6), which moved to August to accommodate telco lead times." },
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "Makes total sense. And looking at the numbers: 107 total risk statements on the register, but the average mitigation score has dropped from 15.4 down to 8.4—that's a 7-point drop in risk exposure. Inherent risks are getting systematically burned down." },
+                { speaker: "Jordan", avatar: "👩‍💻", role: "Technical Lead", text: "Exactly. So heading into August, the two critical actions for the Joint Executive Board are: one, getting final Commonwealth acceptance on Milestone 1 artefacts, and two, keeping Milestone 2 IBR tracking at its current 85% completion rate for late August delivery." },
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "Outstanding progress. That's your 2-minute executive rundown for Week 26. Back to the dashboard!" }
+            ],
+            w25: [
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "Welcome to the Week 25 F-DSE Briefing for July 24th, 2026. Jordan, the headline this week is the initial platform validation tests for GDC Enterprise." },
+                { speaker: "Jordan", avatar: "👩‍💻", role: "Technical Lead", text: "That's right, Alex. Platform validation is concluding, and we are on the verge of lifting the RED blocker on Ref 1.10b." }
+            ],
+            w24: [
+                { speaker: "Alex", avatar: "👨‍💼", role: "Strategic Analyst", text: "F-DSE Deep Dive for Week 24 (July 17th, 2026). Jordan, we have a critical escalation to discuss regarding Month 6.5 platform delivery." },
+                { speaker: "Jordan", avatar: "👩‍💻", role: "Technical Lead", text: "Yes, Alex. Ref 1.10b is currently a RED Blocker due to a 5-week platform delivery delay, requiring immediate Joint Executive Board intervention." }
+            ]
+        };
+
+        const GEMINI_PARAGRAPHS = {
+            executive: "Program F-DSE maintains a stable AMBER posture in Week 26 as critical platform risk yields to delivery success while requirements baselines undergo proactive schedule realignment. The primary breakthrough is the delivery and validation of GDC Enterprise E.01 Platform (I-129 / Ref 1.10b), resolving a former RED blocker into active system onboarding. Concurrently, leadership established a structured CD1.5 prioritisation glide path for Systems Requirements Review (SRR / Ref 1.14), adjusting target completion to September 2026 to mirror the IBR methodology. Risk mitigation performance remains exceptionally robust, compressing average residual risk from 15.4 to 8.4 (Δ -7.0), with primary near-term executive attention focused on accelerating Commonwealth acceptance of Milestone 1 artefacts.",
+            technical: "Technical assessment for Week 26 confirms critical de-risking of Tier 1 CD1 primary gates. Ref 1.10b (GDC EE E.01 Test/Dev) has been successfully validated and released for initial system onboarding, mitigating the Month 6.5 schedule variance. Ref 1.14 (SRR) engineering baseline has been realigned to September 2026 to establish an iterative CD1.5 requirements allocation glide path. ATO-C security assessors remain embedded across active enclaves with zero blocker vulnerabilities. Inherent-to-residual risk burndown demonstrates a Δ -7.0 exposure compression across 107 logged statements.",
+            governance: "From a governance and commercial standpoint, Program F-DSE is tracking within cost baselines with Milestone 2 (IBR) at 85% completion targeted for late August 2026. Joint Executive Board escalation remains active across 5 items with defined gap close plans, notably Commonwealth acceptance of Milestone 1 deliverables (Ref 1.2b) and EST9111 GAL Barracks early works realigned to December 2027. Steering committee action is requested to endorse the revised SRR glide path."
+        };
+
+        let currentAiTone = 'executive';
+        let isPodcastPlaying = false;
+        let podcastUtterances = [];
+        let currentUtteranceIndex = 0;
+        let podcastPlaybackSpeed = 1.0;
+
+        function setAiTone(tone) {
+            currentAiTone = tone;
+            ['executive', 'technical', 'governance'].forEach(t => {
+                const btn = document.getElementById('tone' + t.charAt(0).toUpperCase() + t.slice(1, 4));
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', t === tone);
+                    btn.classList.toggle('text-white', t === tone);
+                }
+            });
+            document.getElementById('geminiSummaryText').innerText = GEMINI_PARAGRAPHS[tone] || GEMINI_PARAGRAPHS.executive;
+        }
+
+        function copyGeminiParagraph() {
+            const text = document.getElementById('geminiSummaryText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyGeminiBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>✓ Copied!</span>';
+                    setTimeout(() => { btn.innerHTML = '<span>📋 Copy Synthesis</span>'; }, 2000);
+                }
+            });
+        }
+
+        function toggleTranscriptModal() {
+            const modal = document.getElementById('transcriptModal');
+            if (modal) {
+                modal.classList.toggle('hidden');
+                if (!modal.classList.contains('hidden')) {
+                    renderPodcastTranscript();
+                }
+            }
+        }
+
+        function renderPodcastTranscript() {
+            const container = document.getElementById('podcastTranscriptContainer');
+            if (!container) return;
+
+            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
+            container.innerHTML = script.map((line, idx) => `
+                <div class="p-3 rounded-xl border ${line.speaker === 'Alex' ? 'bg-indigo-50/70 border-indigo-200' : 'bg-purple-50/70 border-purple-200'} flex items-start gap-3">
+                    <span class="text-xl p-1 bg-white rounded-lg shadow-2xs">${line.avatar}</span>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <strong class="text-slate-900">${line.speaker}</strong>
+                            <span class="text-[10px] text-slate-500 font-medium">(${line.role})</span>
+                        </div>
+                        <p class="text-slate-800 leading-relaxed font-normal">${line.text}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copyPodcastScript() {
+            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
+            const fullText = script.map(s => `${s.speaker} (${s.role}): ${s.text}`).join('\n\n');
+            navigator.clipboard.writeText(fullText).then(() => {
+                const btn = document.getElementById('copyScriptBtn');
+                if (btn) {
+                    btn.innerText = '✓ Script Copied!';
+                    setTimeout(() => { btn.innerText = 'Copy Script'; }, 2000);
+                }
+            });
+        }
+
+        function setPodcastSpeed(speed) {
+            podcastPlaybackSpeed = speed;
+            [1.0, 1.25, 1.5].forEach(s => {
+                const id = s === 1.0 ? 'speed10' : (s === 1.25 ? 'speed12' : 'speed15');
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', s === speed);
+                    btn.classList.toggle('text-white', s === speed);
+                }
+            });
+            if (isPodcastPlaying) {
+                window.speechSynthesis.cancel();
+                playPodcastFromIndex(currentUtteranceIndex);
+            }
+        }
+
+        function togglePodcastPlayback() {
+            if (!('speechSynthesis' in window)) {
+                alert('Audio playback is not supported in this browser.');
+                return;
+            }
+
+            if (isPodcastPlaying) {
+                window.speechSynthesis.cancel();
+                isPodcastPlaying = false;
+                document.getElementById('podcastPlayBtn').innerText = '▶';
+                document.getElementById('podcastTimeLabel').innerText = 'Paused';
+                animateWaveform(false);
+            } else {
+                isPodcastPlaying = true;
+                document.getElementById('podcastPlayBtn').innerText = '⏸';
+                currentUtteranceIndex = 0;
+                playPodcastFromIndex(0);
+                animateWaveform(true);
+            }
+        }
+
+        function playPodcastFromIndex(index) {
+            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
+            if (index >= script.length) {
+                isPodcastPlaying = false;
+                document.getElementById('podcastPlayBtn').innerText = '▶';
+                document.getElementById('podcastTimeLabel').innerText = 'Finished';
+                animateWaveform(false);
+                return;
+            }
+
+            currentUtteranceIndex = index;
+            const line = script[index];
+            const utterance = new SpeechSynthesisUtterance(line.text);
+            utterance.rate = podcastPlaybackSpeed;
+            
+            // Pick dual alternating voices if available
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                if (line.speaker === 'Alex') {
+                    utterance.voice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Guy'))) || voices[0];
+                } else {
+                    utterance.voice = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Jenny') || v.name.includes('Samantha'))) || voices[1] || voices[0];
+                }
+            }
+
+            document.getElementById('podcastTimeLabel').innerText = `Speaking: ${line.speaker} (${index + 1}/${script.length})`;
+
+            utterance.onend = () => {
+                if (isPodcastPlaying) {
+                    playPodcastFromIndex(index + 1);
+                }
+            };
+
+            utterance.onerror = () => {
+                if (isPodcastPlaying) {
+                    playPodcastFromIndex(index + 1);
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        let waveInterval = null;
+        function animateWaveform(active) {
+            const bars = document.querySelectorAll('#waveformContainer div');
+            if (waveInterval) clearInterval(waveInterval);
+
+            if (active) {
+                waveInterval = setInterval(() => {
+                    bars.forEach(b => {
+                        const h = Math.floor(Math.random() * 20) + 4;
+                        b.style.height = `${h}px`;
+                    });
+                }, 150);
+            } else {
+                bars.forEach((b, idx) => {
+                    b.style.height = `${(idx % 4 + 2) * 3}px`;
+                });
+            }
         }
 
         // --- TIME MACHINE FUNCTIONS ---
@@ -2059,5 +2363,31 @@
 
         window.onload = initApp;
     </script>
+
+    <!-- NOTEBOOKLM PODCAST FULL TRANSCRIPT MODAL -->
+    <div id="transcriptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 p-5 text-white flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🎙️</span>
+                    <div>
+                        <h2 class="text-base font-bold">NotebookLM Deep Dive Transcript</h2>
+                        <p class="text-xs text-purple-200">Episode 26: The I-129 Breakthrough &amp; SRR Glide Path (Alex &amp; Jordan)</p>
+                    </div>
+                </div>
+                <button onclick="toggleTranscriptModal()" class="text-white/80 hover:text-white p-1 rounded-lg">✕</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-4 text-xs leading-relaxed" id="podcastTranscriptContainer">
+                <!-- Dialogue entries injected via JS -->
+            </div>
+            
+            <div class="bg-slate-50 border-t border-slate-200 px-6 py-3.5 flex justify-between items-center shrink-0">
+                <button onclick="copyPodcastScript()" class="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100">📋 Copy Script</button>
+                <button onclick="toggleTranscriptModal()" class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">Close</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
