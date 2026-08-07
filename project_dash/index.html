@@ -2514,7 +2514,7 @@
             document.getElementById('heatmapGridContainer').innerHTML = html;
         }
 
-        // --- EXEC BRIEFING V2 (CALIBRATED SEMANTIC COLORS) ---
+                // --- EXEC BRIEFING V2 (ZERO ID WRAPPING & CALIBRATED SEMANTIC COLORS) ---
         function renderExecBriefing() {
             const top5Risks = [...LIVE_RISKS]
                 .filter(r => r.status !== 'Closed')
@@ -2529,23 +2529,25 @@
                 const score = r.residualRiskScore || 0;
                 let scoreBadge = '';
                 if (score >= 18) {
-                    scoreBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2 shadow-2xs">Score ${score}</span>`;
+                    scoreBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg font-mono shrink-0 ml-3 shadow-2xs whitespace-nowrap">Score ${score}</span>`;
                 } else if (score >= 12) {
-                    scoreBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">Score ${score}</span>`;
+                    scoreBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-1 rounded-lg font-mono shrink-0 ml-3 whitespace-nowrap">Score ${score}</span>`;
                 } else {
-                    scoreBadge = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">Score ${score}</span>`;
+                    scoreBadge = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs px-2.5 py-1 rounded-lg font-mono shrink-0 ml-3 whitespace-nowrap">Score ${score}</span>`;
                 }
+
+                const riskIdText = `#${idx + 1} ID ${r.displayId || r.id}`;
 
                 return `
                 <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-300 transition-all">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-700 font-mono">#${idx + 1} ID ${r.displayId || r.id}</span>
-                            <span class="text-xs text-slate-500">• 👤 ${r.riskOwner}</span>
-                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-medium">${r.bundle || 'F-DSE'}</span>
+                    <div class="flex-1 min-w-0 space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 px-2 py-0.5 rounded whitespace-nowrap shrink-0">${riskIdText}</span>
+                            <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${r.riskOwner}</span>
+                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${r.bundle || 'F-DSE'}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-900 mt-1">${r.riskName || r.riskDescription}</p>
-                        <p class="text-[11px] text-slate-600 mt-1">Mitigation: ${r.treatmentPlan || 'Ongoing governance monitoring.'}</p>
+                        <p class="text-xs font-bold text-slate-900 leading-snug pt-0.5">${r.riskName || r.riskDescription}</p>
+                        <p class="text-[11px] text-slate-600 leading-normal">Mitigation: ${r.treatmentPlan || 'Ongoing governance monitoring.'}</p>
                     </div>
                     ${scoreBadge}
                 </div>
@@ -2553,30 +2555,33 @@
             }).join('');
 
             document.getElementById('execTopIssuesFullList').innerHTML = top5Issues.map((i, idx) => {
-                // Determine true severity vs owner name
                 const sevRaw = (i.severityRating || i.trend || i.consequence || '').toLowerCase();
                 let rightBadge = '';
                 
                 if (sevRaw.includes('critical') || sevRaw.includes('immediate') || sevRaw.includes('urgent')) {
-                    rightBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2 shadow-2xs">Critical</span>`;
+                    rightBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-1 rounded-lg font-mono shrink-0 ml-3 shadow-2xs whitespace-nowrap">Critical</span>`;
                 } else if (sevRaw.includes('high') || sevRaw.includes('prompt')) {
-                    rightBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">High</span>`;
+                    rightBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-1 rounded-lg font-mono shrink-0 ml-3 whitespace-nowrap">High</span>`;
                 } else if (i.severityRating && !i.severityRating.includes('Jul') && !i.severityRating.includes('Aug') && i.severityRating.length > 2) {
-                    rightBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs px-2.5 py-0.5 rounded-lg font-medium shrink-0 ml-2">👤 ${i.severityRating}</span>`;
+                    rightBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs px-2.5 py-1 rounded-lg font-medium shrink-0 ml-3 whitespace-nowrap">👤 ${i.severityRating}</span>`;
                 } else {
-                    rightBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2 py-0.5 rounded-lg font-mono shrink-0 ml-2">Active</span>`;
+                    rightBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2 py-1 rounded-lg font-mono shrink-0 ml-3 whitespace-nowrap">Active</span>`;
                 }
+
+                const ownerName = i.relatedRiskId && isNaN(i.relatedRiskId) ? i.relatedRiskId : (i.issueOwner || 'Team Google');
+                const bundleRef = i.driverTreeRef && i.driverTreeRef.length < 20 ? i.driverTreeRef : (i.bundle || 'F-DSE');
+                const issueIdText = `#${idx + 1} ${i.id}`;
 
                 return `
                 <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-300 transition-all">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-700 font-mono">#${idx + 1} ${i.id}</span>
-                            <span class="text-xs text-slate-500">• 👤 ${i.relatedRiskId && isNaN(i.relatedRiskId) ? i.relatedRiskId : (i.issueOwner || 'Team Google')}</span>
-                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-medium">${i.driverTreeRef && i.driverTreeRef.length < 20 ? i.driverTreeRef : (i.bundle || 'F-DSE')}</span>
+                    <div class="flex-1 min-w-0 space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 px-2 py-0.5 rounded whitespace-nowrap shrink-0">${issueIdText}</span>
+                            <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${ownerName}</span>
+                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${bundleRef}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-900 mt-1">${i.issueName || i.issueDescription}</p>
-                        <p class="text-[11px] text-slate-600 mt-1">Action: ${i.actionPlan || i.governanceLevel || 'Under review.'}</p>
+                        <p class="text-xs font-bold text-slate-900 leading-snug pt-0.5">${i.issueName || i.issueDescription}</p>
+                        <p class="text-[11px] text-slate-600 leading-normal">Action: ${i.actionPlan || i.governanceLevel || 'Under review.'}</p>
                     </div>
                     ${rightBadge}
                 </div>
