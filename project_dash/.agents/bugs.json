@@ -152,5 +152,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 11,
+    "type": "FR",
+    "title": "Remove / Deprecate Executive Summary tone selection buttons",
+    "description": "The Tone selection buttons ('Exec Concise', 'Technical', 'Steering Comm') on the Executive Briefing card do not add value and should be permanently removed in favor of a single authoritative exception-first standard.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
