@@ -1,0 +1,29 @@
+suite_name: "c4astart"
+timeout_seconds: 300
+cases {
+  name: "plan_prototype_upload"
+  prompt: "I have a prototype ready in the 'proto_app' directory that I need to share via the C4A Starter service. The application name is 'flight-tracker' and the repository name is 'flight-tracker-repo'. Can you tell me exactly how to package and upload this? Please provide the end-to-end instructions and commands, but do not execute the upload itself."
+  expectations: "Agent instructs to create a ZIP archive of the 'proto_app' directory."
+  expectations: "Agent includes the command to clone 'git@depot.code.corp.goog:ace/porcupette-cli.git' to obtain the upload script."
+  expectations: "Agent provides the correct upload command using 'python3 upload_zip.py' with '--repo-name flight-tracker-repo' and '--application-name flight-tracker'."
+  setup {
+    commands: "mkdir -p proto_app && echo 'print(\"hello\")' > proto_app/main.py"
+  }
+  cleanup {
+    commands: "rm -rf proto_app proto_app.zip porcupette-cli"
+  }
+}
+cases {
+  name: "plan_test_environment_upload"
+  prompt: "I need to test a new build for my C4A Starter prototype. The app name is 'internal-tool' and repo is 'tool-repo'. I already have the 'build.zip' file ready and the upload script in my current directory. What command should I run to upload this specifically to the test environment? Please show the command but do not run it."
+  expectations: "Agent provides the upload command using 'python3 upload_zip.py'."
+  expectations: "Command references 'build.zip' as the input file."
+  expectations: "Command includes '--repo-name tool-repo' and '--application-name internal-tool'."
+  expectations: "Command includes the '--test-env' flag."
+  setup {
+    commands: "touch build.zip upload_zip.py"
+  }
+  cleanup {
+    commands: "rm -f build.zip upload_zip.py"
+  }
+}

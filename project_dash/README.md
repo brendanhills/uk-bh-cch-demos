@@ -35,6 +35,41 @@ Ensure you have Python 3.11+ installed along with the dependencies listed in `py
   - Escalation status changes (**Internal** / **IPF/PSG**).
 - **Interactive Driver Tree Explorer:** Select any Driver Tree section (`1.10a Infrastructure Ready`, `1.10b Platform Ready`, `Schedule 5 Governance`, etc.) to view its latest status update and filtered associated risks and issues.
 
+## 🚀 Remote Deployment & AI Studio Collaboration (`c4astart`)
+
+To deploy this dashboard internally without running it on your laptop, and to allow colleagues (including Extended Workforce / xWF) to modify it via **Google AI Studio**:
+
+### 1. Deploy to Internal Google Cloud Run via `c4astart`
+```bash
+# 1. Package the dashboard directory
+zip -r dashboard_app.zip . -x "*.git*" "*/node_modules/*" "*/.venv/*" "dist/*"
+
+# 2. Deploy to C4A Starter
+python3 ../.agents/skills/c4astart/scripts/upload_zip.py \
+  dashboard_app.zip \
+  --repo-name project-dashboard \
+  --application-name "F-DSE Project Dashboard"
+```
+
+- **Live URL:** `https://start.c4a.corp.goog/applications?focus=<applicationId>` (secured with Corp SSO / `gosso`).
+- **Auto-Generated Repo:** `git@depot.code.corp.goog:<org>/project-dashboard.git`.
+
+### 2. Colleague AI Studio Collaboration
+1. Colleague clones the GitHub Enterprise repo (`depot.code.corp.goog`).
+2. Iterates in **Google AI Studio** (`aistudio.google.com`) on components/prompts.
+3. Commits and pushes changes directly to the **`dev`** branch (we always push to `dev`, never pushing feature branches to origin):
+   ```bash
+   git checkout dev
+   # apply updated files
+   git add .
+   git commit -m "feat: updated dashboard components from AI Studio"
+   git push origin dev
+   ```
+4. Pushing to `dev` automatically triggers a build and redeploys the live application.
+5. Pull updates back into your local Jetski environment with `git pull origin dev`.
+
+---
+
 ## 🔮 Roadmap: Recommended Future Phases
 Based on common Google project reporting and executive governance standards:
 - **Phase 2 (Operational & Governance Enhancements):**
