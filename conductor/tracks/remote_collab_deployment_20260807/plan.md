@@ -26,7 +26,7 @@
 
 ## Phase 3: xWF & Multi-Developer Onboarding & Governance
 - [ ] Task: Author Comprehensive Collaboration Guide (`COLLABORATION_GUIDE.md`)
-  - [ ] Document GitHub repository access, branch protection, and PR workflow for FTE and xWF team members
+  - [ ] Document repository access, centralized `dev` branch push policy (always push directly to `origin dev`, never push feature branches to remote), and team onboarding for FTE and xWF members
   - [ ] Document GCP IAM role assignment matrix for xWF colleagues (`roles/run.viewer`, `roles/run.developer`, `roles/iap.httpsResourceAccessor`)
   - [ ] Document Google Workspace Site embedding instructions (step-by-step Google Sites iframe embed guide)
   - [ ] Document Google3 / CitC alternative workflow for team members with Piper access

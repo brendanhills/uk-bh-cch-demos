@@ -26,7 +26,7 @@ This track establishes the production deployment architecture and collaborative 
 - **Sync & Verification Tooling:** Provide clear documentation (`AI_STUDIO_WORKFLOW.md`) and validation scripts (`npm run build`, `npm run typecheck`) to verify AI Studio exports integrate without breaking existing dashboard routes or TypeScript types.
 
 ### 3.3. xWF-Friendly Multi-Developer Code Sharing & Access (FR-3)
-- **GitHub / Git Collaboration Workflow:** Primary repository workflow supporting both FTE and xWF collaborators via GitHub PRs, feature branches, and code reviews.
+- **Centralized `dev` Branch Push Workflow:** Standardize repository collaboration where all changes are integrated and pushed directly to the `dev` branch (`git push origin dev`). Feature branches are kept local only and never pushed to the remote repository.
 - **GCP IAM & Tool Access Matrix:** Step-by-step instructions for granting xWF team members necessary GCP IAM permissions (`Cloud Run Viewer/Developer`, `IAP Web App User`, `Artifact Registry Reader`).
 - **Google3 / CitC Alternative:** Document Piper/CitC onboarding for team members with full internal codebase access.
 
