@@ -1,10 +1,10 @@
 # Implementation Plan: Simplify Dashboard & Unified Bug Resolution
 
-## Phase 1: Immediate UI & Navigation Consolidation
+## Phase 1: Immediate UI, Navigation & Persona Switcher (A/B Testing)
 - [ ] Task: Make header title and logo clickable to return to Executive Summary home (FR #10)
 - [ ] Task: Update ATO-C Security Gate status text styling from emerald to amber (Bug #5)
-- [ ] Task: Consolidate top navigation bar from 6 tabs down to 4 streamlined core tabs
-- [ ] Task: Remove standalone Ledger tab and embed direct Google Sheet deep links
+- [ ] Task: Build interactive Persona Switcher (Exec 4-Tab Mode vs PM 5-Tab Mode) with URL param (?view=pm) and localStorage persistence
+- [ ] Task: Consolidate navigation tabs: default to 4 core views in Exec Mode, dynamically expose 5th Whole Register Ledger tab in PM Mode
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Risk & Issue Cockpit Harmonization
@@ -26,6 +26,6 @@
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 5: Verification & Delivery
-- [ ] Task: Run end-to-end verification across all 4 views on localhost:9000
-- [ ] Task: Update README.md and Resume.md with simplified architecture
+- [ ] Task: Run end-to-end verification across both Exec (4-tab) and PM (5-tab) modes on localhost:9000
+- [ ] Task: Update README.md and Resume.md with persona switcher documentation
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
