@@ -104,5 +104,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 8,
+    "type": "Bug",
+    "title": "Burndown chart is empty on Performance Trends tab",
+    "description": "On the Performance Trends tab (Tab 4), the Inherent vs Residual Risk Burndown / Burnup line chart is rendered blank or empty.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
