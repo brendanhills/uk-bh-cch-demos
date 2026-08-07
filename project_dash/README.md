@@ -1,38 +1,52 @@
-# F-DSE Program Governance Dashboard (`project_dash`)
+# F-DSE Program Governance & Risk Intelligence Platform
 
-A modern, high-contrast, exception-first executive governance platform for the F-DSE Program. Built with single-tech-stack vanilla HTML5, Tailwind CSS, Chart.js, and a native Python HTTP server with Google Drive report ingestion APIs.
+Interactive Executive Cockpit and Risk Intelligence Platform built for the **Future Data Science Environment (F-DSE)** governance lifecycle.
 
 ---
 
-## 🚀 Quick Start (Port 9000)
+## 🌟 Key Architecture & Capabilities
+
+1. **Single Product Vanilla Architecture**:
+   - High-performance, zero-build single-file SPA (`index.html`) using Tailwind CSS and Chart.js.
+   - Sub-millisecond tab switching and native browser history (`pushState` / `popstate`).
+2. **Executive Decision Briefing (Gemini 3.5 Pro)**:
+   - Exception-first synthesis highlighting Top 3 Critical Action items, Early Warning Sleeper Outlier (`Ref 1.15`), and schedule squeeze alerts.
+   - Neural Australian Audio Briefing (`en-AU-Neural2-A` & `B`) with speed controls, animated waveform, and direct download.
+3. **Interactive 5×5 Risk Heatmap & Issue Cockpit**:
+   - Dynamic Inherent vs. Residual matrix toggling, active focus rings, and granular 1-click citation jumps (`↗`).
+4. **Performance Trends & Velocity**:
+   - Dynamic Burndown and Risk Cause Category distribution with `Weekly`, `Bi-Weekly`, and `Monthly` granularity.
+5. **Contractual Delivery & Gap Close Horizon**:
+   - CD1 Driver Tree linking Level 2 Contractual Milestones to high-priority remediation plans.
+6. **Live Google Drive & Sheets Sync API**:
+   - Local Python server (`server.py`) handling real-time Google Sheets sync, weekly PDF report ingestion, and Time Machine historical snapshots.
+
+---
+
+## 🚀 Quickstart
 
 ```bash
-# Run server
-cd project_dash
+# Run server on port 9000
 uv run python server.py
+
+# Open in browser
+http://localhost:9000
 ```
-Open **`http://localhost:9000`** in your browser (or forward port 9000 via SSH: `ssh -L 9000:localhost:9000 <host>`).
 
 ---
 
-## 🏛️ Core Architecture & Tabs
+## 📁 Repository Layout
 
-1. **✨ Executive Summary (Tab 1)**:
-   - Exception-first Gemini 3.5 Pro Briefing, Top 3 Attention Items, Early Warning Sleeper Outlier (`Ref 1.15 PDR`), and Schedule Squeeze Warnings.
-   - Dual-host NotebookLM podcast player with neutral Australian voices (`en-AU-Neural2-A` & `B`), speed toggle, and direct audio download.
-   - Active Escalations 2×2 grid with 1-Cycle Resolution banner (`#3 I-129`) and real-time temporal clock.
-
-2. **📊 Risk Dashboard & Live Explorer (Tab 2)**:
-   - 5×5 Risk Heatmap Matrix (Inherent vs Residual toggle), quick preset chips (`📋 All Risks`, `🔴 Score ≥ 18`, `📈 Trending Worse`, `⚠️ Eventuated Issues`, `🏛️ Joint Exec Escalations`), and live search.
-
-3. **⚠️ Issue Register (Tab 3)**:
-   - Complete 29-issue register with root causes, priority badges, and active remediation plans.
-
-4. **📈 Performance Trends (Tab 4)**:
-   - Weekly, Bi-Weekly, and Monthly granularity burndown charts, and dynamic Risk Cause Category Concentration horizontal bar chart.
-
-5. **🌳 CD1 Driver Tree & Gap Close Horizon (Tab 5)**:
-   - Enterprise light theme Strategic Architecture overview (Pages 3–5 reference), Level 2 & 3 deliverable decomposition, and Gap Close Horizon cards.
-
-6. **📋 Whole Register Ledger (Tab 6)**:
-   - Searchable, exportable CSV table of the complete 107-risk register.
+```
+project_dash/
+├── index.html                  # Core Single-Page Application (HTML5 / Tailwind / Chart.js)
+├── server.py                   # Python server with Drive sync and ingestion APIs
+├── README.md                   # Project documentation
+├── assets/                     # Audio assets (podcast_w26.mp3, podcast_w26.wav)
+├── prompts/                    # Gemini prompt templates (exec_summary_prompt.md)
+├── scripts/                    # Report ingestion utilities (ingest_weekly_report.py)
+├── src/data/                   # Weekly snapshots and live sync data
+├── archive/                    # Archived Streamlit prototype files
+├── dash_v1/                    # Reference React/Vite v1 prototype
+└── conductor/                  # Conductor SDD tracks, specs, and implementation plans
+```

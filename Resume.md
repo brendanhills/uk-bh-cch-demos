@@ -1,42 +1,50 @@
 # Session Resume & Compaction Summary
 
-**Generated At:** 2026-08-07T15:30:00+10:00  
+**Generated At:** 2026-08-07T16:05:00+10:00  
 **Project:** F-DSE Program Governance Dashboard (`project_dash`)  
-**Workspace:** `/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash`  
-**Active Port:** `9000` (Direct Python Server: `uv run python server.py`)
+**Workspace Root:** `/usr/local/google/home/brendanhills/dev/uk-bh-experiments`  
+**Active Worktree:** `/usr/local/google/home/brendanhills/.gemini/jetski/worktrees/project_dash/implement_aistudio_draft`  
+**Active Port:** `9000` (Direct Python Server: `uv run python server.py`)  
+**Git Tag:** `project_dash/checkpoint-20260807-1605`
 
 ---
 
 ## 🎯 Executive Overview of Completed Work
 
-1. **Enterprise Light Theme & Typography Scaling**:
-   - Converted the Gemini 3.5 Pro Briefing card and Strategic Architecture overview from dark format to a crisp, high-contrast modern light theme (`bg-white`, `border-slate-200`, `bg-slate-50`).
-   - Scaled up typography across the Executive Briefing (`text-base` 16px body, `text-sm/text-base` bold titles, `text-xs` badge pills).
-   - Removed the Tone selector (`Exec Concise`, `Technical`, `Steering Comm`) to deliver one authoritative, exception-first briefing.
+1. **Light Theme Conversion & Typography Polish Across All Views**:
+   - Converted both the Gemini 3.5 Pro Briefing card and the Tab 5 Strategic Architecture banner to crisp, high-contrast modern light themes (`bg-white`, `border-slate-200`, `bg-slate-50`).
+   - Scaled executive briefing typography up to `text-base` (16px) with prominent titles and crisp badge pills.
+   - Removed the Tone selector (`Exec Concise`, `Technical`, `Steering Comm`) in favor of a single authoritative exception-first standard.
 
 2. **Professional Neutral Australian Voice Audio (`en-AU`)**:
-   - Synthesized both MP3 (`assets/podcast_w26.mp3`) and WAV (`assets/podcast_w26.wav`) audio files using `en-AU-Neural2-B` (Alex) and `en-AU-Neural2-A` (Jordan).
-   - Enforced strict executive defence decorum: removed all colloquialisms, casual slang ("G'day"), and filler.
-   - Dual audio source fallback with cache-busting (`?v=au3`), speed controls (1.0x, 1.25x, 1.5x), animated waveform, and direct audio download (`📥 Download Audio`).
+   - Synthesized both [`assets/podcast_w26.mp3`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/assets/podcast_w26.mp3) and [`assets/podcast_w26.wav`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/assets/podcast_w26.wav) using `en-AU-Neural2-B` (Alex) and `en-AU-Neural2-A` (Jordan).
+   - Removed all slang and colloquialisms (`"G'day"`).
+   - Added cache-busting (`?v=au3`), speed controls (1.0x, 1.25x, 1.5x), animated waveform, and direct audio download (`📥 Download Audio`).
 
 3. **Standardized Navigation & Citations (`↗`)**:
-   - Standardized all drill-down citations, deliverable links, and section jump buttons across all 6 tabs to use the lower-left to upper-right arrow (`↗`).
-   - Deep-linked 1-click citations (`[Ref 1.10b ↗]`, `[Ref 1.14 ↗]`, `[Ref 1.15 ↗]`, `[107 Register Risks ↗]`, `[Gap #1 ↗]`).
-   - Granular browser history (`pushState` / `popstate`): Clicking a 5×5 matrix cell registers a distinct history step (`#overview-cell-5-5`), so pressing the browser **Back** button unfilters the matrix on Tab 2 before returning to Tab 1.
+   - Standardized all drill-down badges, deliverable links, and section jumps to use the lower-left to upper-right arrow (`↗`).
+   - Deep-linked 1-click citations with native browser history (`pushState` / `popstate`).
+   - Granular 5×5 matrix back-navigation: pressing **Back** unfilters the matrix on Tab 2 before returning to Tab 1.
 
-4. **Executive Summary Content & Logic**:
-   - Structured around the **Top 3 Critical Action Items** (Commonwealth Acceptance, SRR Prioritization Glide Path, GDC Platform Ready).
-   - **Early Warning Sleeper Outlier**: Highlights `Ref 1.15 (Milestone 3 PDR)` currently GREEN but facing schedule squeeze due to SRR shifting right into September.
-   - **Coming Up & Schedule Squeeze Radar**: Real-time alerts for tight float where delivery has slipped against fixed milestone due dates.
-   - **Disambiguated Vocabulary**: Use "reduced / drove down" for risk scores and "tight window / schedule squeeze" for calendar float.
-
-5. **Performance Trends & Risk Cause Category Concentration**:
+4. **Performance Trends Granularity & Dynamic Cause Category Chart**:
    - Connected `Weekly`, `Bi-Weekly`, and `Monthly` granularity toggles to dynamic Chart.js datasets.
-   - Fixed and rendered the dynamic **Risk Cause Category Concentration** horizontal bar chart showing live distribution across all 107 risks.
+   - Populated the dynamic **Risk Cause Category Concentration** horizontal bar chart aggregating all 107 risks directly from the live register.
 
-6. **Active Escalations 2×2 Grid & 1-Cycle Resolution**:
-   - Formatted active escalations into a balanced 2×2 grid with progressive disclosure cap at 6.
-   - **1-Cycle Resolution Protocol**: Resolved blockers (`#3 I-129`) are celebrated in a dedicated `✅ Resolved This Cycle` banner for 1 reporting cycle, then archived.
+5. **Quick Preset Chips Standardization**:
+   - Standardized all preset chips on the Risk Dashboard to the uniform pattern: `[Icon] Label (Count)` with real-time dynamic count updates.
+   - Aligned `Score ≥ 18` filter to strictly evaluate the active matrix rating (Inherent vs. Residual).
+
+6. **Streamlined UI & Backlog Hygiene**:
+   - Removed `➕ Log New Risk` tab from the active navigation bar to simplify the user interface, converting it to a future backlog item (`FR #12`).
+   - Archived legacy Streamlit prototype files (`app.py`, `app_phase2.py`, `.streamlit/`) into [`project_dash/archive/streamlit/`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/archive/streamlit/).
+   - Restored and preserved [`project_dash/dash_v1/`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/dash_v1/) for reference.
+
+7. **Initialized Conductor Track**:
+   - Initialized and recorded Conductor track **[`simplify_dashboard_20260807`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/conductor/tracks/simplify_dashboard_20260807/)** (*"Simplify Dashboard: 4-View Architecture & Progressive Disclosure"*).
+
+8. **Triage & Resolution of Bug Registry**:
+   - Triaged all 14 open tickets in [`.agents/bugs.json`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/.agents/bugs.json).
+   - Marked **`FR #2`** (Exec summary expansion), **`FR #11`** (Tone buttons deprecation), and **`FR #15`** (Streamlit archival & workspace cleanup) as **`Fix Verified`**.
 
 ---
 
@@ -55,8 +63,20 @@ http://localhost:9000
 
 ---
 
-## 📋 Open Items / Next Steps
+## 📋 Active Conductor Track & Next Steps
 
-1. **FR #6**: Interactive in-dashboard Gemini prompt editor under dashboard settings (currently stored in `project_dash/prompts/exec_summary_prompt.md`).
-2. **Bug #5**: ATO-C Security Gate AMBER text rendered in green (`/fix_bug #5`).
-3. **Bundle Deprecation Track**: Paused pending PM confirmation of workstream taxonomy.
+### Active Track: `simplify_dashboard_20260807`
+1. **Phase 1: Navigation & IA Consolidation**:
+   - Consolidate navigation bar down to 4 core views (Executive Summary, Risk & Issue Cockpit, Trends, Driver Tree).
+   - Add click handler on Header Title / Logo (`FR #10`) to return to home.
+   - Remove standalone Ledger tab and embed 1-click external Google Sheets/Drive deep links.
+2. **Phase 2: Risk & Issue Cockpit Harmonization**:
+   - Side-by-side 5×5 Risk Matrix and Issue Status breakdown (`FR #14`).
+   - 5×5 Heatmap active focus ring and smooth filter scroll (`Bug #7`).
+   - 3-preset filter bar (`All Exceptions`, `Score ≥ 18`, `Eventuated Issues`).
+3. **Phase 3: Executive Summary & Performance Trends Polish**:
+   - ATO-C Security Gate AMBER text color fix (`Bug #5`).
+   - Trends burndown canvas sizing and multi-granularity dataset binding (`Bug #8`).
+   - Time Machine horizontal weekly scrubbing ribbon (`FR #9`).
+4. **Phase 4: Verification & Delivery**:
+   - End-to-end multi-view validation on `http://localhost:9000`.

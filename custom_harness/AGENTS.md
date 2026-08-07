@@ -4,7 +4,7 @@
   * **CRITICAL HARD CONSTRAINT**: Code modifications, edits, and bug fixes are **EXCLUSIVELY PERMITTED when the user explicitly invokes the `/fix_bug` command**. Commands like `/bug`, `/fr`, `/list_bugs`, `/triage_bug`, `/bug_plan`, and `/bug_review` MUST ONLY inspect codebase files or record metadata into `.agents/bugs.json` / `.agents/bug_plan.md`—they MUST NEVER modify source code, edit implementation files, or attempt to resolve the reported issue.
   * **Test Execution Constraint**: Running automated tests (e.g., `pytest`, test harnesses) is **EXCLUSIVELY PERMITTED during `/triage_bug` (for root-cause investigation), `/fix_bug` (for reproduction and fix verification), and `/bug_review` (for regression checks)**. Running tests during `/bug`, `/fr`, `/list_bugs`, or `/bug_plan` is **STRICTLY PROHIBITED**.
   * **`/bug` Command**: When the user runs `/bug` or reports an issue, do NOT try to fix it. Record description, date, and workspace context into `<workspace-root>/.agents/bugs.json` with `"reporter"` auto-detected from `git config user.name` (fallback `$USER`), `"date_reported": "YYYY-MM-DD"`, empty `"date_triaged"`, `"date_resolved"`, `"priority"`, `"impact"`, `"risk"`, and `"phase"` fields (`""`) and status `"Reported"`. Evaluate context: if the report is explicitly a feature request, set `"type"` to `"FR"`, otherwise set `"type"` to `"Bug"`. Do NOT write code edits, run tests, or attempt fixes.
-  * **`/fr` Command**: When the user runs `/fr` or submits a feature request, do NOT implement it immediately. Record into `<workspace-root>/.agents/bugs.json` using the next sequential `BUG-N` ID, setting `"type"` to `"FR"`, `"reporter"` auto-detected from `git config user.name` (fallback `$USER`), `"date_reported"` to current date, status to `"Reported"`, and empty date_triaged/date_resolved/priority/impact/risk/phase fields.
+  * **`/fr` Command**: When the user runs `/fr` or submits a feature request, do NOT implement it immediately. Record into `<workspace-root>/.agents/bugs.json` using the next sequential integer ID (e.g. 4, not BUG-4 or FR-2), setting `"type"` to `"FR"`, `"reporter"` auto-detected from `git config user.name` (fallback `$USER`), `"date_reported"` to current date, status to `"Reported"`, and empty date_triaged/date_resolved/priority/impact/risk/phase fields.
   * **Definitions**:
     - **`type`**: Classification attribute (`"Bug"` vs `"FR"`).
     - **`reporter`**: Author name auto-detected from `git config user.name` or `$USER`.
@@ -35,7 +35,7 @@
      - **Track Start**: `<subfolder>/<track_id>-start` (e.g. `capita/auth-feature-start`)
      - **Phase Complete**: `<subfolder>/<track_id>-phase-<N>` (e.g. `capita/auth-feature-phase-1`)
      - **Track Complete**: `<subfolder>/<track_id>-complete` (e.g. `capita/auth-feature-complete`)
-     - **Bug Fix Verification**: `<subfolder>/bugfix-<bug_id>` (e.g. `capita/bugfix-BUG-12`)
+     - **Bug Fix Verification**: `<subfolder>/bugfix-<bug_id>` (e.g. `capita/bugfix-4`)
      - **Stable Demo Release**: `<subfolder>/demo-v<version>` (e.g. `capita/demo-v1.0`)
   3. **Automatic Push**: Always push tags along with commits (`git push origin dev --tags`).
 
