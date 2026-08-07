@@ -171,11 +171,6 @@
                 <button onclick="switchTab('ledger')" id="tab-ledger" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
                     <span>📋 Whole Register Ledger</span>
                 </button>
-
-                <!-- TAB 7: LOG NEW RISK -->
-                <button onclick="switchTab('data-entry')" id="tab-data-entry" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>➕ Log New Risk</span>
-                </button>
             </nav>
         </div>
 
@@ -1012,15 +1007,6 @@
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- TAB 7: LOG NEW RISK -->
-        <!-- ========================================== -->
-        <section id="view-data-entry" class="hidden space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5 max-w-2xl mx-auto">
-                <h2 class="text-lg font-bold text-slate-900">➕ Log New Risk Statement</h2>
-            </div>
-        </section>
-
     </div>
 
     <!-- TIME MACHINE MODAL DIALOG -->
@@ -1194,7 +1180,7 @@
 
             // Load initial tab based on URL hash if present, or default to Executive Summary
             const initialHash = window.location.hash.replace('#', '');
-            const validTabs = ['exec-briefing', 'overview', 'issues', 'trends', 'driver-tree', 'ledger', 'data-entry'];
+            const validTabs = ['exec-briefing', 'overview', 'issues', 'trends', 'driver-tree', 'ledger'];
             const startTab = validTabs.includes(initialHash) ? initialHash : 'exec-briefing';
             
             switchTab(startTab, false);
@@ -1203,7 +1189,7 @@
         }
 
         function switchTab(tabKey, pushHistory = true) {
-            ['exec-briefing', 'overview', 'issues', 'trends', 'driver-tree', 'ledger', 'data-entry'].forEach(k => {
+            ['exec-briefing', 'overview', 'issues', 'trends', 'driver-tree', 'ledger'].forEach(k => {
                 const el = document.getElementById('view-' + k);
                 const tab = document.getElementById('tab-' + k);
                 if (el) el.classList.add('hidden');
