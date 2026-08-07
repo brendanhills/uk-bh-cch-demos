@@ -9,8 +9,9 @@
 - [ ] **Task 2.1: Port `dash_v1` Core Components & Data Structures**
   - Copy and verify `src/types.ts` (36-column `RiskTicket` schema).
   - Port `RiskMatrix.tsx`, `CD1DriverTree.tsx`, `IssueRegisterView.tsx`, `TrendsTab.tsx`, `WholeDataTab.tsx`, `DataEntryTab.tsx`, and `ImportDataModal.tsx`.
-- [ ] **Task 2.2: UI & Navigation Integration**
-  - Wire main navigation bar to switch smoothly between all 7 tabs/views.
+- [ ] **Task 2.2: Modular View Architecture & Executive Briefing Extension Slot**
+  - Wire main navigation bar to switch smoothly between tabs/views.
+  - Expose clean React component slot and state hooks for `ExecutiveBriefingView` to seamlessly plug in next.
 
 ## Phase 3: Direct Google Sheets (Drive / URL) Integration
 - [ ] **Task 3.1: Google Sheets Fetch & Parsing Service**
