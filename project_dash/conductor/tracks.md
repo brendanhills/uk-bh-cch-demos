@@ -6,3 +6,6 @@
 ---
 - [ ] **Track: Executive Summary Briefing Module (v2)**
   *Link: [./tracks/executive_summary_v2/index.md](./tracks/executive_summary_v2/index.md)*
+---
+- [ ] **Track: Single Product Tech Stack Integration & Google Sheets Sync**
+  *Link: [./tracks/dash_v1_integration/index.md](./tracks/dash_v1_integration/index.md)*
