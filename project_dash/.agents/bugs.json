@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "type": "Bug",
+    "title": "Downloaded pptx and pdf docs are not valid files",
+    "description": "the downloaded pptx and pdf docs are not valid files",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-06",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
+  },
+  {
+    "id": 2,
+    "type": "FR",
+    "title": "Executive Summary is a bit bare",
+    "description": "The exec summary is a bit bare.",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
+  },
+  {
+    "id": 3,
+    "type": "FR",
+    "title": "Settings area to manage and persist Google Sheet and Drive folder URLs and configurations",
+    "description": "FR to have a \"settings\" area which keeps the link to the sheet and to the drive folder (and other settings?)",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
+  }
+]

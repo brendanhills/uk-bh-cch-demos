@@ -74,27 +74,41 @@
                 </div>
             </div>
 
-            <!-- Right Controls: Drive Report Link & Google Workspace Sync Button -->
-            <div class="flex flex-wrap items-center gap-2.5 self-end md:self-auto">
-                <!-- Latest Weekly Report PDF Quick Link -->
+            <!-- Right Controls: Open Sheet Button, Open Report Button, Workspace Sync -->
+            <div class="flex flex-wrap items-center gap-2 self-end md:self-auto">
+                
+                <!-- Open Live Google Sheet Button -->
+                <a 
+                    href="https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all"
+                    title="Open Live Risk & Issue Register (Google Sheet)"
+                >
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Open Sheet</span>
+                    <svg class="w-3 h-3 text-emerald-600 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+
+                <!-- Open Latest Weekly Report PDF Button -->
                 <a 
                     href="https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view" 
                     target="_blank" 
                     rel="noreferrer"
-                    class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-2xs text-xs font-bold transition-all"
+                    class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all"
                     title="Open Latest Weekly Report PDF (Week 26 - 31 Jul 2026)"
                 >
                     <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                    <span>Latest Pack: <strong class="text-blue-900">Week 26 (31 Jul)</strong></span>
-                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span>Week 26 Pack</span>
+                    <svg class="w-3 h-3 text-blue-500 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
 
                 <!-- Workspace Sync Button -->
-                <button onclick="openSheetsModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl px-3.5 py-1.5 flex items-center gap-2 shadow-2xs text-xs font-bold transition-all cursor-pointer">
-                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                    <span>Workspace Sync</span>
-                    <span class="bg-emerald-200 text-emerald-900 text-[10px] px-1.5 py-0.5 rounded-full font-extrabold">SHEET + DRIVE</span>
+                <button onclick="openSheetsModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Sync</span>
                 </button>
+
             </div>
 
         </div>
@@ -455,18 +469,38 @@
             <div class="p-6 space-y-4">
                 <!-- Source 1: Google Sheet Register -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        1. Risk &amp; Issue Register (Google Sheet):
-                    </label>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            1. Risk &amp; Issue Register (Google Sheet):
+                        </label>
+                        <a 
+                            href="https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit" 
+                            target="_blank" 
+                            class="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1"
+                        >
+                            <span>Open Sheet</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
                     <input type="text" id="sheetUrlInput" value="https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900">
                     <p class="text-[11px] text-slate-500 mt-1">Worksheet 0 (107 Risks) • Worksheet 2088295051 (29 Issues)</p>
                 </div>
 
                 <!-- Source 2: Drive Folder Archive -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        2. Weekly Status Reports Archive (Google Drive Folder):
-                    </label>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            2. Weekly Status Reports Archive (Drive Folder):
+                        </label>
+                        <a 
+                            href="https://drive.google.com/corp/drive/folders/1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C" 
+                            target="_blank" 
+                            class="text-xs font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1"
+                        >
+                            <span>Open Folder</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
                     <input type="text" id="driveFolderUrlInput" value="https://drive.google.com/corp/drive/folders/1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900">
                     <div class="flex items-center gap-2 mt-1 text-[11px] text-emerald-700 font-semibold">
                         <span>✓ Verified Latest Report:</span>
@@ -477,9 +511,7 @@
                 <!-- Historical Reports Dropdown List -->
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
                     <span class="text-[11px] font-bold text-slate-700 block mb-1">Historical Reports in Drive (25 Packs):</span>
-                    <div class="text-xs space-y-1 max-h-24 overflow-y-auto font-mono text-slate-600" id="driveReportsModalList">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div class="text-xs space-y-1 max-h-24 overflow-y-auto font-mono text-slate-600" id="driveReportsModalList"></div>
                 </div>
             </div>
             <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-between items-center">
