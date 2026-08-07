@@ -184,5 +184,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 13,
+    "type": "FR",
+    "title": "Overhaul Performance Trends tab: reconcile with dash_v1 and Drive weekly snapshots",
+    "description": "Review and enhance the Performance Trends tab (Tab 4) by benchmarking against dash_v1 and parsing the multi-week historical reporting data in Drive to concisely synthesize risk velocity, burndown trajectories, and delivery performance trends.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
