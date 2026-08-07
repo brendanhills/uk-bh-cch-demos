@@ -88,5 +88,21 @@
     "risk": "",
     "phase": "",
     "status": "Reported"
+  },
+  {
+    "id": 7,
+    "type": "Bug",
+    "title": "Click-through on 5x5 heatmap cells does not work / filter risks as expected",
+    "description": "Clicking into individual cells on the 5x5 Risk Heatmap Matrix on Tab 2 does not filter the risk items in the Live Explorer or navigate correctly.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
