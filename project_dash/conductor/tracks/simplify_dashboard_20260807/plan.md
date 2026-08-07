@@ -1,10 +1,10 @@
 # Implementation Plan: Simplify Dashboard (Single Unified View with URL-Driven A/B Testing)
 
 ## Phase 1: Immediate UI, Navigation & URL-Driven A/B Testing
-- [ ] Task: Make header title and logo clickable to return to Executive Summary home (FR #10)
-- [ ] Task: Update ATO-C Security Gate status text styling from emerald to amber (Bug #5)
-- [ ] Task: Implement URL query parameter detection (?view=pm / ?ledger=true) to dynamically reveal 5th Ledger tab for PM A/B testing without adding UI buttons
-- [ ] Task: Consolidate navigation bar: default to 4 core views in clean Executive Mode, dynamically expose Tab 5 when ?view=pm is present in URL
+- [x] Task: Make header title and logo clickable to return to Executive Summary home (FR #10) d43d892
+- [x] Task: Update ATO-C Security Gate status text styling from emerald to amber (Bug #5) d43d892
+- [x] Task: Implement URL query parameter detection (?view=pm / ?ledger=true) to dynamically reveal 5th Ledger tab for PM A/B testing without adding UI buttons d43d892
+- [x] Task: Consolidate navigation bar: default to 4 core views in clean Executive Mode, dynamically expose Tab 5 when ?view=pm is present in URL d43d892
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Risk & Issue Cockpit Harmonization

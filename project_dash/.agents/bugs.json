@@ -51,9 +51,10 @@
     "impact": "Low",
     "risk": "Low",
     "phase": "Investigation",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "context": "project_dash",
-    "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/a4ce41a4-19d9-4bd7-b15e-afaa84c5a587/.user_uploaded/media_1786074673809.png"
+    "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/a4ce41a4-19d9-4bd7-b15e-afaa84c5a587/.user_uploaded/media_1786074673809.png",
+    "commit_sha": "d43d892"
   },
   {
     "id": 6,
@@ -142,8 +143,9 @@
     "impact": "Low",
     "risk": "Low",
     "phase": "Design",
-    "status": "Investigated",
-    "context": "project_dash"
+    "status": "Fix Implemented",
+    "context": "project_dash",
+    "commit_sha": "d43d892"
   },
   {
     "id": 11,
