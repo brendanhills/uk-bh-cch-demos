@@ -200,5 +200,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 14,
+    "type": "FR",
+    "title": "Unify Risk & Issue architecture across both Dashboards and Registers",
+    "description": "Harmonize the taxonomy and views so that both Risks and Issues have equal representation across visual dashboards (Issue severity/status breakdown alongside the 5x5 Risk Heatmap) and tabular registers (unified/toggleable Risk & Issue Explorer and Ledgers), eliminating the asymmetry of having a 'Risk Dashboard' but an 'Issue Register'.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
