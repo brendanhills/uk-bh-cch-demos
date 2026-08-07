@@ -117,211 +117,53 @@
     <!-- MAIN APP WRAPPER -->
     <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex-1 flex flex-col gap-5">
 
-        <!-- Navigation Tabs Bar -->
+        <!-- Navigation Tabs Bar (EXECUTIVE BRIEFING IS TAB 1 BY DEFAULT) -->
         <div class="flex items-center justify-between border-b border-slate-200 pb-2">
             <nav class="flex overflow-x-auto gap-2 bg-slate-200/70 p-1.5 rounded-xl border border-slate-300/60 shadow-xs">
-                <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab active flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                    Risk Dashboard
-                </button>
-                <button onclick="switchTab('exec-briefing')" id="tab-exec-briefing" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>✨ Executive Briefing</span>
+                <!-- TAB 1: EXECUTIVE BRIEFING (DEFAULT ACTIVE) -->
+                <button onclick="switchTab('exec-briefing')" id="tab-exec-briefing" class="nav-tab active flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Executive Summary</span>
                     <span class="bg-amber-100 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold">v2</span>
                 </button>
-                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>⚠️ Issue Dashboard (29)</span>
+
+                <!-- TAB 2: RISK DASHBOARD & EXPLORER -->
+                <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span>Risk Dashboard (107)</span>
                 </button>
+
+                <!-- TAB 3: ISSUE REGISTER -->
+                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
+                    <span>⚠️ Issue Register (29)</span>
+                </button>
+
+                <!-- TAB 4: PERFORMANCE TRENDS -->
                 <button onclick="switchTab('trends')" id="tab-trends" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 transition-all cursor-pointer">
                     <span>📈 Performance Trends</span>
                 </button>
+
+                <!-- TAB 5: CD1 MILESTONES -->
                 <button onclick="switchTab('driver-tree')" id="tab-driver-tree" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>🌳 CD1 Milestones &amp; Bundles</span>
+                    <span>🌳 CD1 Milestones &amp; Gates</span>
                 </button>
+
+                <!-- TAB 6: WHOLE LEDGER -->
                 <button onclick="switchTab('ledger')" id="tab-ledger" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>📋 Whole Register Ledger (107)</span>
+                    <span>📋 Whole Register Ledger</span>
                 </button>
+
+                <!-- TAB 7: LOG NEW RISK -->
                 <button onclick="switchTab('data-entry')" id="tab-data-entry" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
                     <span>➕ Log New Risk</span>
                 </button>
             </nav>
         </div>
 
-        <!-- TAB 1: RISK DASHBOARD (5x5 HEATMAP & INTEGRATED RISK EXPLORER) -->
-        <main id="view-overview" class="space-y-6">
-            
-            <!-- 5x5 Heatmap Matrix Section -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <span>5x5 Risk Heatmap Matrix</span>
-                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-0.5 rounded-full" id="riskMatrixCount">107 Risks</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click any cell to filter the Live Risk Explorer below</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="bg-slate-100 p-1 rounded-xl flex flex-wrap text-xs font-semibold text-slate-600 gap-1">
-                            <button onclick="setRiskStatusFilter('open')" id="rBtnOpen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">Open (99)</button>
-                            <button onclick="setRiskStatusFilter('active')" id="rBtnActive" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Active (78)</button>
-                            <button onclick="setRiskStatusFilter('eventuated')" id="rBtnEventuated" class="px-3 py-1.5 rounded-lg hover:text-slate-900 text-purple-700 font-bold">Eventuated (21)</button>
-                            <button onclick="setRiskStatusFilter('closed')" id="rBtnClosed" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Closed (8)</button>
-                            <button onclick="setRiskStatusFilter('all')" id="rBtnAll" class="px-3 py-1.5 rounded-lg hover:text-slate-900">All (107)</button>
-                        </div>
-                        <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold text-slate-600">
-                            <button onclick="setRiskRating('inherent')" id="rBtnInherent" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Inherent</button>
-                            <button onclick="setRiskRating('residual')" id="rBtnResidual" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">Residual</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3 Top KPI Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div onclick="setQuickFilter('high')" class="bg-red-50 hover:bg-red-100/80 border border-red-200 border-l-4 border-l-red-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
-                        <div>
-                            <div class="text-xs font-bold text-red-800 tracking-wider">🔴 EXTREME TOP RISKS</div>
-                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono">1 <span class="text-xs font-semibold text-slate-600">Active (RSK-001)</span></div>
-                        </div>
-                        <span class="bg-red-200 text-red-900 text-xs font-bold px-2.5 py-1 rounded-lg">Score 23-25</span>
-                    </div>
-
-                    <div onclick="setQuickFilter('eventuated')" class="bg-purple-50 hover:bg-purple-100/80 border border-purple-200 border-l-4 border-l-purple-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
-                        <div>
-                            <div class="text-xs font-bold text-purple-800 tracking-wider">⚠️ EVENTUATED ISSUES</div>
-                            <div class="text-2xl font-black text-purple-900 mt-1 font-mono" id="kpiEventuatedCount">21 <span class="text-xs font-semibold text-purple-600">Risks</span></div>
-                        </div>
-                        <span class="bg-purple-200 text-purple-900 text-xs font-bold px-2.5 py-1 rounded-lg">Escalated</span>
-                    </div>
-
-                    <div onclick="setQuickFilter('unactioned')" class="bg-amber-50 hover:bg-amber-100/80 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
-                        <div>
-                            <div class="text-xs font-bold text-amber-800 tracking-wider">🟡 IDLE / UNACTIONED RISKS</div>
-                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono">10 <span class="text-xs font-semibold text-slate-600">Active</span></div>
-                        </div>
-                        <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-lg">>7 Days Idle</span>
-                    </div>
-                </div>
-
-                <div class="pt-2 overflow-x-auto">
-                    <div class="min-w-[650px]" id="heatmapGridContainer"></div>
-                </div>
-            </div>
-
-            <!-- INTEGRATED LIVE RISK EXPLORER & TRIAGE SECTION -->
-            <div id="riskExplorerSection" class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
-                
-                <!-- Section Header with Search and Mode Toggle -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <span>🔎 Live Risk Explorer &amp; Triage</span>
-                            <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 font-mono" id="explorerMatchCount">107 Matched</span>
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Search statements, view root causes, control deltas, and filter by workstream</p>
-                    </div>
-
-                    <!-- View Toggle: Cards vs Table -->
-                    <div class="flex items-center gap-2">
-                        <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold text-slate-600">
-                            <button onclick="setExplorerViewMode('cards')" id="expBtnCards" class="px-3 py-1.5 rounded-lg bg-white text-indigo-700 font-bold shadow-xs cursor-pointer">📇 Cards View</button>
-                            <button onclick="setExplorerViewMode('table')" id="expBtnTable" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">📑 Compact Table</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Global Search & Faceted Filter Controls Bar -->
-                <div class="space-y-3">
-                    
-                    <!-- Search Input -->
-                    <div class="relative">
-                        <input
-                            type="text"
-                            id="explorerSearchInput"
-                            oninput="renderRiskExplorer()"
-                            placeholder="Search by ID (e.g. 8), Risk Name, Owner, Root Cause, Treatment Plan, Driver Ref (1.10b)..."
-                            class="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-indigo-500 focus:bg-white transition-all font-medium"
-                        />
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    </div>
-
-                    <!-- Quick Preset Chips Bar -->
-                    <div class="flex flex-wrap items-center gap-2 pt-1">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Quick Presets:</span>
-                        <button onclick="setQuickFilter('all')" id="qfAll" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-2xs">All</button>
-                        <button onclick="setQuickFilter('high')" id="qfHigh" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-700 border border-red-200 hover:bg-red-100">🔥 Score ≥ 18</button>
-                        <button onclick="setQuickFilter('trending_worse')" id="qfTrending" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100">📈 Trending Worse (↑)</button>
-                        <button onclick="setQuickFilter('eventuated')" id="qfEventuated" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100">⚠️ Eventuated Issues</button>
-                        <button onclick="setQuickFilter('exec')" id="qfExec" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100">🏛️ Highlight to Exec / CoA</button>
-                    </div>
-
-                    <!-- Faceted Dropdowns (Bundle, Category, Governance) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bundle / Workstream:</label>
-                            <select id="filterBundleSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
-                                <option value="all">All Bundles</option>
-                                <option value="Bundle G">Bundle G (Platform)</option>
-                                <option value="Bundle A.AO">Bundle A.AO (Architecture)</option>
-                                <option value="Bundle F">Bundle F (Data Fabric)</option>
-                                <option value="Bundle I">Bundle I (Security/ATO)</option>
-                                <option value="Bundle L">Bundle L (Service Ops)</option>
-                                <option value="Bundle A.PI">Bundle A.PI (Integration)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cause Category:</label>
-                            <select id="filterCategorySelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
-                                <option value="all">All Categories</option>
-                                <option value="Schedule">Schedule</option>
-                                <option value="Cost">Cost</option>
-                                <option value="Scope">Scope</option>
-                                <option value="Governance Assurance">Governance Assurance</option>
-                                <option value="Legal/Contract">Legal/Contract</option>
-                                <option value="SovOps">SovOps</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Governance Level:</label>
-                            <select id="filterGovSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
-                                <option value="all">All Governance Levels</option>
-                                <option value="Internal Google">Internal Google</option>
-                                <option value="Team Google">Team Google</option>
-                                <option value="PSG">PSG / Steering Committee</option>
-                                <option value="IPF">IPF</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status:</label>
-                            <select id="filterStatusSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
-                                <option value="open">All Open (Active + Eventuated)</option>
-                                <option value="Active">Active Only</option>
-                                <option value="Issue Eventuated">Issue Eventuated Only</option>
-                                <option value="Closed">Closed Only</option>
-                                <option value="all">All</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Heatmap Filter Banner (Shown if user clicks a matrix cell) -->
-                <div id="activeCellFilterBanner" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex justify-between items-center">
-                    <div class="flex items-center gap-2 text-xs font-bold text-indigo-900">
-                        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
-                        <span id="activeCellFilterText">Filtered by Heatmap Cell: L:4, C:3 (Score 12)</span>
-                    </div>
-                    <button onclick="clearActiveCellFilter()" class="text-xs font-extrabold text-indigo-700 hover:text-indigo-900 bg-white border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs">✕ Clear Matrix Filter</button>
-                </div>
-
-                <!-- Dynamic Content Area: Cards or Table -->
-                <div id="explorerCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
-                <div id="explorerTableContainer" class="hidden overflow-x-auto border border-slate-200 rounded-xl max-h-[600px]"></div>
-
-            </div>
-
-        </main>
-
-        
-        <!-- TAB 2: EXECUTIVE BRIEFING V2 -->
-        <section id="view-exec-briefing" class="hidden space-y-6">
+        <!-- ========================================== -->
+        <!-- TAB 1: EXECUTIVE BRIEFING (DEFAULT LANDING) -->
+        <!-- ========================================== -->
+        <main id="view-exec-briefing" class="space-y-6">
             
             <!-- Hero Leadership Banner with Baseline Selector & Official PDF Link -->
             <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800 space-y-4">
@@ -331,7 +173,7 @@
                             <span class="bg-indigo-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Leadership Governance</span>
                             <span class="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30">Overall Program: 🟡 AMBER (Stable)</span>
                         </div>
-                        <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1.5">Executive Summary &amp; Decision Briefing (v2)</h2>
+                        <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1.5">Executive Summary &amp; Decision Briefing</h2>
                         <p class="text-xs text-slate-300 mt-1 max-w-2xl">
                             Synthesis of Week 26 reporting period (ending 31 Jul 2026), milestone critical path horizon, critical risk control deltas, and escalated issues requiring joint executive action.
                         </p>
@@ -420,7 +262,7 @@
                             </h3>
                             <p class="text-xs text-slate-500 mt-0.5">Ranked by Residual Exposure Score &amp; Governance Escalation</p>
                         </div>
-                        <button onclick="switchTab('overview')" class="text-xs font-bold text-indigo-600 hover:underline">View Matrix &rarr;</button>
+                        <button onclick="switchTab('overview')" class="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">View Matrix &rarr;</button>
                     </div>
                     <div class="space-y-3" id="execTopRisksFullList"></div>
                 </div>
@@ -435,7 +277,7 @@
                             </h3>
                             <p class="text-xs text-slate-500 mt-0.5">Ranked by Severity &amp; Action Priority</p>
                         </div>
-                        <button onclick="switchTab('issues')" class="text-xs font-bold text-indigo-600 hover:underline">View Register &rarr;</button>
+                        <button onclick="switchTab('issues')" class="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">View Register &rarr;</button>
                     </div>
                     <div class="space-y-3" id="execTopIssuesFullList"></div>
                 </div>
@@ -452,7 +294,7 @@
                         </h3>
                         <p class="text-xs text-slate-500 mt-0.5">Delivery Gates tracking commercial milestone sign-offs</p>
                     </div>
-                    <button onclick="switchTab('driver-tree')" class="text-xs font-bold text-indigo-600 hover:underline">Full Roadmap &rarr;</button>
+                    <button onclick="switchTab('driver-tree')" class="text-xs font-bold text-indigo-600 hover:underline cursor-pointer">Full Roadmap &rarr;</button>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -519,10 +361,229 @@
                 </button>
             </div>
 
+        </main>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: RISK DASHBOARD & LIVE RISK EXPLORER -->
+        <!-- ========================================== -->
+        <section id="view-overview" class="hidden space-y-6">
+            
+            <!-- 5x5 Heatmap Matrix Section -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span>5x5 Risk Heatmap Matrix</span>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-0.5 rounded-full" id="riskMatrixCount">107 Risks</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Click any cell to filter the Live Risk Explorer below</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="bg-slate-100 p-1 rounded-xl flex flex-wrap text-xs font-semibold text-slate-600 gap-1">
+                            <button onclick="setRiskStatusFilter('open')" id="rBtnOpen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs cursor-pointer">Open (99)</button>
+                            <button onclick="setRiskStatusFilter('active')" id="rBtnActive" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Active (78)</button>
+                            <button onclick="setRiskStatusFilter('eventuated')" id="rBtnEventuated" class="px-3 py-1.5 rounded-lg hover:text-slate-900 text-purple-700 font-bold cursor-pointer">Eventuated (21)</button>
+                            <button onclick="setRiskStatusFilter('closed')" id="rBtnClosed" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Closed (8)</button>
+                            <button onclick="setRiskStatusFilter('all')" id="rBtnAll" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">All (107)</button>
+                        </div>
+                        <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold text-slate-600">
+                            <button onclick="setRiskRating('inherent')" id="rBtnInherent" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Inherent</button>
+                            <button onclick="setRiskRating('residual')" id="rBtnResidual" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs cursor-pointer">Residual</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Top KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div onclick="setQuickFilter('high')" class="bg-red-50 hover:bg-red-100/80 border border-red-200 border-l-4 border-l-red-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                        <div>
+                            <div class="text-xs font-bold text-red-800 tracking-wider">🔴 EXTREME TOP RISKS</div>
+                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono">1 <span class="text-xs font-semibold text-slate-600">Active (RSK-001)</span></div>
+                        </div>
+                        <span class="bg-red-200 text-red-900 text-xs font-bold px-2.5 py-1 rounded-lg">Score 23-25</span>
+                    </div>
+
+                    <div onclick="setQuickFilter('eventuated')" class="bg-purple-50 hover:bg-purple-100/80 border border-purple-200 border-l-4 border-purple-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                        <div>
+                            <div class="text-xs font-bold text-purple-800 tracking-wider">⚠️ EVENTUATED ISSUES</div>
+                            <div class="text-2xl font-black text-purple-900 mt-1 font-mono" id="kpiEventuatedCount">21 <span class="text-xs font-semibold text-purple-600">Risks</span></div>
+                        </div>
+                        <span class="bg-purple-200 text-purple-900 text-xs font-bold px-2.5 py-1 rounded-lg">Escalated</span>
+                    </div>
+
+                    <div onclick="setQuickFilter('unactioned')" class="bg-amber-50 hover:bg-amber-100/80 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                        <div>
+                            <div class="text-xs font-bold text-amber-800 tracking-wider">🟡 IDLE / UNACTIONED RISKS</div>
+                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono">10 <span class="text-xs font-semibold text-slate-600">Active</span></div>
+                        </div>
+                        <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-lg">>7 Days Idle</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 overflow-x-auto">
+                    <div class="min-w-[650px]" id="heatmapGridContainer"></div>
+                </div>
+            </div>
+
+            <!-- INTEGRATED LIVE RISK EXPLORER & TRIAGE SECTION -->
+            <div id="riskExplorerSection" class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+                
+                <!-- Section Header with Search and Mode Toggle -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span>🔎 Live Risk Explorer &amp; Triage</span>
+                            <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-200 font-mono" id="explorerMatchCount">107 Matched</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Search statements, view root causes, control deltas, and filter by workstream</p>
+                    </div>
+
+                    <!-- View Toggle: Cards vs Table -->
+                    <div class="flex items-center gap-2">
+                        <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold text-slate-600">
+                            <button onclick="setExplorerViewMode('cards')" id="expBtnCards" class="px-3 py-1.5 rounded-lg bg-white text-indigo-700 font-bold shadow-xs cursor-pointer">📇 Cards View</button>
+                            <button onclick="setExplorerViewMode('table')" id="expBtnTable" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">📑 Compact Table</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Search & Faceted Filter Controls Bar -->
+                <div class="space-y-3">
+                    
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="explorerSearchInput"
+                            oninput="renderRiskExplorer()"
+                            placeholder="Search by ID (e.g. 8), Risk Name, Owner, Root Cause, Treatment Plan, Driver Ref (1.10b)..."
+                            class="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-indigo-500 focus:bg-white transition-all font-medium"
+                        />
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+
+                    <!-- Quick Preset Chips Bar with Clear Visual States & Reset -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Quick Presets:</span>
+                        
+                        <!-- ALL FILTER: Always clickable and clearly active/inactive -->
+                        <button 
+                            onclick="setQuickFilter('all')" 
+                            id="qfAll" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-2xs cursor-pointer hover:bg-indigo-700 transition-all border border-indigo-600"
+                        >
+                            All Risks (107)
+                        </button>
+                        
+                        <button 
+                            onclick="setQuickFilter('high')" 
+                            id="qfHigh" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-red-700 border border-red-200 hover:bg-red-50 hover:border-red-300 transition-all cursor-pointer shadow-2xs"
+                        >
+                            🔥 Score ≥ 18
+                        </button>
+                        
+                        <button 
+                            onclick="setQuickFilter('trending_worse')" 
+                            id="qfTrending" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-amber-800 border border-amber-200 hover:bg-amber-50 hover:border-amber-300 transition-all cursor-pointer shadow-2xs"
+                        >
+                            📈 Trending Worse (↑)
+                        </button>
+                        
+                        <button 
+                            onclick="setQuickFilter('eventuated')" 
+                            id="qfEventuated" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-purple-800 border border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all cursor-pointer shadow-2xs"
+                        >
+                            ⚠️ Eventuated Issues (21)
+                        </button>
+                        
+                        <button 
+                            onclick="setQuickFilter('exec')" 
+                            id="qfExec" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-blue-800 border border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer shadow-2xs"
+                        >
+                            🏛️ Highlight to Exec / CoA
+                        </button>
+
+                        <button 
+                            onclick="resetAllFilters()" 
+                            class="ml-auto text-[11px] font-bold text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+                        >
+                            ↺ Reset All Filters
+                        </button>
+                    </div>
+
+                    <!-- Faceted Dropdowns (Bundle, Category, Governance, Status) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bundle / Workstream:</label>
+                            <select id="filterBundleSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
+                                <option value="all">All Bundles</option>
+                                <option value="Bundle G">Bundle G (Platform)</option>
+                                <option value="Bundle A.AO">Bundle A.AO (Architecture)</option>
+                                <option value="Bundle F">Bundle F (Data Fabric)</option>
+                                <option value="Bundle I">Bundle I (Security/ATO)</option>
+                                <option value="Bundle L">Bundle L (Service Ops)</option>
+                                <option value="Bundle A.PI">Bundle A.PI (Integration)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cause Category:</label>
+                            <select id="filterCategorySelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
+                                <option value="all">All Categories</option>
+                                <option value="Schedule">Schedule</option>
+                                <option value="Cost">Cost</option>
+                                <option value="Scope">Scope</option>
+                                <option value="Governance Assurance">Governance Assurance</option>
+                                <option value="Legal/Contract">Legal/Contract</option>
+                                <option value="SovOps">SovOps</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Governance Level:</label>
+                            <select id="filterGovSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
+                                <option value="all">All Governance Levels</option>
+                                <option value="Internal Google">Internal Google</option>
+                                <option value="Team Google">Team Google</option>
+                                <option value="PSG">PSG / Steering Committee</option>
+                                <option value="IPF">IPF</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status:</label>
+                            <select id="filterStatusSelect" onchange="renderRiskExplorer()" class="w-full text-xs px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium">
+                                <option value="open">All Open (Active + Eventuated)</option>
+                                <option value="Active">Active Only</option>
+                                <option value="Issue Eventuated">Issue Eventuated Only</option>
+                                <option value="Closed">Closed Only</option>
+                                <option value="all">All</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Heatmap Filter Banner (Shown if user clicks a matrix cell) -->
+                <div id="activeCellFilterBanner" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2 text-xs font-bold text-indigo-900">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+                        <span id="activeCellFilterText">Filtered by Heatmap Cell: L:4, C:3 (Score 12)</span>
+                    </div>
+                    <button onclick="clearActiveCellFilter()" class="text-xs font-extrabold text-indigo-700 hover:text-indigo-900 bg-white border border-indigo-200 px-2.5 py-1 rounded-lg shadow-2xs cursor-pointer">✕ Clear Matrix Filter</button>
+                </div>
+
+                <!-- Dynamic Content Area: Cards or Table -->
+                <div id="explorerCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                <div id="explorerTableContainer" class="hidden overflow-x-auto border border-slate-200 rounded-xl max-h-[600px]"></div>
+
+            </div>
+
         </section>
 
-
+        <!-- ========================================== -->
         <!-- TAB 3: ISSUE REGISTER DASHBOARD -->
+        <!-- ========================================== -->
         <section id="view-issues" class="hidden space-y-4">
             <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="relative flex-1 max-w-md">
@@ -563,7 +624,9 @@
             </div>
         </section>
 
-        <!-- TAB 4: PERFORMANCE TRENDS (BACKLOG, BURNDOWN, CATEGORY, SEVERITY) -->
+        <!-- ========================================== -->
+        <!-- TAB 4: PERFORMANCE TRENDS -->
+        <!-- ========================================== -->
         <section id="view-trends" class="hidden space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white border border-slate-100 rounded-xl p-4 shadow-2xs">
                 <div>
@@ -660,22 +723,24 @@
             </div>
         </section>
 
-        <!-- TAB 5: CD1 DELIVERABLES & BUNDLE ROADMAP -->
+        <!-- ========================================== -->
+        <!-- TAB 5: CD1 DELIVERABLES & GATES ROADMAP -->
+        <!-- ========================================== -->
         <section id="view-driver-tree" class="hidden space-y-6">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <span>🌳 CD1 Milestones &amp; Deliverables Horizon</span>
+                            <span>🌳 CD1 Milestones &amp; Contractual Gates Horizon</span>
                             <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-0.5 rounded-full">12 Major Gates</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Aligned with F-DSE Weekly Status Reports &amp; PI2 Bundle Objectives</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Aligned with F-DSE Weekly Status Reports &amp; PI2 Objectives</p>
                     </div>
                     <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                        <button onclick="filterBundleItems('all')" id="bBtnAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">All Bundles</button>
-                        <button onclick="filterBundleItems('Bundle G')" id="bBtnG" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Bundle G (Platform)</button>
-                        <button onclick="filterBundleItems('Bundle A.AO')" id="bBtnAO" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Bundle A.AO (Arch)</button>
-                        <button onclick="filterBundleItems('Bundle F')" id="bBtnF" class="px-3 py-1.5 rounded-lg hover:text-slate-900">Bundle F (Data)</button>
+                        <button onclick="filterBundleItems('all')" id="bBtnAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs cursor-pointer">All Gates</button>
+                        <button onclick="filterBundleItems('Bundle G')" id="bBtnG" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Platform &amp; Infra</button>
+                        <button onclick="filterBundleItems('Bundle A.AO')" id="bBtnAO" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Engineering Reviews</button>
+                        <button onclick="filterBundleItems('Bundle F')" id="bBtnF" class="px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer">Data &amp; Apps</button>
                     </div>
                 </div>
 
@@ -683,12 +748,14 @@
             </div>
         </section>
 
+        <!-- ========================================== -->
         <!-- TAB 6: WHOLE REGISTER LEDGER -->
+        <!-- ========================================== -->
         <section id="view-ledger" class="hidden space-y-6">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
                 <div class="flex justify-between items-center pb-4 border-b border-slate-100">
                     <h2 class="text-lg font-bold text-slate-900">📋 Whole Register Ledger</h2>
-                    <button onclick="exportCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs">📥 Export CSV</button>
+                    <button onclick="exportCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs cursor-pointer">📥 Export CSV</button>
                 </div>
                 <div class="overflow-x-auto border border-slate-200 rounded-xl max-h-[650px]">
                     <table class="w-full text-left text-xs text-slate-700">
@@ -703,7 +770,9 @@
             </div>
         </section>
 
+        <!-- ========================================== -->
         <!-- TAB 7: LOG NEW RISK -->
+        <!-- ========================================== -->
         <section id="view-data-entry" class="hidden space-y-6">
             <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5 max-w-2xl mx-auto">
                 <h2 class="text-lg font-bold text-slate-900">➕ Log New Risk Statement</h2>
@@ -790,9 +859,9 @@
         let selectedBundleFilter = 'all';
 
         // Explorer Filter States
-        let activeMatrixCellFilter = null; // { l: number, c: number, score: number }
-        let currentQuickFilter = 'all'; // 'all', 'high', 'trending_worse', 'eventuated', 'exec', 'unactioned'
-        let explorerViewMode = 'cards'; // 'cards' or 'table'
+        let activeMatrixCellFilter = null;
+        let currentQuickFilter = 'all';
+        let explorerViewMode = 'cards';
         let expandedRiskIds = new Set();
 
         function initApp() {
@@ -804,10 +873,13 @@
             renderTrendsCharts();
             renderDriveReportsInModal();
             renderRiskExplorer();
+
+            // DEFAULT TO EXEC BRIEFING AS FIRST TAB
+            switchTab('exec-briefing');
         }
 
         function switchTab(tabKey) {
-            ['overview', 'exec-briefing', 'issues', 'trends', 'driver-tree', 'ledger', 'data-entry'].forEach(k => {
+            ['exec-briefing', 'overview', 'issues', 'trends', 'driver-tree', 'ledger', 'data-entry'].forEach(k => {
                 const el = document.getElementById('view-' + k);
                 const tab = document.getElementById('tab-' + k);
                 if (el) el.classList.add('hidden');
@@ -846,19 +918,53 @@
             renderRiskExplorer();
         }
 
+        function updateQuickFilterButtonsUI() {
+            const buttons = [
+                { id: 'qfAll', key: 'all', activeBg: 'bg-indigo-600 text-white border-indigo-600', inactiveBg: 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50' },
+                { id: 'qfHigh', key: 'high', activeBg: 'bg-red-600 text-white border-red-600', inactiveBg: 'bg-white text-red-700 border-red-200 hover:bg-red-50' },
+                { id: 'qfTrending', key: 'trending_worse', activeBg: 'bg-amber-600 text-white border-amber-600', inactiveBg: 'bg-white text-amber-800 border-amber-200 hover:bg-amber-50' },
+                { id: 'qfEventuated', key: 'eventuated', activeBg: 'bg-purple-600 text-white border-purple-600', inactiveBg: 'bg-white text-purple-800 border-purple-200 hover:bg-purple-50' },
+                { id: 'qfExec', key: 'exec', activeBg: 'bg-blue-600 text-white border-blue-600', inactiveBg: 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50' },
+            ];
+
+            buttons.forEach(b => {
+                const el = document.getElementById(b.id);
+                if (!el) return;
+                const isActive = (currentQuickFilter === b.key);
+                el.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs border ${isActive ? b.activeBg : b.inactiveBg}`;
+            });
+        }
+
         function setQuickFilter(qf) {
             currentQuickFilter = qf;
-            ['all', 'high', 'trending_worse', 'eventuated', 'exec', 'unactioned'].forEach(k => {
-                const btn = document.getElementById('qf' + k.charAt(0).toUpperCase() + k.slice(1));
-                if (btn) {
-                    btn.classList.toggle('bg-indigo-600', k === qf);
-                    btn.classList.toggle('text-white', k === qf);
-                }
-            });
+            updateQuickFilterButtonsUI();
 
-            // If user clicked quick filter, scroll down smoothly to explorer
+            if (qf === 'eventuated') {
+                const statusSelect = document.getElementById('filterStatusSelect');
+                if (statusSelect) statusSelect.value = 'all';
+            }
+
             renderRiskExplorer();
+            
+            const overviewTab = document.getElementById('view-overview');
+            if (overviewTab && overviewTab.classList.contains('hidden')) {
+                switchTab('overview');
+            }
             document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetAllFilters() {
+            currentQuickFilter = 'all';
+            activeMatrixCellFilter = null;
+            document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
+            if (document.getElementById('explorerSearchInput')) document.getElementById('explorerSearchInput').value = '';
+            if (document.getElementById('filterBundleSelect')) document.getElementById('filterBundleSelect').value = 'all';
+            if (document.getElementById('filterCategorySelect')) document.getElementById('filterCategorySelect').value = 'all';
+            if (document.getElementById('filterGovSelect')) document.getElementById('filterGovSelect').value = 'all';
+            if (document.getElementById('filterStatusSelect')) document.getElementById('filterStatusSelect').value = 'open';
+            
+            updateQuickFilterButtonsUI();
+            renderRiskExplorer();
         }
 
         function toggleRiskCardExpand(riskId) {
@@ -902,8 +1008,9 @@
 
                 // 6. Quick Presets
                 if (currentQuickFilter === 'high') {
-                    const score = (currentMatrixRating === 'inherent' ? r.inherentRiskScore : r.residualRiskScore) || 0;
-                    if (score < 18) return false;
+                    const inhScore = r.inherentRiskScore || 0;
+                    const resScore = r.residualRiskScore || 0;
+                    if (inhScore < 18 && resScore < 18) return false;
                 } else if (currentQuickFilter === 'trending_worse') {
                     if (r.trend !== '↑' && !String(r.trend).toLowerCase().includes('worse') && !String(r.trend).toLowerCase().includes('deteriorating')) return false;
                 } else if (currentQuickFilter === 'eventuated') {
@@ -942,7 +1049,7 @@
             const cardsContainer = document.getElementById('explorerCardsContainer');
             if (cardsContainer) {
                 if (filtered.length === 0) {
-                    cardsContainer.innerHTML = `<div class="col-span-2 text-center py-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 italic text-xs">No risk statements match the selected search and filter criteria.</div>`;
+                    cardsContainer.innerHTML = `<div class="col-span-2 text-center py-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 italic text-xs">No risk statements match the selected search and filter criteria. <button onclick="resetAllFilters()" class="text-indigo-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>`;
                 } else {
                     cardsContainer.innerHTML = filtered.map(r => {
                         const isExpanded = expandedRiskIds.has(r.id);
@@ -1100,6 +1207,11 @@
             document.getElementById('activeCellFilterBanner')?.classList.remove('hidden');
             document.getElementById('activeCellFilterText').innerText = `📍 Filtered by Heatmap Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
             renderRiskExplorer();
+            
+            const overviewTab = document.getElementById('view-overview');
+            if (overviewTab && overviewTab.classList.contains('hidden')) {
+                switchTab('overview');
+            }
             document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
@@ -1376,32 +1488,53 @@
                 .slice(0, 5);
 
             document.getElementById('execTopRisksFullList').innerHTML = top5Risks.map((r, idx) => `
-                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start">
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-300 transition-all">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-indigo-600 font-mono">#${idx + 1} ID ${r.displayId || r.id}</span>
                             <span class="text-xs text-slate-500">• ${r.riskOwner}</span>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium">${r.bundle || 'F-DSE'}</span>
                         </div>
                         <p class="text-xs font-bold text-slate-800 mt-1">${r.riskName || r.riskDescription}</p>
                         <p class="text-[11px] text-slate-500 mt-1">Mitigation: ${r.treatmentPlan || 'Ongoing governance monitoring.'}</p>
                     </div>
-                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2">Score ${r.residualRiskScore || '-'}</span>
+                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2 shadow-2xs">Score ${r.residualRiskScore || '-'}</span>
                 </div>
             `).join('');
 
             document.getElementById('execTopIssuesFullList').innerHTML = top5Issues.map((i, idx) => `
-                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start">
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-300 transition-all">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-amber-600 font-mono">#${idx + 1} ${i.id}</span>
                             <span class="text-xs text-slate-500">• ${i.issueOwner}</span>
+                            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium">${i.bundle || 'F-DSE'}</span>
                         </div>
                         <p class="text-xs font-bold text-slate-800 mt-1">${i.issueName}</p>
                         <p class="text-[11px] text-slate-500 mt-1">Action: ${i.actionPlan || 'Under review.'}</p>
                     </div>
-                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2">${i.severityRating}</span>
+                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2 shadow-2xs">${i.severityRating}</span>
                 </div>
             `).join('');
+        }
+
+        function copyExecSummaryNote() {
+            const note = `*F-DSE Executive Briefing - Week 26 (31 Jul 2026)*\n\n` +
+                `• *Program Health & Milestones:* Overall status is AMBER (Stable). Milestone 2 (IBR) is tracking at 85% completion for August 2026 delivery. Systems Requirements Review (SRR) scheduled for September 2026.\n` +
+                `• *Critical Risks & Control Deltas:* Inherent average risk score has reduced from 15.4 to 8.4 (Δ -7.0) through active mitigation controls. Top critical risks are being managed in Key Personnel retention and GDC multi-site landing.\n` +
+                `• *Operational Issues:* 29 total registered issues; 5 critical escalations active with immediate next actions assigned.`;
+            
+            navigator.clipboard.writeText(note).then(() => {
+                const btn = document.getElementById('copyExecNoteBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>✓ Copied to Clipboard!</span>';
+                    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>📋 Copy Briefing Note</span>';
+                        btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+                    }, 2500);
+                }
+            });
         }
 
         // --- ISSUES TABLE ---
@@ -1491,7 +1624,6 @@
             }
 
             try {
-                // Fetch latest data from backend sync API
                 const resp = await fetch('/api/sync-sheet');
                 if (resp.ok) {
                     const data = await resp.json();
@@ -1535,26 +1667,6 @@
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 4000);
-        }
-
-        
-        function copyExecSummaryNote() {
-            const note = `*F-DSE Executive Briefing - Week 26 (31 Jul 2026)*\n\n` +
-                `• *Program Health & Milestones:* Overall status is AMBER (Stable). Milestone 2 (IBR) is tracking at 85% completion for August 2026 delivery. Systems Requirements Review (SRR) scheduled for September 2026.\n` +
-                `• *Critical Risks & Control Deltas:* Inherent average risk score has reduced from 15.4 to 8.4 (Δ -7.0) through active mitigation controls. Top critical risks are being managed in Key Personnel retention and GDC multi-site landing.\n` +
-                `• *Operational Issues:* 29 total registered issues; 5 critical escalations active with immediate next actions assigned.`;
-            
-            navigator.clipboard.writeText(note).then(() => {
-                const btn = document.getElementById('copyExecNoteBtn');
-                if (btn) {
-                    btn.innerHTML = '<span>✓ Copied to Clipboard!</span>';
-                    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
-                    setTimeout(() => {
-                        btn.innerHTML = '<span>📋 Copy Briefing Note</span>';
-                        btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
-                    }, 2500);
-                }
-            });
         }
 
         window.onload = initApp;
