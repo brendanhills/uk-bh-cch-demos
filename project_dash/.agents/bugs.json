@@ -136,5 +136,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 10,
+    "type": "FR",
+    "title": "Clicking dashboard header title / logo navigates back to Executive Summary home",
+    "description": "Clicking the main header title ('Risk and Issue Interactive Dashboard') or application logo should act as a standard home button, switching directly back to the Executive Summary (Tab 1) and updating browser history.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
