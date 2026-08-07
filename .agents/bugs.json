@@ -256,5 +256,24 @@
     "context": "project_dash",
     "cause": "Sync modal displays technical Drive file IDs rather than human-readable document titles and folder aliases.",
     "plan": "Build friendly name-based Sheet & Folder picker in Settings modal with live connection test and active source indicators."
+  },
+  {
+    "id": 17,
+    "type": "FR",
+    "title": "Make Whole Register Ledger table headers interactive with column filtering and sort order",
+    "description": "On the Whole Register Ledger table (Tab 5 / PM View), make all column headers (ID, Risk Statement, Owner, Category, Driver Ref, Inherent, Residual, Status, Target Date) interactive with 1-click ascending/descending sort order toggles (\u25b2/\u25bc) and quick column filter dropdowns.",
+    "cause": "",
+    "plan": "",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "Reported",
+    "status": "Reported",
+    "context": "project_dash",
+    "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/a4ce41a4-19d9-4bd7-b15e-afaa84c5a587/.user_uploaded/media_1786088237634.png"
   }
 ]
