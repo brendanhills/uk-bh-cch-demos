@@ -2728,9 +2728,9 @@
                 <div onclick="openItemDetailModal('risk', '${r.id}')" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-400 hover:bg-indigo-50/20 hover:shadow-xs transition-all cursor-pointer group" title="Click to view complete risk details & mitigation plan">
                     <div class="flex-1 min-w-0 space-y-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 group-hover:bg-indigo-100 group-hover:text-indigo-900 px-2 py-0.5 rounded whitespace-nowrap shrink-0 transition-colors">${riskIdText} ↗</span>
-                            <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${owner}</span>
-                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${bundle}</span>
+                            <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 group-hover:bg-indigo-50 text-slate-800 group-hover:text-indigo-900 border border-slate-300 group-hover:border-indigo-300 shadow-2xs whitespace-nowrap shrink-0 transition-all flex items-center gap-1">${riskIdText} <span class="text-indigo-500 font-normal">↗</span></span>
+                            <span class="px-2 py-0.5 rounded-md text-xs bg-slate-50 text-slate-700 border border-slate-200/80 truncate max-w-[160px] whitespace-nowrap">👤 ${owner}</span>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] bg-slate-50 text-slate-600 border border-slate-200/80 font-medium truncate max-w-[130px]">${bundle}</span>
                         </div>
                         <p class="text-xs font-bold text-slate-900 group-hover:text-indigo-950 leading-snug pt-0.5 transition-colors">${title}</p>
                         <p class="text-[11px] text-slate-600 leading-normal line-clamp-2">Mitigation: ${mitigation}</p>
@@ -2777,9 +2777,9 @@
                 <div onclick="openItemDetailModal('issue', '${i.id}')" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-400 hover:bg-amber-50/20 hover:shadow-xs transition-all cursor-pointer group" title="Click to view complete issue details & action plan">
                     <div class="flex-1 min-w-0 space-y-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 group-hover:bg-amber-100 group-hover:text-amber-900 px-2 py-0.5 rounded whitespace-nowrap shrink-0 transition-colors">${issueIdText} ↗</span>
-                            <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${ownerName}</span>
-                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${driverRef}</span>
+                            <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 group-hover:bg-amber-50 text-slate-800 group-hover:text-amber-900 border border-slate-300 group-hover:border-amber-300 shadow-2xs whitespace-nowrap shrink-0 transition-all flex items-center gap-1">${issueIdText} <span class="text-amber-600 font-normal">↗</span></span>
+                            <span class="px-2 py-0.5 rounded-md text-xs bg-slate-50 text-slate-700 border border-slate-200/80 truncate max-w-[160px] whitespace-nowrap">👤 ${ownerName}</span>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] bg-slate-50 text-slate-600 border border-slate-200/80 font-medium truncate max-w-[130px]">${driverRef}</span>
                         </div>
                         <p class="text-xs font-bold text-slate-900 group-hover:text-amber-950 leading-snug pt-0.5 transition-colors">${title}</p>
                         <p class="text-[11px] text-slate-600 leading-normal line-clamp-2">Action: ${action}</p>
