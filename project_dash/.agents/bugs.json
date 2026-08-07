@@ -168,5 +168,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 12,
+    "type": "Bug",
+    "title": "Log New Risk tab / form does not create or submit new risk statements",
+    "description": "On Tab 7 ('+ Log New Risk'), the data entry form is incomplete or fails to submit and append new risk statements to the live register.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
