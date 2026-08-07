@@ -1740,11 +1740,11 @@
             }
 
             const cardsHtml = plansToDisplay.map(g => {
-                let badgeClass = 'bg-red-600 text-white';
-                let borderClass = 'border-red-200 bg-red-50/20';
+                let badgeClass = 'bg-slate-100 text-slate-800 border border-slate-300';
+                let borderClass = 'border-slate-200 bg-white';
                 if (g.status === 'BLUE') {
-                    badgeClass = 'bg-blue-600 text-white';
-                    borderClass = 'border-blue-200 bg-blue-50/20';
+                    badgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+                    borderClass = 'border-emerald-200 bg-emerald-50/10';
                 }
 
                 const basePlan = baselineSnap.plans ? baselineSnap.plans.find(p => p.num === g.num) : null;
@@ -2514,7 +2514,7 @@
             document.getElementById('heatmapGridContainer').innerHTML = html;
         }
 
-        // --- EXEC BRIEFING V2 ---
+        // --- EXEC BRIEFING V2 (CALIBRATED SEMANTIC COLORS) ---
         function renderExecBriefing() {
             const top5Risks = [...LIVE_RISKS]
                 .filter(r => r.status !== 'Closed')
@@ -2525,35 +2525,63 @@
                 .filter(i => i.status !== 'Closed')
                 .slice(0, 5);
 
-            document.getElementById('execTopRisksFullList').innerHTML = top5Risks.map((r, idx) => `
+            document.getElementById('execTopRisksFullList').innerHTML = top5Risks.map((r, idx) => {
+                const score = r.residualRiskScore || 0;
+                let scoreBadge = '';
+                if (score >= 18) {
+                    scoreBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2 shadow-2xs">Score ${score}</span>`;
+                } else if (score >= 12) {
+                    scoreBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">Score ${score}</span>`;
+                } else {
+                    scoreBadge = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">Score ${score}</span>`;
+                }
+
+                return `
                 <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-300 transition-all">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-indigo-600 font-mono">#${idx + 1} ID ${r.displayId || r.id}</span>
-                            <span class="text-xs text-slate-500">• ${r.riskOwner}</span>
-                            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium">${r.bundle || 'F-DSE'}</span>
+                            <span class="text-xs font-bold text-slate-700 font-mono">#${idx + 1} ID ${r.displayId || r.id}</span>
+                            <span class="text-xs text-slate-500">• 👤 ${r.riskOwner}</span>
+                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-medium">${r.bundle || 'F-DSE'}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-800 mt-1">${r.riskName || r.riskDescription}</p>
-                        <p class="text-[11px] text-slate-500 mt-1">Mitigation: ${r.treatmentPlan || 'Ongoing governance monitoring.'}</p>
+                        <p class="text-xs font-bold text-slate-900 mt-1">${r.riskName || r.riskDescription}</p>
+                        <p class="text-[11px] text-slate-600 mt-1">Mitigation: ${r.treatmentPlan || 'Ongoing governance monitoring.'}</p>
                     </div>
-                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2 shadow-2xs">Score ${r.residualRiskScore || '-'}</span>
+                    ${scoreBadge}
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
-            document.getElementById('execTopIssuesFullList').innerHTML = top5Issues.map((i, idx) => `
+            document.getElementById('execTopIssuesFullList').innerHTML = top5Issues.map((i, idx) => {
+                // Determine true severity vs owner name
+                const sevRaw = (i.severityRating || i.trend || i.consequence || '').toLowerCase();
+                let rightBadge = '';
+                
+                if (sevRaw.includes('critical') || sevRaw.includes('immediate') || sevRaw.includes('urgent')) {
+                    rightBadge = `<span class="bg-red-600 text-white font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2 shadow-2xs">Critical</span>`;
+                } else if (sevRaw.includes('high') || sevRaw.includes('prompt')) {
+                    rightBadge = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs px-2.5 py-0.5 rounded-lg font-mono shrink-0 ml-2">High</span>`;
+                } else if (i.severityRating && !i.severityRating.includes('Jul') && !i.severityRating.includes('Aug') && i.severityRating.length > 2) {
+                    rightBadge = `<span class="bg-slate-100 text-slate-700 border border-slate-200 text-xs px-2.5 py-0.5 rounded-lg font-medium shrink-0 ml-2">👤 ${i.severityRating}</span>`;
+                } else {
+                    rightBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2 py-0.5 rounded-lg font-mono shrink-0 ml-2">Active</span>`;
+                }
+
+                return `
                 <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-300 transition-all">
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-amber-600 font-mono">#${idx + 1} ${i.id}</span>
-                            <span class="text-xs text-slate-500">• ${i.issueOwner}</span>
-                            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium">${i.bundle || 'F-DSE'}</span>
+                            <span class="text-xs font-bold text-slate-700 font-mono">#${idx + 1} ${i.id}</span>
+                            <span class="text-xs text-slate-500">• 👤 ${i.relatedRiskId && isNaN(i.relatedRiskId) ? i.relatedRiskId : (i.issueOwner || 'Team Google')}</span>
+                            <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-medium">${i.driverTreeRef && i.driverTreeRef.length < 20 ? i.driverTreeRef : (i.bundle || 'F-DSE')}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-800 mt-1">${i.issueName}</p>
-                        <p class="text-[11px] text-slate-500 mt-1">Action: ${i.actionPlan || 'Under review.'}</p>
+                        <p class="text-xs font-bold text-slate-900 mt-1">${i.issueName || i.issueDescription}</p>
+                        <p class="text-[11px] text-slate-600 mt-1">Action: ${i.actionPlan || i.governanceLevel || 'Under review.'}</p>
                     </div>
-                    <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded font-mono shrink-0 ml-2 shadow-2xs">${i.severityRating}</span>
+                    ${rightBadge}
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function copyExecSummaryNote() {
