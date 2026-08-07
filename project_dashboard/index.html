@@ -319,68 +319,208 @@
 
         </main>
 
+        
         <!-- TAB 2: EXECUTIVE BRIEFING V2 -->
         <section id="view-exec-briefing" class="hidden space-y-6">
-            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-lg border border-slate-800">
-                <div class="flex justify-between items-center flex-wrap gap-4">
+            
+            <!-- Hero Leadership Banner with Baseline Selector & Official PDF Link -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h2 class="text-xl font-extrabold">Executive Briefing &amp; Leadership Governance (v2)</h2>
-                        <p class="text-xs text-slate-300 mt-1">F-DSE Program Review • Week 26 Status (31 Jul 2026) • Top Risks, Issues &amp; Trajectories</p>
+                        <div class="flex items-center gap-2.5">
+                            <span class="bg-indigo-600 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Leadership Governance</span>
+                            <span class="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30">Overall Program: 🟡 AMBER (Stable)</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-1.5">Executive Summary &amp; Decision Briefing (v2)</h2>
+                        <p class="text-xs text-slate-300 mt-1 max-w-2xl">
+                            Synthesis of Week 26 reporting period (ending 31 Jul 2026), milestone critical path horizon, critical risk control deltas, and escalated issues requiring joint executive action.
+                        </p>
                     </div>
-                    <a href="https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs">
-                        <span>📄 View Official Week 26 Pack</span>
-                    </a>
+
+                    <div class="flex flex-wrap items-center gap-2.5 self-start md:self-center">
+                        <select id="execBaselineSelect" class="bg-slate-800/90 text-white text-xs border border-slate-700 rounded-xl px-3 py-2 font-medium">
+                            <option value="w26">Baseline: Week 26 (31 Jul 2026 - Latest)</option>
+                            <option value="w25">Baseline: Week 25 (24 Jul 2026)</option>
+                            <option value="w22">Baseline: Week 22 (03 Jul 2026)</option>
+                        </select>
+
+                        <a href="https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md transition-all">
+                            <span>📄 Open Week 26 Pack</span>
+                            <svg class="w-3.5 h-3.5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4 Executive Pillar Health Indicators -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-800/80">
+                    <div class="bg-slate-800/60 rounded-xl p-3 border border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Commercial &amp; Budget</span>
+                        <div class="text-sm font-extrabold text-emerald-400 mt-0.5 flex items-center gap-1.5">🟢 ON TRACK</div>
+                        <span class="text-[10px] text-slate-400">Fixed-price deliverables aligned</span>
+                    </div>
+                    <div class="bg-slate-800/60 rounded-xl p-3 border border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Milestone 2 IBR</span>
+                        <div class="text-sm font-extrabold text-amber-400 mt-0.5 flex items-center gap-1.5">🟡 DUE AUG 2026</div>
+                        <span class="text-[10px] text-slate-400">85% complete • IMS Baselined</span>
+                    </div>
+                    <div class="bg-slate-800/60 rounded-xl p-3 border border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">ATO-C Security Gate</span>
+                        <div class="text-sm font-extrabold text-emerald-400 mt-0.5 flex items-center gap-1.5">🟢 GREEN</div>
+                        <span class="text-[10px] text-slate-400">Embedded assessors active</span>
+                    </div>
+                    <div class="bg-slate-800/60 rounded-xl p-3 border border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Critical Escalations</span>
+                        <div class="text-sm font-extrabold text-red-400 mt-0.5 flex items-center gap-1.5">🔴 5 ITEMS</div>
+                        <span class="text-[10px] text-slate-400">Flagged to Joint Exec Board</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Bundle Health RAG Grid from Weekly Pack -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">PI2 Delivery Bundle RAG Health (From Weekly Status Pack)</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-amber-800 uppercase">Bundle A.PI</div>
-                        <div class="text-xs font-black text-amber-700 mt-1">🟡 AMBER</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Program Int.</div>
+            <!-- "What's Burning / Immediate Executive Attention" Banner -->
+            <div class="bg-red-50/90 border-l-4 border-red-600 rounded-xl p-4.5 border border-red-200/80 shadow-xs space-y-2">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-red-600 text-base">🔥</span>
+                        <h3 class="text-xs font-bold text-red-900 uppercase tracking-wider">Executive Focus Areas &amp; Immediate Decisions (Week 26)</h3>
                     </div>
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-amber-800 uppercase">Bundle A.AO</div>
-                        <div class="text-xs font-black text-amber-700 mt-1">🟡 AMBER</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Architecture</div>
+                    <span class="text-[10px] font-mono font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded">3 Critical Action Items</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 text-xs">
+                    <div class="bg-white/80 p-3 rounded-lg border border-red-100 space-y-1">
+                        <span class="font-bold text-red-800 block font-mono text-[11px]">1. GDC Sandbox Multi-Site Landing (Ref 1.10b)</span>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            Dual-site EE E.01 infrastructure setup requires joint facility access sign-off to prevent blocking month 6.5 test milestone.
+                        </p>
                     </div>
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-amber-800 uppercase">Bundle G</div>
-                        <div class="text-xs font-black text-amber-700 mt-1">🟡 AMBER</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Cloud Platform</div>
+                    <div class="bg-white/80 p-3 rounded-lg border border-red-100 space-y-1">
+                        <span class="font-bold text-red-800 block font-mono text-[11px]">2. Systems Requirements Review - SRR (Ref 1.14)</span>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            MBSE architecture artifacts and requirements trace matrices tracking for September 2026 gate presentation.
+                        </p>
                     </div>
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-amber-800 uppercase">Bundle F</div>
-                        <div class="text-xs font-black text-amber-700 mt-1">🟡 AMBER</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Data Fabric</div>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-green-800 uppercase">Bundle I</div>
-                        <div class="text-xs font-black text-green-700 mt-1">🟢 GREEN</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Security &amp; ATO</div>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
-                        <div class="text-[10px] font-bold text-green-800 uppercase">Bundle L</div>
-                        <div class="text-xs font-black text-green-700 mt-1">🟢 GREEN</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Service Ops</div>
+                    <div class="bg-white/80 p-3 rounded-lg border border-red-100 space-y-1">
+                        <span class="font-bold text-red-800 block font-mono text-[11px]">3. Key Personnel Retention Obligations (Risk ID 8)</span>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            Transitioned to Issue Eventuated; mitigation plan actively tracking replacement approvals under 2.5yr deed.
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!-- Top 5 Critical Risks & Top 5 Issues Side-by-Side -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">Top 5 Critical Risks</h3>
+                
+                <!-- Left: Top 5 Critical Risks -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <span>🔴 Top 5 Critical Risks</span>
+                                <span class="bg-red-50 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full border border-red-200">High Score</span>
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Ranked by Residual Exposure Score &amp; Governance Escalation</p>
+                        </div>
+                        <button onclick="switchTab('overview')" class="text-xs font-bold text-indigo-600 hover:underline">View Matrix &rarr;</button>
+                    </div>
                     <div class="space-y-3" id="execTopRisksFullList"></div>
                 </div>
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">Top 5 Escalated Issues</h3>
+
+                <!-- Right: Top 5 Escalated Issues -->
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <span>⚠️ Top 5 Escalated Issues</span>
+                                <span class="bg-amber-50 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full border border-amber-200">29 Active</span>
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Ranked by Severity &amp; Action Priority</p>
+                        </div>
+                        <button onclick="switchTab('issues')" class="text-xs font-bold text-indigo-600 hover:underline">View Register &rarr;</button>
+                    </div>
                     <div class="space-y-3" id="execTopIssuesFullList"></div>
                 </div>
+
             </div>
+
+            <!-- 30-60 Day Look-Ahead Delivery Milestones -->
+            <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xs space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span>📅 30–60 Day Look-Ahead Milestones (Critical Path)</span>
+                            <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full border border-indigo-200">Contractual Gates</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Delivery Gates tracking commercial milestone sign-offs</p>
+                    </div>
+                    <button onclick="switchTab('driver-tree')" class="text-xs font-bold text-indigo-600 hover:underline">Full Roadmap &rarr;</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 px-2 py-0.5 rounded">Ref 1.13</span>
+                            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">🟡 AMBER</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900">Milestone 2 - Internal Baseline Review (IBR)</h4>
+                        <div class="text-[11px] text-slate-500 flex justify-between">
+                            <span>Target: <strong>August 2026</strong></span>
+                            <span>Progress: <strong>85%</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 px-2 py-0.5 rounded">Ref 1.10b</span>
+                            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">🟡 AMBER</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900">GDC Platform Ready (Test/Dev) EE E.01</h4>
+                        <div class="text-[11px] text-slate-500 flex justify-between">
+                            <span>Target: <strong>August 2026</strong></span>
+                            <span>Progress: <strong>65%</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 px-2 py-0.5 rounded">Ref 1.14</span>
+                            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">🟡 AMBER</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900">Systems Requirements Review (SRR)</h4>
+                        <div class="text-[11px] text-slate-500 flex justify-between">
+                            <span>Target: <strong>September 2026</strong></span>
+                            <span>Progress: <strong>60%</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 px-2 py-0.5 rounded">Ref 1.15</span>
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">🟢 GREEN</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900">Milestone 3 - Preliminary Design Review (PDR)</h4>
+                        <div class="text-[11px] text-slate-500 flex justify-between">
+                            <span>Target: <strong>November 2026</strong></span>
+                            <span>Progress: <strong>25%</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1-Click Executive Summary Note Copy -->
+            <div class="bg-indigo-50/70 border border-indigo-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <span class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                        <span>✨ One-Click Executive Summary Note</span>
+                    </span>
+                    <p class="text-[11px] text-slate-600">Copy synthesized 3-bullet executive briefing note ready for steering committee emails or meeting notes.</p>
+                </div>
+                <button onclick="copyExecSummaryNote()" id="copyExecNoteBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs shrink-0 flex items-center gap-1.5 transition-all cursor-pointer">
+                    <span>📋 Copy Briefing Note</span>
+                </button>
+            </div>
+
         </section>
+
 
         <!-- TAB 3: ISSUE REGISTER DASHBOARD -->
         <section id="view-issues" class="hidden space-y-4">
@@ -1395,6 +1535,26 @@
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 4000);
+        }
+
+        
+        function copyExecSummaryNote() {
+            const note = `*F-DSE Executive Briefing - Week 26 (31 Jul 2026)*\n\n` +
+                `• *Program Health & Milestones:* Overall status is AMBER (Stable). Milestone 2 (IBR) is tracking at 85% completion for August 2026 delivery. Systems Requirements Review (SRR) scheduled for September 2026.\n` +
+                `• *Critical Risks & Control Deltas:* Inherent average risk score has reduced from 15.4 to 8.4 (Δ -7.0) through active mitigation controls. Top critical risks are being managed in Key Personnel retention and GDC multi-site landing.\n` +
+                `• *Operational Issues:* 29 total registered issues; 5 critical escalations active with immediate next actions assigned.`;
+            
+            navigator.clipboard.writeText(note).then(() => {
+                const btn = document.getElementById('copyExecNoteBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>✓ Copied to Clipboard!</span>';
+                    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>📋 Copy Briefing Note</span>';
+                        btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+                    }, 2500);
+                }
+            });
         }
 
         window.onload = initApp;
