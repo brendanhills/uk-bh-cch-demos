@@ -276,5 +276,23 @@
     "status": "Reported",
     "context": "project_dash",
     "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/a4ce41a4-19d9-4bd7-b15e-afaa84c5a587/.user_uploaded/media_1786088237634.png"
+  },
+  {
+    "id": 18,
+    "type": "FR",
+    "title": "Increase Time Machine range to support all weekly reports in Drive folder (back to Week 5) with historical Sheet synchronization",
+    "description": "Expand the Time Machine range to encompass all weekly reporting packs available in the Google Drive folder dating back to Week 5 (rather than only Weeks 22-26). Maintain historical risk/issue register snapshots matching each historical time machine date so that traveling back in time renders the full state of both the briefing deck and the risk register for that specific week.",
+    "cause": "",
+    "plan": "",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "Reported",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]

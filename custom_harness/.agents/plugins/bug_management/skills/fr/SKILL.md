@@ -11,7 +11,7 @@ description: Record a feature request (FR) in the workspace registry without imp
 When the user runs `/fr` (or submits a feature request):
 1. Record feature description and workspace context into `<workspace-root>/.agents/bugs.json`.
 2. Auto-detect `"reporter"` using `git config user.name` (fallback `$USER` or system user name).
-3. Use the next sequential integer ID (e.g. 4, not BUG-4 or FR-2).
+3. Use the next sequential integer ID from the single shared registry (`id = max(existing_ids) + 1`, e.g. 4, not FR-2 or BUG-4). Bugs and FRs share the exact same ID sequence.
 4. Set `"type"` to `"FR"`.
 5. Set `"date_reported"` to current date (`YYYY-MM-DD`). Initialize `"date_triaged"` and `"date_resolved"` to empty (`""`).
 6. Initialize `"priority"`, `"impact"`, `"risk"`, and `"phase"` fields to empty (`""`).

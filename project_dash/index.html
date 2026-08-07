@@ -577,7 +577,7 @@
 
                 <!-- 3 Top KPI Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div onclick="setQuickFilter('high')" class="bg-red-50 hover:bg-red-100/80 border border-red-200 border-l-4 border-l-red-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                    <div id="kpiBoxHigh" onclick="setQuickFilter('high')" class="bg-red-50 hover:bg-red-100/80 border border-red-200 border-l-4 border-l-red-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all" title="Click to filter by Critical Exposure Risks (Score 18-25)">
                         <div>
                             <div class="text-xs font-bold text-red-800 tracking-wider">🔴 CRITICAL EXPOSURE RISKS</div>
                             <div class="text-2xl font-black text-slate-900 mt-1 font-mono" id="kpiHighCount">3 <span class="text-xs font-semibold text-slate-600">Active</span></div>
@@ -585,7 +585,7 @@
                         <span class="bg-red-200 text-red-900 text-xs font-bold px-2.5 py-1 rounded-lg">Score 18-25</span>
                     </div>
 
-                    <div onclick="setQuickFilter('eventuated')" class="bg-purple-50 hover:bg-purple-100/80 border border-purple-200 border-l-4 border-purple-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                    <div id="kpiBoxEventuated" onclick="setQuickFilter('eventuated')" class="bg-purple-50 hover:bg-purple-100/80 border border-purple-200 border-l-4 border-purple-600 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all" title="Click to filter by Eventuated Issues">
                         <div>
                             <div class="text-xs font-bold text-purple-800 tracking-wider">⚠️ EVENTUATED ISSUES</div>
                             <div class="text-2xl font-black text-purple-900 mt-1 font-mono" id="kpiEventuatedCount">21 <span class="text-xs font-semibold text-purple-600">Risks</span></div>
@@ -593,12 +593,12 @@
                         <span class="bg-purple-200 text-purple-900 text-xs font-bold px-2.5 py-1 rounded-lg">Escalated</span>
                     </div>
 
-                    <div onclick="setQuickFilter('unactioned')" class="bg-amber-50 hover:bg-amber-100/80 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all">
+                    <div id="kpiBoxUnactioned" onclick="setQuickFilter('unactioned')" class="bg-amber-50 hover:bg-amber-100/80 border border-amber-200 border-l-4 border-l-amber-500 rounded-xl p-4 flex justify-between items-center shadow-2xs cursor-pointer transition-all" title="Click to filter by Unactioned Risks missing treatment plans">
                         <div>
-                            <div class="text-xs font-bold text-amber-800 tracking-wider">🟡 IDLE / UNACTIONED RISKS</div>
-                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono" id="kpiIdleCount">10 <span class="text-xs font-semibold text-slate-600">Active</span></div>
+                            <div class="text-xs font-bold text-amber-800 tracking-wider">🟡 UNACTIONED RISKS</div>
+                            <div class="text-2xl font-black text-slate-900 mt-1 font-mono" id="kpiIdleCount">57 <span class="text-xs font-semibold text-slate-600">Active</span></div>
                         </div>
-                        <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-lg">>7 Days Idle</span>
+                        <span class="bg-amber-200 text-amber-900 text-xs font-bold px-2.5 py-1 rounded-lg">Action Required</span>
                     </div>
                 </div>
 
@@ -872,33 +872,7 @@
                             <h3 class="text-sm font-bold text-slate-800">Risk Severity Profile</h3>
                             <span class="text-xs text-slate-500 font-mono">5x5 Score Bands</span>
                         </div>
-                        <div class="space-y-3.5 my-4">
-                            <div class="flex items-center gap-3">
-                                <span class="w-28 font-bold text-xs text-red-600 uppercase">Very High (23-25)</span>
-                                <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="bg-[#ea4335] h-full rounded-full" style="width: 2%"></div></div>
-                                <span class="w-8 text-right text-xs font-bold font-mono">2</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-28 font-bold text-xs text-amber-600 uppercase">High (18-22)</span>
-                                <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="bg-[#ff9900] h-full rounded-full" style="width: 6%"></div></div>
-                                <span class="w-8 text-right text-xs font-bold font-mono">6</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-28 font-bold text-xs text-yellow-700 uppercase">Medium (13-17)</span>
-                                <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="bg-[#eedb33] h-full rounded-full" style="width: 25%"></div></div>
-                                <span class="w-8 text-right text-xs font-bold font-mono">27</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-28 font-bold text-xs text-emerald-600 uppercase">Low (7-12)</span>
-                                <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="bg-[#34a853] h-full rounded-full" style="width: 48%"></div></div>
-                                <span class="w-8 text-right text-xs font-bold font-mono">51</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="w-28 font-bold text-xs text-emerald-800 uppercase">Very Low (1-6)</span>
-                                <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden"><div class="bg-[#93c47d] h-full rounded-full" style="width: 19%"></div></div>
-                                <span class="w-8 text-right text-xs font-bold font-mono">21</span>
-                            </div>
-                        </div>
+                        <div class="space-y-3.5 my-4" id="riskSeverityProfileContainer"></div>
                     </div>
                 </div>
             </div>
@@ -1607,17 +1581,25 @@
             document.getElementById('timeMachineModal').classList.add('hidden');
         }
 
+        function getLatestWeekKey() {
+            for (const [key, snap] of Object.entries(TIME_MACHINE_SNAPSHOTS)) {
+                if (snap.isCurrent) return key;
+            }
+            return Object.keys(TIME_MACHINE_SNAPSHOTS)[0] || 'w26';
+        }
+
         function activateTimeMachine(weekKey) {
             activeTimeMachineWeek = weekKey;
             closeTimeMachineModal();
 
-            const snap = TIME_MACHINE_SNAPSHOTS[weekKey];
+            const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
             const banner = document.getElementById('timeMachineBanner');
             const liveBadge = document.getElementById('liveStatusBadge');
+            const latestKey = getLatestWeekKey();
 
-            if (weekKey === 'w26') {
+            if (weekKey === latestKey) {
                 banner.classList.add('hidden');
-                liveBadge.innerText = 'F-DSE Live (Week 26)';
+                liveBadge.innerText = `F-DSE Live (${snap.week})`;
                 liveBadge.className = 'bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200';
             } else {
                 banner.classList.remove('hidden');
@@ -1637,7 +1619,7 @@
         }
 
         function returnToPresent() {
-            activateTimeMachine('w26');
+            activateTimeMachine(getLatestWeekKey());
         }
 
         // --- DYNAMIC BASELINE DIFFING ---
@@ -1700,18 +1682,27 @@
 
                 diffHeaderHtml = `
                     <div class="space-y-2 mb-3 col-span-full text-xs">
-                        <!-- Resolved De-risking Banner (Victory Lap separated from Active Asks) -->
-                        <div class="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase">✅ Resolved This Cycle</span>
-                                <span class="font-bold text-emerald-950 text-xs">#3 (Ref 1.10b) GDC Test/Dev Environment (I-129)</span>
-                                <span class="text-slate-600 text-[11px] hidden md:inline">— Delivered &amp; validated; resolves former 5-wk blocker</span>
+                        <!-- Dedicated Delivered & De-risked Milestone Card (Separated from Outstanding Issues) -->
+                        <div class="bg-emerald-50/90 border-2 border-emerald-300 rounded-2xl p-4 shadow-xs space-y-2.5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-emerald-200/80">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">✅ Delivered This Cycle</span>
+                                    <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">Gap Close Plan #3</span>
+                                    <button onclick="jumpToDriverRef('1.10b')" class="font-mono font-bold text-emerald-800 text-xs bg-white hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 cursor-pointer">Ref 1.10b (I-129) ↗</button>
+                                </div>
+                                <span class="text-[10px] font-bold text-emerald-900 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-300 font-mono">
+                                    🚀 De-risked • Monitoring (Week 26)
+                                </span>
                             </div>
-                            <div class="flex items-center gap-2 self-end sm:self-auto">
-                                <button onclick="jumpToDriverRef('1.10b')" class="text-[11px] font-bold text-emerald-800 hover:underline cursor-pointer">Inspect Deliverable ↗</button>
-                                <button onclick="toggleResolvedGapPlans()" class="text-[10px] font-bold bg-white text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded cursor-pointer hover:bg-emerald-100">
-                                    ${showResolvedGapPlans ? 'Hide Resolved' : 'Show in Grid (' + resolvedPlans.length + ')'}
-                                </button>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                                <div>
+                                    <h4 class="font-black text-emerald-950 text-sm">I-129 Delivered • GDC EE E.01 Test/Dev Platform Ready</h4>
+                                    <p class="text-emerald-900/90 text-xs mt-0.5">Platform successfully validated and environment build commenced with early release to initial systems. Resolves the former 5-week schedule delay blocker.</p>
+                                </div>
+                                <div class="flex items-center gap-3 shrink-0 text-[11px] text-emerald-800">
+                                    <span>👤 <strong>Tom Trobe / Daryl James</strong></span>
+                                    <button onclick="jumpToDriverRef('1.10b')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-2xs cursor-pointer transition-all">Inspect Gate ↗</button>
+                                </div>
                             </div>
                         </div>
 
@@ -1719,11 +1710,10 @@
                         <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-3 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="font-extrabold text-indigo-950 flex items-center gap-1.5">
-                                    <span>⚡ Active Movements Since <strong>${baselineSnap.week} (${baselineSnap.date})</strong>:</span>
-                                    
+                                    <span>⚡ 4 Active Outstanding Gap Close Plans (<strong>#1, #2, #4, #5</strong>) — Baseline Diff vs <strong>${baselineSnap.week}</strong>:</span>
                                 </span>
-                                <span class="text-[10px] font-bold text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200">
-                                    ${activePlans.length} Open Escalations Requiring Action
+                                <span class="text-[10px] font-bold text-indigo-700 bg-white px-2.5 py-0.5 rounded-full border border-indigo-200 font-mono">
+                                    4 Open Escalations
                                 </span>
                             </div>
                             <div class="flex flex-wrap gap-2 pt-0.5 text-[11px] text-indigo-900">
@@ -1843,8 +1833,8 @@
                     <div class="bg-white border ${item.gapCloseRef ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} p-4 rounded-xl space-y-3 hover:border-indigo-300 hover:shadow-xs transition-all flex flex-col justify-between">
                         <div class="space-y-2">
                             <div class="flex justify-between items-start">
-                                <span class="bg-indigo-600 text-white font-mono font-black text-xs px-2.5 py-0.5 rounded-lg shadow-2xs">Ref ${item.itemNumber}</span>
-                                <span class="text-[10px] ${statusBadge} px-2 py-0.5 rounded border">${item.status}</span>
+                                <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">Ref ${item.itemNumber}</span>
+                                <span class="text-[10px] ${statusBadge} px-2 py-0.5 rounded-full font-bold border">${item.status}</span>
                             </div>
                             <h4 class="font-bold text-slate-900 text-xs leading-snug">${item.description}</h4>
 
@@ -1910,12 +1900,67 @@
             checkDriveSyncStatus();
         }
 
+                function isUnactionedRisk(r) {
+            if (r.status !== 'Active') return false;
+            const hasNoPlan = !r.treatmentPlan || r.treatmentPlan.trim() === '' || r.treatmentPlan === 'TBD' || r.treatmentPlan === 'None';
+            const isUnassigned = !r.riskOwner || r.riskOwner === 'N/A' || r.riskOwner === 'Unassigned';
+            const reqAction = (r.treatmentOwner === 'Requires Action' || r.governanceLevel === 'Requires Action');
+            return hasNoPlan || isUnassigned || reqAction;
+        }
+
+                function renderRiskSeverityProfile() {
+            const container = document.getElementById('riskSeverityProfileContainer');
+            if (!container) return;
+
+            const total = LIVE_RISKS.length || 1;
+            const vh = LIVE_RISKS.filter(r => (r.residualRiskScore || 0) >= 23).length;
+            const h = LIVE_RISKS.filter(r => 18 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 23).length;
+            const m = LIVE_RISKS.filter(r => 13 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 18).length;
+            const l = LIVE_RISKS.filter(r => 7 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 13).length;
+            const vl = LIVE_RISKS.filter(r => 1 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 7).length;
+
+            const bands = [
+                { label: 'Very High (23-25)', count: vh, color: 'bg-[#ea4335]', textCol: 'text-red-600' },
+                { label: 'High (18-22)', count: h, color: 'bg-[#ff9900]', textCol: 'text-amber-600' },
+                { label: 'Medium (13-17)', count: m, color: 'bg-[#eedb33]', textCol: 'text-yellow-700' },
+                { label: 'Low (7-12)', count: l, color: 'bg-[#34a853]', textCol: 'text-emerald-600' },
+                { label: 'Very Low (1-6)', count: vl, color: 'bg-[#93c47d]', textCol: 'text-emerald-800' }
+            ];
+
+            container.innerHTML = bands.map(b => {
+                const pct = Math.round((b.count / total) * 100);
+                return `
+                    <div class="flex items-center gap-3">
+                        <span class="w-28 font-bold text-xs ${b.textCol} uppercase">${b.label}</span>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="${b.color} h-full rounded-full transition-all duration-500" style="width: ${Math.max(pct, b.count > 0 ? 3 : 0)}%"></div>
+                        </div>
+                        <span class="w-8 text-right text-xs font-bold font-mono">${b.count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateAllDynamicCounters() {
+            if (document.getElementById('tabRiskCount')) document.getElementById('tabRiskCount').innerText = LIVE_RISKS.length;
+            if (document.getElementById('tabIssueCount')) document.getElementById('tabIssueCount').innerText = LIVE_ISSUES.length;
+            if (document.getElementById('synthRiskCount')) document.getElementById('synthRiskCount').innerText = `${LIVE_RISKS.length} Risks`;
+            if (document.getElementById('synthIssueCount')) document.getElementById('synthIssueCount').innerText = `${LIVE_ISSUES.length} Issues`;
+            if (document.getElementById('synthGateCount')) document.getElementById('synthGateCount').innerText = `${DRIVER_TREE_ITEMS.length} Driver Gates`;
+            if (document.getElementById('topIssuesCountBadge')) {
+                const activeCount = LIVE_ISSUES.filter(i => i.status !== 'Closed').length;
+                document.getElementById('topIssuesCountBadge').innerText = `${activeCount} Active`;
+            }
+            renderRiskSeverityProfile();
+        }
+
         function updateQuickFilterButtonsUI() {
             // Compute dynamic counts for all presets
             const countAll = LIVE_RISKS.length;
             const countHigh = LIVE_RISKS.filter(r => r.status !== 'Closed' && (currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 0) : (r.residualRiskScore || 0)) >= 18).length;
             const countTrending = LIVE_RISKS.filter(r => r.trend === '↑').length;
             const countEventuated = LIVE_RISKS.filter(r => r.status === 'Issue Eventuated').length;
+            const countUnactioned = LIVE_RISKS.filter(isUnactionedRisk).length;
             const countExec = LIVE_RISKS.filter(r => r.governanceLevel && (r.governanceLevel.includes('Commonwealth') || r.governanceLevel.includes('Steering'))).length;
 
             if (document.getElementById('countQfAll')) document.getElementById('countQfAll').innerText = countAll;
@@ -1932,7 +1977,27 @@
                 document.getElementById('kpiEventuatedCount').innerHTML = `${countEventuated} <span class="text-xs font-semibold text-purple-600">Risks</span>`;
             }
             if (document.getElementById('kpiIdleCount')) {
-                document.getElementById('kpiIdleCount').innerHTML = `10 <span class="text-xs font-semibold text-slate-600">Active</span>`;
+                document.getElementById('kpiIdleCount').innerHTML = `${countUnactioned} <span class="text-xs font-semibold text-slate-600">Active</span>`;
+            }
+
+            // Apply active focus rings to the 3 Top KPI Cards
+            const boxHigh = document.getElementById('kpiBoxHigh');
+            if (boxHigh) {
+                boxHigh.classList.toggle('ring-4', currentQuickFilter === 'high');
+                boxHigh.classList.toggle('ring-red-500', currentQuickFilter === 'high');
+                boxHigh.classList.toggle('scale-[1.02]', currentQuickFilter === 'high');
+            }
+            const boxEventuated = document.getElementById('kpiBoxEventuated');
+            if (boxEventuated) {
+                boxEventuated.classList.toggle('ring-4', currentQuickFilter === 'eventuated');
+                boxEventuated.classList.toggle('ring-purple-500', currentQuickFilter === 'eventuated');
+                boxEventuated.classList.toggle('scale-[1.02]', currentQuickFilter === 'eventuated');
+            }
+            const boxUnactioned = document.getElementById('kpiBoxUnactioned');
+            if (boxUnactioned) {
+                boxUnactioned.classList.toggle('ring-4', currentQuickFilter === 'unactioned');
+                boxUnactioned.classList.toggle('ring-amber-500', currentQuickFilter === 'unactioned');
+                boxUnactioned.classList.toggle('scale-[1.02]', currentQuickFilter === 'unactioned');
             }
 
             const buttons = [
@@ -1952,6 +2017,12 @@
         }
 
         function setQuickFilter(qf) {
+            // Toggle off if already active
+            if (currentQuickFilter === qf) {
+                resetAllFilters();
+                return;
+            }
+
             currentQuickFilter = qf;
             // Clear any active single matrix cell filter so it searches globally
             activeMatrixCellFilter = null;
@@ -2033,7 +2104,7 @@
                     const g = (r.governanceLevel || '').toLowerCase();
                     if (!g.includes('psg') && !g.includes('exec') && !g.includes('steering') && !g.includes('coa')) return false;
                 } else if (currentQuickFilter === 'unactioned') {
-                    if (r.status === 'Closed') return false;
+                    if (!isUnactionedRisk(r)) return false;
                 }
 
                 if (search) {
@@ -2072,33 +2143,39 @@
                         else if (score >= 18) scoreBadge = 'bg-amber-500 text-white font-extrabold shadow-2xs';
                         else if (score >= 13) scoreBadge = 'bg-yellow-100 text-yellow-900 border-yellow-300';
 
-                        let statusBadge = '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>';
+                        let statusBadge = '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Active</span>';
                         if (r.status === 'Issue Eventuated') {
-                            statusBadge = '<span class="bg-purple-100 text-purple-800 border border-purple-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full animate-pulse">⚠️ Eventuated Issue</span>';
+                            statusBadge = '<span class="bg-purple-100 text-purple-800 border border-purple-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full whitespace-nowrap animate-pulse">⚠️ Eventuated Issue</span>';
                         } else if (r.status === 'Closed') {
-                            statusBadge = '<span class="bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-full">Closed</span>';
+                            statusBadge = '<span class="bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Closed</span>';
                         }
 
                         const delta = (r.inherentRiskScore || 9) - (r.residualRiskScore || 4);
                         const deltaBadge = delta > 0 
-                            ? `<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-[10px]">Δ -${delta} (Mitigated)</span>` 
-                            : `<span class="text-slate-500 font-bold bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">Δ 0 (Unchanged)</span>`;
+                            ? `<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-[10px] whitespace-nowrap">Δ -${delta} (Mitigated)</span>` 
+                            : `<span class="text-slate-500 font-bold bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 text-[10px] whitespace-nowrap">Δ 0 (Unchanged)</span>`;
+
+                        const rawTitle = cleanField(r.riskName || r.riskDescription || 'Untitled Risk Statement');
+                        const ownerClean = cleanField(r.riskOwner || 'Team Google');
+                        const bundleClean = cleanField(r.bundle && r.bundle.length < 25 ? r.bundle : 'F-DSE');
+                        let refClean = cleanField(r.driverTreeRef || '1.10b');
+                        if (refClean.length > 25) refClean = refClean.split(' ')[0] || '1.10b';
 
                         return `
-                            <div class="bg-white border ${r.status === 'Issue Eventuated' ? 'border-purple-300 ring-1 ring-purple-100' : 'border-slate-200'} rounded-xl p-4.5 space-y-3.5 hover:border-indigo-400 hover:shadow-xs transition-all flex flex-col justify-between">
+                            <div class="bg-white border ${r.status === 'Issue Eventuated' ? 'border-purple-300 ring-1 ring-purple-100' : 'border-slate-200'} rounded-xl p-4 space-y-3 hover:border-indigo-400 hover:shadow-xs transition-all flex flex-col justify-between min-h-[160px]">
                                 
-                                <div class="space-y-2.5">
+                                <div class="space-y-2">
                                     <div class="flex items-start justify-between gap-2.5">
-                                        <div class="flex items-start gap-2">
-                                            <span class="bg-indigo-600 text-white font-mono font-black text-xs px-2 py-0.5 rounded-md shrink-0 shadow-2xs">ID ${r.displayId || r.id}</span>
-                                            <div>
-                                                <h4 class="text-xs font-bold text-slate-900 leading-snug">${r.riskName || r.riskDescription || 'Untitled Risk Statement'}</h4>
+                                        <div class="flex items-start gap-2 flex-1 min-w-0">
+                                            <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap shrink-0">ID ${r.displayId || r.id}</span>
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="text-xs font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2rem]" title="${rawTitle}">${rawTitle}</h4>
                                                 <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[10px] text-slate-500">
-                                                    <span class="font-semibold text-slate-700">👤 ${r.riskOwner}</span>
+                                                    <span class="font-semibold text-slate-700 truncate max-w-[120px] whitespace-nowrap">👤 ${ownerClean}</span>
                                                     <span>•</span>
-                                                    <span class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium">${r.bundle || 'F-DSE'}</span>
+                                                    <span class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium truncate max-w-[110px]">${bundleClean}</span>
                                                     <span>•</span>
-                                                    <span class="font-mono text-indigo-700 font-semibold">Ref ${r.driverTreeRef || '1.10b'}</span>
+                                                    <span class="font-mono text-indigo-700 font-semibold truncate max-w-[130px]">Ref ${refClean}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -2194,15 +2271,15 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 bg-white font-medium">
                             ${filtered.map(r => `
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="p-3 font-mono font-bold text-indigo-600">${r.displayId || r.id}</td>
-                                    <td class="p-3 font-bold text-slate-900 max-w-md">${r.riskName || r.riskDescription || 'Untitled'}</td>
-                                    <td class="p-3 font-semibold text-slate-700">${r.riskOwner}</td>
-                                    <td class="p-3 font-mono text-[11px] text-slate-600">${r.bundle || 'F-DSE'}</td>
-                                    <td class="p-3 font-mono text-indigo-700 font-bold">${r.driverTreeRef || '1.10b'}</td>
+                                <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">ID ${r.displayId || r.id}</span></td>
+                                    <td class="p-3 font-bold text-slate-900 max-w-md">${cleanField(r.riskName || r.riskDescription || 'Untitled')}</td>
+                                    <td class="p-3 font-semibold text-slate-700">${cleanField(r.riskOwner)}</td>
+                                    <td class="p-3 font-mono text-[11px] text-slate-600">${cleanField(r.bundle || 'F-DSE')}</td>
+                                    <td class="p-3 font-mono text-indigo-700 font-bold">${cleanField(r.driverTreeRef || '1.10b')}</td>
                                     <td class="p-3 text-center font-mono font-bold">${r.inherentRiskScore || 9}</td>
                                     <td class="p-3 text-center font-mono font-bold text-indigo-700">${r.residualRiskScore || 4}</td>
-                                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.status === 'Issue Eventuated' ? 'bg-purple-100 text-purple-800' : (r.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600')}">${r.status || 'Active'}</span></td>
+                                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap ${r.status === 'Issue Eventuated' ? 'bg-purple-100 text-purple-800 border-purple-300' : (r.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200')}">${r.status || 'Active'}</span></td>
                                     <td class="p-3 font-mono text-slate-500">${r.targetDate || '2026-08-31'}</td>
                                 </tr>
                             `).join('')}
@@ -2852,25 +2929,33 @@
             const tbody = document.getElementById('interactiveIssuesTableBody');
             if (!tbody) return;
 
-            tbody.innerHTML = filtered.map((i, index) => `
-                <tr class="hover:bg-slate-50 transition-colors">
+            tbody.innerHTML = filtered.map((i, index) => {
+                const isCritical = (i.severityRating === 'Critical');
+                const isHigh = (i.severityRating === 'High');
+                const sevBadge = isCritical 
+                    ? 'bg-red-600 text-white font-extrabold shadow-2xs' 
+                    : (isHigh ? 'bg-amber-100 text-amber-900 border border-amber-300 font-bold' : 'bg-slate-100 text-slate-700 border border-slate-200');
+
+                return `
+                <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="openItemDetailModal('issue', '${i.id}')">
                     <td class="px-4 py-3 text-center text-slate-400 font-mono border-r border-slate-100">${index + 1}</td>
-                    <td class="px-3 py-3 font-bold text-indigo-600 font-mono border-r border-slate-100">${i.id}</td>
-                    <td class="px-3 py-3 border-r border-slate-100"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700">${i.status || 'Open'}</span></td>
+                    <td class="px-3 py-3 border-r border-slate-100"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">${i.id}</span></td>
+                    <td class="px-3 py-3 border-r border-slate-100"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-emerald-50 text-emerald-700 border-emerald-200">${i.status || 'Active'}</span></td>
                     <td class="px-3 py-3 font-mono text-slate-600 border-r border-slate-100">${i.relatedRiskId || 'N/A'}</td>
-                    <td class="px-3 py-3 text-slate-800 font-medium border-r border-slate-100">${i.issueOwner || 'Unassigned'}</td>
-                    <td class="px-3 py-3 border-r border-slate-100">${i.bundle || 'N/A'}</td>
-                    <td class="px-3 py-3 font-mono text-indigo-700 font-bold border-r border-slate-100">${i.driverTreeRef || 'N/A'}</td>
-                    <td class="px-3 py-3 font-bold text-slate-800 border-r border-slate-100">${i.issueName}</td>
-                    <td class="px-3 py-3 border-r border-slate-100 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${i.severityRating === 'Critical' ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-800'}">${i.severityRating}</span></td>
+                    <td class="px-3 py-3 text-slate-800 font-medium border-r border-slate-100">${cleanField(i.issueOwner || 'Unassigned')}</td>
+                    <td class="px-3 py-3 border-r border-slate-100">${cleanField(i.bundle || 'N/A')}</td>
+                    <td class="px-3 py-3 font-mono text-indigo-700 font-bold border-r border-slate-100">${cleanField(i.driverTreeRef || 'N/A')}</td>
+                    <td class="px-3 py-3 font-bold text-slate-800 border-r border-slate-100 max-w-sm">${cleanField(i.issueName)}</td>
+                    <td class="px-3 py-3 border-r border-slate-100 text-center"><span class="px-2.5 py-0.5 rounded-md text-[10px] whitespace-nowrap ${sevBadge}">${i.severityRating || 'Medium'}</span></td>
                     <td class="px-3 py-3 border-r border-slate-100">${i.priorityRating || 'Prompt'}</td>
-                    <td class="px-3 py-3 text-slate-600 border-r border-slate-100">${i.governanceLevel || 'Google Internal'}</td>
-                    <td class="px-3 py-3 text-slate-800 border-r border-slate-100">${i.nextActionOwner || i.issueOwner || 'N/A'}</td>
+                    <td class="px-3 py-3 text-slate-600 border-r border-slate-100">${cleanField(i.governanceLevel || 'Google Internal')}</td>
+                    <td class="px-3 py-3 text-slate-800 border-r border-slate-100">${cleanField(i.nextActionOwner || i.issueOwner || 'N/A')}</td>
                     <td class="px-3 py-3 font-mono text-slate-500 border-r border-slate-100">${i.dateRaised || '23 Jul 2026'}</td>
                     <td class="px-3 py-3 font-mono text-slate-500 border-r border-slate-100">${i.lastUpdated || '23 Jul 2026'}</td>
-                    <td class="px-3 py-3 text-center"><button class="text-indigo-600 font-bold text-xs">View</button></td>
+                    <td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openItemDetailModal('issue', '${i.id}')" class="px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg shadow-2xs cursor-pointer">Inspect ↗</button></td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // --- LEDGER ---
@@ -2879,20 +2964,20 @@
             if (!tbody) return;
 
             tbody.innerHTML = LIVE_RISKS.map(r => {
-                let statusBadge = '<span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-bold">' + (r.status || 'Active') + '</span>';
+                let statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-emerald-50 text-emerald-700 border-emerald-200">' + (r.status || 'Active') + '</span>';
                 if (r.status === 'Issue Eventuated') {
-                    statusBadge = '<span class="bg-purple-100 text-purple-800 border border-purple-200 px-2 py-0.5 rounded font-bold">⚠️ Eventuated</span>';
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border whitespace-nowrap bg-purple-100 text-purple-800 border-purple-300 animate-pulse">⚠️ Eventuated</span>';
                 } else if (r.status === 'Closed') {
-                    statusBadge = '<span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-bold">Closed</span>';
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-slate-100 text-slate-600 border-slate-200">Closed</span>';
                 }
 
                 return `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3.5 font-mono font-bold text-indigo-600">${r.displayId || r.id}</td>
-                        <td class="p-3.5 font-bold text-slate-900 max-w-sm">${r.riskName || r.riskDescription || 'Untitled'}</td>
-                        <td class="p-3.5 font-semibold text-slate-800">${r.riskOwner}</td>
-                        <td class="p-3.5 text-slate-600">${r.causeCategory || 'Governance'}</td>
-                        <td class="p-3.5 font-mono text-slate-500">${r.driverTreeRef || '1.10b'}</td>
+                    <tr class="hover:bg-slate-50 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                        <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">ID ${r.displayId || r.id}</span></td>
+                        <td class="p-3.5 font-bold text-slate-900 max-w-sm">${cleanField(r.riskName || r.riskDescription || 'Untitled')}</td>
+                        <td class="p-3.5 font-semibold text-slate-800">${cleanField(r.riskOwner)}</td>
+                        <td class="p-3.5 text-slate-600">${cleanField(r.causeCategory || 'Governance')}</td>
+                        <td class="p-3.5 font-mono text-indigo-700 font-bold">${cleanField(r.driverTreeRef || '1.10b')}</td>
                         <td class="p-3.5 font-mono font-bold text-slate-700">${r.inherentRiskScore || '-'}</td>
                         <td class="p-3.5 font-mono font-bold text-indigo-700">${r.residualRiskScore || '-'}</td>
                         <td class="p-3.5">${statusBadge}</td>
