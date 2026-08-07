@@ -1301,10 +1301,6 @@
         let currentUtteranceIndex = 0;
         let podcastPlaybackSpeed = 1.0;
 
-                    });
-            document.getElementById('geminiSummaryText').innerText = GEMINI_PARAGRAPHS[tone] || GEMINI_PARAGRAPHS.executive;
-        }
-
         function copyGeminiParagraph() {
             const summary = document.getElementById('geminiSummaryText').innerText;
             const top3Items = Array.from(document.querySelectorAll('#top3ThingsContainer > div')).map(d => {
