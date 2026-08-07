@@ -1194,9 +1194,11 @@
                 if (isPmView) {
                     tabLedger.classList.remove('hidden');
                     tabLedger.classList.add('flex');
+                    tabLedger.style.display = 'inline-flex';
                 } else {
                     tabLedger.classList.add('hidden');
                     tabLedger.classList.remove('flex');
+                    tabLedger.style.display = 'none';
                 }
             }
             return isPmView;
