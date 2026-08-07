@@ -84,13 +84,14 @@
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
     "date_triaged": "2026-08-07",
-    "date_resolved": "",
+    "date_resolved": "2026-08-07",
     "priority": "P1",
     "impact": "High",
     "risk": "Low",
     "phase": "Investigation",
-    "status": "Investigated",
-    "context": "project_dash"
+    "status": "Fix Implemented",
+    "context": "project_dash",
+    "resolution_notes": "Reconciled renderMatrix vs renderRiskHeatmap, added 1-click toggle unfilter, active focus ring, and smooth scroll to filtered risks in Live Risk Explorer."
   },
   {
     "id": 8,

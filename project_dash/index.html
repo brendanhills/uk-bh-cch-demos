@@ -2202,9 +2202,20 @@
         }
 
         function highlightHeatmapCell(l, c, score, pushHistory = true) {
+            // Toggle off if clicking the already active cell
+            if (activeMatrixCellFilter && activeMatrixCellFilter.l === l && activeMatrixCellFilter.c === c) {
+                clearActiveCellFilter(pushHistory);
+                return;
+            }
+
             activeMatrixCellFilter = { l, c, score };
-            document.getElementById('activeCellFilterBanner')?.classList.remove('hidden');
-            document.getElementById('activeCellFilterText').innerText = `📍 Filtered by Heatmap Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.remove('hidden');
+            
+            const filterText = document.getElementById('activeCellFilterText');
+            if (filterText) {
+                filterText.innerText = `📍 Filtered by 5x5 Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
+            }
             
             const overviewTab = document.getElementById('view-overview');
             if (overviewTab && overviewTab.classList.contains('hidden')) {
@@ -2215,20 +2226,28 @@
                 history.pushState({ tab: 'overview', cellFilter: { l, c, score } }, '', '#overview-cell-' + l + '-' + c);
             }
             
-            renderMatrix();
+            renderRiskHeatmap();
             renderRiskExplorer();
-            document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            const explorerSection = document.getElementById('riskExplorerSection');
+            if (explorerSection) {
+                explorerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function clearActiveCellFilter(pushHistory = true) {
             activeMatrixCellFilter = null;
-            document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.add('hidden');
+            
             if (pushHistory) {
                 history.pushState({ tab: 'overview' }, '', '#overview');
             }
-            renderMatrix();
+            renderRiskHeatmap();
             renderRiskExplorer();
         }
+
+        function renderMatrix() { return renderRiskHeatmap(); }
 
         function renderDriveReportsInModal() {
             const listEl = document.getElementById('driveReportsModalList');
