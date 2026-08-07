@@ -179,28 +179,28 @@
         <!-- ========================================== -->
         <main id="view-exec-briefing" class="space-y-6">
             
-            <!-- Compact Executive Status & 4-Pillar Stat Strip (Tight High-Density Layout) -->
-            <div class="bg-white border border-slate-200/90 rounded-xl px-4 py-2.5 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                <div class="flex items-center gap-3 min-w-max">
-                    <div class="p-2 bg-indigo-50 text-indigo-700 rounded-lg flex items-center justify-center">
+            <!-- Compact Executive Status & 4-Pillar Stat Strip (Guaranteed Fit, Zero Clipping) -->
+            <div class="bg-white border border-slate-200/90 rounded-xl px-4 py-2.5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="p-1.5 bg-indigo-50 text-indigo-700 rounded-lg flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <div class="flex items-center gap-2.5 flex-wrap">
-                        <h2 class="text-sm font-extrabold text-slate-900 tracking-tight whitespace-nowrap">Executive Briefing &amp; Decision Cockpit</h2>
-                        <span id="execOverallBadge" class="bg-amber-100 text-amber-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-amber-300 whitespace-nowrap">🟡 AMBER (Stable)</span>
-                        <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">•</span>
-                        <span class="text-[11px] text-slate-500 font-medium whitespace-nowrap">Week 26 (31 Jul 2026)</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h2 class="text-sm font-extrabold text-slate-900 tracking-tight">Executive Cockpit</h2>
+                        <span id="execOverallBadge" class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-300 whitespace-nowrap">🟡 AMBER (Stable)</span>
+                        <span class="text-[11px] text-slate-400 font-medium hidden xl:inline">•</span>
+                        <span class="text-[11px] text-slate-500 font-medium hidden xl:inline whitespace-nowrap">Week 26 (31 Jul 2026)</span>
                     </div>
                 </div>
 
-                <!-- 4 Sleek Non-Wrapping Horizontal KPI Pills -->
-                <div class="flex items-center gap-2 overflow-x-auto py-0.5 no-scrollbar" id="execKpisGrid">
+                <!-- 4 Sleek Responsive Horizontal KPI Pills -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2" id="execKpisGrid">
                     <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
                         <span class="text-[9px] font-bold text-slate-400 uppercase">Commercial:</span>
                         <span class="font-black text-emerald-700 font-mono" id="kpiCommercial">🟢 ON TRACK</span>
                     </div>
                     <div class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">Milestone 2 IBR:</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">Milestone 2:</span>
                         <span class="font-black text-amber-700 font-mono" id="kpiIbr">🟡 DUE AUG (85%)</span>
                     </div>
                     <div id="cardKpiAto" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] flex items-center gap-1.5 shadow-2xs whitespace-nowrap">
@@ -213,9 +213,7 @@
                     </div>
                 </div>
             </div>
-            </div>
 
-            
             <!-- GEMINI AI EXECUTIVE SUMMARY (FULL WIDTH) & SLIM PODCAST BAR -->
             <div class="space-y-4">
                 
@@ -318,7 +316,7 @@
                                         </button>
                                     </div>
                                     <p class="text-xs sm:text-sm text-[#444746] leading-relaxed">
-                                        <strong>The Risk:</strong> Milestone 3 PDR is currently reported <span class="text-emerald-700 font-bold">🟢 GREEN (Target Nov 2026, 25% complete)</span>. However, with SRR (<button onclick="jumpToDriverRef('1.14')" class="underline decoration-purple-500 hover:text-purple-900 font-mono font-bold">Ref 1.14</button>) shifting right to September, there is only a <strong>tight 6-week window</strong> to author and baseline the TiS and Integrated Support Plans before November. If SRR incurs any further friction, Milestone 3 will turn <span class="text-red-600 font-bold">🔴 RED by October</span>.
+                                        <strong>The Risk:</strong> Milestone 3 PDR is currently reported <span class="text-emerald-700 font-bold">🟢 GREEN (Target Nov 2026, 25% complete)</span>. However, with SRR (<button onclick="jumpToDriverRef('1.14')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer">Ref 1.14 (SRR) ↗</button>) shifting right to September, there is only a <strong>tight 6-week window</strong> to author and baseline the TiS and Integrated Support Plans before November. If SRR incurs any further friction, Milestone 3 will turn <span class="text-red-600 font-bold">🔴 RED by October</span>.
                                     </p>
                                 </div>
                             </div>
