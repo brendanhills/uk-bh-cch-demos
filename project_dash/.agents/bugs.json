@@ -120,5 +120,21 @@
     "phase": "",
     "status": "Reported",
     "context": "project_dash"
+  },
+  {
+    "id": 9,
+    "type": "FR",
+    "title": "Time Machine weekly selector chips across orange header bar",
+    "description": "In Time Machine view, list available historical weeks (Week 22, Week 23, Week 24, Week 25, Week 26, etc.) directly across the top of the orange header bar as clickable chips or a horizontal scroll track to allow instant 1-click scrubbing and flicking between reporting weeks.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
