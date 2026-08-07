@@ -1,10 +1,10 @@
-# Implementation Plan: Simplify Dashboard & Unified Bug Resolution
+# Implementation Plan: Simplify Dashboard (Single Unified View)
 
-## Phase 1: Immediate UI, Navigation & URL-Driven PM View
+## Phase 1: Immediate UI & Navigation Consolidation
 - [ ] Task: Make header title and logo clickable to return to Executive Summary home (FR #10)
 - [ ] Task: Update ATO-C Security Gate status text styling from emerald to amber (Bug #5)
-- [ ] Task: Implement URL query parameter detection (?view=pm / ?ledger=true) to conditionally unhide 5th Ledger tab without adding UI buttons
-- [ ] Task: Consolidate navigation bar: default to 4 core views in clean Executive Mode, expose Tab 5 when ?view=pm is present
+- [ ] Task: Consolidate top navigation bar from 6 tabs down to 4 streamlined core tabs (Executive Summary, Risk & Issue Cockpit, Trends, Driver Tree)
+- [ ] Task: Remove standalone Ledger tab and embed direct Google Sheet deep links
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Risk & Issue Cockpit Harmonization
@@ -26,6 +26,6 @@
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 5: Verification & Delivery
-- [ ] Task: Run end-to-end verification across both default (4-tab) and ?view=pm (5-tab) modes on localhost:9000
-- [ ] Task: Update README.md and Resume.md with URL parameter documentation
+- [ ] Task: Run end-to-end verification across all 4 unified tabs on localhost:9000
+- [ ] Task: Update README.md and Resume.md with simplified architecture
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)

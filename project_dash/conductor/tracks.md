@@ -13,3 +13,7 @@
 ---
 - [~] **Track: Simplify Dashboard (4-View Architecture & Progressive Disclosure)**
   *Link: [./tracks/simplify_dashboard_20260807/index.md](./tracks/simplify_dashboard_20260807/index.md)*
+
+---
+- [ ] **Track: Tailored Stakeholder Views (Exec, PM, and Tech URL-Driven Views)**
+  *Link: [./tracks/tailored_stakeholder_views/index.md](./tracks/tailored_stakeholder_views/index.md)*
