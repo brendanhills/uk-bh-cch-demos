@@ -228,12 +228,7 @@
                             </span>
                             <h3 class="text-sm font-extrabold text-slate-900">Executive Decision Briefing &amp; Critical Exceptions</h3>
                         </div>
-                        <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-[11px] font-bold self-start sm:self-auto border border-slate-200/60">
-                            <span class="text-[10px] text-slate-500 uppercase px-1">Tone:</span>
-                            <button onclick="setAiTone('executive')" id="toneExec" class="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white shadow-2xs cursor-pointer">Exec Concise</button>
-                            <button onclick="setAiTone('technical')" id="toneTech" class="px-2.5 py-0.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Technical</button>
-                            <button onclick="setAiTone('governance')" id="toneGov" class="px-2.5 py-0.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Steering Comm</button>
-                        </div>
+
                     </div>
 
                     <!-- Dynamic AI Paragraph Content with Crisp High-Contrast Direct Citations -->
@@ -1307,15 +1302,7 @@
         let currentUtteranceIndex = 0;
         let podcastPlaybackSpeed = 1.0;
 
-        function setAiTone(tone) {
-            currentAiTone = tone;
-            ['executive', 'technical', 'governance'].forEach(t => {
-                const btn = document.getElementById('tone' + t.charAt(0).toUpperCase() + t.slice(1, 4));
-                if (btn) {
-                    btn.classList.toggle('bg-indigo-600', t === tone);
-                    btn.classList.toggle('text-white', t === tone);
-                }
-            });
+                    });
             document.getElementById('geminiSummaryText').innerText = GEMINI_PARAGRAPHS[tone] || GEMINI_PARAGRAPHS.executive;
         }
 
