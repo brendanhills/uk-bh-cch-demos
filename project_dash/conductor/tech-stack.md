@@ -1,10 +1,12 @@
-# Tech Stack Definition
+# Tech Stack Definition: AI Studio Web Application
 
-## Primary Languages & Frameworks
-- **Language:** Python 3.11+
-- **Frontend Dashboard Framework:** Streamlit (`streamlit`)
-- **Data Analysis & Visualization:** Pandas (`pandas`), Plotly (`plotly`)
-- **Data Integration:** Google Workspace API / gspread / local CSV caching
+## Primary Architecture & Platform
+- **Target Platform:** AI Studio Web Application (`aistudio.corp.google.com/apps/`)
+- **Frontend Stack:** Single Page Web Application (HTML5, CSS3, JavaScript ES6+)
+- **UI Framework & Design System:** Google Material Design / Tailwind CSS / Custom AI Studio App Styling
+- **Visualization Library:** Chart.js / SVG / Canvas Heatmap Grid
+- **AI & Data Layer:** Google Gemini API Integration (`@google/genai`) / In-Memory JSON State & Google Sheets Integration
+- **Execution & Deployment:** Static Web Server (`python3 -m http.server 8080`) or direct AI Studio Remix/Import
 
-## Testing & Quality
-- **Test Runner:** Pytest (`pytest`)
+## Legacy Stack (Deprecated)
+- *Python 3.11+ / Streamlit (`app.py`)* — Migrated to native AI Studio HTML5/JS web architecture.

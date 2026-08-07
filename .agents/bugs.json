@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "description": "The downloaded pptx and pdf docs are not valid files",
+    "type": "Bug",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "context": "project_dash"
+  },
+  {
+    "id": 2,
+    "description": "The exec summary is a bit bare.",
+    "type": "FR",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "status": "Reported",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "context": "project_dash"
+  }
+]

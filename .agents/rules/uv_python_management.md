@@ -1,5 +1,6 @@
-# Rule: Always Use `uv` for Python Package Management
+# Rule: Always Use `uv` for Python Execution & Package Management
 
-- **Python Package Management & Execution (`uv`)**:
-  - Always use `uv` commands (`uv sync`, `uv run`, `uv add`, `uv pip install`) for all Python package management, dependency installation, virtual environment creation, and script/app execution across all projects.
-  - Do not use standard `pip`, `python -m venv`, or direct binary invocation when `uv` is available.
+- **Python Execution & Environment Management (`uv`)**:
+  - Always use `uv run <command>` (e.g. `uv run python script.py`, `uv run streamlit run app.py`) to execute all Python scripts, binaries, and applications.
+  - Always use `uv` commands (`uv add`, `uv sync`, `uv pip install`) for installing dependencies and managing virtual environments.
+  - Do NOT invoke raw `python3`, `pip`, or `python -m venv` directly when `uv` is available.
