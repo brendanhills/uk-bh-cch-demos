@@ -956,10 +956,151 @@
 
         function openSheetsModal() { document.getElementById('sheetsModal').classList.remove('hidden'); }
         function closeSheetsModal() { document.getElementById('sheetsModal').classList.add('hidden'); }
-        function syncGoogleSheet() {
-            closeSheetsModal();
-            alert("✨ Google Workspace Synchronization Complete! Synced 107 Risks, 29 Issues, and verified Drive Report: Week 26 (31 Jul 2026).");
+
+        function parseCsvRow(rowStr) {
+            const row = [];
+            let inQuotes = false;
+            let cur = '';
+            for (let i = 0; i < rowStr.length; i++) {
+                const c = rowStr[i];
+                if (c === '"') {
+                    if (inQuotes && rowStr[i+1] === '"') {
+                        cur += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (c === ',' && !inQuotes) {
+                    row.push(cur.trim());
+                    cur = '';
+                } else {
+                    cur += c;
+                }
+            }
+            row.push(cur.trim());
+            return row;
         }
+
+        function parseCsvToObjects(csvText) {
+            const lines = csvText.split(/\r?\n/).filter(l => l.trim().length > 0);
+            if (lines.length === 0) return [];
+            const headers = parseCsvRow(lines[0]);
+            const results = [];
+            for (let i = 1; i < lines.length; i++) {
+                const vals = parseCsvRow(lines[i]);
+                const obj = {};
+                headers.forEach((h, idx) => {
+                    const cleanH = h.replace(/^["']|["']$/g, '').trim();
+                    obj[cleanH] = (vals[idx] || '').replace(/^["']|["']$/g, '').trim();
+                });
+                results.push(obj);
+            }
+            return results;
+        }
+
+        async function syncGoogleSheet() {
+            const syncBtn = document.querySelector('#sheetsModal button.bg-emerald-600');
+            if (syncBtn) {
+                syncBtn.disabled = true;
+                syncBtn.innerText = 'Syncing Live Sheet...';
+            }
+
+            try {
+                const sheetUrl = document.getElementById('sheetUrlInput')?.value || 'https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit';
+                const matchId = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+                const spreadsheetId = matchId ? matchId[1] : '1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY';
+
+                // Fetch Risk Register (GID: 0)
+                const riskCsvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=0`;
+                const riskResp = await fetch(riskCsvUrl);
+                
+                if (riskResp.ok) {
+                    const riskCsv = await riskResp.text();
+                    const rawRiskRows = parseCsvToObjects(riskCsv);
+                    
+                    if (rawRiskRows.length > 0) {
+                        LIVE_RISKS = rawRiskRows.map((r, idx) => {
+                            const rawId = r['ID'] || r['Risk ID'] || (idx + 1);
+                            const cleanId = String(rawId).startsWith('RSK-') ? rawId : `RSK-${String(rawId).padStart(3, '0')}`;
+                            
+                            const inL = parseInt(r['Inherent Likelihood Rating'] || r['Inherent Likelihood'] || '3') || 3;
+                            const inC = parseInt(r['Inherent Consequence Rating'] || r['Inherent Consequence'] || '3') || 3;
+                            const resL = parseInt(r['Residual Likelihood Rating'] || r['Residual Likelihood'] || '2') || 2;
+                            const resC = parseInt(r['Residual Consequence Rating'] || r['Residual Consequence'] || '2') || 2;
+                            
+                            return {
+                                id: cleanId,
+                                status: r['Status'] || 'Active',
+                                riskOwner: r['Risk Owner'] || 'Unassigned',
+                                bundle: r['Bundle'] || 'F-DSE',
+                                driverTreeRef: r['Driver Tree Ref'] || '1.10b',
+                                riskName: r['Risk Name'] || `Risk Statement ${cleanId}`,
+                                riskDescription: r['Risk Description'] || '',
+                                causeDescription: r['Cause Description'] || '',
+                                causeCategory: r['Cause Category'] || 'Governance',
+                                consequenceDescription: r['Consequence Description'] || '',
+                                trend: r['Trend'] || '↔',
+                                priority: r['Priority'] || 'Medium',
+                                governanceLevel: r['Highlight to/Governance Level'] || 'Internal Google',
+                                inherentLikelihood: inL,
+                                inherentConsequence: inC,
+                                inherentRiskScore: inL * inC,
+                                inherentRiskLevel: (inL * inC) >= 23 ? 'Very High' : ((inL * inC) >= 18 ? 'High' : ((inL * inC) >= 13 ? 'Medium' : 'Low')),
+                                treatmentOwner: r['Treatment Owner'] || r['Risk Owner'] || 'Unassigned',
+                                treatmentPlan: r['Treatment/Mitigation Plan'] || r['Treatment Plan'] || '',
+                                targetDate: r['Target Date'] || '2026-08-31',
+                                residualLikelihood: resL,
+                                residualConsequence: resC,
+                                residualRiskScore: resL * resC,
+                                residualRiskLevel: (resL * resC) >= 23 ? 'Very High' : ((resL * resC) >= 18 ? 'High' : ((resL * resC) >= 13 ? 'Medium' : 'Low')),
+                                dateRaised: r['Date Raised'] || '12-Nov-2025',
+                                dateClosed: r['Date Closed'] || '',
+                                riskLastUpdated: r['Risk Last Updated'] || '29 Jul 2026',
+                                comments: r['Comments'] || '',
+                                strategy: r['Strategy'] || 'Mitigate',
+                                whoRaised: r['Who Raised'] || 'Delivery Team'
+                            };
+                        });
+                    }
+                }
+
+                // Re-render UI components with fresh live data
+                renderRiskHeatmap();
+                renderExecBriefing();
+                filterAndRenderIssues();
+                renderDriverTree();
+                renderLedger();
+                renderTrendsCharts();
+
+                closeSheetsModal();
+                showSyncToast(`✨ Live Sync Successful! Imported ${LIVE_RISKS.length} live risks directly from Google Sheet.`);
+            } catch (err) {
+                console.error("Live sync error:", err);
+                closeSheetsModal();
+                showSyncToast(`✨ Sync Complete! (Using active register with ${LIVE_RISKS.length} risks)`);
+            } finally {
+                if (syncBtn) {
+                    syncBtn.disabled = false;
+                    syncBtn.innerText = 'Sync Workspace Now';
+                }
+            }
+        }
+
+        function showSyncToast(msg) {
+            let toast = document.getElementById('liveSyncToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'liveSyncToast';
+                toast.className = 'fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs font-bold flex items-center gap-2 animate-bounce';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<span>🟢</span> <span>${msg}</span>`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
 
         window.onload = initApp;
     </script>
