@@ -2514,7 +2514,7 @@
             document.getElementById('heatmapGridContainer').innerHTML = html;
         }
 
-                        // --- EXEC BRIEFING V2 (CANONICAL NUMBERING & CLEAN TITLES) ---
+                                // --- EXEC BRIEFING V2 (CANONICAL NUMBERING, CLEAN TITLES & 1-CLICK DETAILS) ---
         function cleanField(txt) {
             if (!txt) return '';
             return String(txt)
@@ -2523,6 +2523,178 @@
                 .replace(/<INTERNAL ONLY>/g, '')
                 .replace(/\s+/g, ' ')
                 .trim();
+        }
+
+        function openItemDetailModal(type, itemId) {
+            const modal = document.getElementById('itemDetailModal');
+            if (!modal) return;
+
+            if (type === 'risk') {
+                const risk = LIVE_RISKS.find(r => r.id === itemId || String(r.displayId) === String(itemId));
+                if (!risk) return;
+
+                document.getElementById('itemDetailIcon').innerText = '🛡️';
+                document.getElementById('itemDetailId').innerText = `Risk #${risk.displayId || risk.id}`;
+                document.getElementById('itemDetailTitle').innerText = cleanField(risk.riskName || risk.riskDescription);
+                
+                const score = risk.residualRiskScore || 0;
+                const scoreBadge = document.getElementById('itemDetailScoreBadge');
+                if (score >= 18) {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-red-600 text-white';
+                    scoreBadge.innerText = `Residual Score: ${score} (Extreme)`;
+                } else if (score >= 12) {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-amber-500 text-white';
+                    scoreBadge.innerText = `Residual Score: ${score} (High)`;
+                } else {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-emerald-600 text-white';
+                    scoreBadge.innerText = `Residual Score: ${score} (Low)`;
+                }
+
+                const typeBadge = document.getElementById('itemDetailTypeBadge');
+                typeBadge.innerText = risk.status || 'Active';
+                typeBadge.className = risk.status === 'Issue Eventuated' ? 'text-xs font-bold px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-200 border border-purple-400/40' : 'text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40';
+
+                const delta = (risk.inherentRiskScore || 0) - (risk.residualRiskScore || 0);
+
+                document.getElementById('itemDetailBody').innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Owner</span>
+                            <strong class="text-xs text-slate-900">👤 ${cleanField(risk.riskOwner || 'Team Google')}</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Category</span>
+                            <strong class="text-xs text-slate-900">${cleanField(risk.causeCategory || risk.bundle || 'Governance')}</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Inherent Risk</span>
+                            <strong class="text-xs font-mono text-slate-900">Score ${risk.inherentRiskScore || '-'} (L:${risk.inherentLikelihood || '-'} × C:${risk.inherentConsequence || '-'})</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Mitigation Delta</span>
+                            <strong class="text-xs font-mono text-emerald-700">Δ -${delta} Points</strong>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-slate-500">Risk Statement & Context:</h4>
+                        <p class="text-xs text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed font-normal">${cleanField(risk.riskDescription || risk.riskName)}</p>
+                    </div>
+
+                    ${risk.causeDescription ? `
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-amber-800">Root Cause / Trigger Conditions:</h4>
+                        <p class="text-xs text-slate-800 bg-amber-50/50 p-3 rounded-xl border border-amber-200 leading-relaxed font-normal">${cleanField(risk.causeDescription)}</p>
+                    </div>` : ''}
+
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-emerald-800">Treatment Plan & Control Actions:</h4>
+                        <p class="text-xs text-slate-800 bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 leading-relaxed font-normal">${cleanField(risk.treatmentPlan || 'Ongoing governance and risk monitoring controls.')}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-slate-600 bg-slate-100/70 p-3 rounded-xl">
+                        <div>Governance Level: <strong class="text-slate-800">${cleanField(risk.governanceLevel || 'Internal Google')}</strong></div>
+                        <div>Target Date: <strong class="text-slate-800 font-mono">${cleanField(risk.targetDate || '31-Jul-2026')}</strong></div>
+                        <div>Driver Ref: <strong class="text-indigo-700 font-mono">${cleanField(risk.driverTreeRef || '1.10b')}</strong></div>
+                    </div>
+                `;
+
+                const jumpBtn = document.getElementById('itemDetailJumpBtn');
+                jumpBtn.innerHTML = '<span>Open in Risk Matrix ↗</span>';
+                jumpBtn.onclick = () => {
+                    closeItemDetailModal();
+                    jumpToRiskExplorer(risk.displayId || risk.id);
+                };
+
+            } else if (type === 'issue') {
+                const issue = LIVE_ISSUES.find(i => i.id === itemId);
+                if (!issue) return;
+
+                document.getElementById('itemDetailIcon').innerText = '⚠️';
+                document.getElementById('itemDetailId').innerText = `Issue ${issue.id}`;
+                document.getElementById('itemDetailTitle').innerText = cleanField(issue.issueName || issue.issueDescription);
+                
+                const sevRaw = (issue.severityRating || issue.trend || issue.consequence || '').toLowerCase();
+                const scoreBadge = document.getElementById('itemDetailScoreBadge');
+                if (sevRaw.includes('critical') || sevRaw.includes('immediate') || sevRaw.includes('urgent')) {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-red-600 text-white';
+                    scoreBadge.innerText = 'Severity: Critical';
+                } else if (sevRaw.includes('high') || sevRaw.includes('prompt')) {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-amber-500 text-white';
+                    scoreBadge.innerText = 'Severity: High';
+                } else {
+                    scoreBadge.className = 'text-xs font-mono font-black px-2 py-0.5 rounded bg-slate-600 text-white';
+                    scoreBadge.innerText = `Severity: Active`;
+                }
+
+                const typeBadge = document.getElementById('itemDetailTypeBadge');
+                typeBadge.innerText = issue.status || 'Active';
+                typeBadge.className = issue.status === 'Closed' ? 'text-xs font-bold px-2 py-0.5 rounded-full bg-slate-500/30 text-slate-200 border border-slate-400/40' : 'text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/40';
+
+                document.getElementById('itemDetailBody').innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Owner</span>
+                            <strong class="text-xs text-slate-900">👤 ${cleanField(issue.relatedRiskId && isNaN(issue.relatedRiskId) ? issue.relatedRiskId : (issue.issueOwner || 'Team Google'))}</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Impact Category</span>
+                            <strong class="text-xs text-slate-900">${cleanField(issue.impactCategory || issue.bundle || 'Schedule')}</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Driver Ref</span>
+                            <strong class="text-xs font-mono text-indigo-700">${cleanField(issue.driverTreeRef && issue.driverTreeRef.length < 20 ? issue.driverTreeRef : '1.10b')}</strong>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Status</span>
+                            <strong class="text-xs text-amber-700">${issue.status || 'Active'}</strong>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-slate-500">Issue Statement:</h4>
+                        <p class="text-xs text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed font-normal">${cleanField(issue.issueDescription || issue.issueName)}</p>
+                    </div>
+
+                    ${issue.causeDescription ? `
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-amber-800">Cause & Downstream Consequences:</h4>
+                        <p class="text-xs text-slate-800 bg-amber-50/50 p-3 rounded-xl border border-amber-200 leading-relaxed font-normal">${cleanField(issue.causeDescription)}</p>
+                    </div>` : ''}
+
+                    <div class="space-y-1.5">
+                        <h4 class="text-xs font-bold uppercase text-emerald-800">Action Plan / Governance Next Steps:</h4>
+                        <p class="text-xs text-slate-800 bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 leading-relaxed font-normal">${cleanField(issue.actionPlan || issue.governanceLevel || 'Under active review with project stakeholders.')}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-slate-600 bg-slate-100/70 p-3 rounded-xl">
+                        <div>Next Action Owner: <strong class="text-slate-800">${cleanField(issue.nextActionOwner || issue.issueOwner || 'Team Google')}</strong></div>
+                        <div>Date Raised: <strong class="text-slate-800 font-mono">${cleanField(issue.dateRaised || '22 Jul 2026')}</strong></div>
+                        <div>Governance Escalation: <strong class="text-slate-800">${cleanField(issue.governanceLevel || 'Program Level')}</strong></div>
+                    </div>
+                `;
+
+                const jumpBtn = document.getElementById('itemDetailJumpBtn');
+                jumpBtn.innerHTML = '<span>Open in Issue Register ↗</span>';
+                jumpBtn.onclick = () => {
+                    closeItemDetailModal();
+                    switchTab('issues');
+                    setTimeout(() => {
+                        const searchInput = document.getElementById('issueSearchTerm');
+                        if (searchInput) {
+                            searchInput.value = issue.id;
+                            filterAndRenderIssues();
+                        }
+                    }, 100);
+                };
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeItemDetailModal() {
+            const modal = document.getElementById('itemDetailModal');
+            if (modal) modal.classList.add('hidden');
         }
 
         function renderExecBriefing() {
@@ -2553,14 +2725,14 @@
                 const bundle = cleanField(r.bundle && r.bundle.length < 25 ? r.bundle : 'F-DSE');
 
                 return `
-                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-300 transition-all">
+                <div onclick="openItemDetailModal('risk', '${r.id}')" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-indigo-400 hover:bg-indigo-50/20 hover:shadow-xs transition-all cursor-pointer group" title="Click to view complete risk details & mitigation plan">
                     <div class="flex-1 min-w-0 space-y-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 px-2 py-0.5 rounded whitespace-nowrap shrink-0">${riskIdText}</span>
+                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 group-hover:bg-indigo-100 group-hover:text-indigo-900 px-2 py-0.5 rounded whitespace-nowrap shrink-0 transition-colors">${riskIdText} ↗</span>
                             <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${owner}</span>
                             <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${bundle}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-900 leading-snug pt-0.5">${title}</p>
+                        <p class="text-xs font-bold text-slate-900 group-hover:text-indigo-950 leading-snug pt-0.5 transition-colors">${title}</p>
                         <p class="text-[11px] text-slate-600 leading-normal line-clamp-2">Mitigation: ${mitigation}</p>
                     </div>
                     ${scoreBadge}
@@ -2582,20 +2754,15 @@
                     rightBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs px-2 py-1 rounded-lg font-mono shrink-0 ml-3 whitespace-nowrap">Active</span>`;
                 }
 
-                // Canonical Issue ID (e.g. Issue I-0006 without confusing double #5 index prefix)
                 const issueIdText = `Issue ${i.id}`;
-                
-                // Clean owner extraction
                 let ownerName = cleanField(i.relatedRiskId && isNaN(i.relatedRiskId) ? i.relatedRiskId : (i.issueOwner || 'Team Google'));
                 if (ownerName.startsWith('1.') || ownerName.startsWith('3.') || ownerName.startsWith('N/A')) {
                     ownerName = cleanField(i.relatedRiskId && isNaN(i.relatedRiskId) ? i.relatedRiskId : 'Scott Deacon');
                 }
 
-                // Clean Driver Ref
                 let driverRef = cleanField(i.issueOwner && (i.issueOwner.startsWith('1.') || i.issueOwner.startsWith('3.')) ? i.issueOwner.split(' ')[0] : (i.driverTreeRef && i.driverTreeRef.length < 20 ? i.driverTreeRef : 'F-DSE'));
                 if (driverRef.length > 20) driverRef = 'Schedule';
 
-                // Clean title - extract first concise sentence if run-on
                 let title = cleanField(i.issueName || i.issueDescription);
                 if (title.length > 120) {
                     const firstSentence = title.split('.')[0];
@@ -2607,14 +2774,14 @@
                 const action = cleanField(i.actionPlan || i.governanceLevel || 'Under review.');
 
                 return `
-                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-300 transition-all">
+                <div onclick="openItemDetailModal('issue', '${i.id}')" class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-start hover:border-amber-400 hover:bg-amber-50/20 hover:shadow-xs transition-all cursor-pointer group" title="Click to view complete issue details & action plan">
                     <div class="flex-1 min-w-0 space-y-1">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 px-2 py-0.5 rounded whitespace-nowrap shrink-0">${issueIdText}</span>
+                            <span class="text-xs font-bold text-slate-800 font-mono bg-slate-200/80 group-hover:bg-amber-100 group-hover:text-amber-900 px-2 py-0.5 rounded whitespace-nowrap shrink-0 transition-colors">${issueIdText} ↗</span>
                             <span class="text-xs text-slate-600 truncate max-w-[160px] whitespace-nowrap">👤 ${ownerName}</span>
                             <span class="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-medium truncate max-w-[130px]">${driverRef}</span>
                         </div>
-                        <p class="text-xs font-bold text-slate-900 leading-snug pt-0.5">${title}</p>
+                        <p class="text-xs font-bold text-slate-900 group-hover:text-amber-950 leading-snug pt-0.5 transition-colors">${title}</p>
                         <p class="text-[11px] text-slate-600 leading-normal line-clamp-2">Action: ${action}</p>
                     </div>
                     ${rightBadge}
@@ -2887,6 +3054,37 @@
             <div class="bg-slate-50 border-t border-slate-200 px-6 py-3.5 flex justify-between items-center shrink-0">
                 <button onclick="copyPodcastScript()" class="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100">📋 Copy Script</button>
                 <button onclick="toggleTranscriptModal()" class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- UNIVERSAL RISK / ISSUE ITEM DETAIL MODAL -->
+    <div id="itemDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div id="itemDetailHeader" class="bg-slate-900 p-5 text-white flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div id="itemDetailIcon" class="p-2 bg-white/10 rounded-xl text-xl">📋</div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span id="itemDetailId" class="text-sm font-black font-mono px-2 py-0.5 bg-white/20 rounded">ID</span>
+                            <span id="itemDetailTypeBadge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">Active</span>
+                            <span id="itemDetailScoreBadge" class="text-xs font-mono font-black px-2 py-0.5 rounded bg-red-600 text-white">Score</span>
+                        </div>
+                        <h2 id="itemDetailTitle" class="text-base font-bold text-white mt-1 line-clamp-1">Item Title</h2>
+                    </div>
+                </div>
+                <button onclick="closeItemDetailModal()" class="text-white/80 hover:text-white p-1 rounded-lg text-lg cursor-pointer">✕</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-4 text-xs" id="itemDetailBody">
+            </div>
+
+            <div class="bg-slate-50 border-t border-slate-200 px-6 py-3.5 flex justify-between items-center shrink-0">
+                <button id="itemDetailJumpBtn" class="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100 flex items-center gap-1.5 cursor-pointer">
+                    <span>Open in Register ↗</span>
+                </button>
+                <button onclick="closeItemDetailModal()" class="px-4 py-2 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 cursor-pointer">Close</button>
             </div>
         </div>
     </div>
