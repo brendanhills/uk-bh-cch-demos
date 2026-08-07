@@ -21,7 +21,7 @@ export default function GoogleSheetsSyncModal({
   onDataLoaded,
   currentSheetUrl = ''
 }: GoogleSheetsSyncModalProps) {
-  const [urlInput, setUrlInput] = useState<string>(currentSheetUrl || 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit');
+  const [urlInput, setUrlInput] = useState<string>(currentSheetUrl || 'https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
