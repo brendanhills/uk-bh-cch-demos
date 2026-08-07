@@ -58,5 +58,35 @@
     "risk": "",
     "phase": "",
     "status": "Reported"
+  },
+  {
+    "id": 5,
+    "type": "Bug",
+    "title": "Issue/Risk Name does not appear - only the description is shown",
+    "description": "the issue/risk name doesnt appear - only the description",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
+  },
+  {
+    "id": 6,
+    "type": "Bug",
+    "title": "Risk numbers are rendered as R-008 instead of matching sheet format (8)",
+    "description": "risk numbers are rendered as R-008 not matching the sheet (8)",
+    "reporter": "brendanhills",
+    "date_reported": "2026-08-07",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported"
   }
 ]
