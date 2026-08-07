@@ -121,10 +121,11 @@
                     <svg class="w-3 h-3 text-blue-500 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
 
-                <!-- Workspace Sync Button -->
-                <button onclick="openSheetsModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
+                <!-- Workspace Sync Button with Notification Badge -->
+                <button onclick="openSheetsModal()" class="relative bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
                     <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     <span>Sync</span>
+                    <span id="syncHeaderBadge" class="hidden absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white animate-bounce">!</span>
                 </button>
 
             </div>
@@ -928,8 +929,8 @@
                 </div>
 
                 <!-- Source 2: Drive Folder Archive -->
-                <div>
-                    <div class="flex justify-between items-center mb-1.5">
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                             2. Weekly Status Reports Archive (Drive Folder):
                         </label>
@@ -943,16 +944,23 @@
                         </a>
                     </div>
                     <input type="text" id="driveFolderUrlInput" value="https://drive.google.com/corp/drive/folders/1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900">
-                    <div class="flex items-center gap-2 mt-1 text-[11px] text-emerald-700 font-semibold">
-                        <span>✓ Verified Latest Report:</span>
+                    
+                    <!-- Dynamic Alert Banner for Uningested Reports -->
+                    <div id="uningestedReportAlert" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-3"></div>
+
+                    <div class="flex items-center gap-2 text-[11px] text-emerald-700 font-semibold">
+                        <span>✓ Verified Latest Ingested Report:</span>
                         <strong class="font-mono">Weekly Reporting - Week 26 - 31 Jul 2026.pdf</strong>
                     </div>
                 </div>
 
-                <!-- Historical Reports Dropdown List -->
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                    <span class="text-[11px] font-bold text-slate-700 block mb-1">Historical Reports in Drive (25 Packs):</span>
-                    <div class="text-xs space-y-1 max-h-24 overflow-y-auto font-mono text-slate-600" id="driveReportsModalList"></div>
+                <!-- Historical Reports List with Ingestion Status -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-slate-800">Drive Reports Archive &amp; Ingestion Status:</span>
+                        <button onclick="checkDriveSyncStatus()" class="text-[11px] font-bold text-indigo-600 hover:underline">↻ Refresh Drive Scan</button>
+                    </div>
+                    <div class="space-y-1 max-h-36 overflow-y-auto" id="driveReportsModalList"></div>
                 </div>
             </div>
             <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-between items-center">
@@ -995,6 +1003,7 @@
             renderTrendsCharts();
             renderDriveReportsInModal();
             renderRiskExplorer();
+            checkDriveSyncStatus();
 
             // Default to Exec Briefing as primary tab
             switchTab('exec-briefing');
@@ -1269,6 +1278,7 @@
             document.getElementById('explorerTableContainer').classList.toggle('hidden', mode !== 'table');
 
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function updateQuickFilterButtonsUI() {
@@ -1302,6 +1312,7 @@
             }
 
             renderRiskExplorer();
+            checkDriveSyncStatus();
             
             const overviewTab = document.getElementById('view-overview');
             if (overviewTab && overviewTab.classList.contains('hidden')) {
@@ -1322,6 +1333,7 @@
             
             updateQuickFilterButtonsUI();
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function toggleRiskCardExpand(riskId) {
@@ -1331,6 +1343,7 @@
                 expandedRiskIds.add(riskId);
             }
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function renderRiskExplorer() {
@@ -1549,6 +1562,7 @@
             document.getElementById('activeCellFilterBanner')?.classList.remove('hidden');
             document.getElementById('activeCellFilterText').innerText = `📍 Filtered by Heatmap Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
             renderRiskExplorer();
+            checkDriveSyncStatus();
             
             const overviewTab = document.getElementById('view-overview');
             if (overviewTab && overviewTab.classList.contains('hidden')) {
@@ -1561,6 +1575,7 @@
             activeMatrixCellFilter = null;
             document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function renderDriveReportsInModal() {
@@ -1686,6 +1701,7 @@
             document.getElementById('rBtnResidual').classList.toggle('text-white', type === 'residual');
             renderRiskHeatmap();
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function setRiskStatusFilter(status) {
@@ -1701,6 +1717,7 @@
             if (statusSelect) statusSelect.value = status;
             renderRiskHeatmap();
             renderRiskExplorer();
+            checkDriveSyncStatus();
         }
 
         function renderRiskHeatmap() {
@@ -1896,14 +1913,99 @@
             a.click();
         }
 
-        function openSheetsModal() { document.getElementById('sheetsModal').classList.remove('hidden'); }
-        function closeSheetsModal() { document.getElementById('sheetsModal').classList.add('hidden'); }
+        async function openSheetsModal() {
+            document.getElementById('sheetsModal').classList.remove('hidden');
+            await checkDriveSyncStatus();
+        }
+
+        function closeSheetsModal() {
+            document.getElementById('sheetsModal').classList.add('hidden');
+        }
+
+        async function checkDriveSyncStatus() {
+            const statusContainer = document.getElementById('driveSyncStatusContainer');
+            const uningestedAlert = document.getElementById('uningestedReportAlert');
+            const reportsListEl = document.getElementById('driveReportsModalList');
+            const syncHeaderBadge = document.getElementById('syncHeaderBadge');
+
+            try {
+                const resp = await fetch('/api/check-drive-sync');
+                if (resp.ok) {
+                    const data = await resp.json();
+                    
+                    if (data.uningestedCount > 0) {
+                        if (syncHeaderBadge) syncHeaderBadge.classList.remove('hidden');
+                        if (uningestedAlert) {
+                            uningestedAlert.classList.remove('hidden');
+                            uningestedAlert.innerHTML = `
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="space-y-0.5">
+                                        <div class="font-extrabold text-xs text-amber-950 flex items-center gap-1.5">
+                                            <span>⚠️ ${data.uningestedCount} Uningested Report(s) Found in Drive:</span>
+                                        </div>
+                                        <div class="text-[11px] text-amber-900 font-mono">
+                                            ${data.uningestedReports.map(r => r.name).join(', ')}
+                                        </div>
+                                    </div>
+                                    <button onclick="ingestReport('${data.uningestedReports[0].id}', '${data.uningestedReports[0].name}')" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3.5 py-1.5 rounded-lg text-xs shadow-xs cursor-pointer shrink-0">
+                                        ⚡ Ingest Now
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        if (syncHeaderBadge) syncHeaderBadge.classList.add('hidden');
+                        if (uningestedAlert) uningestedAlert.classList.add('hidden');
+                    }
+
+                    if (reportsListEl && data.allReports) {
+                        reportsListEl.innerHTML = data.allReports.map(r => `
+                            <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${r.isIngested ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900 border border-amber-300'}">
+                                        ${r.isIngested ? '✓ Ingested' : '⚠️ Unindexed'}
+                                    </span>
+                                    <span class="font-mono text-xs text-slate-700">${r.name}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    ${!r.isIngested ? `<button onclick="ingestReport('${r.id}', '${r.name}')" class="text-[11px] font-bold text-amber-700 hover:underline cursor-pointer">Ingest ⚡</button>` : ''}
+                                    <a href="${r.url}" target="_blank" class="text-indigo-600 font-bold hover:underline text-[11px]">Open ↗</a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) {
+                console.warn("Drive sync check failed:", e);
+            }
+        }
+
+        async function ingestReport(fileId, fileName) {
+            showSyncToast(`⚡ Ingesting ${fileName}...`);
+            try {
+                const resp = await fetch('/api/ingest-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_id: fileId, file_name: fileName })
+                });
+
+                if (resp.ok) {
+                    const res = await resp.json();
+                    showSyncToast(`🎉 Ingestion Complete for ${fileName}!`);
+                    await checkDriveSyncStatus();
+                } else {
+                    showSyncToast(`❌ Ingestion failed: ${resp.statusText}`);
+                }
+            } catch (err) {
+                showSyncToast(`❌ Error: ${err.message}`);
+            }
+        }
 
         async function syncGoogleSheet() {
             const syncBtn = document.querySelector('#sheetsModal button.bg-emerald-600');
             if (syncBtn) {
                 syncBtn.disabled = true;
-                syncBtn.innerText = 'Syncing Live Sheet...';
+                syncBtn.innerText = 'Syncing Live Sheet & Drive...';
             }
 
             try {
@@ -1915,6 +2017,7 @@
                         if (data.issues) LIVE_ISSUES = data.issues;
                     }
                 }
+                await checkDriveSyncStatus();
             } catch (err) {
                 console.warn("API sync fallback:", err);
             } finally {
@@ -1926,6 +2029,7 @@
                 renderLedger();
                 renderTrendsCharts();
                 renderRiskExplorer();
+            checkDriveSyncStatus();
 
                 if (syncBtn) {
                     syncBtn.disabled = false;
@@ -1934,7 +2038,7 @@
                 closeSheetsModal();
 
                 const evCount = LIVE_RISKS.filter(r => r.status === 'Issue Eventuated').length;
-                showSyncToast(`✨ Live Sync Complete! Synced ${LIVE_RISKS.length} risks (${evCount} Eventuated Issues).`);
+                showSyncToast(`✨ Workspace Synced! Register has ${LIVE_RISKS.length} risks (${evCount} Eventuated Issues).`);
             }
         }
 
