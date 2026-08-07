@@ -79,7 +79,7 @@ export default function ExecutiveBriefingView({ tickets, issues }: ExecutiveBrie
               <div key={risk.id} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-start justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-indigo-600">#{index + 1} {risk.id}</span>
+                    <span className="text-xs font-mono font-bold text-indigo-600">#{index + 1} ID {risk.displayId || risk.id}</span>
                     <span className="text-[11px] font-semibold text-slate-500">• {risk.riskOwner}</span>
                   </div>
                   <p className="text-xs font-medium text-slate-800">{risk.riskName}</p>
@@ -117,7 +117,7 @@ export default function ExecutiveBriefingView({ tickets, issues }: ExecutiveBrie
               <div key={issue.id} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-start justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-amber-600">#{index + 1} {issue.id}</span>
+                    <span className="text-xs font-mono font-bold text-amber-600">#{index + 1} ID {issue.displayId || issue.id}</span>
                     <span className="text-[11px] font-semibold text-slate-500">• {issue.issueOwner}</span>
                   </div>
                   <p className="text-xs font-medium text-slate-800">{issue.issueName}</p>

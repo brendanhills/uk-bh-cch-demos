@@ -838,7 +838,7 @@ export default function IssueRegisterView({
                         {index + 1}
                       </td>
                       <td onClick={() => toggleRow(i.id)} className="px-3 py-3 font-bold text-indigo-600 font-mono border-r border-slate-100">
-                        {i.id}
+                        {i.displayId || i.id}
                       </td>
                       <td onClick={() => toggleRow(i.id)} className="px-3 py-3 border-r border-slate-100">
                         <span className={`px-2.5 py-0.5 text-[10px] font-bold border rounded-full uppercase ${

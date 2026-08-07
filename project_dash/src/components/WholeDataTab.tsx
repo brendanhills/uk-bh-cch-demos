@@ -1554,7 +1554,7 @@ export default function WholeDataTab({
                           {index + 1}
                         </td>
                         <td className="px-3 py-3.5 font-semibold text-slate-700 font-mono border-r border-slate-100 select-all">
-                          {t.id}
+                          {t.displayId || t.id}
                         </td>
                         <td className="px-3 py-3.5 border-r border-slate-100">
                           <span className={`px-2.5 py-1 text-[10px] font-bold border rounded-full uppercase ${STATUS_COLORS[t.status]}`}>
@@ -2003,7 +2003,7 @@ export default function WholeDataTab({
                               title="Click to Edit Risk"
                             >
                               <div className="flex items-center justify-between gap-1.5">
-                                <span>{t.id}</span>
+                                <span>{t.displayId || t.id}</span>
                                 <Pencil className="w-2.5 h-2.5 text-indigo-500 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-1 group-hover:translate-x-0 cursor-pointer" />
                               </div>
                             </td>

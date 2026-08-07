@@ -316,7 +316,7 @@ export default function RiskMatrix({ tickets, issues, onCellClick, selectedCell 
                     <div key={t.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white border border-red-100/50 rounded-lg hover:border-red-200 hover:shadow-xs transition-all text-xs gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded text-[10px]">{t.id}</span>
+                          <span className="font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded text-[10px]">{t.displayId ? `ID ${t.displayId}` : t.id}</span>
                           <span className="font-semibold text-slate-800 line-clamp-1">{t.riskName}</span>
                         </div>
                         <div className="text-slate-500 text-[11px] line-clamp-1">Owner: <span className="font-medium text-slate-700">{t.riskOwner}</span> | Cause: {t.causeCategory}</div>
@@ -348,7 +348,7 @@ export default function RiskMatrix({ tickets, issues, onCellClick, selectedCell 
                     <div key={t.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white border border-amber-100/50 rounded-lg hover:border-amber-200 hover:shadow-xs transition-all text-xs gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded text-[10px]">{t.id}</span>
+                          <span className="font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded text-[10px]">{t.displayId ? `ID ${t.displayId}` : t.id}</span>
                           <span className="font-semibold text-slate-800 line-clamp-1">{t.riskName}</span>
                         </div>
                         <div className="text-slate-500 text-[11px] line-clamp-1">

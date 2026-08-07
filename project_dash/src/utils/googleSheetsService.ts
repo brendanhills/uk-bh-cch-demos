@@ -100,8 +100,10 @@ export function mapRowsToRiskTickets(rows: Record<string, string>[]): RiskTicket
       return '';
     };
 
-    const id = getVal('Risk ID', 'ID', 'RiskID') || `RSK-${String(index + 1).padStart(3, '0')}`;
-    const riskName = getVal('Risk Name', 'Title', 'Name', 'Risk') || 'Untitled Risk';
+    const rawId = getVal('Risk ID', 'ID', 'RiskID', 'Display ID');
+    const displayId = rawId ? rawId.replace(/^RSK-0*/i, '') || rawId : String(index + 1);
+    const id = rawId ? (rawId.startsWith('RSK-') ? rawId : `RSK-${String(rawId).padStart(3, '0')}`) : `RSK-${String(index + 1).padStart(3, '0')}`;
+    const riskName = getVal('Risk Name', 'Risk Title', 'Title', 'Name', 'Risk') || 'Untitled Risk';
     const riskDescription = getVal('Risk Description', 'Description', 'Detail') || '';
     const causeDescription = getVal('Cause Description', 'Cause', 'Root Cause') || '';
     const causeCategory = getVal('Cause Category', 'Category', 'Risk Category') || 'Governance';
@@ -134,6 +136,7 @@ export function mapRowsToRiskTickets(rows: Record<string, string>[]): RiskTicket
 
     return {
       id,
+      displayId,
       riskName,
       riskDescription,
       causeDescription,
@@ -163,6 +166,70 @@ export function mapRowsToRiskTickets(rows: Record<string, string>[]): RiskTicket
       timelines: getVal('Timelines', 'Timeline'),
       signOffRequirement: getVal('Sign-off Requirement', 'SignOff'),
       mitigationStatus: getVal('Mitigation Status', 'Action Status') || 'In Progress'
+    };
+  });
+}
+
+/**
+ * Maps raw spreadsheet rows to IssueTicket objects
+ */
+export function mapRowsToIssueTickets(rows: Record<string, string>[]): IssueTicket[] {
+  return rows.map((row, index) => {
+    const getVal = (...keys: string[]): string => {
+      for (const k of keys) {
+        const clean = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (row[clean] !== undefined && row[clean] !== '') return row[clean];
+        if (row[k] !== undefined && row[k] !== '') return row[k];
+      }
+      return '';
+    };
+
+    const rawId = getVal('Issue ID', 'ID', 'IssueID', 'Issue');
+    const displayId = rawId ? rawId.replace(/^I-0*/i, '') || rawId : String(index + 1);
+    const id = rawId ? (rawId.startsWith('I-') ? rawId : `I-${String(rawId).padStart(4, '0')}`) : `I-${String(index + 1).padStart(4, '0')}`;
+    const issueName = getVal('Issue Name', 'Issue Title', 'Title', 'Name') || 'Untitled Issue';
+    const issueDescription = getVal('Issue Description', 'Description', 'Detail') || '';
+    const causeDescription = getVal('Cause Description', 'Cause', 'Root Cause') || '';
+    const impactCategory = getVal('Impact Category', 'Category', 'Impact') || 'Schedule';
+    const consequence = getVal('Consequence', 'Consequence Description') || '';
+    const trend = getVal('Trend', 'Issue Trend', 'Direction') || '↔';
+    const priorityRating = getVal('Priority Rating', 'Priority') || 'Medium';
+    const escalateTo = getVal('Escalate to:', 'Escalate To', 'Governance') || 'Team Google';
+    const severityRating = getVal('Severity Rating', 'Severity') || 'High';
+    const actionPlan = getVal('Action Plan', 'Remediation Plan', 'Treatment Plan') || '';
+    const nextActionOwner = getVal('Next Action owner', 'Next Action Owner', 'Action Owner') || '';
+    const issueOwner = getVal('Issue owner', 'Issue Owner', 'Owner', 'Lead') || 'Unassigned';
+    const relatedRiskId = getVal('Related Risk ID', 'Related Risk', 'Risk ID') || '';
+    const bundle = getVal('Bundle', 'Workstream') || 'F-DSE';
+    const driverTreeRef = getVal('Driver Tree Ref', 'Driver Tree', 'Driver Ref') || '1.10b';
+    const dateRaised = parseFlexibleDate(getVal('Date Raised', 'Raised Date', 'Created Date')) || '2026-07-01';
+    const raisedBy = getVal('Raised By', 'Creator') || 'Team Google';
+    const lastUpdated = parseFlexibleDate(getVal('Last Updated', 'Updated Date')) || '2026-07-31';
+
+    return {
+      id,
+      displayId,
+      status: getVal('Status', 'Issue Status', 'State') || 'Active',
+      relatedRiskId,
+      issueOwner,
+      bundle,
+      driverTreeRef,
+      issueName,
+      issueDescription,
+      causeDescription,
+      impactCategory,
+      consequence,
+      trend,
+      priorityRating,
+      escalateTo,
+      severityRating,
+      actionPlan,
+      nextActionOwner,
+      dateRaised,
+      raisedBy,
+      lastUpdated,
+      protectedIssueRisk: getVal('Protected Issue Risk', 'Protected'),
+      dpeRefNumber: getVal('DPE Ref Number', 'DPE Ref')
     };
   });
 }

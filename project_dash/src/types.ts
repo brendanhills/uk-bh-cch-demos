@@ -12,6 +12,7 @@ export type RiskLevel = string;
 
 export interface RiskTicket {
   id: string; // e.g., "RSK-001"
+  displayId?: string; // e.g. "1", "8", "68" matching spreadsheet format
   status: RiskStatus;
   riskOwner: string;
   bundle: string;
@@ -191,6 +192,7 @@ export const STATUS_COLORS: Record<string, string> = {
 
 export interface IssueTicket {
   id: string;
+  displayId?: string;
   status: string;
   relatedRiskId: string;
   issueOwner: string;
