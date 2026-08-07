@@ -223,14 +223,16 @@
     "description": "Audit and clean up legacy temporary scripts, unused prototype assets, and stale files in the project_dash directory to keep the workspace lightweight, organized, and clean.",
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
-    "date_triaged": "",
+    "date_triaged": "2026-08-07",
     "date_resolved": "",
-    "priority": "",
-    "impact": "",
-    "risk": "",
-    "phase": "",
-    "status": "Reported",
-    "context": "project_dash"
+    "priority": "P2",
+    "impact": "Medium",
+    "risk": "Low",
+    "phase": "Analysis",
+    "status": "Investigated",
+    "context": "project_dash",
+    "cause": "Rapid iterative development left behind scratch files, orphan zips, and duplicate scripts in project_dash/.",
+    "plan": "Audit project_dash directory, remove redundant temporary files, clean up dash_v1/tmp/, and retain only core single-stack assets."
   },
   {
     "id": 16,
@@ -239,13 +241,15 @@
     "description": "Provide a streamlined interface in Dashboard Settings / Sync modal to easily point the dashboard to a new Google Sheet or Drive Folder. Rather than displaying opaque hexadecimal Drive/Sheet IDs, display clear human-readable names (e.g. 'F-DSE Master Risk Register (Week 26)', 'F-DSE Weekly Reporting Packs') with 1-click folder/sheet selection and validation.",
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
-    "date_triaged": "",
+    "date_triaged": "2026-08-07",
     "date_resolved": "",
-    "priority": "",
-    "impact": "",
-    "risk": "",
-    "phase": "",
-    "status": "Reported",
-    "context": "project_dash"
+    "priority": "P2",
+    "impact": "High",
+    "risk": "Low",
+    "phase": "Architecture Design",
+    "status": "Investigated",
+    "context": "project_dash",
+    "cause": "Sync modal displays technical Drive file IDs rather than human-readable document titles and folder aliases.",
+    "plan": "Build friendly name-based Sheet & Folder picker in Settings modal with live connection test and active source indicators."
   }
 ]
