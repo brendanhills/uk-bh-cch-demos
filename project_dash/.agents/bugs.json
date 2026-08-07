@@ -27,13 +27,14 @@
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
     "date_triaged": "2026-08-07",
-    "date_resolved": "",
+    "date_resolved": "2026-08-07",
     "priority": "P1",
     "impact": "High",
     "risk": "Low",
     "phase": "Implementation",
-    "status": "Investigated",
-    "context": "project_dash"
+    "status": "Fix Verified",
+    "context": "project_dash",
+    "resolution_notes": "Enriched executive briefing with Gemini 3.5 Pro decision synthesis, Top 3 Action items, Sleeper Outlier (Ref 1.15), and Australian NotebookLM podcast player."
   },
   {
     "id": 5,
@@ -154,13 +155,14 @@
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
     "date_triaged": "2026-08-07",
-    "date_resolved": "",
+    "date_resolved": "2026-08-07",
     "priority": "P3",
     "impact": "Low",
     "risk": "Low",
     "phase": "Completed/Verified",
-    "status": "Investigated",
-    "context": "project_dash"
+    "status": "Fix Verified",
+    "context": "project_dash",
+    "resolution_notes": "Permanently deprecated and removed tone buttons from the executive synthesis card, prompt template, and JS logic in favor of a single exception-first standard."
   },
   {
     "id": 12,
