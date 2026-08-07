@@ -27,3 +27,7 @@ An executive dashboard is not an exhaustive encyclopedia; it is a **decision-sup
 5. **1-Minute Scannability & Dynamic Temporal Awareness**:
    - Surface the **top 1–2 critical decision points within the first 15 seconds**.
    - Dynamically evaluate deliverable dates against current real-time system time to automatically detect and flag overdue targets.
+
+6. **Preservation of Reference Implementations (`dash_v1`)**:
+   - The `project_dash/dash_v1/` directory contains the foundational reference prototype and baseline components.
+   - **Invariant**: Never delete, purge, or modify `project_dash/dash_v1/` during refactoring, workspace cleanup, or dead-code elimination passes. Treat it as an immutable reference benchmark for feature parity and component comparisons.
