@@ -9,3 +9,7 @@
 ---
 - [~] **Track: Single Product Tech Stack Integration & Google Sheets Sync**
   *Link: [./tracks/dash_v1_integration/index.md](./tracks/dash_v1_integration/index.md)*
+
+---
+- [~] **Track: Simplify Dashboard (4-View Architecture & Progressive Disclosure)**
+  *Link: [./tracks/simplify_dashboard_20260807/index.md](./tracks/simplify_dashboard_20260807/index.md)*
