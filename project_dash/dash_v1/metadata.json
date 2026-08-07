@@ -1,8 +1,0 @@
-{
-  "name": "Remix Risk Ticket Dashboard",
-  "description": "An interactive dashboard and risk ticket system for managing, tracking, and visualizing risk items, featuring data entry, comprehensive records, and weekly performance trends.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}

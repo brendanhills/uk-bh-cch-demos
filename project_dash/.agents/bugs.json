@@ -226,15 +226,16 @@
     "reporter": "Brendan Hills",
     "date_reported": "2026-08-07",
     "date_triaged": "2026-08-07",
-    "date_resolved": "",
+    "date_resolved": "2026-08-07",
     "priority": "P2",
     "impact": "Medium",
     "risk": "Low",
     "phase": "Analysis",
-    "status": "Investigated",
+    "status": "Fix Verified",
     "context": "project_dash",
     "cause": "Rapid iterative development left behind scratch files, orphan zips, and duplicate scripts in project_dash/.",
-    "plan": "Audit project_dash directory, remove redundant temporary files, clean up dash_v1/tmp/, and retain only core single-stack assets."
+    "plan": "Audit project_dash directory, remove redundant temporary files, clean up dash_v1/tmp/, and retain only core single-stack assets.",
+    "resolution_notes": "Purged legacy Streamlit prototypes (app.py, app_phase2.py, .streamlit/), old prototype directory (dash_v1/), and unused React/Vite scaffolding (package.json, tsconfig.json, vite.config.ts), standardizing 100% on the single-product vanilla HTML5 / Tailwind / Chart.js architecture."
   },
   {
     "id": 16,
