@@ -1,7 +1,86 @@
-# Load environment variables at the absolute entrypoint BEFORE importing any Google or ADK libraries
+import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv(Path(__file__).parent / ".env", override=True)
+
+# 1. Search and load .env hierarchically (app/.env, agent_demo/.env, or cwd)
+_possible_env_paths = [
+    Path(__file__).parent / ".env",          # CCH_demo/agent_demo/app/.env
+    Path(__file__).parent.parent / ".env",   # CCH_demo/agent_demo/.env
+    Path.cwd() / ".env",
+]
+for _env_path in _possible_env_paths:
+    if _env_path.exists():
+        load_dotenv(_env_path, override=True)
+        break
+
+# 2. Pre-flight Environment Validation & Diagnostic Banner
+def validate_environment_and_print_banner():
+    use_vertex = os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "").strip().lower() in ("true", "1", "yes", "vertex", "vertexai")
+    project = os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("PROJECT_ID")
+    location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+    live_model = os.getenv("LIVE_MODEL_ID") or os.getenv("DEMO_AGENT_MODEL") or "gemini-live-2.5-flash-native-audio"
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+
+    if use_vertex or (project and not api_key):
+        os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
+        if not project:
+            print("\n" + "═" * 63, file=sys.stderr)
+            print("  ❌ ERROR: Missing Google Cloud Project", file=sys.stderr)
+            print("  GOOGLE_GENAI_USE_VERTEXAI=TRUE requires GOOGLE_CLOUD_PROJECT.", file=sys.stderr)
+            print("  Please set GOOGLE_CLOUD_PROJECT in your .env or run:", file=sys.stderr)
+            print("    gcloud config set project <your-project-id>", file=sys.stderr)
+            print("═" * 63 + "\n", file=sys.stderr)
+            sys.exit(1)
+
+        try:
+            import google.auth
+            credentials, _ = google.auth.default()
+            auth_str = "Application Default Credentials (ADC) [OK]"
+        except Exception as e:
+            print("\n" + "═" * 63, file=sys.stderr)
+            print("  ❌ ERROR: Google Cloud Credentials Not Found", file=sys.stderr)
+            print(f"  Details: {e}", file=sys.stderr)
+            print("  Please authenticate with Google Cloud by running:", file=sys.stderr)
+            print("    gcloud auth application-default login", file=sys.stderr)
+            print("═" * 63 + "\n", file=sys.stderr)
+            sys.exit(1)
+
+        print("\n" + "═" * 63)
+        print("  CCH Concierge Agent (ADK Gemini Live API)")
+        print("  • Mode:        Vertex AI (Google Cloud)")
+        print(f"  • Project:     {project}")
+        print(f"  • Region:      {location}")
+        print(f"  • Auth:        {auth_str}")
+        print(f"  • Live Model:  {live_model}")
+        print("═" * 63 + "\n")
+
+    elif api_key:
+        print("\n" + "═" * 63)
+        print("  CCH Concierge Agent (ADK Gemini Live API)")
+        print("  • Mode:        Gemini AI Studio (API Key)")
+        print(f"  • Auth:        API Key Configured (***{api_key[-4:] if len(api_key) > 4 else '****'})")
+        print(f"  • Live Model:  {live_model}")
+        print("═" * 63 + "\n")
+
+    else:
+        print("\n" + "═" * 63, file=sys.stderr)
+        print("  ❌ ERROR: Missing Authentication Configuration", file=sys.stderr)
+        print("  Neither Google Cloud (Vertex AI) nor a Gemini API Key was found.", file=sys.stderr)
+        print("\n  To resolve, update your .env with one of the options:", file=sys.stderr)
+        print("  Option A (Vertex AI):", file=sys.stderr)
+        print("    GOOGLE_GENAI_USE_VERTEXAI=TRUE", file=sys.stderr)
+        print("    GOOGLE_CLOUD_PROJECT=your-project-id", file=sys.stderr)
+        print("    GOOGLE_CLOUD_LOCATION=us-central1", file=sys.stderr)
+        print("    Then run: gcloud auth application-default login", file=sys.stderr)
+        print("\n  Option B (AI Studio API Key):", file=sys.stderr)
+        print("    GOOGLE_GENAI_USE_VERTEXAI=FALSE", file=sys.stderr)
+        print("    GOOGLE_API_KEY=AIzaSy...", file=sys.stderr)
+        print("═" * 63 + "\n", file=sys.stderr)
+        sys.exit(1)
+
+# Execute pre-flight check immediately on boot
+validate_environment_and_print_banner()
 
 # Force IPv4 to resolve WebSocket handshake timeouts caused by broken IPv6 routing on this environment
 import socket
@@ -65,9 +144,9 @@ warnings.filterwarnings("ignore", message=".*Failed to detach context.*")
 # Application name constant
 APP_NAME = "cch-demo"
 
-# ========================================
-# Phase 1: Application Initialization (once at startup)
-# ========================================
+
+
+
 
 app = FastAPI()
 
