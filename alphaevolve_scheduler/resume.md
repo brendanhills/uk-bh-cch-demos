@@ -1,7 +1,7 @@
 # Session Resume & Compaction Summary
 
 **Date / Time**: 2026-07-31  
-**Workspace**: `/usr/local/google/home/brendanhills/dev/kmart-alphaevolve-demo`  
+**Workspace**: `/usr/local/google/home/brendanhills/dev/uk-bh-experiments/CCH_demo/alphaevolve_scheduler`  
 **Branch**: `rch-decouple`
 
 ---
