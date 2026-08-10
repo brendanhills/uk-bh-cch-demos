@@ -16,9 +16,17 @@ from dotenv import load_dotenv
 from vertexai import types as vertexai_types
 from vertexai.preview.reasoning_engines import AdkApp
 
-load_dotenv(
-    os.path.join(os.path.dirname(__file__), "..", "app", ".env"), override=True
-)
+# Try loading .env from project root first, then from app directory
+root_env = os.path.join(os.path.dirname(__file__), "..", ".env")
+app_env = os.path.join(os.path.dirname(__file__), "..", "app", ".env")
+if os.path.exists(root_env):
+    load_dotenv(root_env, override=True)
+elif os.path.exists(app_env):
+    load_dotenv(app_env, override=True)
+else:
+    raise FileNotFoundError(
+        "No .env configuration file found! Please copy app/.env.example to .env and configure your environment variables."
+    )
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "app"))
 
