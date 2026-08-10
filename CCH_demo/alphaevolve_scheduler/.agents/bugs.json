@@ -609,13 +609,15 @@
   },
   {
     "id": 52,
-    "description": "Candidate Feed metrics column renders contradictory down arrow for positive patient count gains on DEGRADED candidates (displaying '126 Patients (\u25bc +4)' instead of '\u25b2 +4'); patient delta arrow should match the sign of patientDiff (\u25b2 for positive, \u25bc for negative) regardless of overall candidate status",
+    "description": "Candidate Feed metrics column renders contradictory down arrow for positive patient count gains on DEGRADED candidates (displaying '126 Patients (\\u25bc +4)' instead of '\\u25b2 +4'); patient delta arrow should match the sign of patientDiff (\\u25b2 for positive, \\u25bc for negative) regardless of overall candidate status",
     "date": "2026-07-31T18:47:46Z",
     "date_reported": "2026-07-31T18:47:46Z",
     "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/CCH_demo/alphaevolve_scheduler",
-    "status": "Reported",
-    "impact": "",
-    "priority": ""
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P2",
+    "cause": "renderCandidateFeed() hardcoded a down arrow (\\u25bc) for degraded/rejected candidate entries even when patientDiff was positive (e.g. +4 patients scheduled).",
+    "plan": "Updated renderCandidateFeed() in cch/index.html to compute arrow dynamically based on the sign of patientDiff (\\u25b2 for positive >= 0, \\u25bc for negative < 0). Added automated reproduction unit test test_bug52_candidate_feed_patient_delta_arrow_matches_sign in experiment/test_cch_html.py."
   },
   {
     "id": 53,
@@ -623,8 +625,10 @@
     "date": "2026-07-31T18:53:13Z",
     "date_reported": "2026-07-31T18:53:13Z",
     "workspace": "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/CCH_demo/alphaevolve_scheduler",
-    "status": "Reported",
-    "impact": "",
-    "priority": ""
+    "status": "Fix Implemented",
+    "impact": "Medium",
+    "priority": "P2",
+    "cause": "renderEvolutionFitnessChart() plotted EVOLUTION_DATA.traces which only contained accepted breakthrough steps (8 steps) instead of all evaluated candidates in the search space.",
+    "plan": "1. Initialized EVOLUTION_DATA.candidates in cch/index.html. 2. Updated renderCandidateFeed() to store all parsed candidates into EVOLUTION_DATA.candidates. 3. Updated renderEvolutionFitnessChart() to plot all evaluated candidates with status-specific colors (accepted green, degraded orange, rejected red, active blue) and link accepted breakthroughs. 4. Added test_bug53_evolution_curve_plots_all_feed_candidates."
   }
 ]

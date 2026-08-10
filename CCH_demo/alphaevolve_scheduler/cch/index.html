@@ -1426,7 +1426,7 @@
 
     <!-- State Management & Dynamic Streaming JavaScript -->
     <script>
-        let EVOLUTION_DATA = { resources: [], staff: [], patients: [], traces: [], unavailability: [] };
+        let EVOLUTION_DATA = { resources: [], staff: [], patients: [], traces: [], unavailability: [], disruptions: [], candidates: [] };
 
         let currentTraceStep = 0;
         let isPlaying = false;
@@ -1560,6 +1560,8 @@
                 }));
             }
 
+            EVOLUTION_DATA.candidates = feedEntries;
+
             const pollingIndicator = document.getElementById('live-polling-indicator');
             const pollingBadge = document.getElementById('polling-status-badge');
             const stopBtn = document.getElementById('btn-stop-optimization');
@@ -1656,15 +1658,16 @@
                     }
                 }
 
-                // Patient count formatting with Delta vs Best So Far
+                // Patient count formatting with Delta vs Best So Far (Bug #52)
                 let patientHtml = `<strong>${candPatients || '-'} Patients</strong>`;
                 if (!isBaseline && candPatients) {
+                    const arrow = patientDiff >= 0 ? '▲' : '▼';
+                    const sign = patientDiff >= 0 ? '+' : '';
                     if (cand.status === 'REJECTED' || isDegraded) {
                         const color = (cand.status === 'REJECTED') ? '#da1a31' : '#d97706';
-                        const sign = patientDiff >= 0 ? '+' : '';
-                        patientHtml = `<strong style="color: ${color};">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: ${color}; font-weight: bold;" title="Compared to best algorithm so far (${prevBestPatients} patients)">(▼ ${sign}${patientDiff})</span>`;
+                        patientHtml = `<strong style="color: ${color};">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: ${color}; font-weight: bold;" title="Compared to best algorithm so far (${prevBestPatients} patients)">(${arrow} ${sign}${patientDiff})</span>`;
                     } else if (isImproved) {
-                        patientHtml = `<strong style="color: var(--cch-green);">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: var(--cch-green); font-weight: bold;" title="Improved over best algorithm so far (${prevBestPatients} patients)">(▲ +${patientDiff})</span>`;
+                        patientHtml = `<strong style="color: var(--cch-green);">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: var(--cch-green); font-weight: bold;" title="Improved over best algorithm so far (${prevBestPatients} patients)">(${arrow} +${patientDiff})</span>`;
                     }
                 }
 
@@ -2318,19 +2321,22 @@
             renderEvolutionFitnessChart();
         }
 
-        // Render Algorithm Evolution Fitness Sparkline / Curve Graph
+        // Render Algorithm Evolution Fitness Sparkline / Curve Graph (Bug #53)
         function renderEvolutionFitnessChart() {
             const svg = document.getElementById('evolution-svg');
             const labelEl = document.getElementById('fitness-chart-latest');
-            if (!svg || !EVOLUTION_DATA.traces || EVOLUTION_DATA.traces.length === 0) return;
+            const items = (EVOLUTION_DATA.candidates && EVOLUTION_DATA.candidates.length > 0) 
+                ? EVOLUTION_DATA.candidates 
+                : EVOLUTION_DATA.traces;
+            if (!svg || !items || items.length === 0) return;
 
             const container = document.getElementById('evolution-fitness-chart');
             const width = container ? (container.clientWidth || 300) : 300;
             const height = 75;
             const padding = { top: 12, right: 16, bottom: 20, left: 16 };
 
-            const traces = EVOLUTION_DATA.traces;
-            const scores = traces.map(t => {
+            const scores = items.map(t => {
+                if (t.score !== undefined) return t.score;
                 if (t.metrics && t.metrics.score !== undefined) return t.metrics.score;
                 return (t.metrics?.patientsScheduled || 0) * 200 - (t.metrics?.fatigueViolations || 0) * 50;
             });
@@ -2339,33 +2345,43 @@
             const maxScore = Math.max(...scores);
             const scoreRange = (maxScore - minScore) || 1;
 
-            const points = traces.map((t, idx) => {
-                const x = padding.left + (idx / Math.max(1, traces.length - 1)) * (width - padding.left - padding.right);
+            const points = items.map((t, idx) => {
+                const x = padding.left + (idx / Math.max(1, items.length - 1)) * (width - padding.left - padding.right);
                 const y = height - padding.bottom - ((scores[idx] - minScore) / scoreRange) * (height - padding.top - padding.bottom);
-                return { x, y, step: idx, trace: t, score: scores[idx] };
+                return { x, y, step: idx, item: t, score: scores[idx] };
             });
 
-            const visiblePoints = points.slice(0, currentTraceStep + 1);
+            const visiblePoints = points;
 
-            let pathD = `M ${visiblePoints[0].x} ${visiblePoints[0].y}`;
-            for (let i = 1; i < visiblePoints.length; i++) {
-                pathD += ` L ${visiblePoints[i].x} ${visiblePoints[i].y}`;
+            // Connect accepted breakthrough progression with green curve line
+            const acceptedPoints = visiblePoints.filter(p => {
+                const s = p.item.status || (p.step === 0 ? 'BASELINE' : 'ACCEPTED');
+                return s === 'ACCEPTED' || s === 'BASELINE' || s === 'REPLANNED';
+            });
+
+            let pathD = acceptedPoints.length > 0 ? `M ${acceptedPoints[0].x} ${acceptedPoints[0].y}` : '';
+            for (let i = 1; i < acceptedPoints.length; i++) {
+                pathD += ` L ${acceptedPoints[i].x} ${acceptedPoints[i].y}`;
             }
 
             let circlesHtml = visiblePoints.map(p => {
                 const isCurrent = p.step === currentTraceStep;
-                let status = (p.trace.insight && p.trace.insight.status) || (p.step === 0 ? 'BASELINE' : 'ACCEPTED');
+                let status = p.item.status || (p.item.insight && p.item.insight.status) || (p.step === 0 ? 'BASELINE' : 'ACCEPTED');
                 if (status === 'REPLANNED') status = 'ACCEPTED';
                 let color = '#82C341'; // Green (Accepted/Baseline)
                 if (status === 'DEGRADED') color = '#F26322'; // Orange (Degraded)
                 else if (status === 'REJECTED') color = '#DA1A31'; // Red (Rejected)
                 if (isCurrent) color = '#0076AD'; // Highlight active step
 
-                const radius = isCurrent ? 6 : 4;
-                const patients = p.trace.metrics ? (p.trace.metrics.patientsScheduled || 0) : 0;
-                const fatigue = p.trace.metrics ? (p.trace.metrics.fatigueViolations || 0) : 0;
-                return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" fill="${color}" stroke="#FFF" stroke-width="1.5" style="cursor: pointer;" onclick="currentTraceStep=${p.step}; renderCurrentStep();">
-                            <title>Candidate #${p.step} [${status}]: Objective Score ${Math.round(p.score).toLocaleString()} (${patients} Patients, ${fatigue} Fatigue Breaches)</title>
+                const radius = isCurrent ? 6 : 4.5;
+                const patients = p.item.metrics ? (p.item.metrics.patientsScheduled || 0) : 0;
+                const fatigue = p.item.metrics ? (p.item.metrics.fatigueViolations || 0) : 0;
+                const gen = p.item.generation !== undefined ? p.item.generation : p.step;
+                const maxTraceIdx = (EVOLUTION_DATA.traces ? EVOLUTION_DATA.traces.length - 1 : 0);
+                const targetStep = Math.min(p.step, maxTraceIdx);
+
+                return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" fill="${color}" stroke="#FFF" stroke-width="1.5" style="cursor: pointer;" onclick="currentTraceStep=${targetStep}; renderCurrentStep();">
+                            <title>Candidate #${gen} [${status}]: Objective Score ${Math.round(p.score).toLocaleString()} (${patients} Patients, ${fatigue} Fatigue Breaches)</title>
                         </circle>`;
             }).join('');
 
@@ -2374,12 +2390,13 @@
                     <text x="2" y="12" font-size="9" fill="#666" font-weight="bold">${Math.round(maxScore)}</text>
                     <text x="2" y="${height - 4}" font-size="9" fill="#666" font-weight="bold">${Math.round(minScore)}</text>
                 </g>
-                <path d="${pathD}" fill="none" stroke="var(--cch-green)" stroke-width="2.5" />
+                ${pathD ? `<path d="${pathD}" fill="none" stroke="var(--cch-green)" stroke-width="2.5" />` : ''}
                 ${circlesHtml}
             `;
 
             if (labelEl) {
-                const currentScore = scores[currentTraceStep] || 0;
+                const activeIdx = Math.min(currentTraceStep, scores.length - 1);
+                const currentScore = scores[activeIdx] || 0;
                 const baseScore = scores[0] || 1;
                 const diff = currentScore - baseScore;
                 const pctGain = baseScore > 0 ? ((diff / baseScore) * 100).toFixed(1) : '0.0';
