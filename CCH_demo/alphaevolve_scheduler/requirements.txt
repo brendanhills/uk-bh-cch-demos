@@ -1,0 +1,5 @@
+git+https://github.com/Google-Cloud-AI/alphaevolve-on-googlecloud.git@8693985fa0eebf1a3b8fe2a64b7594e74ddb6557
+python-dotenv
+nest_asyncio
+numpy
+pydantic

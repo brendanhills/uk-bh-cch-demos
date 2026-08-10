@@ -1,0 +1,8 @@
+{
+  "id": "cleanup_kmart_files_20260731",
+  "type": "chore",
+  "status": "new",
+  "created_at": "2026-07-31T18:58:15+10:00",
+  "updated_at": "2026-07-31T18:58:15+10:00",
+  "description": "Clean up legacy Kmart files from active project directories while preserving CCH demo integrity."
+}

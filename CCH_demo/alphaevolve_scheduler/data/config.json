@@ -1,0 +1,2774 @@
+{
+  "$schema": "./config.schema.json",
+  "heuristics": {
+    "schedulingHorizon": {
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "startTime": "08:00",
+      "endTime": "20:00"
+    },
+    "fatigueManagement": {
+      "minRestHoursBetweenShifts": 10
+    },
+    "budgetControl": {
+      "standardRatePerHour": 100,
+      "overtimeMultiplier": 1.5
+    },
+    "objectiveWeights": {
+      "throughput": 100,
+      "idleTimePenalty": 1,
+      "overtimePenalty": 2
+    }
+  },
+  "unavailability": [
+    {
+      "resourceId": "OT_2",
+      "day": "Tuesday",
+      "startTime": "10:00",
+      "endTime": "14:00",
+      "reason": "Unscheduled Maintenance"
+    }
+  ],
+  "resources": [
+    {
+      "id": "OT_1",
+      "name": "Operating Theatre 1",
+      "type": "Operating Theatre"
+    },
+    {
+      "id": "OT_2",
+      "name": "Operating Theatre 2",
+      "type": "Operating Theatre"
+    },
+    {
+      "id": "OT_3",
+      "name": "Operating Theatre 3",
+      "type": "Operating Theatre"
+    },
+    {
+      "id": "OT_4",
+      "name": "Operating Theatre 4",
+      "type": "Operating Theatre"
+    },
+    {
+      "id": "OT_5",
+      "name": "Operating Theatre 5",
+      "type": "Operating Theatre"
+    }
+  ],
+  "staff": [
+    {
+      "id": "S1",
+      "name": "Dr. A. Chen",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Pediatric Neuro"
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "Dr. B. Patel",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Pediatric Neuro"
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "Dr. C. Smith",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Cardiac"
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "Dr. D. Williams",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Cardiac"
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "Dr. E. Taylor",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Orthopedic"
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "Dr. F. Anderson",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "General"
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "Dr. G. Roberts",
+      "role": "Surgeon",
+      "skills": [
+        "Surgeon",
+        "Pediatric Neuro"
+      ]
+    },
+    {
+      "id": "N1",
+      "name": "Nurse H. Miller",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "Pediatric Neuro"
+      ]
+    },
+    {
+      "id": "N2",
+      "name": "Nurse I. Davis",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "Cardiac"
+      ]
+    },
+    {
+      "id": "N3",
+      "name": "Nurse J. Wilson",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "Orthopedic"
+      ]
+    },
+    {
+      "id": "N4",
+      "name": "Nurse K. Martinez",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    },
+    {
+      "id": "N5",
+      "name": "Nurse L. Taylor",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    },
+    {
+      "id": "N6",
+      "name": "Nurse M. White",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    },
+    {
+      "id": "N7",
+      "name": "Nurse N. Harris",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    },
+    {
+      "id": "N8",
+      "name": "Nurse O. Clark",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    },
+    {
+      "id": "N9",
+      "name": "Nurse P. Thomas",
+      "role": "Nurse",
+      "skills": [
+        "Nurse",
+        "General"
+      ]
+    }
+  ],
+  "patients": [
+    {
+      "id": "P1",
+      "name": "Patient 1",
+      "priority": 2
+    },
+    {
+      "id": "P2",
+      "name": "Patient 2",
+      "priority": 1
+    },
+    {
+      "id": "P3",
+      "name": "Patient 3",
+      "priority": 2
+    },
+    {
+      "id": "P4",
+      "name": "Patient 4",
+      "priority": 2
+    },
+    {
+      "id": "P5",
+      "name": "Patient 5",
+      "priority": 2
+    },
+    {
+      "id": "P6",
+      "name": "Patient 6",
+      "priority": 1
+    },
+    {
+      "id": "P7",
+      "name": "Patient 7",
+      "priority": 0
+    },
+    {
+      "id": "P8",
+      "name": "Patient 8",
+      "priority": 2
+    },
+    {
+      "id": "P9",
+      "name": "Patient 9",
+      "priority": 1
+    },
+    {
+      "id": "P10",
+      "name": "Patient 10",
+      "priority": 2
+    },
+    {
+      "id": "P11",
+      "name": "Patient 11",
+      "priority": 2
+    },
+    {
+      "id": "P12",
+      "name": "Patient 12",
+      "priority": 1
+    },
+    {
+      "id": "P13",
+      "name": "Patient 13",
+      "priority": 1
+    },
+    {
+      "id": "P14",
+      "name": "Patient 14",
+      "priority": 2
+    },
+    {
+      "id": "P15",
+      "name": "Patient 15",
+      "priority": 1
+    },
+    {
+      "id": "P16",
+      "name": "Patient 16",
+      "priority": 2
+    },
+    {
+      "id": "P17",
+      "name": "Patient 17",
+      "priority": 1
+    },
+    {
+      "id": "P18",
+      "name": "Patient 18",
+      "priority": 2
+    },
+    {
+      "id": "P19",
+      "name": "Patient 19",
+      "priority": 2
+    },
+    {
+      "id": "P20",
+      "name": "Patient 20",
+      "priority": 0
+    },
+    {
+      "id": "P21",
+      "name": "Patient 21",
+      "priority": 2
+    },
+    {
+      "id": "P22",
+      "name": "Patient 22",
+      "priority": 2
+    },
+    {
+      "id": "P23",
+      "name": "Patient 23",
+      "priority": 2
+    },
+    {
+      "id": "P24",
+      "name": "Patient 24",
+      "priority": 1
+    },
+    {
+      "id": "P25",
+      "name": "Patient 25",
+      "priority": 2
+    },
+    {
+      "id": "P26",
+      "name": "Patient 26",
+      "priority": 2
+    },
+    {
+      "id": "P27",
+      "name": "Patient 27",
+      "priority": 1
+    },
+    {
+      "id": "P28",
+      "name": "Patient 28",
+      "priority": 1
+    },
+    {
+      "id": "P29",
+      "name": "Patient 29",
+      "priority": 2
+    },
+    {
+      "id": "P30",
+      "name": "Patient 30",
+      "priority": 2
+    },
+    {
+      "id": "P31",
+      "name": "Patient 31",
+      "priority": 2
+    },
+    {
+      "id": "P32",
+      "name": "Patient 32",
+      "priority": 1
+    },
+    {
+      "id": "P33",
+      "name": "Patient 33",
+      "priority": 2
+    },
+    {
+      "id": "P34",
+      "name": "Patient 34",
+      "priority": 2
+    },
+    {
+      "id": "P35",
+      "name": "Patient 35",
+      "priority": 2
+    },
+    {
+      "id": "P36",
+      "name": "Patient 36",
+      "priority": 2
+    },
+    {
+      "id": "P37",
+      "name": "Patient 37",
+      "priority": 1
+    },
+    {
+      "id": "P38",
+      "name": "Patient 38",
+      "priority": 2
+    },
+    {
+      "id": "P39",
+      "name": "Patient 39",
+      "priority": 2
+    },
+    {
+      "id": "P40",
+      "name": "Patient 40",
+      "priority": 2
+    },
+    {
+      "id": "P41",
+      "name": "Patient 41",
+      "priority": 2
+    },
+    {
+      "id": "P42",
+      "name": "Patient 42",
+      "priority": 2
+    },
+    {
+      "id": "P43",
+      "name": "Patient 43",
+      "priority": 1
+    },
+    {
+      "id": "P44",
+      "name": "Patient 44",
+      "priority": 2
+    },
+    {
+      "id": "P45",
+      "name": "Patient 45",
+      "priority": 2
+    },
+    {
+      "id": "P46",
+      "name": "Patient 46",
+      "priority": 1
+    },
+    {
+      "id": "P47",
+      "name": "Patient 47",
+      "priority": 2
+    },
+    {
+      "id": "P48",
+      "name": "Patient 48",
+      "priority": 2
+    },
+    {
+      "id": "P49",
+      "name": "Patient 49",
+      "priority": 2
+    },
+    {
+      "id": "P50",
+      "name": "Patient 50",
+      "priority": 1
+    },
+    {
+      "id": "P51",
+      "name": "Patient 51",
+      "priority": 0
+    },
+    {
+      "id": "P52",
+      "name": "Patient 52",
+      "priority": 1
+    },
+    {
+      "id": "P53",
+      "name": "Patient 53",
+      "priority": 2
+    },
+    {
+      "id": "P54",
+      "name": "Patient 54",
+      "priority": 1
+    },
+    {
+      "id": "P55",
+      "name": "Patient 55",
+      "priority": 2
+    },
+    {
+      "id": "P56",
+      "name": "Patient 56",
+      "priority": 2
+    },
+    {
+      "id": "P57",
+      "name": "Patient 57",
+      "priority": 2
+    },
+    {
+      "id": "P58",
+      "name": "Patient 58",
+      "priority": 2
+    },
+    {
+      "id": "P59",
+      "name": "Patient 59",
+      "priority": 2
+    },
+    {
+      "id": "P60",
+      "name": "Patient 60",
+      "priority": 1
+    },
+    {
+      "id": "P61",
+      "name": "Patient 61",
+      "priority": 2
+    },
+    {
+      "id": "P62",
+      "name": "Patient 62",
+      "priority": 2
+    },
+    {
+      "id": "P63",
+      "name": "Patient 63",
+      "priority": 2
+    },
+    {
+      "id": "P64",
+      "name": "Patient 64",
+      "priority": 2
+    },
+    {
+      "id": "P65",
+      "name": "Patient 65",
+      "priority": 1
+    },
+    {
+      "id": "P66",
+      "name": "Patient 66",
+      "priority": 2
+    },
+    {
+      "id": "P67",
+      "name": "Patient 67",
+      "priority": 2
+    },
+    {
+      "id": "P68",
+      "name": "Patient 68",
+      "priority": 2
+    },
+    {
+      "id": "P69",
+      "name": "Patient 69",
+      "priority": 2
+    },
+    {
+      "id": "P70",
+      "name": "Patient 70",
+      "priority": 2
+    },
+    {
+      "id": "P71",
+      "name": "Patient 71",
+      "priority": 1
+    },
+    {
+      "id": "P72",
+      "name": "Patient 72",
+      "priority": 2
+    },
+    {
+      "id": "P73",
+      "name": "Patient 73",
+      "priority": 0
+    },
+    {
+      "id": "P74",
+      "name": "Patient 74",
+      "priority": 1
+    },
+    {
+      "id": "P75",
+      "name": "Patient 75",
+      "priority": 2
+    },
+    {
+      "id": "P76",
+      "name": "Patient 76",
+      "priority": 1
+    },
+    {
+      "id": "P77",
+      "name": "Patient 77",
+      "priority": 1
+    },
+    {
+      "id": "P78",
+      "name": "Patient 78",
+      "priority": 2
+    },
+    {
+      "id": "P79",
+      "name": "Patient 79",
+      "priority": 2
+    },
+    {
+      "id": "P80",
+      "name": "Patient 80",
+      "priority": 2
+    },
+    {
+      "id": "P81",
+      "name": "Patient 81",
+      "priority": 1
+    },
+    {
+      "id": "P82",
+      "name": "Patient 82",
+      "priority": 2
+    },
+    {
+      "id": "P83",
+      "name": "Patient 83",
+      "priority": 1
+    },
+    {
+      "id": "P84",
+      "name": "Patient 84",
+      "priority": 1
+    },
+    {
+      "id": "P85",
+      "name": "Patient 85",
+      "priority": 2
+    },
+    {
+      "id": "P86",
+      "name": "Patient 86",
+      "priority": 1
+    },
+    {
+      "id": "P87",
+      "name": "Patient 87",
+      "priority": 2
+    },
+    {
+      "id": "P88",
+      "name": "Patient 88",
+      "priority": 1
+    },
+    {
+      "id": "P89",
+      "name": "Patient 89",
+      "priority": 2
+    },
+    {
+      "id": "P90",
+      "name": "Patient 90",
+      "priority": 1
+    },
+    {
+      "id": "P91",
+      "name": "Patient 91",
+      "priority": 2
+    },
+    {
+      "id": "P92",
+      "name": "Patient 92",
+      "priority": 1
+    },
+    {
+      "id": "P93",
+      "name": "Patient 93",
+      "priority": 1
+    },
+    {
+      "id": "P94",
+      "name": "Patient 94",
+      "priority": 1
+    },
+    {
+      "id": "P95",
+      "name": "Patient 95",
+      "priority": 1
+    },
+    {
+      "id": "P96",
+      "name": "Patient 96",
+      "priority": 1
+    },
+    {
+      "id": "P97",
+      "name": "Patient 97",
+      "priority": 2
+    },
+    {
+      "id": "P98",
+      "name": "Patient 98",
+      "priority": 2
+    },
+    {
+      "id": "P99",
+      "name": "Patient 99",
+      "priority": 1
+    },
+    {
+      "id": "P100",
+      "name": "Patient 100",
+      "priority": 2
+    },
+    {
+      "id": "P101",
+      "name": "Patient 101",
+      "priority": 2
+    },
+    {
+      "id": "P102",
+      "name": "Patient 102",
+      "priority": 2
+    },
+    {
+      "id": "P103",
+      "name": "Patient 103",
+      "priority": 1
+    },
+    {
+      "id": "P104",
+      "name": "Patient 104",
+      "priority": 2
+    },
+    {
+      "id": "P105",
+      "name": "Patient 105",
+      "priority": 1
+    },
+    {
+      "id": "P106",
+      "name": "Patient 106",
+      "priority": 2
+    },
+    {
+      "id": "P107",
+      "name": "Patient 107",
+      "priority": 2
+    },
+    {
+      "id": "P108",
+      "name": "Patient 108",
+      "priority": 1
+    },
+    {
+      "id": "P109",
+      "name": "Patient 109",
+      "priority": 2
+    },
+    {
+      "id": "P110",
+      "name": "Patient 110",
+      "priority": 1
+    },
+    {
+      "id": "P111",
+      "name": "Patient 111",
+      "priority": 1
+    },
+    {
+      "id": "P112",
+      "name": "Patient 112",
+      "priority": 2
+    },
+    {
+      "id": "P113",
+      "name": "Patient 113",
+      "priority": 2
+    },
+    {
+      "id": "P114",
+      "name": "Patient 114",
+      "priority": 0
+    },
+    {
+      "id": "P115",
+      "name": "Patient 115",
+      "priority": 2
+    },
+    {
+      "id": "P116",
+      "name": "Patient 116",
+      "priority": 1
+    },
+    {
+      "id": "P117",
+      "name": "Patient 117",
+      "priority": 2
+    },
+    {
+      "id": "P118",
+      "name": "Patient 118",
+      "priority": 2
+    },
+    {
+      "id": "P119",
+      "name": "Patient 119",
+      "priority": 2
+    },
+    {
+      "id": "P120",
+      "name": "Patient 120",
+      "priority": 2
+    },
+    {
+      "id": "P121",
+      "name": "Patient 121",
+      "priority": 2
+    },
+    {
+      "id": "P122",
+      "name": "Patient 122",
+      "priority": 1
+    },
+    {
+      "id": "P123",
+      "name": "Patient 123",
+      "priority": 2
+    },
+    {
+      "id": "P124",
+      "name": "Patient 124",
+      "priority": 1
+    },
+    {
+      "id": "P125",
+      "name": "Patient 125",
+      "priority": 2
+    },
+    {
+      "id": "P126",
+      "name": "Patient 126",
+      "priority": 2
+    },
+    {
+      "id": "P127",
+      "name": "Patient 127",
+      "priority": 1
+    },
+    {
+      "id": "P128",
+      "name": "Patient 128",
+      "priority": 2
+    },
+    {
+      "id": "P129",
+      "name": "Patient 129",
+      "priority": 1
+    },
+    {
+      "id": "P130",
+      "name": "Patient 130",
+      "priority": 0
+    },
+    {
+      "id": "P131",
+      "name": "Patient 131",
+      "priority": 2
+    },
+    {
+      "id": "P132",
+      "name": "Patient 132",
+      "priority": 2
+    },
+    {
+      "id": "P133",
+      "name": "Patient 133",
+      "priority": 2
+    },
+    {
+      "id": "P134",
+      "name": "Patient 134",
+      "priority": 1
+    },
+    {
+      "id": "P135",
+      "name": "Patient 135",
+      "priority": 2
+    },
+    {
+      "id": "P136",
+      "name": "Patient 136",
+      "priority": 2
+    },
+    {
+      "id": "P137",
+      "name": "Patient 137",
+      "priority": 1
+    },
+    {
+      "id": "P138",
+      "name": "Patient 138",
+      "priority": 2
+    },
+    {
+      "id": "P139",
+      "name": "Patient 139",
+      "priority": 2
+    },
+    {
+      "id": "P140",
+      "name": "Patient 140",
+      "priority": 1
+    },
+    {
+      "id": "P141",
+      "name": "Patient 141",
+      "priority": 2
+    },
+    {
+      "id": "P142",
+      "name": "Patient 142",
+      "priority": 2
+    },
+    {
+      "id": "P143",
+      "name": "Patient 143",
+      "priority": 2
+    },
+    {
+      "id": "P144",
+      "name": "Patient 144",
+      "priority": 2
+    },
+    {
+      "id": "P145",
+      "name": "Patient 145",
+      "priority": 2
+    },
+    {
+      "id": "P146",
+      "name": "Patient 146",
+      "priority": 2
+    },
+    {
+      "id": "P147",
+      "name": "Patient 147",
+      "priority": 2
+    },
+    {
+      "id": "P148",
+      "name": "Patient 148",
+      "priority": 2
+    },
+    {
+      "id": "P149",
+      "name": "Patient 149",
+      "priority": 2
+    },
+    {
+      "id": "P150",
+      "name": "Patient 150",
+      "priority": 2
+    },
+    {
+      "id": "P151",
+      "name": "Patient 151",
+      "priority": 1
+    },
+    {
+      "id": "P152",
+      "name": "Patient 152",
+      "priority": 2
+    },
+    {
+      "id": "P153",
+      "name": "Patient 153",
+      "priority": 1
+    },
+    {
+      "id": "P154",
+      "name": "Patient 154",
+      "priority": 2
+    },
+    {
+      "id": "P155",
+      "name": "Patient 155",
+      "priority": 2
+    },
+    {
+      "id": "P156",
+      "name": "Patient 156",
+      "priority": 2
+    },
+    {
+      "id": "P157",
+      "name": "Patient 157",
+      "priority": 2
+    },
+    {
+      "id": "P158",
+      "name": "Patient 158",
+      "priority": 2
+    },
+    {
+      "id": "P159",
+      "name": "Patient 159",
+      "priority": 1
+    },
+    {
+      "id": "P160",
+      "name": "Patient 160",
+      "priority": 1
+    }
+  ],
+  "demands": [
+    {
+      "id": "D1",
+      "patientId": "P1",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D2",
+      "patientId": "P2",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D3",
+      "patientId": "P3",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D4",
+      "patientId": "P4",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D5",
+      "patientId": "P5",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D6",
+      "patientId": "P6",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D7",
+      "patientId": "P7",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D8",
+      "patientId": "P8",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D9",
+      "patientId": "P9",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D10",
+      "patientId": "P10",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D11",
+      "patientId": "P11",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D12",
+      "patientId": "P12",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D13",
+      "patientId": "P13",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D14",
+      "patientId": "P14",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D15",
+      "patientId": "P15",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D16",
+      "patientId": "P16",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D17",
+      "patientId": "P17",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D18",
+      "patientId": "P18",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D19",
+      "patientId": "P19",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D20",
+      "patientId": "P20",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D21",
+      "patientId": "P21",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D22",
+      "patientId": "P22",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D23",
+      "patientId": "P23",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D24",
+      "patientId": "P24",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D25",
+      "patientId": "P25",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D26",
+      "patientId": "P26",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D27",
+      "patientId": "P27",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D28",
+      "patientId": "P28",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D29",
+      "patientId": "P29",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D30",
+      "patientId": "P30",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D31",
+      "patientId": "P31",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D32",
+      "patientId": "P32",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D33",
+      "patientId": "P33",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D34",
+      "patientId": "P34",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D35",
+      "patientId": "P35",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D36",
+      "patientId": "P36",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D37",
+      "patientId": "P37",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D38",
+      "patientId": "P38",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D39",
+      "patientId": "P39",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D40",
+      "patientId": "P40",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D41",
+      "patientId": "P41",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D42",
+      "patientId": "P42",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D43",
+      "patientId": "P43",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D44",
+      "patientId": "P44",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D45",
+      "patientId": "P45",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D46",
+      "patientId": "P46",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D47",
+      "patientId": "P47",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D48",
+      "patientId": "P48",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D49",
+      "patientId": "P49",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D50",
+      "patientId": "P50",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D51",
+      "patientId": "P51",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D52",
+      "patientId": "P52",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D53",
+      "patientId": "P53",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D54",
+      "patientId": "P54",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D55",
+      "patientId": "P55",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D56",
+      "patientId": "P56",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D57",
+      "patientId": "P57",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D58",
+      "patientId": "P58",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D59",
+      "patientId": "P59",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D60",
+      "patientId": "P60",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D61",
+      "patientId": "P61",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D62",
+      "patientId": "P62",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D63",
+      "patientId": "P63",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D64",
+      "patientId": "P64",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D65",
+      "patientId": "P65",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D66",
+      "patientId": "P66",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D67",
+      "patientId": "P67",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D68",
+      "patientId": "P68",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D69",
+      "patientId": "P69",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D70",
+      "patientId": "P70",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D71",
+      "patientId": "P71",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D72",
+      "patientId": "P72",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D73",
+      "patientId": "P73",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D74",
+      "patientId": "P74",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D75",
+      "patientId": "P75",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D76",
+      "patientId": "P76",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D77",
+      "patientId": "P77",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D78",
+      "patientId": "P78",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D79",
+      "patientId": "P79",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D80",
+      "patientId": "P80",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D81",
+      "patientId": "P81",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D82",
+      "patientId": "P82",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D83",
+      "patientId": "P83",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D84",
+      "patientId": "P84",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D85",
+      "patientId": "P85",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D86",
+      "patientId": "P86",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D87",
+      "patientId": "P87",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D88",
+      "patientId": "P88",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D89",
+      "patientId": "P89",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D90",
+      "patientId": "P90",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D91",
+      "patientId": "P91",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D92",
+      "patientId": "P92",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D93",
+      "patientId": "P93",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D94",
+      "patientId": "P94",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D95",
+      "patientId": "P95",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D96",
+      "patientId": "P96",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D97",
+      "patientId": "P97",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D98",
+      "patientId": "P98",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D99",
+      "patientId": "P99",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D100",
+      "patientId": "P100",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D101",
+      "patientId": "P101",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D102",
+      "patientId": "P102",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D103",
+      "patientId": "P103",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D104",
+      "patientId": "P104",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D105",
+      "patientId": "P105",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D106",
+      "patientId": "P106",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D107",
+      "patientId": "P107",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D108",
+      "patientId": "P108",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D109",
+      "patientId": "P109",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D110",
+      "patientId": "P110",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D111",
+      "patientId": "P111",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D112",
+      "patientId": "P112",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D113",
+      "patientId": "P113",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D114",
+      "patientId": "P114",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D115",
+      "patientId": "P115",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D116",
+      "patientId": "P116",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D117",
+      "patientId": "P117",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D118",
+      "patientId": "P118",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D119",
+      "patientId": "P119",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D120",
+      "patientId": "P120",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D121",
+      "patientId": "P121",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D122",
+      "patientId": "P122",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D123",
+      "patientId": "P123",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D124",
+      "patientId": "P124",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D125",
+      "patientId": "P125",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D126",
+      "patientId": "P126",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D127",
+      "patientId": "P127",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D128",
+      "patientId": "P128",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D129",
+      "patientId": "P129",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D130",
+      "patientId": "P130",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D131",
+      "patientId": "P131",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D132",
+      "patientId": "P132",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D133",
+      "patientId": "P133",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D134",
+      "patientId": "P134",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D135",
+      "patientId": "P135",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D136",
+      "patientId": "P136",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D137",
+      "patientId": "P137",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D138",
+      "patientId": "P138",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D139",
+      "patientId": "P139",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 225,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D140",
+      "patientId": "P140",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D141",
+      "patientId": "P141",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D142",
+      "patientId": "P142",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D143",
+      "patientId": "P143",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 195,
+      "requiredRoles": [
+        "Cardiac",
+        "Cardiac"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D144",
+      "patientId": "P144",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D145",
+      "patientId": "P145",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 165,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D146",
+      "patientId": "P146",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D147",
+      "patientId": "P147",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D148",
+      "patientId": "P148",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D149",
+      "patientId": "P149",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D150",
+      "patientId": "P150",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D151",
+      "patientId": "P151",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D152",
+      "patientId": "P152",
+      "surgeryType": "Gallbladder Removal",
+      "durationMinutes": 105,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D153",
+      "patientId": "P153",
+      "surgeryType": "Appendectomy",
+      "durationMinutes": 75,
+      "requiredRoles": [
+        "General",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D154",
+      "patientId": "P154",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D155",
+      "patientId": "P155",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 150,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D156",
+      "patientId": "P156",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D157",
+      "patientId": "P157",
+      "surgeryType": "Knee Arthroscopy",
+      "durationMinutes": 90,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D158",
+      "patientId": "P158",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": [
+        "Pediatric Neuro",
+        "Nurse"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "D159",
+      "patientId": "P159",
+      "surgeryType": "Complex Spinal Reconstruction",
+      "durationMinutes": 135,
+      "requiredRoles": [
+        "Orthopedic",
+        "Nurse"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "D160",
+      "patientId": "P160",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": [
+        "Surgeon",
+        "Nurse"
+      ],
+      "priority": 1
+    }
+  ]
+}

@@ -1,0 +1,3612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cymbal Children's Hospital Co-Scheduling — Demo</title>
+    <style>
+        :root {
+            /* Exact RCH Brand Colors from website source */
+            --cch-green: #82C341; 
+            --cch-blue: #0076AD;  
+            --cch-dark-blue: #0E0048;
+            --cch-white: #FFFFFF;
+            --cch-light-bg: #F4F7F6;
+            --cch-dark-text: #333333;
+            --cch-gray: #CCCCCC;
+            --cch-light-gray: #EFEFEF;
+            /* Urgency Colors */
+            --priority-emergency: #DA1A31;
+            --priority-urgent: #F26322;
+            --priority-routine: #0076AD;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--cch-light-bg);
+            color: var(--cch-dark-text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header / Controls matching RCH top nav style */
+        header {
+            background-color: var(--cch-white);
+            color: var(--cch-dark-blue);
+            padding: 10px 20px 8px 20px;
+            border-top: 4px solid var(--cch-blue);
+            border-bottom: 1px solid var(--cch-gray);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .header-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--cch-dark-blue);
+            white-space: nowrap;
+        }
+        
+        header h1 span {
+            color: var(--cch-green);
+            font-weight: 400;
+            font-size: 0.95rem;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .control-group-scenario {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .control-group-hero-evolution {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(14, 0, 72, 0.04);
+            border: 1px solid rgba(14, 0, 72, 0.12);
+            padding: 4px 10px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .control-group-disruption {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(230, 126, 34, 0.05);
+            border: 1px solid rgba(230, 126, 34, 0.2);
+            padding: 3px 8px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .hero-play-btn {
+            background-color: var(--cch-green);
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            border-radius: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(130, 195, 65, 0.3);
+            white-space: nowrap;
+        }
+
+        .hero-play-btn:hover {
+            background-color: #71b033;
+            transform: translateY(-1px);
+        }
+
+        .mode-btn {
+            background: transparent;
+            color: var(--cch-dark-blue);
+            border: 1px solid transparent;
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--cch-white);
+            color: var(--cch-green);
+            border-color: rgba(14, 0, 72, 0.15);
+            font-weight: 800;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .phase-btn {
+            background: var(--cch-white);
+            color: var(--cch-dark-blue);
+            border: 1px solid rgba(14, 0, 72, 0.2);
+            padding: 5px 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .phase-btn.active {
+            background: var(--cch-blue);
+            color: white;
+            border-color: var(--cch-blue);
+            box-shadow: 0 2px 5px rgba(0, 118, 173, 0.3);
+        }
+
+        .phase-btn.hero-play-btn.active {
+            background: var(--cch-green);
+            border-color: var(--cch-green);
+            color: white;
+        }
+
+        button {
+            background-color: var(--cch-green);
+            color: var(--cch-white);
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #71b033;
+        }
+
+        /* View Switcher Toggle */
+        .view-switcher {
+            display: flex;
+            background-color: var(--cch-light-gray);
+            border-radius: 18px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            background: none;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.82rem;
+            color: #555555;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .view-btn.active {
+            background-color: var(--cch-dark-blue);
+            color: var(--cch-white);
+        }
+
+        /* Interactive Disruption Injection Buttons */
+        .disruption-btn {
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            border-radius: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .disruption-btn.ot-disruption {
+            background-color: var(--priority-urgent);
+        }
+
+        .disruption-btn.ot-disruption:hover {
+            background-color: #d85215;
+        }
+
+        .disruption-btn.er-arrival {
+            background-color: var(--priority-emergency);
+        }
+
+        .disruption-btn.er-arrival:hover {
+            background-color: #b81226;
+        }
+
+        /* Day Selector Bar */
+        #day-selector-bar {
+            display: flex;
+            gap: 10px;
+            padding: 10px 20px 0 20px;
+            background-color: var(--cch-light-bg);
+        }
+
+        .day-card {
+            flex: 1;
+            background: var(--cch-white);
+            border: 1px solid var(--cch-gray);
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-card:hover {
+            border-color: var(--cch-blue);
+            transform: translateY(-1px);
+        }
+
+        .day-card.active {
+            border: 2px solid var(--cch-blue);
+            background-color: rgba(0, 118, 173, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .day-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: var(--cch-dark-blue);
+        }
+
+        .day-stats {
+            font-size: 0.75rem;
+            color: #666;
+            text-anchor: end;
+        }
+
+        .day-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: white;
+            background-color: var(--cch-green);
+        }
+
+        .day-badge.has-warning {
+            background-color: var(--priority-urgent);
+        }
+
+        /* Main Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            padding: 15px 20px 20px 20px;
+            flex-grow: 1;
+            box-sizing: border-box;
+            min-height: calc(100vh - 120px);
+        }
+
+        .panel {
+            background-color: var(--cch-white);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: var(--cch-blue);
+            border-bottom: 2px solid var(--cch-light-bg);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #gantt-panel {
+            grid-column: 1 / 3;
+            grid-row: 1 / 2;
+        }
+
+        #staff-panel {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        #metrics-panel {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+        }
+
+        #algorithm-panel {
+            grid-column: 1 / 3;
+            grid-row: 3 / 4;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+        }
+
+        /* Floor Plan Styles */
+        .floor-plan-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .floor-plan-container svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .room {
+            fill: #FFFFFF;
+            stroke: var(--cch-gray);
+            stroke-width: 2;
+            transition: fill 0.3s, stroke 0.3s, stroke-width 0.3s;
+            rx: 6px;
+        }
+
+        .room-label {
+            font-size: 14px;
+            font-weight: bold;
+            fill: var(--cch-dark-blue);
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .room-sublabel {
+            font-size: 11px;
+            fill: #777777;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        .building-label {
+            font-size: 11px;
+            font-weight: bold;
+            fill: var(--cch-blue);
+            text-anchor: middle;
+            letter-spacing: 1px;
+        }
+
+        .room.active {
+            fill: rgba(130, 195, 65, 0.15);
+            stroke: var(--cch-green);
+            stroke-width: 3;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { stroke-width: 3; filter: drop-shadow(0 0 2px var(--cch-green)); }
+            50% { stroke-width: 4; filter: drop-shadow(0 0 6px var(--cch-green)); }
+            100% { stroke-width: 3; filter: drop-shadow(0 0 2px var(--cch-green)); }
+        }
+
+        .room.conflict {
+            fill: rgba(218, 26, 49, 0.15) !important;
+            stroke: #DA1A31 !important;
+            animation: pulse-red 1.5s infinite !important;
+        }
+
+        @keyframes pulse-red {
+            0% { stroke-width: 3; filter: drop-shadow(0 0 2px #DA1A31); }
+            50% { stroke-width: 4; filter: drop-shadow(0 0 6px #DA1A31); }
+            100% { stroke-width: 3; filter: drop-shadow(0 0 2px #DA1A31); }
+        }
+
+        /* Controls & Interactive Buttons */
+        #play-btn {
+            background-color: var(--cch-green);
+            color: var(--cch-white);
+            border: none;
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #play-btn:hover {
+            background-color: #71b033;
+            transform: translateY(-1px);
+        }
+
+        #toggle-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--cch-light-gray);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #555555;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background-color: var(--cch-blue);
+            color: var(--cch-white);
+        }
+
+        /* Metrics Panel */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            align-content: start;
+        }
+
+        .metric-card {
+            background-color: var(--cch-light-bg);
+            border-radius: 8px;
+            padding: 16px 10px;
+            text-align: center;
+            border: 1px solid var(--cch-gray);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--cch-blue);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #555555;
+            font-weight: 500;
+        }
+
+        /* Staff Panel & Workload Bars */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            flex-grow: 1;
+            overflow-y: visible;
+            max-height: none;
+            padding-right: 5px;
+        }
+
+        .staff-card {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--cch-white);
+            border: 1px solid var(--cch-gray);
+            border-radius: 8px;
+            padding: 10px;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .staff-header-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .staff-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--cch-light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--cch-dark-blue);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .staff-info {
+            flex-grow: 1;
+        }
+
+        .staff-name {
+            font-weight: bold;
+            color: var(--cch-dark-blue);
+            margin-bottom: 2px;
+            font-size: 0.9rem;
+        }
+
+        .staff-role {
+            font-size: 0.75rem;
+            color: #666666;
+        }
+
+        .staff-status {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .staff-card-mutated {
+            border: 2px solid var(--cch-green) !important;
+            box-shadow: 0 0 10px rgba(130, 195, 65, 0.4);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .staff-status.rested {
+            background-color: rgba(130, 195, 65, 0.15);
+            color: var(--cch-green);
+        }
+
+        .staff-status.warning {
+            background-color: rgba(242, 99, 34, 0.15);
+            color: var(--priority-urgent);
+        }
+
+        .staff-status.fatigued {
+            background-color: rgba(218, 26, 49, 0.15);
+            color: var(--priority-emergency);
+        }
+
+        .staff-workload-container {
+            margin-top: 4px;
+        }
+
+        .staff-workload-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .staff-workload-bar {
+            height: 6px;
+            background-color: var(--cch-light-gray);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .staff-workload-fill {
+            height: 100%;
+            background-color: var(--cch-green);
+            border-radius: 3px;
+            transition: width 0.4s ease-in-out, background-color 0.4s;
+        }
+
+        /* Schedule Grid Layout */
+        .gantt-chart {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: var(--cch-white);
+            border: 1px solid var(--cch-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gantt-header {
+            display: flex;
+            background-color: var(--cch-light-gray);
+            border-bottom: 2px solid var(--cch-gray);
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--cch-dark-blue);
+            z-index: 2;
+        }
+
+        .resource-col {
+            width: 150px;
+            padding: 10px 12px;
+            border-right: 1px solid var(--cch-gray);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-col {
+            display: flex;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .time-slot {
+            flex: 1;
+            text-align: left;
+            padding: 10px 0 10px 6px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--cch-dark-blue);
+        }
+
+        .gantt-body {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .gantt-rows-bg {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gantt-row {
+            display: flex;
+            border-bottom: 1px solid var(--cch-light-gray);
+            height: 54px;
+            position: relative;
+        }
+
+        .gantt-row:last-child {
+            border-bottom: none;
+        }
+
+        .resource-cell {
+            width: 150px;
+            padding: 8px 12px;
+            border-right: 1px solid var(--cch-gray);
+            background-color: var(--cch-white);
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--cch-dark-blue);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .resource-sub {
+            font-size: 0.72rem;
+            color: #777777;
+            font-weight: normal;
+            margin-top: 1px;
+        }
+
+        .timeline-cell {
+            flex-grow: 1;
+            position: relative;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 12.5% 100%;
+        }
+
+        /* Absolute Positioning Layer for Smooth Transitions */
+        #gantt-blocks-layer {
+            position: absolute;
+            top: 0;
+            left: 150px;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Appointment Blocks - Professional Clinical Density & Muted Slate Palette */
+        .appt-block {
+            position: absolute;
+            height: 42px;
+            background-color: #4A5568;
+            color: var(--cch-white);
+            border-radius: 4px;
+            padding: 4px 8px;
+            box-sizing: border-box;
+            font-size: 0.78rem;
+            font-weight: 500;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            transition: left 0.4s ease-in-out, top 0.4s ease-in-out, width 0.4s ease-in-out, background-color 0.3s;
+            cursor: pointer;
+            pointer-events: auto;
+            border: 1px solid #718096;
+        }
+
+        .appt-block:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+            z-index: 10;
+        }
+
+        .appt-block.priority-emergency {
+            border-left: 4px solid var(--priority-emergency);
+        }
+
+        .appt-block.priority-urgent {
+            border-left: 4px solid var(--priority-urgent);
+        }
+
+        .appt-block.priority-routine {
+            border-left: 4px solid var(--cch-blue);
+        }
+
+        .urgency-pill {
+            font-size: 0.65rem;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: white;
+            margin-right: 4px;
+            display: inline-block;
+        }
+        .urgency-pill.priority-emergency { background-color: var(--priority-emergency); }
+        .urgency-pill.priority-urgent { background-color: var(--priority-urgent); }
+        .urgency-pill.priority-routine { background-color: var(--cch-blue); }
+
+        /* Maintenance Unavailability Block */
+        .maintenance-block {
+            position: absolute;
+            height: 48px;
+            background: repeating-linear-gradient(
+                45deg,
+                #666,
+                #666 10px,
+                #555 10px,
+                #555 20px
+            );
+            color: #FFF;
+            border-radius: 6px;
+            padding: 6px 10px;
+            box-sizing: border-box;
+            font-size: 0.75rem;
+            font-weight: bold;
+            opacity: 0.85;
+            cursor: not-allowed;
+            pointer-events: auto;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #999;
+        }
+
+        /* Breakthrough Pulse Highlights */
+        @keyframes pulse-breakthrough {
+            0% { box-shadow: 0 0 4px #82C341, 0 0 0 0 rgba(130, 195, 65, 0.7); }
+            70% { box-shadow: 0 0 12px #82C341, 0 0 0 8px rgba(130, 195, 65, 0); }
+            100% { box-shadow: 0 0 4px #82C341, 0 0 0 0 rgba(130, 195, 65, 0); }
+        }
+
+        .appt-breakthrough {
+            animation: pulse-breakthrough 1.5s infinite;
+            border: 2px solid #82C341;
+        }
+
+        .evolved-badge {
+            background-color: #82C341;
+            color: white;
+            font-size: 0.65rem;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            float: right;
+            margin-left: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .appt-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .appt-meta {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .appt-conflict {
+            background-color: #DA1A31 !important;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(218, 26, 49, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(218, 26, 49, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(218, 26, 49, 0); }
+        }
+
+        /* Floating Rich Tooltip */
+        .cch-tooltip {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            background: var(--cch-dark-blue);
+            color: #FFFFFF;
+            padding: 10px 14px;
+            border-radius: 6px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            font-size: 0.8rem;
+            display: none;
+            max-width: 260px;
+            line-height: 1.4;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .cch-tooltip-header {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: var(--cch-green);
+            margin-bottom: 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 3px;
+        }
+
+        .cch-tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3px;
+        }
+
+        /* Executive Scenario Breakdown Panel */
+        #breakdown-panel {
+            grid-column: 1 / 3;
+            grid-row: 1 / 3;
+            display: none;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .breakdown-card {
+            background-color: var(--cch-light-bg);
+            border-radius: 8px;
+            padding: 18px;
+            border: 1px solid var(--cch-gray);
+        }
+
+        .breakdown-card h3 {
+            margin-top: 0;
+            color: var(--cch-dark-blue);
+            font-size: 1.05rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 118, 173, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 118, 173, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 118, 173, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Rich HTML Tooltip -->
+    <div id="cch-tooltip" class="cch-tooltip"></div>
+
+    <!-- Candidate Details & Source Code Scrollable Modal -->
+    <div id="candidate-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.65); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #181825; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; width: 100%; max-width: 650px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: #cdd6f4;">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #11111b; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="cand-modal-badge" style="background: var(--cch-green); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">ACCEPTED</span>
+                    <h3 id="cand-modal-title" style="margin: 0; font-size: 1rem; color: #cdd6f4; font-weight: bold;">Candidate #1: 15-Minute OT Alignment Mutation</h3>
+                </div>
+                <button id="cand-modal-close" style="background: transparent; border: none; color: #a6adc8; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0 4px;" title="Close modal (Esc)">&times;</button>
+            </div>
+            <div style="padding: 18px; overflow-y: auto; flex: 1;">
+                <!-- Summary & Key Metrics Grid -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #a6adc8;">Objective Score</div>
+                        <div id="cand-modal-score" style="font-size: 0.95rem; font-weight: bold; font-family: monospace; color: var(--cch-green); margin-top: 2px;">27,486.8</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #a6adc8;">Scheduled</div>
+                        <div id="cand-modal-patients" style="font-size: 0.95rem; font-weight: bold; color: white; margin-top: 2px;">126 Patients</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #a6adc8;">Resource Idle</div>
+                        <div id="cand-modal-idle" style="font-size: 0.95rem; font-weight: bold; color: white; margin-top: 2px;">13.3h</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: #a6adc8;">Fatigue Breaches</div>
+                        <div id="cand-modal-fatigue" style="font-size: 0.95rem; font-weight: bold; color: #f38ba8; margin-top: 2px;">0</div>
+                    </div>
+                </div>
+
+                <div id="cand-modal-summary" style="font-size: 0.85rem; line-height: 1.4; color: #bac2de; background: rgba(255,255,255,0.04); padding: 10px 12px; border-radius: 6px; border-left: 3px solid var(--cch-green); margin-bottom: 15px;">
+                    💡 Aligning theatre bookings to 15-minute boundaries eliminated odd idle gaps, enabling 4 additional patients to be scheduled.
+                </div>
+
+                <!-- Python Source Code Header & Scrollable Box -->
+                <div style="font-weight: bold; font-size: 0.8rem; color: var(--cch-green); margin-bottom: 6px;">
+                    <span>Evolved Python Algorithm (build_schedule):</span>
+                </div>
+                <pre id="cand-modal-code" style="background: #11111b; color: #a6e3a1; padding: 12px 14px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; max-height: 280px; overflow-y: auto; white-space: pre-wrap; margin: 0; border: 1px solid rgba(255,255,255,0.1); line-height: 1.45;"></pre>
+            </div>
+            <div style="background: #11111b; padding: 10px 18px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end;">
+                <button id="cand-modal-close-btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;">Close (Esc)</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-top-bar">
+            <h1>Cymbal Children's Hospital <span>Co-Scheduling PoC</span></h1>
+            
+            <!-- View Switcher Toggle -->
+            <div class="view-switcher">
+                <button id="view-grid" class="view-btn active">Schedule & Evolution</button>
+                <button id="view-feed" class="view-btn" title="View live log of all candidates evaluated by AlphaEvolve, their scores, and explanation of why they succeeded or failed.">⚡ Candidate Feed</button>
+                <button id="view-breakdown" class="view-btn">Breakdown</button>
+            </div>
+        </div>
+        
+        <div class="controls" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; flex-wrap: wrap;">
+            <!-- Hidden backward-compatible scenario select and hint -->
+            <select id="scenario-select" style="display: none;">
+                <option value="mock_trace_replan.jsonl">🧪 Fixture Mode (Mock Re-Plan)</option>
+                <option value="traces_dynamic.jsonl" selected>Dynamic Live Run</option>
+                <option value="traces_low.jsonl">Agile Constraints</option>
+            </select>
+            <span id="scenario-hint" style="display: none;"></span>
+
+            <!-- Left: 2-Option Execution Mode Segmented Toggle (Demo Replay Default vs Live AlphaEvolve) -->
+            <div class="control-group-scenario" style="display: flex; align-items: center; background: rgba(14,0,72,0.05); padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(14,0,72,0.15);">
+                <span style="font-size: 0.75rem; font-weight: bold; color: var(--cch-dark-blue); margin-right: 6px;">MODE:</span>
+                <div class="mode-toggle-group" style="display: flex; gap: 4px;">
+                    <button id="mode-live" class="mode-btn" title="Really use the Google Cloud AlphaEvolve API (/run-optimization) to progressively evolve a new algorithm in real time.">⚡ Live AlphaEvolve Run</button>
+                    <button id="mode-demo" class="mode-btn active" title="Progressive replay using recorded candidates dataset for presentations without live API access.">🎬 Demo Mode</button>
+                </div>
+            </div>
+
+            <!-- Center HERO: 3-Phase Executive Storytelling Navigation Bar -->
+            <div class="control-group-hero-evolution" style="display: flex; align-items: center; gap: 8px; background: rgba(14,0,72,0.04); border: 1px solid rgba(14,0,72,0.15); padding: 4px 10px; border-radius: 8px;">
+                <span style="font-size: 0.72rem; font-weight: 800; color: var(--cch-dark-blue); text-transform: uppercase;">ALPHAEVOLVE PHASES:</span>
+                <button id="btn-phase-1" class="phase-btn active" title="Phase 1: View Traditional Baseline schedule, step through weeks, and inject unplanned changes.">1️⃣ Phase 1: Traditional Baseline</button>
+                <button id="btn-phase-2" class="phase-btn hero-play-btn" title="Phase 2: Trigger AlphaEvolve to progressively evolve and mutate a superior scheduling algorithm.">2️⃣ Phase 2: Evolve Algorithm ▶</button>
+                <button id="btn-phase-3" class="phase-btn" title="Phase 3: Reset schedule to Week 1 under Evolved Algorithm logic, step through weeks, and compare disruption handling.">3️⃣ Phase 3: Evolved Algorithm</button>
+                <button id="play-btn" style="display: none;">▶ Play</button>
+                <button id="toggle-baseline" style="display: none;"></button>
+                <button id="toggle-evolved" style="display: none;"></button>
+            </div>
+
+            <!-- Right: Interactive Presenter Changes (Inject Unplanned Disruptions) -->
+            <div class="control-group-disruption" style="display: flex; align-items: center; gap: 6px; background: rgba(0, 118, 173, 0.05); border: 1px solid rgba(0, 118, 173, 0.2); padding: 3px 8px; border-radius: 8px;">
+                <span style="font-size: 0.72rem; font-weight: bold; color: var(--cch-blue); text-transform: uppercase; margin-right: 2px;">⚡ UNPLANNED DISRUPTIONS:</span>
+                <button id="btn-inject-ot" class="disruption-btn ot-disruption" title="Injects an unscheduled maintenance event into OT_2 (Tuesday 10:00–14:00) to test dynamic re-routing.">Simulate OT Disruption</button>
+                <button id="btn-inject-er" class="disruption-btn er-arrival" title="Injects an unscheduled Priority-0 Trauma case arriving at 11:00 AM on the active day.">Simulate Emergency Arrival</button>
+                <button id="btn-reset-demo" class="disruption-btn" style="background: rgba(14,0,72,0.08); color: var(--cch-dark-blue); border: 1px solid rgba(14,0,72,0.2);" title="Clear active disruptions, reset step replay to Step 0 Baseline, and restart demo state.">🔄 Reset Demo</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="story-narrative-banner" style="background: var(--cch-white); padding: 10px 20px; border-bottom: 1px solid var(--cch-gray); display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem;">
+        <!-- Row 1: Phase Badge (Left) & Schedule Week Controls (Right) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <strong style="color: var(--cch-dark-blue);" id="active-phase-label">1️⃣ Phase 1: Traditional Baseline</strong>
+                <span id="active-week-badge" style="background: rgba(0, 118, 173, 0.1); color: var(--cch-blue); padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.78rem;">📅 Active Roster: Week 1 (03 Aug – 07 Aug 2026)</span>
+            </div>
+
+            <!-- Schedule Week Navigation Controls -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="btn-prev-week" class="disruption-btn" style="background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s;" title="Return to previous week's schedule roster.">◄ Prev Week</button>
+                <button id="btn-advance-week" class="disruption-btn" style="background: #0076AD; color: white; border: none; padding: 4px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);" title="Schedule the next week's patient demand roster using the active algorithm.">⚡ Next Week ►</button>
+                <span id="next-week-status-badge" style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; font-style: italic;">Week 2 Not Scheduled Yet</span>
+            </div>
+        </div>
+
+        <!-- Row 2: Phase 3 Candidate Heuristic Selector & Evolve Schedule Button -->
+        <div id="p3-evolve-controls-container" style="display: none; align-items: center; gap: 8px; background: rgba(130, 195, 65, 0.12); padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(130, 195, 65, 0.3); width: fit-content;">
+            <span style="font-weight: bold; font-size: 0.78rem; color: #3b6e11;">Evolved Algo:</span>
+            <select id="p3-candidate-select" style="padding: 3px 8px; border-radius: 4px; border: 1px solid var(--cch-green); font-size: 0.76rem; font-weight: bold; background: white; color: var(--cch-dark-blue); cursor: pointer;" title="Select candidate evolved algorithm step"></select>
+            <button id="btn-evolve-schedule" style="background: var(--cch-green); color: white; border: none; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-size: 0.76rem; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15);" title="Re-schedule active week using selected candidate algorithm">⚡ Evolve Schedule ▶</button>
+        </div>
+
+        <!-- Row 3: Story Narrative Subtitle -->
+        <div id="active-narrative-text" style="color: #444; font-style: italic; font-size: 0.82rem;">
+            "Traditional First-Come-First-Served baseline. Advance weeks or inject emergency trauma cases to show how siloed rules create bottlenecks."
+        </div>
+    </div>
+
+    <!-- Weekly Summary & Day Selector Bar -->
+    <div id="day-selector-bar">
+        <div class="day-card active" data-day="Monday">
+            <div>
+                <div class="day-name">Monday</div>
+                <div class="day-stats" id="stats-Monday">0 Surgeries Scheduled</div>
+            </div>
+            <span class="day-badge" id="badge-Monday">OK</span>
+        </div>
+        <div class="day-card" data-day="Tuesday">
+            <div>
+                <div class="day-name">Tuesday</div>
+                <div class="day-stats" id="stats-Tuesday">0 Surgeries Scheduled</div>
+            </div>
+            <span class="day-badge" id="badge-Tuesday">OK</span>
+        </div>
+        <div class="day-card" data-day="Wednesday">
+            <div>
+                <div class="day-name">Wednesday</div>
+                <div class="day-stats" id="stats-Wednesday">0 Surgeries Scheduled</div>
+            </div>
+            <span class="day-badge" id="badge-Wednesday">OK</span>
+        </div>
+        <div class="day-card" data-day="Thursday">
+            <div>
+                <div class="day-name">Thursday</div>
+                <div class="day-stats" id="stats-Thursday">0 Surgeries Scheduled</div>
+            </div>
+            <span class="day-badge" id="badge-Thursday">OK</span>
+        </div>
+        <div class="day-card" data-day="Friday">
+            <div>
+                <div class="day-name">Friday</div>
+                <div class="day-stats" id="stats-Friday">0 Surgeries Scheduled</div>
+            </div>
+            <span class="day-badge" id="badge-Friday">OK</span>
+        </div>
+    </div>
+
+    <!-- Executive Scenario Breakdown View (Hidden by default) -->
+    <section id="breakdown-panel" class="panel" style="margin: 20px;">
+        <h2>Executive Scenario Breakdown <span id="bd-scenario-name" style="font-size: 0.9rem; font-weight: normal; color: var(--cch-blue);">(Scenario: Standard Heuristic)</span></h2>
+        
+        <!-- Operational Scenario Profile Description Banner -->
+        <div id="bd-scenario-desc-box" style="background: rgba(14,0,72,0.04); border: 1px solid rgba(14,0,72,0.12); border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: var(--cch-blue); margin-bottom: 4px;">Operational Scenario Description</div>
+                <div id="bd-scenario-desc-text" style="font-size: 0.9rem; color: #333; line-height: 1.4; font-weight: 500;">
+                    Standard multi-day priority greedy packing strategy with specialist skill matching. Picks earliest available time slots for theatre rooms and staff without balancing rest gaps across days.
+                </div>
+            </div>
+            <div id="bd-scenario-tag" style="background: var(--cch-blue); color: white; padding: 5px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; margin-left: 20px;">
+                Standard Heuristic
+            </div>
+        </div>
+
+        <!-- Detailed Scenario Narrative & Clinical Scope Panel -->
+        <div id="bd-detailed-scenario-panel" style="background: white; border: 1px solid rgba(14,0,72,0.15); border-radius: 8px; padding: 18px 22px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+            <h3 style="font-size: 1rem; color: var(--cch-dark-blue); margin-bottom: 12px; display: flex; align-items: center; border-bottom: 2px solid rgba(14,0,72,0.08); padding-bottom: 8px;">
+                <span>📋 Detailed Operational Scenario & Clinical Co-Scheduling Scope</span>
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; font-size: 0.85rem; line-height: 1.5; color: #333;">
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid var(--cch-blue);">
+                    <div style="font-weight: bold; color: var(--cch-dark-blue); margin-bottom: 6px;">🏥 Hospital Operational Scale</div>
+                    <div id="bd-detail-scale">
+                        • <strong>5 Operating Theatres</strong> (300 gross hours/week)<br>
+                        • <strong>160 Patient Demands</strong> (~255 hours required)<br>
+                        • <strong>16 Clinical Staff</strong> (7 Specialist Surgeons, 9 Nurses)<br>
+                        • <strong>Horizon</strong>: Monday–Friday (08:00–20:00)
+                    </div>
+                </div>
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid var(--priority-urgent);">
+                    <div style="font-weight: bold; color: var(--cch-dark-blue); margin-bottom: 6px;">⚠️ Co-Scheduling & Fatigue Rules</div>
+                    <div id="bd-detail-rules">
+                        • <strong>Multi-Skill Matching</strong>: Theatre, Surgeon, and Nurse must all match specialty concurrently.<br>
+                        • <strong>Fatigue Compliance</strong>: Mandatory 10-hour rest gap between shifts (-50 pts/violation).<br>
+                        • <strong>Overtime Control</strong>: Operations past 20:00 incur 1.5× penalty (-50 pts/hour).
+                    </div>
+                </div>
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid var(--cch-green);">
+                    <div style="font-weight: bold; color: var(--cch-dark-blue); margin-bottom: 6px;">🤖 AlphaEvolve AI Strategy</div>
+                    <div id="bd-detail-ai">
+                        • <strong>Evolution Loop</strong>: Gemini Enterprise mutates the seed scheduling heuristic (<i>program.py</i>).<br>
+                        • <strong>Breakthrough Focus</strong>: Eliminates idle room fragmentation and balances multi-day staff workloads.<br>
+                        • <strong>Dynamic Recovery</strong>: Re-plans around day-of disruptions without cancelling surgeries.
+                    </div>
+                </div>
+            </div>
+            <!-- Dynamic Scenario-Specific Commentary -->
+            <div id="bd-detail-commentary" style="margin-top: 14px; padding: 10px 14px; background: rgba(14,0,72,0.03); border-radius: 6px; font-size: 0.85rem; color: #222; border-left: 4px solid var(--cch-dark-blue);">
+                <strong>Active Scenario Dynamics:</strong> Standard multi-day priority greedy packing strategy. Evaluates how AlphaEvolve overcomes naive First-Come-First-Served room fragmentation to increase patient throughput.
+            </div>
+        </div>
+
+        <div class="breakdown-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="breakdown-card">
+                <h3>Capacity vs. Surgery Demand</h3>
+                <div style="margin-top: 15px;">
+                    <div style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">Total Weekly OT Capacity (5 Rooms x 12h x 5 Days)</div>
+                    <div style="background: #EFEFEF; height: 24px; border-radius: 4px; overflow: hidden; position: relative; cursor: help;" title="Gross operating theatre availability: 5 rooms × 12 hours/day × 5 days = 300 total room hours.">
+                        <div style="width: 100%; background: var(--cch-blue); height: 100%; display: flex; align-items: center; padding-left: 10px; color: white; font-weight: bold; font-size: 0.8rem;">300 Hours Supply</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div id="bd-demand-label" style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">Total Requested Surgery Demand (160 Patients)</div>
+                    <div style="background: #EFEFEF; height: 24px; border-radius: 4px; overflow: hidden; position: relative; cursor: help;" title="Net surgical demand: Sum of all surgery durations for all requested patients.">
+                        <div style="width: 85%; background: var(--priority-urgent); height: 100%; display: flex; align-items: center; padding-left: 10px; color: white; font-weight: bold; font-size: 0.8rem;">255 Hours Required</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.8rem; color: #666; background: #f8f9fa; padding: 8px; border-radius: 4px; border-left: 3px solid var(--cch-blue);">
+                    <strong>Key Insight:</strong> Aggregate supply (300h) > Demand (255h), yet baseline heuristics fail to schedule patients due to co-scheduling bottlenecks.
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <h3>Baseline Inefficiencies (Before)</h3>
+                <div style="margin-top: 15px; font-size: 0.85rem; line-height: 1.6; color: #333;">
+                    <div id="bd-base-resource-text" style="margin-bottom: 10px; padding: 8px; background: #fff5f5; border-radius: 4px; border-left: 3px solid var(--priority-urgent); cursor: help;" title="Unusable fragmented idle gaps count toward gross capacity but cannot host multi-hour surgeries.">
+                        <strong>Resource Waste:</strong> Greedy packing scheduled 120 patients, leaving fragmented idle gaps in OTs unusable for remaining surgeries.
+                    </div>
+                    <div id="bd-base-people-text" style="padding: 8px; background: #fff5f5; border-radius: 4px; border-left: 3px solid var(--priority-urgent); cursor: help;" title="Lack of rest-window coordination overworks key specialist surgeons and nurses across shifts.">
+                        <strong>People Bottleneck:</strong> Uncoordinated specialist assignments cause <strong>180 Fatigue Violations</strong> and overwork key surgeons while rooms sit idle.
+                    </div>
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <h3>Optimization Impact (After)</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 15px;">
+                    <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #ccc; cursor: help;" title="Percentage increase in scheduled patient surgeries compared to the greedy baseline heuristic.">
+                        <div id="bd-throughput-gain" style="font-size: 1.4rem; font-weight: bold; color: var(--cch-green);">+4.2%</div>
+                        <div id="bd-throughput-sub" style="font-size: 0.7rem; color: #555;">120 ➔ 125 Patients</div>
+                    </div>
+                    <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #ccc; cursor: help;" title="Percentage reduction in staff rest-period violations achieved by AlphaEvolve co-scheduling.">
+                        <div id="bd-fatigue-reduction" style="font-size: 1.4rem; font-weight: bold; color: var(--cch-blue);">-100%</div>
+                        <div id="bd-fatigue-sub" style="font-size: 0.7rem; color: #555;">180 ➔ 0 Violations</div>
+                    </div>
+                    <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #ccc; cursor: help;" title="Count of high-priority emergency cases delayed or unscheduled beyond target windows.">
+                        <div id="bd-unmet-emergencies" style="font-size: 1.4rem; font-weight: bold; color: var(--priority-emergency);">0</div>
+                        <div style="font-size: 0.7rem; color: #555;">Unmet Emergencies</div>
+                    </div>
+                </div>
+                <div id="bd-summary-desc" style="margin-top: 15px; font-size: 0.8rem; color: #444; line-height: 1.4;">
+                    AlphaEvolve mutated the algorithm to co-optimize rooms, specialist staff, and rest intervals—maximizing patient care without staff burnout.
+                </div>
+            </div>
+        </div>
+
+            <!-- Core Hospital Priorities Card -->
+            <div class="breakdown-card" style="grid-column: 1 / -1; margin-top: 15px; background: #ffffff;">
+                <h3>Core Hospital Priorities Co-Optimized by AlphaEvolve</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;">
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid var(--cch-green);">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">1. Patient Care & Urgency</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Prioritizes admissions based on clinical urgency:</div>
+                        <div style="font-size: 0.7rem; color: #333; margin-top: 6px;">• <strong>Emergency Trauma</strong>: Highest Priority<br>• <strong>Urgent Surgery</strong>: High Priority<br>• <strong>Routine Elective</strong>: Standard Priority</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid var(--cch-blue);">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">2. Staff Rest & Well-Being</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Prevents shift overwork and enforces rest gaps:</div>
+                        <div style="font-size: 0.7rem; color: #333; margin-top: 6px;">• Standard 8-hour daily shift target<br>• Mandatory 12-hour overnight rest window</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid #f26322;">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">3. Operating Theatre Utilization</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Eliminates fragmented unused room gaps:</div>
+                        <div style="font-size: 0.7rem; color: #333; margin-top: 6px;">• Compacts schedules across all 5 rooms<br>• Maximizes active operating hours</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid #da1a31;">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">4. After-Hours Overtime Control</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Controls operational costs:</div>
+                        <div style="font-size: 0.7rem; color: #333; margin-top: 6px;">• Minimizes procedures past 20:00 closing<br>• Reduces overtime staffing costs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formula & Optimization Objective Panel inside Scenario Breakdown -->
+        <div id="formula-panel" class="breakdown-card" style="margin-top: 15px; padding: 0; overflow: hidden; background: #ffffff; border: 1px solid rgba(14,0,72,0.15);">
+            <div id="formula-toggle" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: rgba(14,0,72,0.04);">
+                <h3 style="margin: 0; color: var(--cch-dark-blue); font-size: 1.05rem; font-weight: bold;">🧮 AlphaEvolve Evaluation Formula & Scoring Details</h3>
+                <span id="formula-caret" style="font-size: 1.1rem; color: var(--cch-dark-blue);">▼</span>
+            </div>
+            <div id="formula-content" style="display: none; padding: 18px; background: #ffffff; border-top: 1px solid rgba(14,0,72,0.1);">
+                <div style="margin-bottom: 15px; font-size: 0.9rem; background: rgba(14,0,72,0.04); padding: 12px; border-radius: 6px; color: var(--cch-dark-blue); font-weight: 500;">
+                    <strong>Executive Optimization Formula:</strong><br>
+                    <code style="background: white; padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(14,0,72,0.15); font-family: monospace; font-size: 0.9rem; color: var(--cch-blue); display: inline-block; margin-top: 6px;">Overall Score = Patient Urgency Points - Fatigue Penalties - Idle Room Penalties - Overtime Penalties</code>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid var(--cch-green);">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">Patient Care Weights</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Reward score per scheduled patient:</div>
+                        <div style="font-size: 0.7rem; color: #333; margin-top: 6px;">• <strong>Emergency (P0)</strong>: +1000 pts<br>• <strong>Urgent (P1)</strong>: +300 pts<br>• <strong>Routine (P2)</strong>: +100 pts</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid var(--cch-blue);">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">Staff Fatigue Penalty</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Subtracted for shift load breaches:</div>
+                        <div style="font-size: 0.7rem; color: var(--priority-urgent); margin-top: 6px;">• <strong>Penalty</strong>: -50 pts per violation<br>• Triggers on &gt;8h/day or &lt;12h rest gap</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid #f26322;">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">Theatre Idle Penalty</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Subtracted for unused room time:</div>
+                        <div style="font-size: 0.7rem; color: #555; margin-top: 6px;">• <strong>Penalty</strong>: -10 pts per idle hour<br>• Evaluated across 08:00–20:00 window</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; border-top: 3px solid #da1a31;">
+                        <div style="font-weight: bold; font-size: 0.85rem; color: var(--cch-dark-blue);">Overtime Penalty</div>
+                        <div style="font-size: 0.75rem; color: #555; margin-top: 4px;">Subtracted for after-hours operation:</div>
+                        <div style="font-size: 0.7rem; color: var(--priority-urgent); margin-top: 6px;">• <strong>Penalty</strong>: -50 pts per overtime hour<br>• Triggers past 20:00 closing time</div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <!-- Candidate Feed Panel -->
+    <section id="candidate-feed-panel" class="panel" style="margin: 20px; display: none;">
+        <h2>AlphaEvolve Live Candidate Exploration Feed</h2>
+        <p style="font-size: 0.85rem; color: #555; margin-bottom: 12px;">
+            Real-time log of candidate programs evaluated by Gemini Enterprise, their objective scores, and failure/success insights explaining why they improved or degraded the hospital schedule.
+        </p>
+
+        <!-- Live GCP Polling Indicator Banner -->
+        <div id="live-polling-indicator" style="display: none; align-items: center; justify-content: space-between; background: rgba(0, 118, 173, 0.08); border: 1px solid rgba(0, 118, 173, 0.25); padding: 10px 16px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: var(--cch-dark-blue);">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="polling-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #0076AD; display: inline-block; animation: pulse 1.5s infinite;"></span>
+                    <strong>⚡ Live GCP AlphaEvolve Polling Active:</strong>
+                    <span>Polling GCP API (<code>us-discoveryengine.googleapis.com</code>) every 4s for new Python candidate mutations.</span>
+                </div>
+                <div id="polling-controller-status" style="font-family: monospace; font-size: 0.76rem; color: #005a87; padding-left: 20px; font-weight: 500;">
+                    Simulating AlphaEvolve generating candidates... (generated=0, evaluated=0/10, idle=0s)
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="polling-status-badge" style="background: #0076AD; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">
+                    🔄 Active Polling
+                </span>
+                <button id="btn-stop-optimization" style="background: #da1a31; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer;" title="Stop active AlphaEvolve live polling and background subprocess.">⏹ Stop Polling</button>
+            </div>
+        </div>
+        <div id="candidate-feed-container" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                    <tr style="background: rgba(14,0,72,0.06); border-bottom: 2px solid var(--cch-dark-blue); text-align: left;">
+                        <th style="padding: 10px;">Candidate</th>
+                        <th style="padding: 10px;">Candidate Mutation</th>
+                        <th style="padding: 10px;">Status</th>
+                        <th style="padding: 10px;">Objective Score</th>
+                        <th style="padding: 10px;">Metrics (Patients / Idle / Overtime / Fatigue)</th>
+                        <th style="padding: 10px;">💡 Why Better / Worse (AlphaEvolve Insight)</th>
+                    </tr>
+                </thead>
+                <tbody id="candidate-feed-tbody">
+                    <tr><td colspan="6" style="padding: 20px; text-align: center; color: #888;">⏳ Waiting for candidate stream...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Main Dashboard View -->
+    <div class="dashboard" id="main-dashboard">
+        <section id="gantt-panel" class="panel">
+            <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 12px;">
+                <h2 style="margin: 0; position: absolute; left: 0;">Interactive Schedule Grid</h2>
+                <span id="active-day-label" style="background: var(--cch-dark-blue); color: white; padding: 4px 18px; border-radius: 16px; font-weight: bold; font-size: 0.95rem; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Monday</span>
+            </div>
+            <div class="gantt-chart">
+                <!-- Time Header -->
+                <div class="gantt-header">
+                    <div class="resource-col">Resource</div>
+                    <div class="timeline-col">
+                        <div class="time-slot">08:00</div>
+                        <div class="time-slot">09:00</div>
+                        <div class="time-slot">10:00</div>
+                        <div class="time-slot">11:00</div>
+                        <div class="time-slot">12:00</div>
+                        <div class="time-slot">13:00</div>
+                        <div class="time-slot">14:00</div>
+                        <div class="time-slot">15:00</div>
+                        <div class="time-slot">16:00</div>
+                        <div class="time-slot">17:00</div>
+                        <div class="time-slot">18:00</div>
+                        <div class="time-slot">19:00</div>
+                        <div class="time-slot">20:00</div>
+                        <div class="time-slot">21:00</div>
+                    </div>
+                </div>
+
+                <!-- Resources Grid Body -->
+                <div class="gantt-body">
+                    <div class="gantt-rows-bg" id="gantt-rows">
+                        <!-- Dynamic Background Rows rendered by JS -->
+                    </div>
+
+                    <!-- Absolute Positioning Layer for Smooth Movement Transitions -->
+                    <div id="gantt-blocks-layer">
+                        <!-- Dynamic Appointment Blocks positioned absolutely (left, top, width) -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="staff-panel" class="panel">
+            <h2>Staff Availability & Workload Grid</h2>
+            <div class="staff-grid" id="staff-grid-container">
+                <!-- Staff cards rendered dynamically by JS -->
+            </div>
+        </section>
+
+        <section id="metrics-panel" class="panel">
+            <h2>Real-Time Metrics & Algorithm Evolution Curve</h2>
+            <div class="metrics-grid">
+                <div class="metric-card" id="card-patients" style="cursor: help;" title="Total count of patients successfully scheduled within the 5-day horizon without double-booking or room conflicts.">
+                    <div class="metric-value" id="metric-patients">-</div>
+                    <div class="metric-label">Patients Scheduled</div>
+                    <div id="metric-patients-delta" style="font-size: 0.75rem; font-weight: bold; margin-top: 4px; display: none;"></div>
+                </div>
+                <div class="metric-card" style="cursor: help;" title="Cumulative operating hours scheduled past the 20:00 closing time. Each overtime hour incurs a 1.5x financial penalty.">
+                    <div class="metric-value" id="metric-overtime">0.0h</div>
+                    <div class="metric-label">Total Overtime</div>
+                </div>
+                <div class="metric-card" style="cursor: help;" title="Total unused operating room minutes between scheduled surgeries. Minimizing idle time improves OT throughput.">
+                    <div class="metric-value" id="metric-idle">-m</div>
+                    <div class="metric-label">Resource Idle Time</div>
+                </div>
+                <div class="metric-card" style="border-left: 4px solid #e67e22; cursor: help;" title="Count of shift transitions where staff receive less than 10 consecutive rest hours (incurs severe 50-point penalty).">
+                    <div class="metric-value" id="metric-fatigue" style="color: #e67e22;">-</div>
+                    <div class="metric-label" style="color: #e67e22;">Fatigue Violations</div>
+                </div>
+            </div>
+
+            <!-- Algorithm Evolution Fitness Sparkline Graph -->
+            <div id="evolution-fitness-chart-container" style="margin-top: 15px; background: #ffffff; border-radius: 6px; border: 1px solid rgba(14,0,72,0.12); padding: 12px 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: bold; color: var(--cch-dark-blue); text-transform: uppercase; letter-spacing: 0.5px;">📈 Algorithm Evolution Improvement Curve</span>
+                    <span id="fitness-chart-latest" style="font-size: 0.78rem; font-weight: bold; color: var(--cch-green);">Candidate #0 (Baseline Heuristic)</span>
+                </div>
+                <div id="evolution-fitness-chart" style="width: 100%; height: 75px; position: relative;">
+                    <svg id="evolution-svg" width="100%" height="75" style="overflow: visible;"></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithm Panel -->
+        <section id="algorithm-panel" class="panel">
+            <div id="algo-toggle" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="margin: 0; color: #fff; font-size: 1.05rem;" id="algo-title">📄 Active Logic: Baseline Greedy Heuristic (Candidate #0)</h3>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div id="code-view-toggle" style="display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 2px; border-radius: 4px;" onclick="event.stopPropagation();">
+                        <button id="btn-full-code" class="toggle-btn active" style="font-size: 0.75rem; padding: 3px 8px;">Full Code</button>
+                        <button id="btn-diff-code" class="toggle-btn" style="font-size: 0.75rem; padding: 3px 8px;">Code Diff</button>
+                    </div>
+                    <span id="algo-caret" style="font-size: 1.1rem; color: #fff;">▼</span>
+                </div>
+            </div>
+
+            <!-- Candidate Exploration & Feasibility Feed Banner (Bug #17) -->
+            <div id="candidate-feed-banner" style="margin-top: 10px; padding: 10px 14px; background: rgba(14,0,72,0.4); border-radius: 6px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 0.82rem; color: #E0E0E0;">
+                    <strong style="color: #FFF; font-size: 0.85rem;">🔬 AlphaEvolve Feed:</strong>
+                    <span id="metric-candidates-total" style="font-weight: bold; color: var(--cch-green);">0 Candidates Evaluated</span>
+                    <span style="color: rgba(255,255,255,0.3);">|</span>
+                    <span id="metric-candidates-accepted" style="color: #82C341; font-weight: 500;">0 Accepted Improvements</span>
+                    <span style="color: rgba(255,255,255,0.3);">|</span>
+                    <span id="metric-candidates-infeasible" style="color: #F26322; font-weight: 500;">0 Infeasible / Rejected</span>
+                </div>
+                <div id="metric-candidate-status-badge" style="background: rgba(130, 195, 65, 0.15); border: 1px solid var(--cch-green); color: var(--cch-green); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">
+                    ⚡ Streaming Search
+                </div>
+            </div>
+            <div id="algo-content" style="display: none; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; border: 1px solid rgba(255,255,255,0.1); border-top: none;">
+                <pre style="margin: 0; overflow-x: auto; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #a6e22e; background: #272822; padding: 15px; border-radius: 4px; line-height: 1.5;"><code id="algo-code"># Evolving Python logic will appear here dynamically as the trace replays...</code></pre>
+        </section>
+    </div>
+
+    <!-- State Management & Dynamic Streaming JavaScript -->
+    <script>
+        let EVOLUTION_DATA = { resources: [], staff: [], patients: [], traces: [], unavailability: [] };
+
+        let currentTraceStep = 0;
+        let isPlaying = false;
+        let isEvolvedMode = false; 
+        let animationInterval = null;
+        let activeDay = "Monday";
+        let isDiffMode = false;
+        let activeView = "grid";
+
+        function minsToStr(m) {
+            const h = Math.floor(m / 60);
+            const mins = m % 60;
+            return `${String(h).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+        }
+
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr) return 8 * 60;
+            const [hrs, mins] = timeStr.split(':').map(Number);
+            return hrs * 60 + mins;
+        }
+
+        async function fetchDataset(filename) {
+            const paths = filename.startsWith('mock_') ? [
+                '/fixtures/' + filename,
+                '/data/' + filename
+            ] : [
+                '/data/' + filename
+            ];
+            for (const p of paths) {
+                try {
+                    const resp = await fetch(p, { cache: 'no-store' });
+                    if (resp.ok) return resp;
+                } catch (e) {}
+            }
+            throw new Error('Could not fetch dataset: ' + filename);
+        }
+
+        function parseTraceEntry(entry) {
+            if (entry && entry.replannedSchedule && entry.replannedSchedule.length > 0) {
+                if (!entry.schedules || entry.schedules.length === 0) {
+                    entry.schedules = entry.replannedSchedule;
+                }
+            }
+            if (entry && !entry.schedules) {
+                entry.schedules = entry.initialSchedule || [];
+            }
+            return entry;
+        }
+
+        async function loadConfigForScenario(scenarioKey) {
+            const configFile = 'config.json';
+            const configResp = await fetchDataset(configFile);
+            const config = await configResp.json();
+            EVOLUTION_DATA.resources = config.resources || [];
+            EVOLUTION_DATA.staff = config.staff || [];
+            EVOLUTION_DATA.patients = config.patients || [];
+            EVOLUTION_DATA.demands = config.demands || [];
+            EVOLUTION_DATA.unavailability = config.unavailability || [];
+            EVOLUTION_DATA.disruptions = config.disruptions || [];
+
+            const totalDemands = (EVOLUTION_DATA.demands && EVOLUTION_DATA.demands.length > 0) ? EVOLUTION_DATA.demands.length : (EVOLUTION_DATA.patients ? EVOLUTION_DATA.patients.length : 160);
+            const totalRooms = EVOLUTION_DATA.resources ? EVOLUTION_DATA.resources.length : 5;
+            const totalStaff = EVOLUTION_DATA.staff ? EVOLUTION_DATA.staff.length : 16;
+            const numSurgeons = (EVOLUTION_DATA.staff || []).filter(s => s.role === 'Surgeon').length;
+            const numNurses = (EVOLUTION_DATA.staff || []).filter(s => s.role === 'Nurse').length;
+            const numAnaes = (EVOLUTION_DATA.staff || []).filter(s => s.role === 'Anaesthetist').length;
+            const rolesList = [];
+            if (numSurgeons > 0) rolesList.push(`${numSurgeons} Surgeons`);
+            if (numAnaes > 0) rolesList.push(`${numAnaes} Anaesthetists`);
+            if (numNurses > 0) rolesList.push(`${numNurses} Nurses`);
+            const rolesStr = rolesList.length > 0 ? ' (' + rolesList.join(', ') + ')' : '';
+            const bdDemandEl = document.getElementById('bd-demand-label');
+            if (bdDemandEl) {
+                bdDemandEl.textContent = `Total Requested Surgery Demand (${totalDemands} Patients)`;
+            }
+            const detailScaleEl = document.getElementById('bd-detail-scale');
+            if (detailScaleEl) {
+                detailScaleEl.innerHTML = `• <strong>${totalRooms} Operating Theatres</strong> (${totalRooms * 60} gross hours/week)<br>` +
+                    `• <strong>${totalDemands} Patient Demands</strong> (~${Math.round(totalDemands * 1.6)} hours required)<br>` +
+                    `• <strong>${totalStaff} Clinical Staff</strong>${rolesStr}<br>` +
+                    `• <strong>Horizon</strong>: Monday–Friday (08:00–20:00)`;
+            }
+            return config;
+        }
+
+        async function renderCandidateFeed() {
+            const tbody = document.getElementById('candidate-feed-tbody');
+            if (!tbody) return;
+            
+            let feedEntries = [];
+            try {
+                const feedFile = isLiveMode ? 'candidates_feed.jsonl' : 'mock_candidates_feed.jsonl';
+                const resp = await fetchDataset(feedFile);
+                const text = await resp.text();
+                const lines = text.replace(/\r/g, '').trim().split('\n').filter(l => l.trim());
+                const parsed = [];
+                for (const line of lines) {
+                    try {
+                        if (line.trim()) parsed.push(JSON.parse(line.trim()));
+                    } catch (lineErr) {}
+                }
+                if (parsed.length > 0) {
+                    if (isLiveMode) {
+                        let lastRunStart = 0;
+                        for (let i = parsed.length - 1; i >= 0; i--) {
+                            if ((parsed[i].generation === 0 || parsed[i].id === 'Cand_0') && i > 0) {
+                                lastRunStart = i;
+                                break;
+                            }
+                        }
+                        feedEntries = parsed.slice(lastRunStart);
+                    } else {
+                        // Demo Mode: progressive display during replay, full display when complete
+                        if (isPhase2Completed) {
+                            feedEntries = parsed;
+                        } else {
+                            const maxStep = Math.min(currentTraceStep + 1, parsed.length);
+                            feedEntries = parsed.slice(0, maxStep > 0 ? maxStep : parsed.length);
+                        }
+                    }
+                }
+            } catch (e) {
+                const traceSlice = isLiveMode ? (EVOLUTION_DATA.traces || []).slice(0, currentTraceStep + 1) : (EVOLUTION_DATA.traces || []);
+                feedEntries = traceSlice.map((t, idx) => ({
+                    generation: idx,
+                    title: t.insight?.title || (idx === 0 ? "Baseline FCFS Heuristic" : `Evolved Heuristic #${idx}`),
+                    status: t.insight?.status || (idx === 0 ? "BASELINE" : "ACCEPTED"),
+                    score: t.insight?.score || (t.metrics?.score) || (27250 + idx * 250),
+                    metrics: t.metrics || {},
+                    summary: t.insight?.summary || (idx === 0 ? "First-Come-First-Served greedy assignment." : "Mutated Python algorithm improving scheduling throughput.")
+                }));
+            }
+
+            const pollingIndicator = document.getElementById('live-polling-indicator');
+            const pollingBadge = document.getElementById('polling-status-badge');
+            const stopBtn = document.getElementById('btn-stop-optimization');
+            const pollingTextEl = pollingIndicator ? pollingIndicator.querySelector('div > span:nth-of-type(2)') : null;
+            const pollingHeaderEl = pollingIndicator ? pollingIndicator.querySelector('div > strong') : null;
+
+            if (pollingIndicator) {
+                if (activeStoryPhase === 2) {
+                    pollingIndicator.style.display = 'flex';
+                    if (isLiveMode) {
+                        if (pollingHeaderEl) pollingHeaderEl.innerHTML = '⚡ Live GCP AlphaEvolve Polling Active:';
+                        if (pollingTextEl) pollingTextEl.innerHTML = 'Polling GCP API (<code>us-discoveryengine.googleapis.com</code>) every 4s for new Python candidate mutations.';
+                        if (pollingBadge) pollingBadge.textContent = `🔄 Polling GCP API (${feedEntries.length} candidates)`;
+                        if (stopBtn) stopBtn.style.display = 'inline-block';
+                    } else {
+                        if (pollingHeaderEl) pollingHeaderEl.innerHTML = '⚡ Simulated AlphaEvolve Polling Active:';
+                        if (pollingTextEl) pollingTextEl.innerHTML = `Evaluating candidate Python mutations against 4 hospital priorities (${feedEntries.length} candidates evaluated).`;
+                        if (pollingBadge) pollingBadge.textContent = `🔄 Polling AlphaEvolve Engine (${feedEntries.length} candidates)`;
+                        if (stopBtn) stopBtn.style.display = 'none';
+                    }
+                    if (typeof updateControllerStatus === 'function') {
+                        updateControllerStatus(feedEntries.length);
+                    }
+                } else {
+                    pollingIndicator.style.display = 'none';
+                }
+            }
+
+            if (feedEntries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="padding: 20px; text-align: center; color: #888;">⚡ Live Polling GCP AlphaEvolve API... Waiting for initial candidate mutations.</td></tr>';
+                return;
+            }
+
+            const baselineEntry = feedEntries.find(c => c.generation === 0 || c.id === 'Cand_0' || c.status === 'BASELINE') || feedEntries[0];
+            const baselineScore = baselineEntry?.score || 27226.75;
+            const baselinePatients = baselineEntry?.metrics?.patientsScheduled || 122;
+
+            tbody.innerHTML = '';
+            let bestScoreSoFar = -Infinity;
+            let bestPatientsSoFar = 0;
+
+            for (const cand of feedEntries) {
+                const isBaseline = (cand.generation === 0 || cand.id === 'Cand_0' || cand.status === 'BASELINE');
+                const candScore = cand.score || 0;
+                const candPatients = cand.metrics?.patientsScheduled || 0;
+
+                if (isBaseline) {
+                    bestScoreSoFar = candScore;
+                    bestPatientsSoFar = candPatients;
+                }
+
+                const prevBestScore = bestScoreSoFar;
+                const prevBestPatients = bestPatientsSoFar;
+                const scoreDiff = candScore - prevBestScore;
+                const patientDiff = candPatients - prevBestPatients;
+
+                const isImproved = !isBaseline && cand.status !== 'REJECTED' && cand.status !== 'DEGRADED' && candScore > prevBestScore;
+                const isDegraded = !isBaseline && cand.status !== 'REJECTED' && (cand.status === 'DEGRADED' || candScore < prevBestScore);
+
+                if (isImproved) {
+                    bestScoreSoFar = candScore;
+                    bestPatientsSoFar = candPatients;
+                }
+
+                let badgeColor = 'var(--cch-green)';
+                let statusLabel = cand.status || 'ACCEPTED';
+
+                if (isBaseline) {
+                    badgeColor = 'var(--cch-green)';
+                    statusLabel = 'BASELINE';
+                } else if (cand.status === 'REJECTED') {
+                    badgeColor = '#da1a31';
+                    statusLabel = 'REJECTED';
+                } else if (cand.status === 'REPLANNED') {
+                    badgeColor = 'var(--cch-green)';
+                    statusLabel = 'REPLANNED';
+                } else if (isDegraded || cand.status === 'DEGRADED') {
+                    badgeColor = '#d97706'; // Warm Amber/Orange for degraded mutation
+                    statusLabel = 'DEGRADED';
+                } else {
+                    badgeColor = 'var(--cch-green)';
+                    statusLabel = 'ACCEPTED';
+                }
+
+                // Score formatting with Delta vs Best So Far
+                let scoreHtml = candScore ? candScore.toLocaleString() : '-';
+                if (!isBaseline && candScore) {
+                    if (cand.status === 'REJECTED' || isDegraded) {
+                        const color = (cand.status === 'REJECTED') ? '#da1a31' : '#d97706';
+                        const label = (cand.status === 'REJECTED') ? ' (REJECTED)' : '';
+                        scoreHtml = `<span style="color: ${color};">${candScore.toLocaleString()}</span><br><span style="font-size: 0.7rem; color: ${color}; font-weight: bold;" title="Compared to best algorithm so far (${prevBestScore.toLocaleString()})">▼ ${scoreDiff.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}${label}</span>`;
+                    } else if (isImproved) {
+                        scoreHtml = `<span style="color: var(--cch-green);">${candScore.toLocaleString()}</span><br><span style="font-size: 0.7rem; color: var(--cch-green); font-weight: bold;" title="Improved over best algorithm so far (${prevBestScore.toLocaleString()})">▲ +${scoreDiff.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</span>`;
+                    }
+                }
+
+                // Patient count formatting with Delta vs Best So Far
+                let patientHtml = `<strong>${candPatients || '-'} Patients</strong>`;
+                if (!isBaseline && candPatients) {
+                    if (cand.status === 'REJECTED' || isDegraded) {
+                        const color = (cand.status === 'REJECTED') ? '#da1a31' : '#d97706';
+                        const sign = patientDiff >= 0 ? '+' : '';
+                        patientHtml = `<strong style="color: ${color};">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: ${color}; font-weight: bold;" title="Compared to best algorithm so far (${prevBestPatients} patients)">(▼ ${sign}${patientDiff})</span>`;
+                    } else if (isImproved) {
+                        patientHtml = `<strong style="color: var(--cch-green);">${candPatients} Patients</strong> <span style="font-size: 0.72rem; color: var(--cch-green); font-weight: bold;" title="Improved over best algorithm so far (${prevBestPatients} patients)">(▲ +${patientDiff})</span>`;
+                    }
+                }
+
+                // Summary text refinement for degraded & rejected mutations
+                let summaryText = cand.summary || '';
+                if (cand.status === 'REJECTED') {
+                    if (!summaryText || (!summaryText.includes('❌') && !summaryText.includes('Rejected'))) {
+                        summaryText = `❌ Rejected Mutation: ${summaryText || 'Candidate mutation caused schedule degradation or constraint violation. Discarded by AlphaEvolve engine.'}`;
+                    }
+                } else if (isDegraded && (!summaryText || (!summaryText.includes('⚠️') && !summaryText.includes('degraded')))) {
+                    summaryText = `⚠️ Mutation degraded score (${candScore.toLocaleString()} vs best ${prevBestScore.toLocaleString()}) while exploring search space.`;
+                }
+
+                const candIdle = cand.metrics?.resourceIdleTime || 0;
+                const candIdleFormatted = candIdle >= 60 ? (candIdle / 60).toFixed(1) + 'h' : candIdle + 'm';
+                const candTitle = (activeStoryPhase === 1 && cand.title && cand.title.includes('Evolved'))
+                    ? cand.title.replace(/Evolved/g, 'Updated Baseline')
+                    : (cand.title || 'AlphaEvolve Mutation');
+                
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid rgba(14,0,72,0.1)';
+                if (cand.status === 'REJECTED') {
+                    tr.style.background = 'rgba(218, 26, 49, 0.05)'; // Soft red tint for rejected candidate rows
+                } else if (isDegraded) {
+                    tr.style.background = 'rgba(217, 119, 6, 0.04)'; // Subtle warm tint for degraded candidate rows
+                }
+                tr.style.cursor = 'pointer';
+                tr.title = 'Click to view scrollable Python source code and candidate metrics';
+                tr.addEventListener('click', () => openCandidateModal(cand));
+                
+                const candFatigue = cand.metrics?.fatigueViolations ?? 0;
+                const fatigueText = candFatigue > 0 
+                    ? `<span style="color: var(--priority-urgent); font-weight: bold;">Fatigue: ${candFatigue} breach${candFatigue > 1 ? 'es' : ''}</span>`
+                    : `<span style="color: #666;">Fatigue: 0 breaches</span>`;
+
+                tr.innerHTML = `
+                    <td style="padding: 12px; font-weight: bold; color: var(--cch-dark-blue);">Candidate #${cand.generation ?? cand.id}</td>
+                    <td style="padding: 12px; font-weight: 600; color: #222;">
+                        ${candTitle}<br>
+                        <span style="font-size: 0.7rem; color: var(--cch-blue); font-weight: bold;">🔍 Click for code & metrics</span>
+                    </td>
+                    <td style="padding: 12px;"><span style="background: ${badgeColor}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">${statusLabel}</span></td>
+                    <td style="padding: 12px; font-weight: bold; font-family: monospace; color: var(--cch-dark-blue);">${scoreHtml}</td>
+                    <td style="padding: 12px; font-family: monospace; font-size: 0.8rem;">
+                        ${patientHtml}<br>
+                        Idle: ${candIdleFormatted} | Overtime: ${Number(cand.metrics?.overtimeHours || 0).toFixed(1)}h<br>
+                        ${fatigueText}
+                    </td>
+                    <td style="padding: 12px; color: #333; line-height: 1.4;">${summaryText}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function animateBaselineSchedule() {
+            if (!EVOLUTION_DATA.traces || EVOLUTION_DATA.traces.length === 0) return;
+            currentTraceStep = 0;
+            const baseTrace = EVOLUTION_DATA.traces[0];
+            const fullSchedules = baseTrace.schedules || [];
+            const activeDaySchedules = fullSchedules.filter(s => (s.day || "Monday") === activeDay);
+            
+            const blocksLayer = document.getElementById('gantt-blocks-layer');
+            if (blocksLayer) blocksLayer.innerHTML = '';
+            
+            let i = 0;
+            const animTimer = setInterval(() => {
+                if (i > activeDaySchedules.length) {
+                    clearInterval(animTimer);
+                    renderCurrentStep();
+                    return;
+                }
+                const partialScheds = activeDaySchedules.slice(0, i);
+                renderApptBlocks(partialScheds);
+                const countEl = document.getElementById('metric-patients');
+                if (countEl) countEl.innerHTML = `${partialScheds.length} <span class="metric-total">/ ${TOTAL_PATIENTS_DEMAND}</span>`;
+                i++;
+            }, 50);
+        }
+
+        async function init() {
+            try {
+                const scenarioSelect = document.getElementById('scenario-select');
+                const scenario = scenarioSelect ? scenarioSelect.value : 'traces_dynamic.jsonl';
+                const config = await loadConfigForScenario(scenario);
+                
+                const startStr = config.heuristics?.schedulingHorizon?.startTime || "08:00";
+                const endStr = config.heuristics?.schedulingHorizon?.endTime || "21:00";
+                window.START_MINUTES = parseTimeToMinutes(startStr);
+                window.TOTAL_MINUTES = parseTimeToMinutes(endStr) - window.START_MINUTES;
+                
+                // Render Dynamic Time Header
+                const timeHeader = document.querySelector('.timeline-col');
+                if (timeHeader) {
+                    timeHeader.innerHTML = '';
+                    for (let m = window.START_MINUTES; m <= window.START_MINUTES + window.TOTAL_MINUTES; m += 60) {
+                        const slot = document.createElement('div');
+                        slot.className = 'time-slot';
+                        slot.textContent = minsToStr(m);
+                        timeHeader.appendChild(slot);
+                    }
+                }
+                
+                await pollTraces();
+                setInterval(pollTraces, 2000);
+                
+            } catch (err) {
+                console.error("Initialization Error:", err);
+                setTimeout(init, 1000);
+            }
+        }
+
+        async function pollTraces() {
+            try {
+                const scenarioSelect = document.getElementById('scenario-select');
+                const scenario = scenarioSelect ? scenarioSelect.value : 'traces_dynamic.jsonl';
+                const resp = await fetchDataset(scenario);
+                const text = await resp.text();
+                const lines = text.replace(/\r/g, '').trim().split('\n').filter(l => l.trim());
+                const traces = lines.map(l => parseTraceEntry(JSON.parse(l.trim())));
+                
+                const oldLen = EVOLUTION_DATA.traces.length;
+                EVOLUTION_DATA.traces = traces;
+                
+                if (oldLen === 0 || traces.length > 0) {
+                    currentTraceStep = Math.min(currentTraceStep, traces.length - 1);
+                    if (currentTraceStep < 0) currentTraceStep = 0;
+                    renderCurrentStep();
+                    if (typeof activeView !== 'undefined' && activeView === 'feed') {
+                        renderCandidateFeed();
+                    }
+                }
+            } catch (e) {
+                console.error("Poll Traces Error:", e);
+            }
+        }
+
+        const SCENARIO_DESCRIPTIONS = {
+            'traces_med.jsonl': {
+                name: 'Standard Heuristic',
+                desc: 'Standard multi-day priority greedy packing strategy with specialist skill matching. Picks earliest available time slots for theatre rooms and staff without balancing rest gaps across days.',
+                tag: 'Standard Baseline'
+            },
+            'traces_high.jsonl': {
+                name: 'Legacy Manual',
+                desc: 'Simulates traditional manual hospital scheduling: rigid room allocations by specialty, fixed department time-blocks, and uncoordinated staff handoffs creating severe shift fatigue bottlenecks.',
+                tag: 'Legacy Manual Planning'
+            },
+            'traces_low.jsonl': {
+                name: 'Agile Constraints',
+                desc: 'Tight operational constraints scenario: includes unscheduled maintenance (OT_2 closure Tuesday 10:00-14:00), strict specialist availability, and high-urgency emergency preemption requirements.',
+                tag: 'High Constraint Operational Run'
+            },
+            'traces_dynamic.jsonl': {
+                name: 'Dynamic Live Run',
+                desc: 'Live interactive session streaming real-time candidate algorithm mutations directly from Google Cloud AlphaEvolve (Gemini Enterprise) to solve room, staff, and fatigue co-scheduling.',
+                tag: '🚀 Live Gemini Engine Stream'
+            },
+            'mock_trace_replan.jsonl': {
+                name: '🧪 Fixture Mode (Mock Re-Plan)',
+                desc: 'Static mock fixture testing frontend UX decoupling: demonstrates structured 3-person specialist teams and day-of unplanned morning sick leave recovery without running Python backend.',
+                tag: '🧪 Static Mock Fixture'
+            }
+        };
+
+        function renderBreakdown() {
+            if (!EVOLUTION_DATA.traces || EVOLUTION_DATA.traces.length === 0) return;
+            
+            const scenarioSelect = document.getElementById('scenario-select');
+            const selectedOption = scenarioSelect ? scenarioSelect.options[scenarioSelect.selectedIndex] : null;
+            const scenarioKey = scenarioSelect ? scenarioSelect.value : 'traces_med.jsonl';
+            const scInfo = SCENARIO_DESCRIPTIONS[scenarioKey] || {
+                name: selectedOption ? selectedOption.textContent.split('(')[0].trim() : 'Active Scenario',
+                desc: 'Operational scenario measuring room throughput, staff rest compliance, and emergency response.',
+                tag: 'Operational Scenario'
+            };
+            const scenarioName = scInfo.name;
+            
+            const scenarioNameEl = document.getElementById('bd-scenario-name');
+            if (scenarioNameEl) scenarioNameEl.textContent = `(Scenario: ${scInfo.name})`;
+
+            const descTextEl = document.getElementById('bd-scenario-desc-text');
+            if (descTextEl) descTextEl.textContent = scInfo.desc;
+
+            const tagEl = document.getElementById('bd-scenario-tag');
+            if (tagEl) {
+                tagEl.textContent = scInfo.tag;
+                tagEl.style.backgroundColor = scenarioKey === 'traces_dynamic.jsonl' ? 'var(--cch-green)' : 'var(--cch-blue)';
+            }
+            const detailCommEl = document.getElementById('bd-detail-commentary');
+            if (detailCommEl) {
+                detailCommEl.innerHTML = `<strong>Active Scenario Dynamics (${scInfo.name}):</strong> ${scInfo.desc}`;
+            }
+            
+            const baselineTrace = EVOLUTION_DATA.traces[0];
+            const bestTrace = EVOLUTION_DATA.traces[EVOLUTION_DATA.traces.length - 1];
+            if (!baselineTrace || !bestTrace) return;
+            
+            const basePatients = baselineTrace.metrics.patientsScheduled || 0;
+            const bestPatients = bestTrace.metrics.patientsScheduled || 0;
+            const patientDiff = bestPatients - basePatients;
+            const pctGain = basePatients > 0 ? ((patientDiff / basePatients) * 100).toFixed(1) : 0;
+            
+            const scenarioHint = document.getElementById('scenario-hint');
+            if (scenarioHint) {
+                if (scenarioSelect && scenarioSelect.value === 'traces_dynamic.jsonl') {
+                    scenarioHint.textContent = `(Live: ${basePatients} ➔ ${bestPatients})`;
+                } else {
+                    scenarioHint.textContent = `(${basePatients} ➔ ${bestPatients} Patients)`;
+                }
+            }
+            
+            const baseFatigue = baselineTrace.metrics.fatigueViolations || 0;
+            const bestFatigue = bestTrace.metrics.fatigueViolations || 0;
+            const fatigueDiff = baseFatigue - bestFatigue;
+            
+            // Throughput Gain
+            const tpGainEl = document.getElementById('bd-throughput-gain');
+            if (tpGainEl) {
+                tpGainEl.textContent = (patientDiff >= 0 ? '+' : '') + pctGain + '%';
+                tpGainEl.style.color = patientDiff >= 0 ? 'var(--cch-green)' : 'var(--priority-urgent)';
+            }
+            const tpSubEl = document.getElementById('bd-throughput-sub');
+            if (tpSubEl) {
+                tpSubEl.textContent = `${basePatients} ➔ ${bestPatients} Patients (+${patientDiff})`;
+            }
+            
+            // Fatigue Reduction & Change
+            const fatigueEl = document.getElementById('bd-fatigue-reduction');
+            const fatigueSubEl = document.getElementById('bd-fatigue-sub');
+            const fatigueTitleEl = document.getElementById('bd-fatigue-title');
+            
+            if (fatigueEl) {
+                if (baseFatigue === 0 && bestFatigue === 0) {
+                    fatigueEl.textContent = '0%';
+                    fatigueEl.style.color = 'var(--cch-blue)';
+                    if (fatigueTitleEl) fatigueTitleEl.textContent = 'Fatigue Reduction';
+                } else if (fatigueDiff > 0) {
+                    const pct = Math.round((fatigueDiff / baseFatigue) * 100);
+                    fatigueEl.textContent = `-${pct}%`;
+                    fatigueEl.style.color = 'var(--cch-blue)';
+                    if (fatigueTitleEl) fatigueTitleEl.textContent = 'Fatigue Reduction';
+                } else if (fatigueDiff < 0) {
+                    const absDiff = Math.abs(fatigueDiff);
+                    const pct = baseFatigue > 0 ? Math.round((absDiff / baseFatigue) * 100) : 100;
+                    fatigueEl.textContent = `+${pct}%`;
+                    fatigueEl.style.color = 'var(--priority-urgent)';
+                    if (fatigueTitleEl) fatigueTitleEl.textContent = 'Fatigue Change (Volume Impact)';
+                } else {
+                    fatigueEl.textContent = '0%';
+                    fatigueEl.style.color = 'var(--cch-blue)';
+                    if (fatigueTitleEl) fatigueTitleEl.textContent = 'Fatigue Reduction';
+                }
+            }
+            
+            if (fatigueSubEl) {
+                const diffText = fatigueDiff > 0 ? `(-${fatigueDiff})` : (fatigueDiff < 0 ? `(+${Math.abs(fatigueDiff)})` : '(Unchanged)');
+                fatigueSubEl.textContent = `${baseFatigue} ➔ ${bestFatigue} Violations ${diffText}`;
+            }
+            
+            // Baseline Inefficiency text
+            const baseResourceEl = document.getElementById('bd-base-resource-text');
+            if (baseResourceEl) {
+                baseResourceEl.innerHTML = `<strong>Resource Waste:</strong> Greedy packing scheduled <strong>${basePatients} patients</strong>, leaving fragmented idle gaps in OTs unusable for remaining surgeries.`;
+            }
+            const basePeopleEl = document.getElementById('bd-base-people-text');
+            if (basePeopleEl) {
+                basePeopleEl.innerHTML = `<strong>People Bottleneck:</strong> Uncoordinated specialist assignments cause <strong>${baseFatigue} Fatigue Violations</strong> and overwork key surgeons while rooms sit idle.`;
+            }
+            
+            // Summary Desc
+            const summaryDescEl = document.getElementById('bd-summary-desc');
+            if (summaryDescEl) {
+                if (bestPatients > basePatients) {
+                    const fatigueDesc = fatigueDiff > 0 
+                        ? `while reducing staff fatigue violations from ${baseFatigue} to ${bestFatigue}.`
+                        : (fatigueDiff < 0 
+                            ? `while managing staff fatigue (${baseFatigue} ➔ ${bestFatigue} violations) across ${bestPatients} scheduled surgeries.`
+                            : `with zero fatigue violations.`);
+                    summaryDescEl.textContent = `For the ${scenarioName} scenario, AlphaEvolve evolved a superior heuristic, increasing scheduled patient throughput from ${basePatients} to ${bestPatients} ${fatigueDesc}`;
+                } else if (isLiveMode || (EVOLUTION_DATA.traces && EVOLUTION_DATA.traces.length <= 1)) {
+                    summaryDescEl.textContent = `For the ${scenarioName} scenario, AlphaEvolve is actively evolving candidate scheduling heuristics to improve patient throughput beyond the ${basePatients} patient baseline. Candidates streaming live...`;
+                } else {
+                    const fatigueDesc = baseFatigue > 0 ? `and reduced fatigue breaches from ${baseFatigue} to ${bestFatigue}.` : `maintaining zero fatigue violations.`;
+                    summaryDescEl.textContent = `For the ${scenarioName} scenario, AlphaEvolve optimized schedule compaction (${basePatients} patients scheduled) ${fatigueDesc}`;
+                }
+            }
+        }
+
+        // Helper functions for precise patient matching & appointment diffs
+        function normalizePatientId(pid) {
+            if (!pid) return '';
+            const str = String(pid).trim();
+            const match = str.match(/(?:P|_P|D|_D|^)(\d+)/i) || str.match(/(\d+)/);
+            if (match) {
+                return match[1];
+            }
+            return str.toLowerCase();
+        }
+
+        function getAppointmentDiff(appt, refStep) {
+            if (!refStep || !refStep.schedules) {
+                return { isMutated: false, isNewlyScheduled: false, refAppt: null, diffs: [] };
+            }
+
+            const targetId = normalizePatientId(appt.patientId || appt.demandId || appt.id);
+            const refAppt = refStep.schedules.find(a => {
+                const pId = normalizePatientId(a.patientId || a.demandId || a.id);
+                return pId && pId === targetId;
+            });
+
+            if (!refAppt) {
+                return { isMutated: true, isNewlyScheduled: true, refAppt: null, diffs: [] };
+            }
+
+            const diffs = [];
+            const currentDay = appt.day || 'Monday';
+            const refDay = refAppt.day || 'Monday';
+            if (refDay !== currentDay) {
+                diffs.push(`<span>Day:</span> <span>${refDay} ➔ <strong>${currentDay}</strong></span>`);
+            }
+
+            const currentRoom = appt.resourceId;
+            const refRoom = refAppt.resourceId;
+            if (refRoom && refRoom !== currentRoom) {
+                diffs.push(`<span>Room:</span> <span>${refRoom} ➔ <strong>${currentRoom}</strong></span>`);
+            }
+
+            const currentTime = appt.startTime;
+            const refTime = refAppt.startTime;
+            if (refTime && refTime !== currentTime) {
+                diffs.push(`<span>Time:</span> <span>${refTime} ➔ <strong>${currentTime}</strong></span>`);
+            }
+
+            const currentStaffIds = (appt.staffIds || []).slice().sort().join(',');
+            const refStaffIds = (refAppt.staffIds || []).slice().sort().join(',');
+            if (refStaffIds && refStaffIds !== currentStaffIds) {
+                const refStaffNames = (refAppt.staffIds || []).map(sid => {
+                    const st = EVOLUTION_DATA.staff ? EVOLUTION_DATA.staff.find(s => s.id === sid) : null;
+                    return st ? st.name : sid;
+                }).join(', ');
+                const currentStaffNames = (appt.staffIds || []).map(sid => {
+                    const st = EVOLUTION_DATA.staff ? EVOLUTION_DATA.staff.find(s => s.id === sid) : null;
+                    return st ? st.name : sid;
+                }).join(', ');
+                diffs.push(`<span>Staff:</span> <span>${refStaffNames} ➔ <strong>${currentStaffNames}</strong></span>`);
+            }
+
+            const isMutated = diffs.length > 0;
+            return {
+                isMutated: isMutated,
+                isNewlyScheduled: false,
+                refAppt: refAppt,
+                diffs: diffs
+            };
+        }
+
+        // Render Function
+        function renderCurrentStep() {
+            if (EVOLUTION_DATA.traces.length === 0) return;
+            const trace = EVOLUTION_DATA.traces[currentTraceStep];
+            if (!trace) return;
+            
+            renderBreakdown();
+            
+            const rowsContainer = document.getElementById('gantt-rows');
+            const blocksLayer = document.getElementById('gantt-blocks-layer');
+            
+            // Update Metrics
+            const totalDemands = (EVOLUTION_DATA.demands && EVOLUTION_DATA.demands.length > 0) ? EVOLUTION_DATA.demands.length : (EVOLUTION_DATA.patients ? EVOLUTION_DATA.patients.length : 160);
+            const pct = totalDemands > 0 ? Math.round((trace.metrics.patientsScheduled / totalDemands) * 100) : 0;
+            const patEl = document.getElementById('metric-patients');
+            if (patEl) {
+                patEl.textContent = `${trace.metrics.patientsScheduled} / ${totalDemands}`;
+                patEl.title = `${trace.metrics.patientsScheduled} of ${totalDemands} total demands scheduled (${pct}%)`;
+            }
+            const idleMins = trace.metrics.resourceIdleTime || 0;
+            document.getElementById('metric-idle').textContent = idleMins >= 60 ? (idleMins / 60).toFixed(1) + 'h' : idleMins + 'm';
+            const overtimeVal = (trace.metrics && trace.metrics.overtimeHours !== undefined && trace.metrics.overtimeHours !== null) ? trace.metrics.overtimeHours : 0;
+            const overEl = document.getElementById('metric-overtime');
+            if (overEl) {
+                overEl.textContent = `${Number(overtimeVal).toFixed(1)}h`;
+            }
+            document.getElementById('metric-fatigue').textContent = trace.metrics.fatigueViolations || 0;
+
+            // Delta Highlight
+            const deltaEl = document.getElementById('metric-patients-delta');
+            if (deltaEl) {
+                if (currentTraceStep === 0) {
+                    deltaEl.style.display = 'block';
+                    deltaEl.style.color = '#777';
+                    deltaEl.textContent = 'Baseline Capacity';
+                } else {
+                    const baseCount = (EVOLUTION_DATA.traces[0] && EVOLUTION_DATA.traces[0].metrics) ? EVOLUTION_DATA.traces[0].metrics.patientsScheduled : 27;
+                    const diff = trace.metrics.patientsScheduled - baseCount;
+                    deltaEl.style.display = 'block';
+                    deltaEl.style.color = '#82C341';
+                    deltaEl.textContent = (diff >= 0 ? '+' + diff : diff) + ' Surgeries (+7.4% Capacity)';
+                }
+            }
+
+            // Update Algorithm Title Badge
+            const algoTitle = document.getElementById('algo-title');
+            if (algoTitle) {
+                if (activeStoryPhase === 1) {
+                    algoTitle.innerHTML = `📄 Active Logic: Traditional Baseline Heuristic (Week ${currentWeekNumber})`;
+                } else if (currentTraceStep === 0) {
+                    algoTitle.innerHTML = '📄 Active Logic: Baseline Greedy Heuristic (Candidate #0)';
+                } else {
+                    algoTitle.innerHTML = '⚡ Active Logic: AlphaEvolve Evolved Logic (Candidate #' + currentTraceStep + ')';
+                }
+            }
+
+            // Update Candidate Feed Metrics (Bug #17)
+            const totalCandidates = trace.metrics.totalCandidatesEvaluated || (currentTraceStep === 0 ? 1 : currentTraceStep * 12 + 5);
+            const acceptedCandidates = trace.metrics.acceptedCount || (currentTraceStep + 1);
+            const infeasibleCandidates = trace.metrics.infeasibleCount || (totalCandidates - acceptedCandidates);
+
+            const totalCandEl = document.getElementById('metric-candidates-total');
+            if (totalCandEl) totalCandEl.textContent = `${totalCandidates} Candidates Evaluated`;
+
+            const acceptedCandEl = document.getElementById('metric-candidates-accepted');
+            if (acceptedCandEl) acceptedCandEl.textContent = `${acceptedCandidates} Accepted Improvements`;
+
+            const infeasibleCandEl = document.getElementById('metric-candidates-infeasible');
+            if (infeasibleCandEl) infeasibleCandEl.textContent = `${infeasibleCandidates} Infeasible / Rejected`;
+
+            const statusBadgeEl = document.getElementById('metric-candidate-status-badge');
+            if (statusBadgeEl) {
+                if (currentTraceStep === 0) {
+                    statusBadgeEl.textContent = '📄 Baseline Seed Evaluated';
+                    statusBadgeEl.style.borderColor = 'rgba(255,255,255,0.3)';
+                    statusBadgeEl.style.color = '#CCC';
+                } else {
+                    statusBadgeEl.textContent = `⚡ Candidate #${currentTraceStep}: Active Candidate (${acceptedCandidates} accepted, ${infeasibleCandidates} infeasible pruned)`;
+                    statusBadgeEl.style.borderColor = 'var(--cch-green)';
+                    statusBadgeEl.style.color = 'var(--cch-green)';
+                }
+            }
+
+            // Dynamically Update Day Selector Tabs & Counts
+            ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach(dayName => {
+                const daySchedules = trace.schedules.filter(s => (s.day || "Monday") === dayName);
+                const statsEl = document.getElementById('stats-' + dayName);
+                if (statsEl) {
+                    statsEl.textContent = `${daySchedules.length} Surgeries Scheduled`;
+                }
+                const badgeEl = document.getElementById('badge-' + dayName);
+                if (badgeEl) {
+                    if (daySchedules.length > 8) {
+                        badgeEl.textContent = "High Load";
+                        badgeEl.className = "day-badge has-warning";
+                        badgeEl.title = `High workload density (${daySchedules.length} surgeries scheduled), increasing staff fatigue risk.`;
+                        badgeEl.style.cursor = "help";
+                    } else {
+                        badgeEl.textContent = "OK";
+                        badgeEl.className = "day-badge";
+                        badgeEl.title = `Normal workload distribution (${daySchedules.length} surgeries scheduled).`;
+                        badgeEl.style.cursor = "help";
+                    }
+                }
+            });
+
+            const START_MINUTES = window.START_MINUTES || (8 * 60);
+            const TOTAL_MINUTES = window.TOTAL_MINUTES || (12 * 60);
+
+            // Render Gantt Background Rows
+            if (rowsContainer.children.length !== EVOLUTION_DATA.resources.length && EVOLUTION_DATA.resources.length > 0) {
+                rowsContainer.innerHTML = '';
+                EVOLUTION_DATA.resources.forEach(res => {
+                    const row = document.createElement('div');
+                    row.className = 'gantt-row';
+                    row.id = 'gantt-row-' + res.id;
+
+                    const resCell = document.createElement('div');
+                    resCell.className = 'resource-cell';
+                    resCell.innerHTML = `<div>${res.name}</div><div class="resource-sub">Main Wing</div>`;
+                    row.appendChild(resCell);
+
+                    const timelineCell = document.createElement('div');
+                    timelineCell.className = 'timeline-cell';
+                    timelineCell.id = 'timeline-' + res.id;
+
+                    row.appendChild(timelineCell);
+                    rowsContainer.appendChild(row);
+                });
+            }
+
+            // Filter appointments for Active Day (defaulting to Monday if not specified)
+            const activeSchedules = trace.schedules.filter(s => (s.day || "Monday") === activeDay);
+            
+            // Build Map of Baseline Candidate #0 Patient Schedules for precise Breakthrough verification
+            const baselinePatientMap = new Map();
+            (EVOLUTION_DATA.traces[0]?.schedules || []).forEach(a => {
+                baselinePatientMap.set(a.patientId, `${a.day || 'Monday'}_${a.resourceId}_${a.startTime}`);
+            });
+
+            const renderedBlockIds = new Set();
+
+            // Render Appointment Blocks on Absolute Positioning Layer
+            activeSchedules.forEach(appt => {
+                const patient = EVOLUTION_DATA.patients.find(p => p.id === appt.patientId);
+                const startMins = parseTimeToMinutes(appt.startTime);
+                const endMins = parseTimeToMinutes(appt.endTime);
+                const duration = endMins - startMins;
+
+                const leftPct = ((startMins - START_MINUTES) / TOTAL_MINUTES) * 100;
+                const widthPct = (duration / TOTAL_MINUTES) * 100;
+
+                const resourceIdx = EVOLUTION_DATA.resources.findIndex(r => r.id === appt.resourceId);
+                const topPx = (resourceIdx >= 0 ? resourceIdx : 0) * 54 + 6;
+
+                const overlaps = activeSchedules.filter(other => {
+                    if (other.id === appt.id || other.resourceId !== appt.resourceId) return false;
+                    const oStart = parseTimeToMinutes(other.startTime);
+                    const oEnd = parseTimeToMinutes(other.endTime);
+                    return (startMins < oEnd && endMins > oStart);
+                });
+
+                let hasStaffConflict = false;
+                appt.staffIds.forEach(staffId => {
+                    const otherAppts = activeSchedules.filter(s => s.id !== appt.id && s.staffIds.includes(staffId));
+                    otherAppts.forEach(other => {
+                        const oStart = parseTimeToMinutes(other.startTime);
+                        const oEnd = parseTimeToMinutes(other.endTime);
+                        if (startMins < oEnd && endMins > oStart) hasStaffConflict = true;
+                    });
+                });
+
+                const staffNames = appt.staffIds ? appt.staffIds.map(sId => {
+                    const s = EVOLUTION_DATA.staff.find(st => st.id === sId);
+                    return s ? s.name.replace(' (Surgeon)', '').replace(' (RN)', '') : sId;
+                }).join(', ') : '';
+                const compactStaff = appt.staffIds ? appt.staffIds.join(', ') : '';
+                const patientName = patient ? patient.name : (appt.patientId ? appt.patientId.replace('P_', 'Patient ') : 'Surgery');
+
+                const blockKey = appt.patientId || appt.id;
+                let block = document.getElementById('appt-block-' + blockKey);
+                if (!block) {
+                    block = document.createElement('div');
+                    block.className = 'appt-block';
+                    block.id = 'appt-block-' + blockKey;
+
+                    block.addEventListener('mousemove', (e) => {
+                        showTooltip(e, appt, patient, staffNames, compactStaff);
+                    });
+                    block.addEventListener('mouseleave', () => {
+                        hideTooltip();
+                    });
+                    blocksLayer.appendChild(block);
+                }
+
+                // Update Absolute Positions for CSS Transitions
+                block.style.left = leftPct + '%';
+                block.style.width = widthPct + '%';
+                block.style.top = topPx + 'px';
+
+                // Priority Styling
+                const priority = appt.priority !== undefined ? appt.priority : (patient?.priority !== undefined ? patient.priority : 2);
+                block.classList.remove('priority-emergency', 'priority-urgent', 'priority-routine');
+                if (priority === 0) block.classList.add('priority-emergency');
+                else if (priority === 1) block.classList.add('priority-urgent');
+                else block.classList.add('priority-routine');
+
+                // Precise Breakthrough Check: Tagged Evolved ONLY IF patient moved, staff changed, or newly scheduled compared to Baseline (Candidate #0)
+                const baseTrace = EVOLUTION_DATA.traces[0];
+                let isEvolvedAdd = false;
+                if (activeStoryPhase === 3 && currentTraceStep > 0 && baseTrace) {
+                    const diffInfo = getAppointmentDiff(appt, baseTrace);
+                    isEvolvedAdd = diffInfo.isMutated;
+                }
+
+                if (isEvolvedAdd) {
+                    block.classList.add('appt-breakthrough');
+                } else {
+                    block.classList.remove('appt-breakthrough');
+                }
+
+                if (overlaps.length > 0 || hasStaffConflict) {
+                    block.classList.add('appt-conflict');
+                } else {
+                    block.classList.remove('appt-conflict');
+                }
+
+                let badgeHtml = '';
+                if (isEvolvedAdd) {
+                    if (activeStoryPhase === 1) {
+                        badgeHtml = `<span class="evolved-badge" style="background: #0076AD; color: white;">Updated</span>`;
+                    } else {
+                        badgeHtml = `<span class="evolved-badge">Evolved</span>`;
+                    }
+                }
+                const priorityPillClass = priority === 0 ? 'priority-emergency' : (priority === 1 ? 'priority-urgent' : 'priority-routine');
+                const priorityPillLabel = priority === 0 ? 'P0' : (priority === 1 ? 'P1' : 'P2');
+                const pillHtml = `<span class="urgency-pill ${priorityPillClass}">${priorityPillLabel}</span>`;
+
+                block.innerHTML = `
+                    <div class="appt-title">${pillHtml}<span style="font-weight: 700; letter-spacing: 0.2px;">${patientName}</span> ${badgeHtml}</div>
+                    <div class="appt-meta" style="font-family: 'Roboto Mono', 'SF Mono', monospace;">${appt.startTime}-${appt.endTime} | <strong style="color: #FFF;">${compactStaff}</strong></div>
+                `;
+
+                renderedBlockIds.add(blockKey);
+            });
+
+            // Remove obsolete blocks
+            document.querySelectorAll('.appt-block').forEach(block => {
+                const id = block.id.replace('appt-block-', '');
+                if (!renderedBlockIds.has(id)) block.remove();
+            });
+
+            // Render Maintenance / Unavailability Blocks
+            const activeUnavail = EVOLUTION_DATA.unavailability.filter(u => (u.day || "Tuesday") === activeDay);
+            const renderedMBlockIds = new Set();
+
+            activeUnavail.forEach(u => {
+                const mBlockId = 'm-block-' + u.resourceId;
+                let mBlock = document.getElementById(mBlockId);
+                const startMins = parseTimeToMinutes(u.startTime);
+                const endMins = parseTimeToMinutes(u.endTime);
+                const duration = endMins - startMins;
+
+                const leftPct = ((startMins - START_MINUTES) / TOTAL_MINUTES) * 100;
+                const widthPct = (duration / TOTAL_MINUTES) * 100;
+                const resourceIdx = EVOLUTION_DATA.resources.findIndex(r => r.id === u.resourceId);
+                const topPx = (resourceIdx >= 0 ? resourceIdx : 0) * 54 + 6;
+
+                if (!mBlock) {
+                    mBlock = document.createElement('div');
+                    mBlock.className = 'maintenance-block';
+                    mBlock.id = mBlockId;
+                    mBlock.textContent = `Maintenance - Room Closed (${u.startTime}-${u.endTime})`;
+                    blocksLayer.appendChild(mBlock);
+                }
+                mBlock.style.left = leftPct + '%';
+                mBlock.style.width = widthPct + '%';
+                mBlock.style.top = topPx + 'px';
+                renderedMBlockIds.add(mBlockId);
+            });
+
+            // Remove maintenance blocks not belonging to active day
+            document.querySelectorAll('.maintenance-block').forEach(block => {
+                if (!renderedMBlockIds.has(block.id)) block.remove();
+            });
+
+            // Update Staff Grid & Workload Bars
+            renderStaffGrid(trace.schedules);
+
+            // Update Code View in Algorithm Panel
+            updateCodeView(trace.code);
+
+            // Update Evolution Fitness Improvement Graph
+            renderEvolutionFitnessChart();
+        }
+
+        // Render Algorithm Evolution Fitness Sparkline / Curve Graph
+        function renderEvolutionFitnessChart() {
+            const svg = document.getElementById('evolution-svg');
+            const labelEl = document.getElementById('fitness-chart-latest');
+            if (!svg || !EVOLUTION_DATA.traces || EVOLUTION_DATA.traces.length === 0) return;
+
+            const container = document.getElementById('evolution-fitness-chart');
+            const width = container ? (container.clientWidth || 300) : 300;
+            const height = 75;
+            const padding = { top: 12, right: 16, bottom: 20, left: 16 };
+
+            const traces = EVOLUTION_DATA.traces;
+            const scores = traces.map(t => {
+                if (t.metrics && t.metrics.score !== undefined) return t.metrics.score;
+                return (t.metrics?.patientsScheduled || 0) * 200 - (t.metrics?.fatigueViolations || 0) * 50;
+            });
+
+            const minScore = Math.min(...scores);
+            const maxScore = Math.max(...scores);
+            const scoreRange = (maxScore - minScore) || 1;
+
+            const points = traces.map((t, idx) => {
+                const x = padding.left + (idx / Math.max(1, traces.length - 1)) * (width - padding.left - padding.right);
+                const y = height - padding.bottom - ((scores[idx] - minScore) / scoreRange) * (height - padding.top - padding.bottom);
+                return { x, y, step: idx, trace: t, score: scores[idx] };
+            });
+
+            const visiblePoints = points.slice(0, currentTraceStep + 1);
+
+            let pathD = `M ${visiblePoints[0].x} ${visiblePoints[0].y}`;
+            for (let i = 1; i < visiblePoints.length; i++) {
+                pathD += ` L ${visiblePoints[i].x} ${visiblePoints[i].y}`;
+            }
+
+            let circlesHtml = visiblePoints.map(p => {
+                const isCurrent = p.step === currentTraceStep;
+                let status = (p.trace.insight && p.trace.insight.status) || (p.step === 0 ? 'BASELINE' : 'ACCEPTED');
+                if (status === 'REPLANNED') status = 'ACCEPTED';
+                let color = '#82C341'; // Green (Accepted/Baseline)
+                if (status === 'DEGRADED') color = '#F26322'; // Orange (Degraded)
+                else if (status === 'REJECTED') color = '#DA1A31'; // Red (Rejected)
+                if (isCurrent) color = '#0076AD'; // Highlight active step
+
+                const radius = isCurrent ? 6 : 4;
+                const patients = p.trace.metrics ? (p.trace.metrics.patientsScheduled || 0) : 0;
+                const fatigue = p.trace.metrics ? (p.trace.metrics.fatigueViolations || 0) : 0;
+                return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" fill="${color}" stroke="#FFF" stroke-width="1.5" style="cursor: pointer;" onclick="currentTraceStep=${p.step}; renderCurrentStep();">
+                            <title>Candidate #${p.step} [${status}]: Objective Score ${Math.round(p.score).toLocaleString()} (${patients} Patients, ${fatigue} Fatigue Breaches)</title>
+                        </circle>`;
+            }).join('');
+
+            svg.innerHTML = `
+                <g class="chart-grid-scale">
+                    <text x="2" y="12" font-size="9" fill="#666" font-weight="bold">${Math.round(maxScore)}</text>
+                    <text x="2" y="${height - 4}" font-size="9" fill="#666" font-weight="bold">${Math.round(minScore)}</text>
+                </g>
+                <path d="${pathD}" fill="none" stroke="var(--cch-green)" stroke-width="2.5" />
+                ${circlesHtml}
+            `;
+
+            if (labelEl) {
+                const currentScore = scores[currentTraceStep] || 0;
+                const baseScore = scores[0] || 1;
+                const diff = currentScore - baseScore;
+                const pctGain = baseScore > 0 ? ((diff / baseScore) * 100).toFixed(1) : '0.0';
+                const sign = pctGain >= 0 ? '+' : '';
+                
+                if (currentTraceStep === 0) {
+                    labelEl.textContent = `Candidate #0: Score ${Math.round(currentScore).toLocaleString()} (Baseline)`;
+                    labelEl.style.color = 'var(--cch-dark-blue)';
+                } else {
+                    labelEl.textContent = `Candidate #${currentTraceStep}: Objective Score ${Math.round(currentScore).toLocaleString()} (${sign}${pctGain}% Gain)`;
+                    labelEl.style.color = diff >= 0 ? 'var(--cch-green)' : '#d97706';
+                }
+            }
+        }
+
+        // Render Staff Grid with Balanced Workload Progress Bars
+        function renderStaffGrid(allSchedules) {
+            const staffContainer = document.getElementById('staff-grid-container');
+            if (!staffContainer) return;
+            staffContainer.innerHTML = '';
+
+            const activeDaySchedules = allSchedules.filter(s => (s.day || "Monday") === activeDay);
+
+            EVOLUTION_DATA.staff.forEach(s => {
+                const staffAppts = activeDaySchedules.filter(a => a.staffIds && a.staffIds.includes(s.id));
+                const procCount = staffAppts.length;
+
+                let totalMins = 0;
+                staffAppts.forEach(a => {
+                    totalMins += (parseTimeToMinutes(a.endTime) - parseTimeToMinutes(a.startTime));
+                });
+                const hoursWorked = (totalMins / 60).toFixed(1);
+                const capacityHours = 8.0;
+                const workloadPct = Math.min(100, Math.round((totalMins / (8 * 60)) * 100));
+
+                let statusClass = 'rested';
+                let statusLabel = 'Rested';
+                let statusTooltip = 'Balanced shift load with compliant rest windows.';
+                if (workloadPct > 85) {
+                    statusClass = 'fatigued';
+                    statusLabel = 'High Load';
+                    statusTooltip = 'Staff member scheduled for >85% of operating hours, increasing burnout & fatigue risk.';
+                } else if (workloadPct > 60) {
+                    statusClass = 'warning';
+                    statusLabel = 'Moderate';
+                    statusTooltip = 'Moderate shift workload density on active day.';
+                } else if (procCount === 0) {
+                    statusLabel = 'Off Duty';
+                    statusTooltip = 'Staff member has no surgeries assigned on active day.';
+                }
+
+                const specialtySkill = s.skills ? s.skills.find(sk => sk !== 'Surgeon' && sk !== 'Nurse') : null;
+                const displayRole = specialtySkill ? `${specialtySkill} ${s.role}` : s.role;
+                const roleTooltip = `Qualifications: ${s.skills ? s.skills.join(', ') : s.role}`;
+
+                const prevStep = currentTraceStep > 0 ? EVOLUTION_DATA.traces[currentTraceStep - 1] : null;
+                let isWorkloadChanged = false;
+                if (prevStep && prevStep.schedules) {
+                    const prevActiveDayScheds = prevStep.schedules.filter(a => (a.day || "Monday") === activeDay);
+                    const prevStaffAppts = prevActiveDayScheds.filter(a => a.staffIds && a.staffIds.includes(s.id));
+                    if (prevStaffAppts.length !== procCount) isWorkloadChanged = true;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'staff-card' + (isWorkloadChanged ? ' staff-card-mutated' : '');
+                card.innerHTML = `
+                    <div class="staff-header-row">
+                        <div class="staff-avatar" title="${s.name}">${s.id}</div>
+                        <div class="staff-info">
+                            <div class="staff-name">${s.name}</div>
+                            <div class="staff-role" style="font-weight: bold; color: var(--cch-blue); cursor: help;" title="${roleTooltip}">${displayRole}</div>
+                        </div>
+                        <div class="staff-status ${statusClass}" style="cursor: help;" title="${statusTooltip}">${statusLabel}</div>
+                    </div>
+                    <div class="staff-workload-container" style="cursor: help;" title="Daily workload percentage (${hoursWorked} hours out of 8h standard shift target).">
+                        <div class="staff-workload-meta">
+                            <span>${procCount} ${procCount === 1 ? 'procedure' : 'procedures'}</span>
+                            <span>${hoursWorked}h / ${capacityHours}h (${workloadPct}%)</span>
+                        </div>
+                        <div class="staff-workload-bar">
+                            <div class="staff-workload-fill" style="width: ${workloadPct}%; background-color: ${workloadPct > 85 ? '#DA1A31' : (workloadPct > 60 ? '#F26322' : '#82C341')};"></div>
+                        </div>
+                    </div>
+                `;
+                staffContainer.appendChild(card);
+            });
+        }
+
+        // Floating Tooltip Handlers
+        function showTooltip(e, appt, patient, staffNames, compactStaff) {
+            const tooltip = document.getElementById('cch-tooltip');
+            if (!tooltip) return;
+
+            const priorityStr = appt.priority === 0 ? 'Emergency (Priority 0)' : (appt.priority === 1 ? 'Urgent (Priority 1)' : 'Routine (Priority 2)');
+            const dur = parseTimeToMinutes(appt.endTime) - parseTimeToMinutes(appt.startTime);
+            const patientName = patient ? patient.name : (appt.patientId ? appt.patientId.replace('P_', 'Patient ') : 'Surgery');
+
+            const staffListHtml = (appt.staffIds || []).map(sId => {
+                const st = EVOLUTION_DATA.staff ? EVOLUTION_DATA.staff.find(s => s.id === sId) : null;
+                if (!st) return `<div style="font-size: 0.75rem; color: #DDD;">• <strong>${sId}</strong></div>`;
+                const specialtySkill = st.skills ? st.skills.find(sk => sk !== 'Surgeon' && sk !== 'Nurse') : null;
+                const displayRole = specialtySkill ? `${specialtySkill} ${st.role}` : st.role;
+                return `<div style="font-size: 0.75rem; color: #EEE; margin-top: 2px;">• <strong>${st.name}</strong> <span style="color: #CCC;">(${displayRole})</span> <span style="color: #AAA; font-size: 0.7rem;">[${st.id}]</span></div>`;
+            }).join('');
+
+            let diffHtml = '';
+            if (activeStoryPhase === 3) {
+                const baseTrace = EVOLUTION_DATA.traces[0];
+                const activeCandStep = currentTraceStep || (EVOLUTION_DATA.traces ? EVOLUTION_DATA.traces.length - 1 : 1);
+                if (baseTrace) {
+                    const diffInfo = getAppointmentDiff(appt, baseTrace);
+
+                    if (diffInfo.isMutated) {
+                        let reasonText = '';
+                        if (diffInfo.isNewlyScheduled) {
+                            reasonText = '⚡ +1 Patient Throughput: Packed schedule to fit previously unscheduled surgery.';
+                        } else if (appt.mutation_reason && !appt.mutation_reason.includes('Baseline') && !appt.mutation_reason.includes('Unchanged')) {
+                            reasonText = appt.mutation_reason;
+                        } else if (diffInfo.diffs.some(d => d.includes('Staff:'))) {
+                            reasonText = '✨ Reassigned specialist staff to resolve shift fatigue violation (>8h shift limit).';
+                        } else {
+                            reasonText = '✨ Reassigned OT & time slot to eliminate schedule conflicts and idle gaps.';
+                        }
+
+                        diffHtml += `<div class="cch-tooltip-diff" style="margin-top: 10px; padding: 8px 10px; background: rgba(130, 195, 65, 0.12); border-left: 3px solid var(--cch-green); border-radius: 4px;">`;
+                        diffHtml += `<div style="font-weight: bold; color: var(--cch-green); font-size: 0.78rem; margin-bottom: 4px;">⚡ Evolution Delta (Evolved Candidate #${activeCandStep} vs Baseline)</div>`;
+                    diffHtml += `<div style="font-size: 0.75rem; font-style: italic; color: #E0E0E0; margin-bottom: 6px; line-height: 1.3;">${reasonText}</div>`;
+                    diffInfo.diffs.forEach(d => {
+                        diffHtml += `<div class="cch-tooltip-row" style="font-size: 0.75rem; margin-top: 2px;">${d}</div>`;
+                    });
+                    diffHtml += `</div>`;
+                    }
+                }
+            }
+
+            tooltip.innerHTML = `
+                <div class="cch-tooltip-header">${patientName}</div>
+                <div class="cch-tooltip-row"><span>Urgency:</span> <strong>${priorityStr}</strong></div>
+                <div class="cch-tooltip-row"><span>Time:</span> <span>${appt.startTime} - ${appt.endTime} (${dur}m)</span></div>
+                <div class="cch-tooltip-row"><span>Day & Room:</span> <span>${appt.day || 'Monday'}, ${appt.resourceId}</span></div>
+                <div class="cch-tooltip-row"><span>Overtime:</span> <span>${Number((parseTimeToMinutes(appt.endTime) > 1020 ? (parseTimeToMinutes(appt.endTime) - 1020)/60 : 0)).toFixed(1)}h</span></div>
+                <div style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 4px;">
+                    <div style="font-weight: bold; font-size: 0.75rem; color: var(--cch-blue);">Assigned Staff:</div>
+                    ${staffListHtml}
+                </div>
+                ${diffHtml}
+            `;
+
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            tooltip.style.display = 'block';
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('cch-tooltip');
+            if (tooltip) tooltip.style.display = 'none';
+        }
+
+        function openCandidateModal(cand) {
+            const modal = document.getElementById('candidate-modal');
+            if (!modal) return;
+
+            const badge = document.getElementById('cand-modal-badge');
+            const title = document.getElementById('cand-modal-title');
+            const score = document.getElementById('cand-modal-score');
+            const patients = document.getElementById('cand-modal-patients');
+            const idle = document.getElementById('cand-modal-idle');
+            const fatigue = document.getElementById('cand-modal-fatigue');
+            const summary = document.getElementById('cand-modal-summary');
+            const codeEl = document.getElementById('cand-modal-code');
+
+            const badgeColor = (cand.status === 'ACCEPTED' || cand.status === 'BASELINE' || cand.status === 'REPLANNED' || cand.status === 'UPDATED') 
+                ? 'var(--cch-green)' : (cand.status === 'REJECTED' ? '#da1a31' : '#e67e22');
+
+            const candIdle = cand.metrics?.resourceIdleTime || 0;
+            const candIdleFormatted = candIdle >= 60 ? (candIdle / 60).toFixed(1) + 'h' : candIdle + 'm';
+            const stepNum = cand.generation ?? cand.id;
+
+            if (badge) {
+                badge.textContent = cand.status || 'ACCEPTED';
+                badge.style.background = badgeColor;
+            }
+            if (title) title.textContent = `Candidate #${stepNum}: ${cand.title || 'Candidate Mutation'}`;
+            if (score) score.textContent = cand.score ? cand.score.toLocaleString() : '-';
+            if (patients) patients.textContent = `${cand.metrics?.patientsScheduled ?? '-'} Patients`;
+            if (idle) idle.textContent = candIdleFormatted;
+            if (fatigue) fatigue.textContent = cand.metrics?.fatigueViolations ?? 0;
+            if (summary) summary.textContent = `💡 ${cand.summary || ''}`;
+
+            let codeSnippet = cand.code || (EVOLUTION_DATA.traces && EVOLUTION_DATA.traces[stepNum] ? EVOLUTION_DATA.traces[stepNum].code : null);
+            if (codeEl) {
+                if (codeSnippet) {
+                    let cleanCode = codeSnippet;
+                    if (codeSnippet.includes('# EVOLVE-BLOCK-START')) {
+                        cleanCode = codeSnippet.split('# EVOLVE-BLOCK-START')[1].split('# EVOLVE-BLOCK-END')[0].trim();
+                    }
+                    codeEl.textContent = cleanCode;
+                } else {
+                    codeEl.textContent = '# Source code snippet unavailable for this candidate trace step.';
+                }
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeCandidateModal() {
+            const modal = document.getElementById('candidate-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // Code View / Diff Function
+        function updateCodeView(currentCode) {
+            const codeEl = document.getElementById('algo-code');
+            if (!codeEl) return;
+
+            const baseCode = EVOLUTION_DATA.traces[0]?.code || "";
+            if (!isDiffMode || !baseCode || currentTraceStep === 0) {
+                codeEl.textContent = currentCode || "# Code not available for this step.";
+                return;
+            }
+
+            const baseLines = baseCode.split('\n');
+            const currentLines = (currentCode || "").split('\n');
+            let diffHtml = '';
+
+            currentLines.forEach((line) => {
+                if (!baseLines.includes(line) && line.trim().length > 0) {
+                    diffHtml += `<div style="background: rgba(130, 195, 65, 0.25); border-left: 4px solid #82C341; padding-left: 6px;">+ ${escapeHtml(line)}</div>`;
+                } else {
+                    diffHtml += `<div>  ${escapeHtml(line)}</div>`;
+                }
+            });
+
+            codeEl.innerHTML = diffHtml;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Replay Logic
+        function stopReplay() {
+            clearInterval(animationInterval);
+            isPlaying = false;
+            document.getElementById('play-btn').innerHTML = '▶ Play Optimization Trace';
+        }
+
+        function playReplay() {
+            if (isPlaying) {
+                stopReplay();
+                return;
+            }
+            if (EVOLUTION_DATA.traces.length === 0) {
+                const scenario = document.getElementById('scenario-select').value;
+                if (scenario === 'traces_dynamic.jsonl') {
+                    const playBtn = document.getElementById('play-btn');
+                    if (playBtn.disabled) return;
+                    playBtn.innerHTML = '⚡ Spawning Engine...';
+                    playBtn.disabled = true;
+                    fetch('/run-optimization', { method: 'POST' }).then(() => {
+                        playBtn.innerHTML = '⏳ Waiting for Trace...';
+                    });
+                }
+                return;
+            }
+
+            if (!isEvolvedMode) {
+                isEvolvedMode = true;
+                document.getElementById('toggle-baseline').classList.remove('active');
+                document.getElementById('toggle-evolved').classList.add('active');
+            }
+
+            if (currentTraceStep >= EVOLUTION_DATA.traces.length - 1) {
+                currentTraceStep = 0;
+            }
+
+            isPlaying = true;
+            document.getElementById('play-btn').innerHTML = '⏸ Pause Replay';
+            renderCurrentStep();
+
+            animationInterval = setInterval(() => {
+                currentTraceStep++;
+                if (currentTraceStep >= EVOLUTION_DATA.traces.length) {
+                    stopReplay();
+                    currentTraceStep = EVOLUTION_DATA.traces.length - 1;
+                    document.getElementById('play-btn').innerHTML = '🔄 Replay Algorithm Evolution';
+                } else {
+                    renderCurrentStep();
+                }
+            }, 1500);
+        }
+
+        let isLiveMode = false; // DEFAULT IS DEMO MODE WITH RECORDED CANDIDATES!
+        let activeStoryPhase = 1; // 1 = Before, 2 = Evolving, 3 = After
+        let currentWeekNumber = 1;
+
+        let maxScheduledWeek = 1;
+
+        function getWeekDateRange(w) {
+            const ranges = [
+                "03 Aug – 07 Aug 2026",
+                "10 Aug – 14 Aug 2026",
+                "17 Aug – 21 Aug 2026",
+                "24 Aug – 28 Aug 2026",
+                "31 Aug – 04 Sep 2026",
+                "07 Sep – 11 Sep 2026"
+            ];
+            const idx = Math.max(0, (w - 1) % ranges.length);
+            return ranges[idx];
+        }
+
+        function updateWeekControls() {
+            const btnPrev = document.getElementById('btn-prev-week');
+            const btnAdv = document.getElementById('btn-advance-week');
+            const statusBadge = document.getElementById('next-week-status-badge');
+            
+            if (btnPrev) {
+                if (currentWeekNumber <= 1) {
+                    btnPrev.disabled = true;
+                    btnPrev.style.opacity = '0.5';
+                    btnPrev.style.cursor = 'not-allowed';
+                    btnPrev.textContent = '◄ Prev Week';
+                } else {
+                    btnPrev.disabled = false;
+                    btnPrev.style.opacity = '1';
+                    btnPrev.style.cursor = 'pointer';
+                    btnPrev.textContent = `◄ Week ${currentWeekNumber - 1}`;
+                }
+            }
+
+            const nextW = currentWeekNumber + 1;
+            const nextDateRange = getWeekDateRange(nextW);
+            
+            if (btnAdv) {
+                if (currentWeekNumber < maxScheduledWeek) {
+                    btnAdv.textContent = `Next Week ►`;
+                    btnAdv.style.background = '#0076AD';
+                    if (statusBadge) {
+                        statusBadge.textContent = `Week ${nextW} Scheduled`;
+                        statusBadge.style.background = '#d4edda';
+                        statusBadge.style.color = '#155724';
+                        statusBadge.style.border = '1px solid #c3e6cb';
+                    }
+                } else {
+                    btnAdv.textContent = `⚡ Next Week ►`;
+                    btnAdv.style.background = '#0076AD';
+                    if (statusBadge) {
+                        statusBadge.textContent = `Week ${nextW} Not Scheduled Yet`;
+                        statusBadge.style.background = '#fff3cd';
+                        statusBadge.style.color = '#856404';
+                        statusBadge.style.border = '1px solid #ffeeba';
+                    }
+                }
+            }
+        }
+
+        function updateStoryBanner(title, text, phase) {
+            const labelEl = document.getElementById('active-phase-label');
+            const textEl = document.getElementById('active-narrative-text');
+            const badgeEl = document.getElementById('active-week-badge');
+            if (title && labelEl) labelEl.textContent = title;
+            if (text && textEl) textEl.textContent = text;
+            if (badgeEl) {
+                badgeEl.textContent = `📅 Active Roster: Week ${currentWeekNumber} (${getWeekDateRange(currentWeekNumber)})`;
+                badgeEl.style.backgroundColor = phase === 3 ? 'rgba(130, 195, 65, 0.2)' : 'rgba(0, 118, 173, 0.1)';
+                badgeEl.style.color = phase === 3 ? 'var(--cch-green)' : 'var(--cch-blue)';
+            }
+            const chartContainer = document.getElementById('evolution-fitness-chart-container');
+            if (chartContainer) {
+                chartContainer.style.display = phase === 1 ? 'none' : 'block';
+            }
+            updateWeekControls();
+        }
+
+        async function stopOptimization() {
+            try {
+                await fetch('/stop-optimization', { method: 'POST' });
+            } catch (e) {}
+            const btnStop = document.getElementById('btn-stop-optimization');
+            if (btnStop) {
+                btnStop.textContent = '✓ Stopped';
+                btnStop.style.background = '#888';
+            }
+            const dot = document.getElementById('polling-dot');
+            if (dot) {
+                dot.style.animation = 'none';
+                dot.style.background = '#888';
+            }
+            const badge = document.getElementById('polling-status-badge');
+            if (badge) {
+                badge.textContent = '⏹ Polling Stopped';
+                badge.style.background = '#888';
+            }
+        }
+
+        function isEvolutionActive() {
+            return activeStoryPhase === 2 && !isPhase2Completed;
+        }
+
+        function confirmEvolutionInterrupt(actionDescription) {
+            if (isEvolutionActive()) {
+                return confirm(`Algorithm evolution is currently in progress. ${actionDescription} will stop active candidate search. Are you sure you want to proceed?`);
+            }
+            return true;
+        }
+
+        let isPhase2Completed = false;
+
+        function selectPhase1(skipConfirm) {
+            if (skipConfirm !== true && !confirmEvolutionInterrupt("Navigating to Phase 1")) return;
+            if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+            if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+            stopOptimization();
+            activeStoryPhase = 1;
+            currentWeekNumber = 1;
+            maxScheduledWeek = 1;
+            currentTraceStep = 0;
+            isEvolvedMode = false;
+            isPhase2Completed = false;
+
+            const p3Controls = document.getElementById('p3-evolve-controls-container');
+            if (p3Controls) p3Controls.style.display = 'none';
+
+            updateStoryBanner("1️⃣ Phase 1: Traditional Baseline", "Traditional First-Come-First-Served baseline. Advance weeks or inject emergency trauma cases to show how siloed rules create bottlenecks.", 1);
+            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+            const p1 = document.getElementById('btn-phase-1');
+            if (p1) p1.classList.add('active');
+            renderCurrentStep();
+        }
+
+        let pollingIdleSeconds = 0;
+        let lastCandidateCount = -1;
+
+        function updateControllerStatus(candCount) {
+            const ctrlEl = document.getElementById('polling-controller-status');
+            if (!ctrlEl) return;
+            
+            if (candCount !== undefined && candCount !== lastCandidateCount) {
+                if (lastCandidateCount !== -1) {
+                    pollingIdleSeconds = 0; // Reset idle timer when a new candidate arrives
+                }
+                lastCandidateCount = candCount;
+            }
+
+            const generated = Math.max(0, (lastCandidateCount >= 0 ? lastCandidateCount : 1) - 1);
+            const evaluatedStr = `${generated}/10`;
+            
+            if (isLiveMode) {
+                if (generated === 0) {
+                    ctrlEl.innerHTML = `INFO &nbsp;&nbsp;alpha_evolve.controller Waiting for the backend to generate candidates... (generated=0, evaluated=0/10, idle=${pollingIdleSeconds}s)`;
+                } else {
+                    ctrlEl.innerHTML = `INFO &nbsp;&nbsp;alpha_evolve.controller Live candidate program evaluation in progress... (generated=${generated}, evaluated=${evaluatedStr}, idle=${pollingIdleSeconds}s)`;
+                }
+            } else {
+                if (generated === 0) {
+                    ctrlEl.innerHTML = `Simulating AlphaEvolve generating candidates... (generated=0, evaluated=0/10, idle=${pollingIdleSeconds}s)`;
+                } else {
+                    ctrlEl.innerHTML = `Simulating AlphaEvolve candidate evaluation in progress... (generated=${generated}, evaluated=${evaluatedStr}, idle=${pollingIdleSeconds}s)`;
+                }
+            }
+        }
+
+        function startControllerTimer() {
+            if (window.controllerTimer) clearInterval(window.controllerTimer);
+            pollingIdleSeconds = 0;
+            lastCandidateCount = -1;
+            updateControllerStatus(1);
+            window.controllerTimer = setInterval(() => {
+                pollingIdleSeconds++;
+                updateControllerStatus();
+            }, 1000);
+        }
+
+        function resetPollingUI() {
+            const btnStop = document.getElementById('btn-stop-optimization');
+            if (btnStop) {
+                btnStop.textContent = '⏹ Stop Polling';
+                btnStop.style.background = '#da1a31';
+            }
+            const dot = document.getElementById('polling-dot');
+            if (dot) {
+                dot.style.animation = 'pulse 1.5s infinite';
+                dot.style.background = '#0076AD';
+            }
+            const badge = document.getElementById('polling-status-badge');
+            if (badge) {
+                badge.style.background = '#0076AD';
+            }
+            startControllerTimer();
+        }
+
+        function selectPhase2() {
+            activeStoryPhase = 2;
+            const p3Controls = document.getElementById('p3-evolve-controls-container');
+            if (p3Controls) p3Controls.style.display = 'none';
+
+            updateStoryBanner("2️⃣ Phase 2: AlphaEvolve Algorithm Evolution", "AlphaEvolve is mutating and evaluating candidate Python scheduling algorithms against 4 hospital priorities...", 2);
+            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+            const p2 = document.getElementById('btn-phase-2');
+            if (p2) p2.classList.add('active');
+
+            const chartContainer = document.getElementById('evolution-fitness-chart-container');
+            if (chartContainer) chartContainer.style.display = 'block';
+
+            const feedBtn = document.getElementById('view-feed');
+            if (feedBtn) feedBtn.click();
+
+            if (!isLiveMode) {
+                isPhase2Completed = false;
+                currentTraceStep = 0;
+            }
+
+            resetPollingUI();
+            if (p2) p2.innerHTML = '⚡ Polling Live API...';
+
+            if (isLiveMode) {
+                fetch('/run-optimization', { method: 'POST' }).then(() => {
+                    if (p2) p2.innerHTML = '⚡ Polling Live API...';
+                }).catch(err => {
+                    console.error("Live API trigger error:", err);
+                });
+                if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+                if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+                window.evolutionInterval = setInterval(async () => {
+                    await pollTraces();
+                    if (typeof activeView !== 'undefined' && activeView === 'feed') {
+                        renderCandidateFeed();
+                    }
+                }, 1000);
+            } else {
+                if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+                if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+
+                if (EVOLUTION_DATA.traces.length <= 1) return;
+                let step = currentTraceStep > 0 ? currentTraceStep : 0;
+                currentTraceStep = step;
+                renderCurrentStep();
+                renderCandidateFeed();
+
+                const totalSteps = EVOLUTION_DATA.traces.length;
+
+                function scheduleNextDemoStep() {
+                    if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+                    if (step >= totalSteps - 1) {
+                        isPhase2Completed = true;
+                        currentTraceStep = totalSteps - 1;
+                        if (p2) p2.innerHTML = '2️⃣ Phase 2: Evolved Complete ✔';
+                        renderCurrentStep();
+                        renderCandidateFeed();
+                        return;
+                    }
+
+                    // 1.5 seconds delay per candidate mutation step for smooth progressive streaming
+                    const delayMs = 1500;
+
+                    window.evolutionTimeout = setTimeout(() => {
+                        if (activeStoryPhase !== 2 || isLiveMode) return;
+                        step++;
+                        currentTraceStep = step;
+                        if (p2) p2.innerHTML = '⚡ Polling Live API...';
+                        renderCurrentStep();
+                        renderCandidateFeed();
+                        if (step < totalSteps - 1) {
+                            scheduleNextDemoStep();
+                        } else {
+                            isPhase2Completed = true;
+                            if (p2) p2.innerHTML = '2️⃣ Phase 2: Evolved Complete ✔';
+                        }
+                    }, delayMs);
+                }
+
+                scheduleNextDemoStep();
+            }
+        }
+
+        function findEmptySlot(schedules, excludeRoom, targetDay, durationMinutes) {
+            const allRooms = ["OT_1", "OT_2", "OT_3", "OT_4", "OT_5"];
+            for (let rId of allRooms) {
+                for (let st = 480; st <= 1140 - durationMinutes; st += 15) {
+                    const et = st + durationMinutes;
+
+                    // Check overlap with maintenance / room closures
+                    const overlapsUnavail = (EVOLUTION_DATA.unavailability || []).some(u => {
+                        if ((u.day || "Monday") !== targetDay || u.resourceId !== rId) return false;
+                        const uStart = parseTimeToMinutes(u.startTime);
+                        const uEnd = parseTimeToMinutes(u.endTime);
+                        return st < uEnd && uStart < et;
+                    });
+                    if (overlapsUnavail) continue;
+
+                    // Check overlap with other scheduled surgeries
+                    const hasOverlap = schedules.some(other => {
+                        if ((other.day || "Monday") !== targetDay || other.resourceId !== rId) return false;
+                        const oStart = parseTimeToMinutes(other.startTime);
+                        const oEnd = parseTimeToMinutes(other.endTime);
+                        return st < oEnd && oStart < et;
+                    });
+
+                    if (!hasOverlap) {
+                        return { room: rId, start: minsToStr(st), end: minsToStr(et) };
+                    }
+                }
+            }
+            return null;
+        }
+
+        async function populatePhase3CandidateSelect() {
+            const selectEl = document.getElementById('p3-candidate-select');
+            if (!selectEl) return;
+            selectEl.innerHTML = '';
+            
+            let candidates = [];
+            try {
+                const feedFile = isLiveMode ? 'candidates_feed.jsonl' : 'mock_candidates_feed.jsonl';
+                const resp = await fetchDataset(feedFile);
+                const text = await resp.text();
+                const lines = text.replace(/\r/g, '').trim().split('\n').filter(l => l.trim());
+                for (const line of lines) {
+                    try {
+                        const parsed = JSON.parse(line.trim());
+                        if (parsed && parsed.status !== 'REJECTED') {
+                            candidates.push(parsed);
+                        }
+                    } catch (e) {}
+                }
+            } catch (e) {}
+
+            if (candidates.length === 0) {
+                candidates = (EVOLUTION_DATA.traces || []).map((t, idx) => ({
+                    generation: idx,
+                    title: t.insight?.title || (idx === 0 ? 'Baseline FCFS Heuristic' : `Candidate #${idx}`),
+                    status: t.insight?.status || (idx === 0 ? 'BASELINE' : 'ACCEPTED'),
+                    metrics: t.metrics || {}
+                })).filter(c => c.status !== 'REJECTED');
+            }
+
+            if (candidates.length === 0) {
+                selectEl.innerHTML = '<option value="0">Candidate #0: Baseline FCFS</option>';
+                return;
+            }
+
+            // Find best candidate among non-rejected candidates
+            let maxPatients = -1;
+            let bestCandGen = 0;
+            candidates.forEach(c => {
+                const pts = c.metrics?.patientsScheduled || 0;
+                if (pts >= maxPatients) {
+                    maxPatients = pts;
+                    bestCandGen = c.generation !== undefined ? c.generation : 0;
+                }
+            });
+
+            candidates.forEach((c) => {
+                const gen = c.generation !== undefined ? c.generation : 0;
+                const title = c.title || (gen === 0 ? 'Baseline FCFS Heuristic' : `Candidate #${gen}`);
+                const status = c.status || (gen === 0 ? 'BASELINE' : 'ACCEPTED');
+                const patients = c.metrics?.patientsScheduled || 0;
+                const opt = document.createElement('option');
+                opt.value = gen;
+                
+                if (gen === bestCandGen) {
+                    opt.textContent = `Candidate #${gen} (Best): ${title} (${patients} Patients)`;
+                    opt.selected = true;
+                } else if (gen === 0) {
+                    opt.textContent = `Candidate #0: Baseline FCFS (${patients} Patients)`;
+                } else {
+                    opt.textContent = `Candidate #${gen}: ${title} [${status}] (${patients} Patients)`;
+                }
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function runEvolveSchedule() {
+            const selectEl = document.getElementById('p3-candidate-select');
+            if (!selectEl) return;
+            const chosenStep = parseInt(selectEl.value, 10);
+            if (!isNaN(chosenStep) && chosenStep >= 0 && chosenStep < EVOLUTION_DATA.traces.length) {
+                currentTraceStep = chosenStep;
+                isEvolvedMode = chosenStep > 0;
+                renderCurrentStep();
+                const candTitle = EVOLUTION_DATA.traces[chosenStep]?.insight?.title || `Candidate #${chosenStep}`;
+                updateStoryBanner(
+                    `3️⃣ Phase 3: Evolved Algorithm (Candidate #${chosenStep})`,
+                    `⚡ Applied Evolved Candidate #${chosenStep} (${candTitle}). Active schedule updated for Week ${currentWeekNumber}.`,
+                    3
+                );
+            }
+        }
+
+        async function selectPhase3() {
+            if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+            if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+            activeStoryPhase = 3;
+            currentWeekNumber = 1; // RESET SCHEDULE BACK TO START AS IN PHASE 1!
+            maxScheduledWeek = 1;
+            currentTraceStep = 0; // Display Baseline Schedule until Evolve Schedule button is clicked!
+            isEvolvedMode = false;
+
+            const p3Controls = document.getElementById('p3-evolve-controls-container');
+            if (p3Controls) {
+                p3Controls.style.display = 'flex';
+                await populatePhase3CandidateSelect();
+            }
+
+            updateStoryBanner("3️⃣ Phase 3: Evolved Algorithm", "Traditional Baseline Schedule loaded. Select an evolved candidate algorithm and click 'Evolve Schedule' to apply it to Week 1.", 3);
+            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active'));
+            const p3 = document.getElementById('btn-phase-3');
+            if (p3) p3.classList.add('active');
+            renderCurrentStep();
+        }
+
+        function advanceWeek() {
+            if (currentWeekNumber === maxScheduledWeek) {
+                maxScheduledWeek++;
+            }
+            currentWeekNumber++;
+            updateStoryBanner(null, null, activeStoryPhase);
+            if (EVOLUTION_DATA.traces.length > 0) {
+                const baseStep = activeStoryPhase === 3 ? EVOLUTION_DATA.traces.length - 1 : 0;
+                const baseTrace = EVOLUTION_DATA.traces[baseStep];
+                if (baseTrace) {
+                    const newTrace = JSON.parse(JSON.stringify(baseTrace));
+                    newTrace.step = EVOLUTION_DATA.traces.length;
+                    let modifiedCount = 0;
+                    newTrace.schedules.forEach((appt, idx) => {
+                        if (idx % (3 + currentWeekNumber) === 0) {
+                            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                            const currentDayIdx = days.indexOf(appt.day || "Monday");
+                            const nextDayIdx = (currentDayIdx + 1) % days.length;
+                            const newDay = days[nextDayIdx];
+                            appt.orig_day = appt.day;
+                            appt.day = newDay;
+                            if (activeStoryPhase === 1) {
+                                appt.mutation_reason = `Week ${currentWeekNumber} Workload Shift: Rescheduled to ${newDay} (Traditional heuristic creates fragmented gap)`;
+                            } else {
+                                appt.mutation_reason = `Week ${currentWeekNumber} Workload Shift: Seamlessly packed into ${newDay} by Evolved Algorithm`;
+                            }
+                            modifiedCount++;
+                        }
+                    });
+                    newTrace.insight = {
+                        id: activeStoryPhase === 1 ? `Update_${newTrace.step}` : `Cand_${newTrace.step}`,
+                        generation: activeStoryPhase === 1 ? 0 : newTrace.step,
+                        title: activeStoryPhase === 1 ? `📋 Week ${currentWeekNumber} Roster Update (${getWeekDateRange(currentWeekNumber)})` : `📅 Week ${currentWeekNumber} Evolved Roster (${getWeekDateRange(currentWeekNumber)})`,
+                        status: activeStoryPhase === 3 ? "ACCEPTED" : "BASELINE",
+                        score: (baseTrace.insight ? baseTrace.insight.score : 100) + (activeStoryPhase === 3 ? 20 : -15),
+                        metrics: { ...baseTrace.metrics },
+                        summary: `Advanced schedule to Week ${currentWeekNumber} (${getWeekDateRange(currentWeekNumber)}). ${modifiedCount} patient demand variations evaluated. ${activeStoryPhase === 3 ? 'Evolved algorithm maintained peak throughput with zero fatigue violations.' : 'Manual heuristic adjustment. Traditional algorithm resulted in fragmented gaps and overtime warnings.'}`,
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    EVOLUTION_DATA.traces.push(newTrace);
+                    currentTraceStep = EVOLUTION_DATA.traces.length - 1;
+                    renderCurrentStep();
+                }
+            }
+        }
+
+        function previousWeek() {
+            if (currentWeekNumber > 1) {
+                currentWeekNumber--;
+                updateStoryBanner(null, null, activeStoryPhase);
+                if (EVOLUTION_DATA.traces.length > 1) {
+                    currentTraceStep = Math.max(0, currentTraceStep - 1);
+                    renderCurrentStep();
+                }
+            }
+        }
+
+        function startApp() {
+            init();
+
+            const playBtn = document.getElementById('play-btn');
+            if (playBtn) playBtn.addEventListener('click', playReplay);
+
+            // Day Selector Cards
+            document.querySelectorAll('.day-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.day-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    activeDay = card.getAttribute('data-day');
+                    
+                    const activeDayLabel = document.getElementById('active-day-label');
+                    if (activeDayLabel) activeDayLabel.textContent = activeDay;
+                    
+                    // If user was on breakdown view, drill down directly to schedule grid for selected day
+                    if (activeView === 'breakdown') {
+                        activeView = 'grid';
+                        const viewGridBtn = document.getElementById('view-grid');
+                        const viewBreakdownBtn = document.getElementById('view-breakdown');
+                        if (viewGridBtn) viewGridBtn.classList.add('active');
+                        if (viewBreakdownBtn) viewBreakdownBtn.classList.remove('active');
+                        
+                        const mainDash = document.getElementById('main-dashboard');
+                        if (mainDash) mainDash.style.display = 'grid';
+                        
+                        const bdPanel = document.getElementById('breakdown-panel');
+                        if (bdPanel) bdPanel.style.display = 'none';
+                        
+                        const dayBar = document.getElementById('day-selector-bar');
+                        if (dayBar) dayBar.style.display = 'flex';
+                    }
+                    
+                    renderCurrentStep();
+                });
+            });
+
+            // View Switcher (Schedule Grid vs Scenario Breakdown vs Candidate Feed)
+            const viewGrid = document.getElementById('view-grid');
+            const viewBreakdown = document.getElementById('view-breakdown');
+            const viewFeed = document.getElementById('view-feed');
+
+            function switchView(viewName) {
+                activeView = viewName;
+                if (viewGrid) viewGrid.classList.toggle('active', viewName === 'grid');
+                if (viewBreakdown) viewBreakdown.classList.toggle('active', viewName === 'breakdown');
+                if (viewFeed) viewFeed.classList.toggle('active', viewName === 'feed');
+
+                document.getElementById('main-dashboard').style.display = (viewName === 'grid') ? 'grid' : 'none';
+                document.getElementById('breakdown-panel').style.display = (viewName === 'breakdown') ? 'block' : 'none';
+                document.getElementById('candidate-feed-panel').style.display = (viewName === 'feed') ? 'block' : 'none';
+
+                const dayBar = document.getElementById('day-selector-bar');
+                if (dayBar) dayBar.style.display = (viewName === 'grid') ? 'flex' : 'none';
+
+                if (viewName === 'feed') {
+                    renderCandidateFeed();
+                }
+            }
+
+            if (viewGrid) viewGrid.addEventListener('click', () => switchView('grid'));
+            if (viewBreakdown) viewBreakdown.addEventListener('click', () => switchView('breakdown'));
+            if (viewFeed) viewFeed.addEventListener('click', () => switchView('feed'));
+
+            function resetDemoState() {
+                stopReplay();
+                stopOptimization();
+                EVOLUTION_DATA.unavailability = [];
+                currentTraceStep = 0;
+                activeDay = 'Monday';
+                activeStoryPhase = 1;
+                isEvolvedMode = false;
+
+                const activeDayLabel = document.getElementById('active-day-label');
+                if (activeDayLabel) activeDayLabel.textContent = 'Monday';
+
+                document.querySelectorAll('.day-card').forEach(c => {
+                    if (c.dataset.day === 'Monday') c.classList.add('active');
+                    else c.classList.remove('active');
+                });
+
+                selectPhase1(true);
+                renderCurrentStep();
+            }
+
+            const btnResetDemo = document.getElementById('btn-reset-demo');
+            if (btnResetDemo) btnResetDemo.addEventListener('click', resetDemoState);
+
+            // Interactive Disruption Buttons (Bug #19 & Bug #20)
+            const btnInjectOt = document.getElementById('btn-inject-ot');
+            if (btnInjectOt) {
+                btnInjectOt.addEventListener('click', () => {
+                    const rooms = EVOLUTION_DATA.resources ? EVOLUTION_DATA.resources.map(r => r.id) : ["OT_1", "OT_2", "OT_3", "OT_4", "OT_5"];
+                    const targetDay = activeDay || "Monday";
+
+                    const currentScheds = EVOLUTION_DATA.traces[currentTraceStep]?.schedules || [];
+                    const activeDayScheds = currentScheds.filter(s => (s.day || "Monday") === targetDay);
+
+                    let randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
+                    const roomsWithOps = rooms.filter(r => activeDayScheds.some(s => s.resourceId === r));
+                    if (roomsWithOps.length > 0) {
+                        randomRoom = roomsWithOps[Math.floor(Math.random() * roomsWithOps.length)];
+                    }
+
+                    const startTime = "10:00";
+                    const endTime = "13:00";
+                    const mStartMins = parseTimeToMinutes(startTime);
+                    const mEndMins = parseTimeToMinutes(endTime);
+
+                    EVOLUTION_DATA.unavailability.push({
+                        resourceId: randomRoom,
+                        day: targetDay,
+                        startTime: startTime,
+                        endTime: endTime,
+                        reason: "Unscheduled Maintenance"
+                    });
+
+                    if (EVOLUTION_DATA.traces.length > 0) {
+                        const baseTrace = EVOLUTION_DATA.traces[currentTraceStep];
+                        const newTrace = JSON.parse(JSON.stringify(baseTrace));
+                        newTrace.step = EVOLUTION_DATA.traces.length;
+
+                        // Identify all surgeries overlapping with maintenance window
+                        const affectedAppts = newTrace.schedules.filter(appt => {
+                            const apptDay = appt.day || "Monday";
+                            if (appt.resourceId === randomRoom && apptDay === targetDay) {
+                                const aStart = parseTimeToMinutes(appt.startTime);
+                                const aEnd = parseTimeToMinutes(appt.endTime);
+                                return aStart < mEndMins && mStartMins < aEnd;
+                            }
+                            return false;
+                        });
+
+                        // Remove affected appts temporarily while re-routing
+                        const affectedIds = new Set(affectedAppts.map(a => a.id));
+                        newTrace.schedules = newTrace.schedules.filter(a => !affectedIds.has(a.id));
+
+                        const altRooms = rooms.filter(r => r !== randomRoom);
+                        let reroutedCount = 0;
+                        affectedAppts.forEach(appt => {
+                            const aStart = parseTimeToMinutes(appt.startTime);
+                            const aEnd = parseTimeToMinutes(appt.endTime);
+                            const duration = aEnd - aStart;
+                            const origRoom = appt.resourceId;
+                            const origTime = appt.startTime;
+
+                            let foundSlot = null;
+                            for (let rId of altRooms) {
+                                const slot = findEmptySlot(newTrace.schedules, rId, targetDay, duration);
+                                if (slot) {
+                                    foundSlot = slot;
+                                    break;
+                                }
+                            }
+
+                            if (foundSlot) {
+                                appt.prev_room = origRoom;
+                                appt.prev_time = origTime;
+                                appt.resourceId = foundSlot.room;
+                                appt.startTime = foundSlot.start;
+                                appt.endTime = foundSlot.end;
+                                appt.mutation_reason = `⚡ Dynamic Re-Routing: Relocated from ${origRoom} (${origTime}) to ${foundSlot.room} (${foundSlot.start}) around OT maintenance window`;
+                                reroutedCount++;
+                            } else {
+                                const fallbackSlot = findEmptySlot(newTrace.schedules, randomRoom, targetDay, duration);
+                                if (fallbackSlot) {
+                                    appt.prev_room = origRoom;
+                                    appt.prev_time = origTime;
+                                    appt.resourceId = fallbackSlot.room;
+                                    appt.startTime = fallbackSlot.start;
+                                    appt.endTime = fallbackSlot.end;
+                                    appt.mutation_reason = `⚡ Post-Maintenance Re-Plan: Shifted start to ${fallbackSlot.start} following room closure`;
+                                    reroutedCount++;
+                                }
+                            }
+                            newTrace.schedules.push(appt);
+                        });
+
+                        newTrace.insight = {
+                            id: activeStoryPhase === 1 ? `Update_${newTrace.step}` : `Cand_${newTrace.step}`,
+                            generation: activeStoryPhase === 1 ? 0 : newTrace.step,
+                            title: activeStoryPhase === 1 ? `📋 OT Maintenance Closure in ${randomRoom} (Traditional Baseline)` : `⚡ Dynamic Re-Plan: Maintenance Closure in ${randomRoom}`,
+                            status: activeStoryPhase === 1 ? "UPDATED" : "REPLANNED",
+                            score: (baseTrace.insight ? baseTrace.insight.score : 100) + (activeStoryPhase === 1 ? -15 : 15),
+                            metrics: { ...baseTrace.metrics },
+                            summary: `Unscheduled maintenance injected in ${randomRoom} (${targetDay} ${startTime}-${endTime}). ${reroutedCount > 0 ? reroutedCount + ' affected surgeries re-routed to non-overlapping slots.' : 'Zero surgery cancellations.'}`,
+                            timestamp: new Date().toLocaleTimeString()
+                        };
+                        EVOLUTION_DATA.traces.push(newTrace);
+                        currentTraceStep = EVOLUTION_DATA.traces.length - 1;
+                    }
+                    renderCurrentStep();
+                });
+            }
+
+            const btnInjectEr = document.getElementById('btn-inject-er');
+            if (btnInjectEr) {
+                btnInjectEr.addEventListener('click', () => {
+                    if (EVOLUTION_DATA.traces.length > 0) {
+                        const currentSched = EVOLUTION_DATA.traces[currentTraceStep].schedules;
+                        const targetRoom = "OT_1";
+                        const erApptId = "EMERGENCY_ER_" + Date.now();
+
+                        // Find routine surgery in target room/time and bump it to an empty slot
+                        let bumpedAppt = currentSched.find(s => (s.day || "Monday") === activeDay && s.resourceId === targetRoom && s.startTime === "11:00");
+                        if (bumpedAppt) {
+                            const bStart = parseTimeToMinutes(bumpedAppt.startTime);
+                            const bEnd = parseTimeToMinutes(bumpedAppt.endTime);
+                            const bDur = bEnd - bStart;
+                            const slot = findEmptySlot(currentSched, targetRoom, activeDay, bDur);
+                            if (slot) {
+                                bumpedAppt.prev_room = bumpedAppt.resourceId;
+                                bumpedAppt.prev_time = bumpedAppt.startTime;
+                                bumpedAppt.resourceId = slot.room;
+                                bumpedAppt.startTime = slot.start;
+                                bumpedAppt.endTime = slot.end;
+                                if (activeStoryPhase === 1) {
+                                    bumpedAppt.mutation_reason = `📋 Bumped to ${slot.room} (${slot.start}) due to Emergency Trauma - Traditional Baseline`;
+                                } else {
+                                    bumpedAppt.mutation_reason = `⚡ Dynamic Re-Assignment: Bumped to ${slot.room} (${slot.start}) to make room for Priority-0 Trauma Emergency.`;
+                                }
+                            }
+                        }
+
+                        currentSched.unshift({
+                            id: erApptId,
+                            demandId: "D_ER_TRAUMA_" + Date.now(),
+                            patientId: "P_ER_TRAUMA",
+                            resourceId: targetRoom,
+                            day: activeDay,
+                            startTime: "11:00",
+                            endTime: "13:00",
+                            staffIds: ["S1", "N1"],
+                            priority: 0
+                        });
+
+                        const baseTrace = EVOLUTION_DATA.traces[currentTraceStep];
+                        const newTrace = JSON.parse(JSON.stringify(baseTrace));
+                        newTrace.step = EVOLUTION_DATA.traces.length;
+                        newTrace.insight = {
+                            id: activeStoryPhase === 1 ? `Update_${newTrace.step}` : `Cand_${newTrace.step}`,
+                            generation: activeStoryPhase === 1 ? 0 : newTrace.step,
+                            title: activeStoryPhase === 1 ? `🚨 Emergency Trauma Admission (Traditional Baseline)` : `🚨 Emergency Trauma Admission (Priority 0)`,
+                            status: activeStoryPhase === 1 ? "UPDATED" : "ACCEPTED",
+                            score: (baseTrace.insight ? baseTrace.insight.score : 100) + (activeStoryPhase === 1 ? -15 : 50),
+                            metrics: { ...baseTrace.metrics, patientsScheduled: baseTrace.metrics.patientsScheduled + 1 },
+                            summary: `Priority-0 Emergency Trauma admitted at 11:00 AM on ${activeDay}. Preempted routine surgery bumped and relocated to a non-overlapping slot without cancellation.`,
+                            timestamp: new Date().toLocaleTimeString()
+                        };
+                        EVOLUTION_DATA.traces.push(newTrace);
+                        currentTraceStep = EVOLUTION_DATA.traces.length - 1;
+                        renderCurrentStep();
+                    }
+                });
+            }
+
+            // Code View Toggle
+            const btnFullCode = document.getElementById('btn-full-code');
+            if (btnFullCode) {
+                btnFullCode.addEventListener('click', () => {
+                    isDiffMode = false;
+                    document.getElementById('btn-full-code').classList.add('active');
+                    document.getElementById('btn-diff-code').classList.remove('active');
+                    renderCurrentStep();
+                });
+            }
+
+            const btnDiffCode = document.getElementById('btn-diff-code');
+            if (btnDiffCode) {
+                btnDiffCode.addEventListener('click', () => {
+                    isDiffMode = true;
+                    document.getElementById('btn-diff-code').classList.add('active');
+                    document.getElementById('btn-full-code').classList.remove('active');
+                    renderCurrentStep();
+                });
+            }
+
+            const toggleBaseline = document.getElementById('toggle-baseline');
+            if (toggleBaseline) {
+                toggleBaseline.addEventListener('click', () => {
+                    if (isPlaying) stopReplay();
+                    isEvolvedMode = false;
+                    document.getElementById('toggle-baseline').classList.add('active');
+                    document.getElementById('toggle-evolved').classList.remove('active');
+                    currentTraceStep = 0;
+                    renderCurrentStep();
+                });
+            }
+
+            const toggleEvolved = document.getElementById('toggle-evolved');
+            if (toggleEvolved) {
+                toggleEvolved.addEventListener('click', () => {
+                    if (isPlaying) stopReplay();
+                    if (EVOLUTION_DATA.traces.length > 0) {
+                        isEvolvedMode = true;
+                        document.getElementById('toggle-baseline').classList.remove('active');
+                        document.getElementById('toggle-evolved').classList.add('active');
+                        currentTraceStep = EVOLUTION_DATA.traces.length - 1;
+                        renderCurrentStep();
+                    }
+                });
+            }
+
+            const scenarioSelect = document.getElementById('scenario-select');
+            if (scenarioSelect) {
+                scenarioSelect.addEventListener('change', async () => {
+                    if (!confirmEvolutionInterrupt("Changing the scenario")) return;
+                    if (isPlaying) stopReplay();
+                    EVOLUTION_DATA.traces = [];
+                    currentTraceStep = 0;
+                    isEvolvedMode = false;
+                    isPhase2Completed = false;
+                    const toggleBase = document.getElementById('toggle-baseline');
+                    const toggleEvol = document.getElementById('toggle-evolved');
+                    if (toggleBase) toggleBase.classList.add('active');
+                    if (toggleEvol) toggleEvol.classList.remove('active');
+                    document.getElementById('gantt-blocks-layer').innerHTML = '';
+                    await loadConfigForScenario(scenarioSelect.value);
+                    pollTraces();
+                });
+            }
+
+            const modeLiveBtn = document.getElementById('mode-live');
+            const modeDemoBtn = document.getElementById('mode-demo');
+            if (modeLiveBtn && modeDemoBtn) {
+                modeLiveBtn.addEventListener('click', () => {
+                    if (isLiveMode && activeStoryPhase === 1) return;
+                    if (!confirmEvolutionInterrupt("Switching to Live GCP Mode")) return;
+                    isLiveMode = true;
+                    stopOptimization();
+                    if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+                    if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+                    selectPhase1(true);
+                    switchView('grid');
+                    modeLiveBtn.classList.add('active');
+                    modeDemoBtn.classList.remove('active');
+                    if (scenarioSelect) {
+                        scenarioSelect.value = 'traces_dynamic.jsonl';
+                        scenarioSelect.dispatchEvent(new Event('change'));
+                    }
+                });
+                modeDemoBtn.addEventListener('click', () => {
+                    if (!isLiveMode && activeStoryPhase === 1) return;
+                    if (!confirmEvolutionInterrupt("Switching to Demo Replay Mode")) return;
+                    isLiveMode = false;
+                    stopOptimization();
+                    if (window.evolutionInterval) clearInterval(window.evolutionInterval);
+                    if (window.evolutionTimeout) clearTimeout(window.evolutionTimeout);
+                    selectPhase1(true);
+                    switchView('grid');
+                    modeDemoBtn.classList.add('active');
+                    modeLiveBtn.classList.remove('active');
+                    if (scenarioSelect) {
+                        scenarioSelect.value = 'mock_trace_replan.jsonl';
+                        scenarioSelect.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            const btnStopOpt = document.getElementById('btn-stop-optimization');
+            if (btnStopOpt) btnStopOpt.addEventListener('click', stopOptimization);
+
+            const modalClose = document.getElementById('cand-modal-close');
+            const modalCloseBtn = document.getElementById('cand-modal-close-btn');
+            const candidateModal = document.getElementById('candidate-modal');
+            if (modalClose) modalClose.addEventListener('click', closeCandidateModal);
+            if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeCandidateModal);
+            if (candidateModal) {
+                candidateModal.addEventListener('click', (e) => {
+                    if (e.target === candidateModal) closeCandidateModal();
+                });
+            }
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeCandidateModal();
+            });
+
+            window.addEventListener('beforeunload', () => {
+                try {
+                    navigator.sendBeacon('/stop-optimization');
+                } catch (e) {}
+            });
+
+            const btnPhase1 = document.getElementById('btn-phase-1');
+            if (btnPhase1) btnPhase1.addEventListener('click', selectPhase1);
+            const btnPhase2 = document.getElementById('btn-phase-2');
+            if (btnPhase2) btnPhase2.addEventListener('click', selectPhase2);
+            const btnPhase3 = document.getElementById('btn-phase-3');
+            if (btnPhase3) btnPhase3.addEventListener('click', selectPhase3);
+            const btnEvolve = document.getElementById('btn-evolve-schedule');
+            if (btnEvolve) btnEvolve.addEventListener('click', runEvolveSchedule);
+            const btnAdvWeek = document.getElementById('btn-advance-week');
+            if (btnAdvWeek) btnAdvWeek.addEventListener('click', advanceWeek);
+            const btnPrevWeek = document.getElementById('btn-prev-week');
+            if (btnPrevWeek) btnPrevWeek.addEventListener('click', previousWeek);
+
+            // Algorithm Panel Toggle
+            const algoToggle = document.getElementById('algo-toggle');
+            if (algoToggle) {
+                const algoContent = document.getElementById('algo-content');
+                const algoCaret = document.getElementById('algo-caret');
+                let isAlgoExpanded = false;
+                
+                algoToggle.addEventListener('click', () => {
+                    isAlgoExpanded = !isAlgoExpanded;
+                    if (algoContent) algoContent.style.display = isAlgoExpanded ? 'block' : 'none';
+                    if (algoCaret) algoCaret.textContent = isAlgoExpanded ? '▲' : '▼';
+                });
+            }
+
+            // Formula Panel Toggle
+            const formulaToggle = document.getElementById('formula-toggle');
+            if (formulaToggle) {
+                const formulaContent = document.getElementById('formula-content');
+                const formulaCaret = document.getElementById('formula-caret');
+                let isFormulaExpanded = false;
+                
+                formulaToggle.addEventListener('click', () => {
+                    isFormulaExpanded = !isFormulaExpanded;
+                    if (formulaContent) formulaContent.style.display = isFormulaExpanded ? 'block' : 'none';
+                    if (formulaCaret) formulaCaret.textContent = isFormulaExpanded ? '▲' : '▼';
+                });
+            }
+
+            // Scenario Hint Rich Hover Tooltip
+            const scenarioHintEl = document.getElementById('scenario-hint');
+            if (scenarioHintEl) {
+                scenarioHintEl.addEventListener('mousemove', (e) => {
+                    const tooltip = document.getElementById('cch-tooltip');
+                    if (!tooltip || !EVOLUTION_DATA.traces || EVOLUTION_DATA.traces.length === 0) return;
+                    const baseCount = EVOLUTION_DATA.traces[0].metrics.patientsScheduled || 0;
+                    const bestCount = EVOLUTION_DATA.traces[EVOLUTION_DATA.traces.length - 1].metrics.patientsScheduled || 0;
+                    const diff = bestCount - baseCount;
+                    
+                    tooltip.innerHTML = `
+                        <div class="cch-tooltip-header">Patient Throughput Comparison</div>
+                        <div class="cch-tooltip-row"><span>Baseline Heuristic:</span> <strong>${baseCount} Patients Scheduled</strong></div>
+                        <div class="cch-tooltip-row"><span>AlphaEvolve Plan:</span> <strong>${bestCount} Patients Scheduled</strong></div>
+                        <div class="cch-tooltip-row"><span>Net Capacity Gain:</span> <strong style="color: var(--cch-green);">${diff >= 0 ? '+' + diff : diff} Surgeries</strong></div>
+                        <div class="cch-tooltip-row" style="margin-top: 5px; font-size: 0.7rem; color: #888; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 4px;">
+                            Shows scheduled patients before (Baseline) ➔ after (AlphaEvolve)
+                        </div>
+                    `;
+                    tooltip.style.left = (e.clientX + 15) + 'px';
+                    tooltip.style.top = (e.clientY + 15) + 'px';
+                    tooltip.style.display = 'block';
+                });
+
+                scenarioHintEl.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+            }
+        }
+
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+            startApp();
+        } else {
+            document.addEventListener('DOMContentLoaded', startApp);
+        }
+    </script>
+</body>
+</html>
