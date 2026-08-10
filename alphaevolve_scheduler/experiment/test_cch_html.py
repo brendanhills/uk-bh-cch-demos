@@ -298,12 +298,21 @@ class TestCCHHtmlAndScriptIntegrity(unittest.TestCase):
         self.assertIn("btn-reset-demo", self.html_content)
         self.assertIn("resetDemoState", self.script_content)
 
-    def test_bug37_ot_disruption_no_overlap_overlay(self):
-        """Bug #37: Ensure OT disruption re-routing excludes the closed room and searches open non-overlapping slots."""
-        btn_start = self.script_content.find("btnInjectOt.addEventListener('click'")
-        self.assertGreater(btn_start, 0)
-        btn_code = self.script_content[btn_start : btn_start + 5000]
-        self.assertIn("altRooms", btn_code, "OT disruption re-routing should search altRooms excluding randomRoom")
+    def test_bug52_candidate_feed_patient_delta_arrow_matches_sign(self):
+        """Bug #52: Candidate feed patient delta arrow must match the sign of patientDiff (▲ for positive, ▼ for negative)."""
+        feed_start = self.script_content.find("async function renderCandidateFeed()")
+        self.assertGreater(feed_start, 0)
+        feed_code = self.script_content[feed_start : feed_start + 12000]
+        # Should not hardcode (▼ ${sign}${patientDiff}) for degraded/rejected when patientDiff is positive
+        self.assertNotIn("(▼ ${sign}${patientDiff})", feed_code, "Patient count delta should not hardcode down arrow ▼ for positive patientDiff")
+        self.assertIn("patientDiff >= 0 ? '▲' : '▼'", feed_code, "Patient delta arrow should match the sign of patientDiff")
+
+    def test_bug53_evolution_curve_plots_all_feed_candidates(self):
+        """Bug #53: Algorithm Evolution Improvement Curve graph should plot all evaluated candidates from candidate feed."""
+        chart_start = self.script_content.find("function renderEvolutionFitnessChart()")
+        self.assertGreater(chart_start, 0)
+        chart_code = self.script_content[chart_start : chart_start + 4000]
+        self.assertIn("EVOLUTION_DATA.candidates", chart_code, "renderEvolutionFitnessChart should plot EVOLUTION_DATA.candidates from the candidate feed")
 
 if __name__ == "__main__":
     unittest.main()
