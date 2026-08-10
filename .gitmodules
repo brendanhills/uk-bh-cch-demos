@@ -20,3 +20,6 @@
 [submodule "advanced_agent_patterns/adk_tutorial"]
 	path = advanced_agent_patterns/adk_tutorial
 	url = https://github.com/brendanhills/adk_tutorial.git
+[submodule "kmart_demo"]
+	path = kmart_demo
+	url = git@github.com:grandintegrator/kmart-alphaevolve-demo.git
