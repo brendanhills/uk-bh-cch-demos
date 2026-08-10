@@ -1,0 +1,144 @@
+{
+  "$schema": "../data/config.schema.json",
+  "heuristics": {
+    "schedulingHorizon": {
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "startTime": "08:00",
+      "endTime": "20:00"
+    },
+    "fatigueManagement": {
+      "minRestHoursBetweenShifts": 10
+    },
+    "budgetControl": {
+      "standardRatePerHour": 100,
+      "overtimeMultiplier": 1.5
+    },
+    "objectiveWeights": {
+      "throughput": 100,
+      "idleTimePenalty": 1,
+      "overtimePenalty": 2
+    }
+  },
+  "unavailability": [],
+  "disruptions": [
+    {
+      "id": "DIS_N1_WED",
+      "type": "UNPLANNED_SICK_LEAVE",
+      "staffId": "N1",
+      "day": "Wednesday",
+      "noticeTime": "07:30",
+      "startTime": "08:00",
+      "endTime": "20:00",
+      "reason": "Unplanned Morning Call-in"
+    }
+  ],
+  "resources": [
+    {
+      "id": "OT_1",
+      "name": "Operating Theatre 1 (Cardiac Suite)",
+      "type": "Operating Theatre"
+    },
+    {
+      "id": "OT_2",
+      "name": "Operating Theatre 2 (Neuro Suite)",
+      "type": "Operating Theatre"
+    }
+  ],
+  "staff": [
+    {
+      "id": "S1",
+      "name": "Dr. A. Chen",
+      "role": "Surgeon",
+      "specialty": "Pediatric Neuro",
+      "skills": ["Surgeon", "Pediatric Neuro"]
+    },
+    {
+      "id": "A1",
+      "name": "Dr. B. Patel",
+      "role": "Anaesthetist",
+      "specialty": "Pediatric Neuro",
+      "skills": ["Anaesthetist", "Pediatric Neuro"]
+    },
+    {
+      "id": "N1",
+      "name": "Nurse H. Miller",
+      "role": "Nurse",
+      "specialty": "Pediatric Neuro",
+      "skills": ["Nurse", "Pediatric Neuro"]
+    },
+    {
+      "id": "S2",
+      "name": "Dr. C. Smith",
+      "role": "Surgeon",
+      "specialty": "Cardiac",
+      "skills": ["Surgeon", "Cardiac"]
+    },
+    {
+      "id": "A2",
+      "name": "Dr. D. Williams",
+      "role": "Anaesthetist",
+      "specialty": "Cardiac",
+      "skills": ["Anaesthetist", "Cardiac"]
+    },
+    {
+      "id": "N2",
+      "name": "Nurse I. Davis",
+      "role": "Nurse",
+      "specialty": "Cardiac",
+      "skills": ["Nurse", "Cardiac"]
+    },
+    {
+      "id": "N3",
+      "name": "Nurse J. Wilson (Backup)",
+      "role": "Nurse",
+      "specialty": "Pediatric Neuro",
+      "skills": ["Nurse", "Pediatric Neuro", "Cardiac"]
+    }
+  ],
+  "patients": [
+    { "id": "P1", "name": "Patient 1" },
+    { "id": "P2", "name": "Patient 2" },
+    { "id": "P3", "name": "Patient 3" }
+  ],
+  "demands": [
+    {
+      "id": "D1",
+      "patientId": "P1",
+      "surgeryType": "Pediatric Brain Tumor Resection",
+      "durationMinutes": 180,
+      "requiredRoles": ["Surgeon", "Anaesthetist", "Nurse"],
+      "requiredTeam": [
+        { "role": "Surgeon", "specialty": "Pediatric Neuro" },
+        { "role": "Anaesthetist", "specialty": "Pediatric Neuro" },
+        { "role": "Nurse", "specialty": "Pediatric Neuro" }
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D2",
+      "patientId": "P2",
+      "surgeryType": "Open Heart Valve Repair",
+      "durationMinutes": 210,
+      "requiredRoles": ["Surgeon", "Anaesthetist", "Nurse"],
+      "requiredTeam": [
+        { "role": "Surgeon", "specialty": "Cardiac" },
+        { "role": "Anaesthetist", "specialty": "Cardiac" },
+        { "role": "Nurse", "specialty": "Cardiac" }
+      ],
+      "priority": 0
+    },
+    {
+      "id": "D3",
+      "patientId": "P3",
+      "surgeryType": "Emergency Trauma Surgery",
+      "durationMinutes": 120,
+      "requiredRoles": ["Surgeon", "Anaesthetist", "Nurse"],
+      "requiredTeam": [
+        { "role": "Surgeon", "specialty": "Pediatric Neuro" },
+        { "role": "Anaesthetist", "specialty": "Pediatric Neuro" },
+        { "role": "Nurse", "specialty": "Pediatric Neuro" }
+      ],
+      "priority": 1
+    }
+  ]
+}

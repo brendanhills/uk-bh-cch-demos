@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AlphaEvolve Co-Scheduling Scenario Config",
+  "type": "object",
+  "properties": {
+    "heuristics": {
+      "type": "object",
+      "properties": {
+        "schedulingHorizon": {
+          "type": "object",
+          "properties": {
+            "startTime": { "type": "string", "example": "08:00" },
+            "endTime": { "type": "string", "example": "16:00" }
+          },
+          "required": ["startTime", "endTime"]
+        },
+        "fatigueManagement": {
+          "type": "object",
+          "properties": {
+            "minRestHoursBetweenShifts": { "type": "integer" }
+          },
+          "required": ["minRestHoursBetweenShifts"]
+        },
+        "budgetControl": {
+          "type": "object",
+          "properties": {
+            "standardRatePerHour": { "type": "number" },
+            "overtimeMultiplier": { "type": "number" }
+          },
+          "required": ["standardRatePerHour", "overtimeMultiplier"]
+        },
+        "objectiveWeights": {
+          "type": "object",
+          "properties": {
+            "throughput": { "type": "number" },
+            "idleTimePenalty": { "type": "number" },
+            "overtimePenalty": { "type": "number" }
+          },
+          "required": ["throughput", "idleTimePenalty", "overtimePenalty"]
+        }
+      },
+      "required": ["schedulingHorizon", "fatigueManagement", "budgetControl", "objectiveWeights"]
+    },
+    "unavailability": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resourceId": { "type": "string" },
+          "day": { "type": "string" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "disruptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "staffId": { "type": "string" },
+          "day": { "type": "string" },
+          "noticeTime": { "type": "string" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "required": ["id", "type"]
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      }
+    },
+    "staff": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "specialty": { "type": "string" },
+          "skills": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["id", "name", "role", "skills"]
+      }
+    },
+    "patients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      }
+    },
+    "demands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "patientId": { "type": "string" },
+          "surgeryType": { "type": "string" },
+          "durationMinutes": { "type": "integer" },
+          "requiredRoles": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "requiredTeam": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "role": { "type": "string" },
+                "specialty": { "type": "string" }
+              },
+              "required": ["role"]
+            }
+          },
+          "priority": { "type": "integer" }
+        },
+        "required": ["id", "patientId", "durationMinutes"]
+      }
+    }
+  },
+  "required": ["heuristics", "resources", "staff", "patients", "demands"]
+}

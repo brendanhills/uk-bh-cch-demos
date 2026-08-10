@@ -1,0 +1,6371 @@
+{
+ "source": "alphaevolve-real-run",
+ "metric": "neg_total_cost",
+ "model": "gemini-3.5-flash",
+ "baseline": {
+  "score": -17545.595086209407,
+  "primary_cost": 17007.19,
+  "routes": [
+   {
+    "dc": "DC-SOUTH",
+    "stores": [
+     "S04",
+     "S01",
+     "S08"
+    ]
+   },
+   {
+    "dc": "DC-SOUTH",
+    "stores": [
+     "S02",
+     "S11",
+     "S05",
+     "S10"
+    ]
+   },
+   {
+    "dc": "DC-SOUTH",
+    "stores": [
+     "S07",
+     "S06",
+     "S09"
+    ]
+   },
+   {
+    "dc": "DC-SOUTH",
+    "stores": [
+     "S03"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S16",
+     "S17"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S14",
+     "S20"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S24",
+     "S22"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S19",
+     "S21"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S12",
+     "S15"
+    ]
+   },
+   {
+    "dc": "DC-CENTRAL",
+    "stores": [
+     "S13"
+    ]
+   },
+   {
+    "dc": "DC-NORTH",
+    "stores": [
+     "S26",
+     "S27"
+    ]
+   },
+   {
+    "dc": "DC-NORTH",
+    "stores": [
+     "S23",
+     "S28"
+    ]
+   },
+   {
+    "dc": "DC-NORTH",
+    "stores": [
+     "S18",
+     "S25",
+     "S30"
+    ]
+   },
+   {
+    "dc": "DC-NORTH",
+    "stores": [
+     "S29"
+    ]
+   }
+  ],
+  "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    \"\"\"Baseline heuristic: assign each store to its nearest DC, then build\n    routes per DC with greedy nearest-neighbour, opening a new truck whenever\n    the next store would exceed capacity.\n    \"\"\"\n    routes = []\n    for dc in dcs:\n        mine = [s for s in stores\n                if min(dcs, key=lambda d: dist(s, d))[\"id\"] == dc[\"id\"]]\n        unvisited = list(mine)\n        while unvisited:\n            route = {\"dc\": dc[\"id\"], \"stores\": []}\n            load = 0\n            pos = dc\n            while unvisited:\n                nxt = min(unvisited, key=lambda s: dist(pos, s))\n                if load + nxt[\"demand\"] > capacity:\n                    break\n                route[\"stores\"].append(nxt[\"id\"])\n                load += nxt[\"demand\"]\n                pos = nxt\n                unvisited.remove(nxt)\n            routes.append(route)\n    return routes\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+ },
+ "candidates": [
+  {
+   "idx": 1,
+   "score": -18726.568263293946,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S07",
+      "S05",
+      "S10"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S11",
+      "S06",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S03",
+      "S17",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S24",
+      "S22"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18",
+      "S26",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 2,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": true,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    }
+   ],
+   "primary_cost": 15472.71,
+   "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    \"\"\"An optimized Multi-Depot Clarke-Wright Savings algorithm combined with\n    2-opt local search for intra-route optimization.\n    \"\"\"\n    # Create fast-lookup maps\n    store_map = {s[\"id\"]: s for s in stores}\n    dc_map = {d[\"id\"]: d for d in dcs}\n\n    # 1. Assign each store to its nearest DC\n    dc_assignments = {dc[\"id\"]: [] for dc in dcs}\n    for s in stores:\n        best_dc = min(dcs, key=lambda d: dist(s, d))\n        dc_assignments[best_dc[\"id\"]].append(s)\n\n    all_routes = []\n\n    # 2. Apply Clarke-Wright Savings for each DC separately\n    for dc_id, assigned_stores in dc_assignments.items():\n        if not assigned_stores:\n            continue\n        dc = dc_map[dc_id]\n        \n        # Initialize each store to its own single-trip route: DC -> s -> DC\n        routes = [[s[\"id\"]] for s in assigned_stores]\n        demands = {s[\"id\"]: s[\"demand\"] for s in assigned_stores}\n        \n        # Calculate savings for all pairs of stores assigned to this DC\n        savings = []\n        n = len(assigned_stores)\n        for i in range(n):\n            for j in range(i + 1, n):\n                s1 = assigned_stores[i]\n                s2 = assigned_stores[j]\n                val = dist(s1, dc) + dist(dc, s2) - dist(s1, s2)\n                savings.append((val, s1[\"id\"], s2[\"id\"]))\n        \n        # Sort savings in descending order\n        savings.sort(key=lambda x: x[0], reverse=True)\n\n        # Helper to find which route contains a store and its index\n        def find_route(store_id):\n            for r_idx, r in enumerate(routes):\n                if store_id in r:\n                    return r_idx, r\n            return None, None\n\n        # Merge routes based on savings\n        for val, s1_id, s2_id in savings:\n            r1_idx, r1 = find_route(s1_id)\n            r2_idx, r2 = find_route(s2_id)\n            \n            if r1 is None or r2 is None or r1_idx == r2_idx:\n                continue\n            \n            # Check capacity constraint\n            r1_demand = sum(demands[sid] for sid in r1)\n            r2_demand = sum(demands[sid] for sid in r2)\n            if r1_demand + r2_demand > capacity:\n                continue\n            \n            # Check if they can be merged (must be endpoints)\n            if r1[-1] == s1_id and r2[0] == s2_id:\n                new_route = r1 + r2\n            elif r1[0] == s1_id and r2[-1] == s2_id:\n                new_route = r2 + r1\n            elif r1[-1] == s1_id and r2[-1] == s2_id:\n                new_route = r1 + r2[::-1]\n            elif r1[0] == s1_id and r2[0] == s2_id:\n                new_route = r1[::-1] + r2\n            else:\n                continue\n            \n            # Perform merge\n            routes.remove(r1)\n            routes.remove(r2)\n            routes.append(new_route)\n\n        # 3. Apply 2-opt local search to improve each route individually\n        for r in routes:\n            improved = True\n            while improved:\n                improved = False\n                n_r = len(r)\n                if n_r < 3:\n                    break\n                best_dist = 0.0\n                # Calculate current route distance: DC -> r[0] -> ... -> r[-1] -> DC\n                best_dist += dist(dc, store_map[r[0]])\n                for idx in range(n_r - 1):\n                    best_dist += dist(store_map[r[idx]], store_map[r[idx+1]])\n                best_dist += dist(store_map[r[-1]], dc)\n\n                for i in range(n_r - 1):\n                    for j in range(i + 1, n_r):\n                        # Construct 2-opt swap candidate\n                        new_r = r[:i] + r[i:j+1][::-1] + r[j+1:]\n                        # Calculate distance of candidate\n                        d_val = dist(dc, store_map[new_r[0]])\n                        for idx in range(n_r - 1):\n                            d_val += dist(store_map[new_r[idx]], store_map[new_r[idx+1]])\n                        d_val += dist(store_map[new_r[-1]], dc)\n\n                        if d_val < best_dist - 1e-5:\n                            r = new_r\n                            best_dist = d_val\n                            improved = True\n                            break\n                    if improved:\n                        break\n            \n            all_routes.append({\"dc\": dc_id, \"stores\": r})\n\n    return all_routes\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+  },
+  {
+   "idx": 3,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 4,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 5,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 6,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 7,
+   "score": -15316.375346499728,
+   "failed": false,
+   "new_best": true,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "primary_cost": 15472.71,
+   "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    # Map for quick lookup\n    store_map = {s[\"id\"]: s for s in stores}\n    dc_map = {d[\"id\"]: d for d in dcs}\n    \n    # Precompute distances to optimize execution speed\n    dist_memo = {}\n    def get_dist(id1, id2):\n        key = (id1, id2) if id1 < id2 else (id2, id1)\n        if key not in dist_memo:\n            loc1 = store_map[id1] if id1 in store_map else dc_map[id1]\n            loc2 = store_map[id2] if id2 in store_map else dc_map[id2]\n            dist_memo[key] = dist(loc1, loc2)\n        return dist_memo[key]\n\n    def route_cost_val(dc_id, store_ids):\n        if not store_ids:\n            return 0.0\n        d_cost = get_dist(dc_id, store_ids[0])\n        for i in range(len(store_ids) - 1):\n            d_cost += get_dist(store_ids[i], store_ids[i+1])\n        d_cost += get_dist(store_ids[-1], dc_id)\n        return d_cost * 2.5 + 300.0\n\n    def optimize_route_2opt(dc_id, store_ids):\n        if len(store_ids) < 3:\n            return store_ids, route_cost_val(dc_id, store_ids)\n        \n        best_stores = list(store_ids)\n        best_cost = route_cost_val(dc_id, best_stores)\n        improved = True\n        while improved:\n            improved = False\n            for i in range(len(best_stores) - 1):\n                for j in range(i + 1, len(best_stores)):\n                    new_stores = best_stores[:i] + best_stores[i:j+1][::-1] + best_stores[j+1:]\n                    new_cost = route_cost_val(dc_id, new_stores)\n                    if new_cost < best_cost - 1e-5:\n                        best_stores = new_stores\n                        best_cost = new_cost\n                        improved = True\n                        break\n                if improved:\n                    break\n        return best_stores, best_cost\n\n    # Run Clarke-Wright and routing independently for each DC,\n    # then resolve the global allocation.\n    best_overall_routes = []\n    best_overall_cost = float('inf')\n\n    # Multi-depot assignment strategies:\n    # 1. Assignment to absolute nearest DC.\n    # 2. Assignment based on DC-savings/affinity.\n    # We can evaluate both and pick the best initial routes.\n    strategies = [\"nearest\", \"balanced_affinity\"]\n    \n    for strategy in strategies:\n        # Determine initial DC assignment\n        dc_assignments = {d[\"id\"]: [] for d in dcs}\n        if strategy == \"nearest\":\n            for s in stores:\n                best_dc = min(dcs, key=lambda d: dist(s, d))\n                dc_assignments[best_dc[\"id\"]].append(s[\"id\"])\n        else:\n            for s in stores:\n                # Rank DCs based on proximity and assign with secondary bias\n                sorted_dcs = sorted(dcs, key=lambda d: dist(s, d))\n                dc_assignments[sorted_dcs[0][\"id\"]].append(s[\"id\"])\n\n        current_all_routes = []\n        for dc_id, assigned_stores in dc_assignments.items():\n            if not assigned_stores:\n                continue\n            \n            # Start each assigned store as its own route\n            dc_routes = []\n            for s_id in assigned_stores:\n                dc_routes.append({\n                    \"dc\": dc_id,\n                    \"stores\": [s_id],\n                    \"load\": store_map[s_id][\"demand\"]\n                })\n            \n            # Clarke-Wright Merging for this DC\n            improved_merge = True\n            while improved_merge:\n                improved_merge = False\n                best_saving = 0\n                best_merge = None\n                \n                n_r = len(dc_routes)\n                for i in range(n_r):\n                    for j in range(i + 1, n_r):\n                        r1, r2 = dc_routes[i], dc_routes[j]\n                        if r1[\"load\"] + r2[\"load\"] > capacity:\n                            continue\n                        \n                        c1 = route_cost_val(dc_id, r1[\"stores\"]) + route_cost_val(dc_id, r2[\"stores\"])\n                        options = [\n                            r1[\"stores\"] + r2[\"stores\"],\n                            r1[\"stores\"] + r2[\"stores\"][::-1],\n                            r1[\"stores\"][::-1] + r2[\"stores\"],\n                            r1[\"stores\"][::-1] + r2[\"stores\"][::-1]\n                        ]\n                        for opt in options:\n                            c2 = route_cost_val(dc_id, opt)\n                            saving = c1 - c2\n                            if saving > best_saving:\n                                best_saving = saving\n                                best_merge = (i, j, opt)\n                                \n                if best_merge is not None:\n                    i, j, merged_stores = best_merge\n                    dc_routes[i][\"stores\"] = merged_stores\n                    dc_routes[i][\"load\"] += dc_routes[j][\"load\"]\n                    dc_routes.pop(j)\n                    improved_merge = True\n            \n            current_all_routes.extend(dc_routes)\n\n        # Apply 2-opt to all routes in this strategy's set\n        for r in current_all_routes:\n            r[\"stores\"], _ = optimize_route_2opt(r[\"dc\"], r[\"stores\"])\n\n        # Inter-route improvement phase: relocations and swaps\n        improved_inter = True\n        while improved_inter:\n            improved_inter = False\n            # Try shifting a single store from one route to another (either same DC or different DC)\n            for i in range(len(current_all_routes)):\n                for j in range(len(current_all_routes)):\n                    if i == j:\n                        continue\n                    r_src, r_dest = current_all_routes[i], current_all_routes[j]\n                    \n                    for store_idx, s_id in enumerate(r_src[\"stores\"]):\n                        demand = store_map[s_id][\"demand\"]\n                        if r_dest[\"load\"] + demand <= capacity:\n                            # Evaluate cost change if we move s_id from r_src to r_dest\n                            old_src_cost = route_cost_val(r_src[\"dc\"], r_src[\"stores\"])\n                            old_dest_cost = route_cost_val(r_dest[\"dc\"], r_dest[\"stores\"])\n                            \n                            new_src_stores = r_src[\"stores\"][:store_idx] + r_src[\"stores\"][store_idx+1:]\n                            # Test inserting into all positions of r_dest\n                            best_insert_cost = float('inf')\n                            best_insert_stores = []\n                            for ins_idx in range(len(r_dest[\"stores\"]) + 1):\n                                temp_dest = r_dest[\"stores\"][:ins_idx] + [s_id] + r_dest[\"stores\"][ins_idx:]\n                                temp_cost = route_cost_val(r_dest[\"dc\"], temp_dest)\n                                if temp_cost < best_insert_cost:\n                                    best_insert_cost = temp_cost\n                                    best_insert_stores = temp_dest\n                                    \n                            new_src_cost = route_cost_val(r_src[\"dc\"], new_src_stores)\n                            \n                            saving = (old_src_cost + old_dest_cost) - (new_src_cost + best_insert_cost)\n                            if saving > 1e-5:\n                                r_src[\"stores\"] = new_src_stores\n                                r_src[\"load\"] -= demand\n                                r_dest[\"stores\"] = best_insert_stores\n                                r_dest[\"load\"] += demand\n                                improved_inter = True\n                                break\n                    if improved_inter:\n                        break\n                if improved_inter:\n                    break\n\n            # Remove empty routes\n            current_all_routes = [r for r in current_all_routes if r[\"stores\"]]\n\n        # Final evaluation of the strategy\n        total_cost = sum(route_cost_val(r[\"dc\"], r[\"stores\"]) for r in current_all_routes)\n        if total_cost < best_overall_cost:\n            best_overall_cost = total_cost\n            best_overall_routes = current_all_routes\n\n    # Clean up empty routes & 2-opt optimize the best chosen solution\n    final_routes = []\n    for r in best_overall_routes:\n        if r[\"stores\"]:\n            opt_stores, _ = optimize_route_2opt(r[\"dc\"], r[\"stores\"])\n            final_routes.append({\n                \"dc\": r[\"dc\"],\n                \"stores\": opt_stores\n            })\n\n    return final_routes\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+  },
+  {
+   "idx": 8,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 9,
+   "score": -15787.27004932135,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S08",
+      "S01"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 10,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 11,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 12,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 13,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 14,
+   "score": -15329.079208196568,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 15,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 16,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 17,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 18,
+   "score": -15316.375346499728,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 19,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 20,
+   "score": -15329.079208196568,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 21,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 22,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 23,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 24,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 25,
+   "score": -15711.191596502931,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 26,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 27,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 28,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 29,
+   "score": -15393.988517252103,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 30,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 31,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 32,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 33,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 34,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 35,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 36,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 37,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 38,
+   "score": -15329.079208196565,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 39,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 40,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 41,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 42,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 43,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S09"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S13",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 44,
+   "score": -15280.101181502097,
+   "failed": false,
+   "new_best": true,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "primary_cost": 15019.74,
+   "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    \"\"\"An optimized Multi-Depot Clarke-Wright Savings heuristic with route-to-DC \n    re-assignment and 2-opt refinement.\n    \"\"\"\n    fixed_cost = 300.0\n    cost_per_km = 2.5\n\n    store_by_id = {s[\"id\"]: s for s in stores}\n    dc_by_id = {d[\"id\"]: d for d in dcs}\n\n    def route_distance(dc_id, store_ids):\n        if not store_ids:\n            return 0.0\n        dc = dc_by_id[dc_id]\n        d = dist(dc, store_by_id[store_ids[0]])\n        for i in range(len(store_ids) - 1):\n            d += dist(store_by_id[store_ids[i]], store_by_id[store_ids[i+1]])\n        d += dist(store_by_id[store_ids[-1]], dc)\n        return d\n\n    # Step 1: Initialize each store in its own route.\n    # To find the best DC for each single-store route, we evaluate the cost of\n    # serving it from each DC.\n    routes = []\n    for s in stores:\n        best_dc = min(dcs, key=lambda d: dist(s, d))\n        routes.append({\n            \"dc\": best_dc[\"id\"],\n            \"stores\": [s[\"id\"]],\n            \"demand\": s[\"demand\"]\n        })\n\n    # Step 2: Generalized Multi-Depot Clarke-Wright Savings\n    # We evaluate merges between any two routes. If they are merged, we dynamically\n    # evaluate all 4 possible merge orientations and the best DC for the merged route\n    # to maximize the overall savings.\n    while True:\n        best_saving = -1.0\n        best_merge = None  # (idx_i, idx_j, best_dc_id_for_merged_route, best_sequence)\n\n        for i in range(len(routes)):\n            for j in range(i + 1, len(routes)):\n                r1 = routes[i]\n                r2 = routes[j]\n                if r1[\"demand\"] + r2[\"demand\"] > capacity:\n                    continue\n\n                # Calculate the cost of the separate routes under their current DCs\n                cost_r1 = route_distance(r1[\"dc\"], r1[\"stores\"]) * cost_per_km + fixed_cost\n                cost_r2 = route_distance(r2[\"dc\"], r2[\"stores\"]) * cost_per_km + fixed_cost\n                separate_cost = cost_r1 + cost_r2\n\n                # Test all 4 merge orientations\n                orientations = [\n                    r1[\"stores\"] + r2[\"stores\"],\n                    r1[\"stores\"] + r2[\"stores\"][::-1],\n                    r1[\"stores\"][::-1] + r2[\"stores\"],\n                    r1[\"stores\"][::-1] + r2[\"stores\"][::-1]\n                ]\n\n                for seq in orientations:\n                    # Find the best DC for this combined sequence\n                    best_combined_dc_id = r1[\"dc\"]\n                    best_combined_dist = route_distance(best_combined_dc_id, seq)\n                    for dc in dcs:\n                        d_val = route_distance(dc[\"id\"], seq)\n                        if d_val < best_combined_dist:\n                            best_combined_dist = d_val\n                            best_combined_dc_id = dc[\"id\"]\n\n                    merged_cost = (best_combined_dist * cost_per_km) + fixed_cost\n                    saving = separate_cost - merged_cost\n\n                    if saving > best_saving:\n                        best_saving = saving\n                        best_merge = (i, j, best_combined_dc_id, seq)\n\n        if best_saving > 0.01 and best_merge is not None:\n            i, j, target_dc, best_seq = best_merge\n            routes[i][\"stores\"] = best_seq\n            routes[i][\"demand\"] += routes[j][\"demand\"]\n            routes[i][\"dc\"] = target_dc\n            routes.pop(j)\n        else:\n            break\n\n    # Step 3: Re-assign routes to their overall cheapest DC (balancing transport cost)\n    for r in routes:\n        best_dc_id = r[\"dc\"]\n        best_cost = route_distance(best_dc_id, r[\"stores\"])\n        for dc in dcs:\n            c = route_distance(dc[\"id\"], r[\"stores\"])\n            if c < best_cost:\n                best_cost = c\n                best_dc_id = dc[\"id\"]\n        r[\"dc\"] = best_dc_id\n\n    # Step 4: Refine each route using 2-opt to minimize travel distance\n    def optimize_route(dc_id, store_ids):\n        current_stores = list(store_ids)\n        if len(current_stores) < 3:\n            return current_stores\n        improved = True\n        while improved:\n            improved = False\n            best_dist = route_distance(dc_id, current_stores)\n            for i in range(len(current_stores) - 1):\n                for j in range(i + 1, len(current_stores)):\n                    new_stores = current_stores[:i] + current_stores[i:j+1][::-1] + current_stores[j+1:]\n                    new_dist = route_distance(dc_id, new_stores)\n                    if new_dist < best_dist - 1e-6:\n                        current_stores = new_stores\n                        best_dist = new_dist\n                        improved = True\n                        break\n                if improved:\n                    break\n        return current_stores\n\n    for r in routes:\n        r[\"stores\"] = optimize_route(r[\"dc\"], r[\"stores\"])\n\n    # Step 5: Inter-Route Local Search (Shift & Exchange)\n    # We attempt to move stores between routes or swap stores if they lower the total global cost.\n    improved = True\n    while improved:\n        improved = False\n        \n        # Calculate overall system cost\n        def total_system_cost(curr_routes):\n            cost = 0.0\n            for r in curr_routes:\n                cost += route_distance(r[\"dc\"], r[\"stores\"]) * cost_per_km + fixed_cost\n            return cost\n\n        current_cost = total_system_cost(routes)\n\n        # Try Shift Moves (relocating a store to another route)\n        for i in range(len(routes)):\n            for j in range(len(routes)):\n                if i == j:\n                    continue\n                if not routes[i][\"stores\"]:\n                    continue\n                \n                # For each store in route i, try inserting it at each position in route j\n                for s_idx, store_id in enumerate(routes[i][\"stores\"]):\n                    store_demand = store_by_id[store_id][\"demand\"]\n                    if routes[j][\"demand\"] + store_demand > capacity:\n                        continue\n\n                    # Simulate shift\n                    new_r1_stores = routes[i][\"stores\"][:s_idx] + routes[i][\"stores\"][s_idx+1:]\n                    for insert_pos in range(len(routes[j][\"stores\"]) + 1):\n                        new_r2_stores = routes[j][\"stores\"][:insert_pos] + [store_id] + routes[j][\"stores\"][insert_pos:]\n                        \n                        # Find best DCs for updated routes\n                        best_dc1 = min(dcs, key=lambda d: route_distance(d[\"id\"], new_r1_stores)) if new_r1_stores else dcs[0]\n                        best_dc2 = min(dcs, key=lambda d: route_distance(d[\"id\"], new_r2_stores))\n\n                        # Evaluate cost\n                        cost_r1 = (route_distance(best_dc1[\"id\"], new_r1_stores) * cost_per_km + fixed_cost) if new_r1_stores else 0.0\n                        cost_r2 = route_distance(best_dc2[\"id\"], new_r2_stores) * cost_per_km + fixed_cost\n                        \n                        old_cost_r1 = route_distance(routes[i][\"dc\"], routes[i][\"stores\"]) * cost_per_km + fixed_cost\n                        old_cost_r2 = route_distance(routes[j][\"dc\"], routes[j][\"stores\"]) * cost_per_km + fixed_cost\n\n                        if (cost_r1 + cost_r2) < (old_cost_r1 + old_cost_r2) - 0.01:\n                            # Perform move\n                            routes[i][\"stores\"] = optimize_route(best_dc1[\"id\"], new_r1_stores) if new_r1_stores else []\n                            routes[i][\"demand\"] -= store_demand\n                            if new_r1_stores:\n                                routes[i][\"dc\"] = best_dc1[\"id\"]\n                            \n                            routes[j][\"stores\"] = optimize_route(best_dc2[\"id\"], new_r2_stores)\n                            routes[j][\"demand\"] += store_demand\n                            routes[j][\"dc\"] = best_dc2[\"id\"]\n                            \n                            # Clean up empty routes\n                            routes = [r for r in routes if r[\"stores\"]]\n                            improved = True\n                            break\n                    if improved:\n                        break\n                if improved:\n                    break\n            if improved:\n                break\n\n        if improved:\n            continue\n\n        # Try Swap/Exchange Moves (swapping one store from route i with one from route j)\n        for i in range(len(routes)):\n            for j in range(i + 1, len(routes)):\n                for idx_i, s_i in enumerate(routes[i][\"stores\"]):\n                    dem_i = store_by_id[s_i][\"demand\"]\n                    for idx_j, s_j in enumerate(routes[j][\"stores\"]):\n                        dem_j = store_by_id[s_j][\"demand\"]\n                        \n                        # Capacity feasibility checks\n                        if routes[i][\"demand\"] - dem_i + dem_j > capacity:\n                            continue\n                        if routes[j][\"demand\"] - dem_j + dem_i > capacity:\n                            continue\n\n                        # Simulate swap\n                        new_r1_stores = routes[i][\"stores\"][:idx_i] + [s_j] + routes[i][\"stores\"][idx_i+1:]\n                        new_r2_stores = routes[j][\"stores\"][:idx_j] + [s_i] + routes[j][\"stores\"][idx_j+1:]\n\n                        best_dc1 = min(dcs, key=lambda d: route_distance(d[\"id\"], new_r1_stores))\n                        best_dc2 = min(dcs, key=lambda d: route_distance(d[\"id\"], new_r2_stores))\n\n                        cost_r1 = route_distance(best_dc1[\"id\"], new_r1_stores) * cost_per_km + fixed_cost\n                        cost_r2 = route_distance(best_dc2[\"id\"], new_r2_stores) * cost_per_km + fixed_cost\n\n                        old_cost_r1 = route_distance(routes[i][\"dc\"], routes[i][\"stores\"]) * cost_per_km + fixed_cost\n                        old_cost_r2 = route_distance(routes[j][\"dc\"], routes[j][\"stores\"]) * cost_per_km + fixed_cost\n\n                        if (cost_r1 + cost_r2) < (old_cost_r1 + old_cost_r2) - 0.01:\n                            routes[i][\"stores\"] = optimize_route(best_dc1[\"id\"], new_r1_stores)\n                            routes[i][\"demand\"] = routes[i][\"demand\"] - dem_i + dem_j\n                            routes[i][\"dc\"] = best_dc1[\"id\"]\n\n                            routes[j][\"stores\"] = optimize_route(best_dc2[\"id\"], new_r2_stores)\n                            routes[j][\"demand\"] = routes[j][\"demand\"] - dem_j + dem_i\n                            routes[j][\"dc\"] = best_dc2[\"id\"]\n\n                            improved = True\n                            break\n                    if improved:\n                        break\n                if improved:\n                    break\n            if improved:\n                break\n\n    # Format the output to fit the required contract\n    return [{\"dc\": r[\"dc\"], \"stores\": r[\"stores\"]} for r in routes]\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+  },
+  {
+   "idx": 45,
+   "score": -17175.799924745796,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S21",
+      "S26"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 46,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S09",
+      "S01",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26",
+      "S25",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 47,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S26"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 48,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 49,
+   "score": -15316.375346499728,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 50,
+   "score": -16459.523696801512,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S20",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16",
+      "S14"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 51,
+   "score": -15329.079208196568,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 52,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S08",
+      "S09",
+      "S01"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S11",
+      "S10",
+      "S05"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 53,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S19",
+      "S21"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18",
+      "S25",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28",
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 54,
+   "score": -15280.101181502097,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S22"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S20",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 55,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 56,
+   "score": -16459.523696801512,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S25",
+      "S18",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16",
+      "S12"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 57,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 58,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 59,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S29",
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26",
+      "S27"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 60,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S30",
+      "S29"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 61,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 62,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S03",
+      "S13",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 63,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S27",
+      "S18"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 64,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S01",
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S19",
+      "S21"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 65,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S01",
+      "S04",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S19",
+      "S21"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 66,
+   "score": -15263.373612461432,
+   "failed": false,
+   "new_best": true,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S09",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "primary_cost": 15019.74,
+   "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    \"\"\"An advanced Multi-Depot Clarke-Wright Savings algorithm with dynamic DC \n    assignment, global savings merging, and 2-opt local search optimization.\n    \"\"\"\n    store_map = {s[\"id\"]: s for s in stores}\n    dc_map = {d[\"id\"]: d for d in dcs}\n\n    # Initialize each store as its own route\n    routes = [[s[\"id\"]] for s in stores]\n    demands = {s[\"id\"]: s[\"demand\"] for s in stores}\n\n    def get_best_dc_for_route(route_stores):\n        # Finds the DC that minimizes the connection cost for the given ordered list of stores\n        first_store = store_map[route_stores[0]]\n        last_store = store_map[route_stores[-1]]\n        best_dc = None\n        min_connection_cost = float('inf')\n        for dc in dcs:\n            cost = dist(dc, first_store) + dist(last_store, dc)\n            if cost < min_connection_cost:\n                min_connection_cost = cost\n                best_dc = dc\n        return best_dc, min_connection_cost\n\n    def get_route_cost(route_stores):\n        if not route_stores:\n            return 0.0\n        # Internal route distance\n        internal_dist = 0.0\n        for i in range(len(route_stores) - 1):\n            internal_dist += dist(store_map[route_stores[i]], store_map[route_stores[i+1]])\n        # Best DC connection cost\n        _, connection_cost = get_best_dc_for_route(route_stores)\n        return internal_dist + connection_cost\n\n    # Precompute initial route costs\n    route_costs = {tuple(r): get_route_cost(r) for r in routes}\n\n    # Calculate global savings for merging any two routes at their endpoints\n    # We find all pairs of stores (s1, s2) and compute savings if they are joined\n    savings = []\n    n_stores = len(stores)\n    for i in range(n_stores):\n        for j in range(i + 1, n_stores):\n            s1_id = stores[i][\"id\"]\n            s2_id = stores[j][\"id\"]\n            \n            # Distance from s1 to s2\n            d_s1_s2 = dist(store_map[s1_id], store_map[s2_id])\n            \n            # Find best individual DC for s1 and s2\n            _, dc_cost1 = get_best_dc_for_route([s1_id])\n            _, dc_cost2 = get_best_dc_for_route([s2_id])\n            \n            # Standard Clarke-Wright savings formula adjusted for multi-depot\n            val = dc_cost1 + dc_cost2 - (d_s1_s2 + min(dist(d, store_map[s1_id]) for d in dcs) + min(dist(d, store_map[s2_id]) for d in dcs))\n            if val > 0:\n                savings.append((val, s1_id, s2_id))\n\n    # Sort savings in descending order\n    savings.sort(key=lambda x: x[0], reverse=True)\n\n    def find_route(store_id):\n        for r_idx, r in enumerate(routes):\n            if store_id in r:\n                return r_idx, r\n        return None, None\n\n    # Merge routes based on savings and capacity constraints\n    for _, s1_id, s2_id in savings:\n        r1_idx, r1 = find_route(s1_id)\n        r2_idx, r2 = find_route(s2_id)\n\n        if r1 is None or r2 is None or r1_idx == r2_idx:\n            continue\n\n        # Capacity check\n        r1_demand = sum(demands[sid] for sid in r1)\n        r2_demand = sum(demands[sid] for sid in r2)\n        if r1_demand + r2_demand > capacity:\n            continue\n\n        # Form candidate merged routes depending on endpoint connections\n        candidates = []\n        if r1[-1] == s1_id and r2[0] == s2_id:\n            candidates.append(r1 + r2)\n        if r1[0] == s1_id and r2[-1] == s2_id:\n            candidates.append(r2 + r1)\n        if r1[-1] == s1_id and r2[-1] == s2_id:\n            candidates.append(r1 + r2[::-1])\n        if r1[0] == s1_id and r2[0] == s2_id:\n            candidates.append(r1[::-1] + r2)\n\n        if not candidates:\n            continue\n\n        # Select the candidate merge that minimizes total route cost\n        best_candidate = min(candidates, key=get_route_cost)\n        \n        # Verify if the merge actually yields a distance saving over separate routes\n        if get_route_cost(best_candidate) < route_costs[tuple(r1)] + route_costs[tuple(r2)]:\n            routes.remove(r1)\n            routes.remove(r2)\n            routes.append(best_candidate)\n            route_costs[tuple(best_candidate)] = get_route_cost(best_candidate)\n            del route_costs[tuple(r1)]\n            del route_costs[tuple(r2)]\n\n    # Route-Stripping Local Search to minimize truck fleet size (eliminate 300.0 fixed costs)\n    routes_with_demands = []\n    for r in routes:\n        routes_with_demands.append({\n            \"stores\": r,\n            \"demand\": sum(demands[sid] for sid in r)\n        })\n\n    routes_with_demands.sort(key=lambda x: x[\"demand\"])\n    i = 0\n    while i < len(routes_with_demands):\n        r_strip = routes_with_demands[i]\n        if r_strip[\"demand\"] > capacity * 0.7:\n            i += 1\n            continue\n        \n        success = True\n        temp_routes = [dict(r) for r in routes_with_demands if r != r_strip]\n        \n        for store_id in r_strip[\"stores\"]:\n            s_demand = demands[store_id]\n            best_insert_cost = 1e9\n            best_insert_idx = None\n            best_insert_pos = None\n            \n            for idx, r_target in enumerate(temp_routes):\n                if r_target[\"demand\"] + s_demand > capacity:\n                    continue\n                \n                t_stores = r_target[\"stores\"]\n                current_cost = get_route_cost(t_stores) * 2.5\n                \n                for pos in range(len(t_stores) + 1):\n                    cand_stores = t_stores[:pos] + [store_id] + t_stores[pos:]\n                    cand_cost = get_route_cost(cand_stores) * 2.5\n                    added_cost = cand_cost - current_cost\n                    if added_cost < best_insert_cost:\n                        best_insert_cost = added_cost\n                        best_insert_idx = idx\n                        best_insert_pos = pos\n            \n            if best_insert_idx is not None and best_insert_cost < 300.0:\n                target = temp_routes[best_insert_idx]\n                target[\"stores\"] = target[\"stores\"][:best_insert_pos] + [store_id] + target[\"stores\"][best_insert_pos:]\n                target[\"demand\"] += s_demand\n            else:\n                success = False\n                break\n                \n        if success:\n            routes_with_demands = temp_routes\n            routes_with_demands.sort(key=lambda x: x[\"demand\"])\n            i = 0\n        else:\n            i += 1\n\n    routes = [r[\"stores\"] for r in routes_with_demands]\n\n    # Optimizing individual routes with 2-opt and finding best DC assignment\n    optimized_routes = []\n    for r in routes:\n        best_dc, _ = get_best_dc_for_route(r)\n        \n        # 2-opt local search\n        improved = True\n        while improved:\n            improved = False\n            n_r = len(r)\n            if n_r < 3:\n                break\n            \n            best_dist = dist(best_dc, store_map[r[0]])\n            for idx in range(n_r - 1):\n                best_dist += dist(store_map[r[idx]], store_map[r[idx+1]])\n            best_dist += dist(store_map[r[-1]], best_dc)\n\n            for i in range(n_r - 1):\n                for j in range(i + 1, n_r):\n                    new_r = r[:i] + r[i:j+1][::-1] + r[j+1:]\n                    d_val = dist(best_dc, store_map[new_r[0]])\n                    for idx in range(n_r - 1):\n                        d_val += dist(store_map[new_r[idx]], store_map[new_r[idx+1]])\n                    d_val += dist(store_map[new_r[-1]], best_dc)\n\n                    if d_val < best_dist - 1e-5:\n                        r = new_r\n                        best_dist = d_val\n                        improved = True\n                        break\n                if improved:\n                    break\n        optimized_routes.append({\"dc\": best_dc[\"id\"], \"stores\": r})\n\n    # Inter-route Relocate Local Search (Move a store to another route if it reduces total cost)\n    improved = True\n    while improved:\n        improved = False\n        for idx1, r1 in enumerate(optimized_routes):\n            if not r1[\"stores\"]:\n                continue\n            for s_idx, store_id in enumerate(r1[\"stores\"]):\n                s_demand = demands[store_id]\n                \n                # Compute cost of route 1 without this store\n                r1_cand_stores = r1[\"stores\"][:s_idx] + r1[\"stores\"][s_idx+1:]\n                if r1_cand_stores:\n                    r1_cand_dc, r1_cand_conn = get_best_dc_for_route(r1_cand_stores)\n                    # Internal\n                    internal = sum(dist(store_map[r1_cand_stores[k]], store_map[r1_cand_stores[k+1]]) for k in range(len(r1_cand_stores)-1))\n                    r1_new_cost = (internal + r1_cand_conn) * 2.5 + 300.0\n                else:\n                    r1_new_cost = 0.0\n                \n                r1_old_dc = dc_map[r1[\"dc\"]]\n                r1_old_internal = sum(dist(store_map[r1[\"stores\"][k]], store_map[r1[\"stores\"][k+1]]) for k in range(len(r1[\"stores\"])-1))\n                r1_old_cost = (r1_old_internal + dist(r1_old_dc, store_map[r1[\"stores\"][0]]) + dist(store_map[r1[\"stores\"][-1]], r1_old_dc)) * 2.5 + 300.0\n                \n                best_improvement = 0.0\n                best_target_idx = None\n                best_target_pos = None\n                best_target_dc_id = None\n                \n                for idx2, r2 in enumerate(optimized_routes):\n                    if idx1 == idx2:\n                        continue\n                    r2_demand = sum(demands[sid] for sid in r2[\"stores\"])\n                    if r2_demand + s_demand > capacity:\n                        continue\n                    \n                    # Compute current cost of route 2\n                    r2_old_dc = dc_map[r2[\"dc\"]]\n                    r2_old_internal = sum(dist(store_map[r2[\"stores\"][k]], store_map[r2[\"stores\"][k+1]]) for k in range(len(r2[\"stores\"])-1))\n                    r2_old_cost = (r2_old_internal + dist(r2_old_dc, store_map[r2[\"stores\"][0]]) + dist(store_map[r2[\"stores\"][-1]], r2_old_dc)) * 2.5 + 300.0\n                    \n                    # Try inserting store_id at all positions in r2\n                    for pos in range(len(r2[\"stores\"]) + 1):\n                        r2_cand_stores = r2[\"stores\"][:pos] + [store_id] + r2[\"stores\"][pos:]\n                        r2_cand_dc, r2_cand_conn = get_best_dc_for_route(r2_cand_stores)\n                        internal = sum(dist(store_map[r2_cand_stores[k]], store_map[r2_cand_stores[k+1]]) for k in range(len(r2_cand_stores)-1))\n                        r2_new_cost = (internal + r2_cand_conn) * 2.5 + 300.0\n                        \n                        improvement = (r1_old_cost + r2_old_cost) - (r1_new_cost + r2_new_cost)\n                        if improvement > best_improvement + 1e-5:\n                            best_improvement = improvement\n                            best_target_idx = idx2\n                            best_target_pos = pos\n                            best_target_dc_id = r2_cand_dc[\"id\"]\n                \n                if best_target_idx is not None:\n                    # Apply relocation\n                    r2 = optimized_routes[best_target_idx]\n                    r2[\"stores\"] = r2[\"stores\"][:best_target_pos] + [store_id] + r2[\"stores\"][best_target_pos:]\n                    r2[\"dc\"] = best_target_dc_id\n                    \n                    r1[\"stores\"] = r1_cand_stores\n                    if r1_cand_stores:\n                        r1[\"dc\"] = get_best_dc_for_route(r1_cand_stores)[0][\"id\"]\n                    \n                    improved = True\n                    break\n            if improved:\n                break\n        \n        # Clean up empty routes\n        optimized_routes = [r for r in optimized_routes if r[\"stores\"]]\n\n    # Inter-route Swap (2-Exchange) Local Search: Try swapping pairs of stores between routes\n    improved = True\n    while improved:\n        improved = False\n        for idx1 in range(len(optimized_routes)):\n            r1 = optimized_routes[idx1]\n            for idx2 in range(idx1 + 1, len(optimized_routes)):\n                r2 = optimized_routes[idx2]\n                \n                r1_demand = sum(demands[sid] for sid in r1[\"stores\"])\n                r2_demand = sum(demands[sid] for sid in r2[\"stores\"])\n                \n                # Precompute current costs\n                r1_old_dc = dc_map[r1[\"dc\"]]\n                r1_old_internal = sum(dist(store_map[r1[\"stores\"][k]], store_map[r1[\"stores\"][k+1]]) for k in range(len(r1[\"stores\"])-1))\n                r1_old_cost = (r1_old_internal + dist(r1_old_dc, store_map[r1[\"stores\"][0]]) + dist(store_map[r1[\"stores\"][-1]], r1_old_dc)) * 2.5 + 300.0\n                \n                r2_old_dc = dc_map[r2[\"dc\"]]\n                r2_old_internal = sum(dist(store_map[r2[\"stores\"][k]], store_map[r2[\"stores\"][k+1]]) for k in range(len(r2[\"stores\"])-1))\n                r2_old_cost = (r2_old_internal + dist(r2_old_dc, store_map[r2[\"stores\"][0]]) + dist(store_map[r2[\"stores\"][-1]], r2_old_dc)) * 2.5 + 300.0\n                \n                best_swap_gain = 0.0\n                best_swap_r1_idx = None\n                best_swap_r2_idx = None\n                best_new_r1_stores = None\n                best_new_r2_stores = None\n                best_new_r1_dc_id = None\n                best_new_r2_dc_id = None\n                \n                for i, s1_id in enumerate(r1[\"stores\"]):\n                    for j, s2_id in enumerate(r2[\"stores\"]):\n                        # Capacity check for swap\n                        d1 = demands[s1_id]\n                        d2 = demands[s2_id]\n                        if r1_demand - d1 + d2 > capacity or r2_demand - d2 + d1 > capacity:\n                            continue\n                        \n                        cand_r1_stores = r1[\"stores\"][:i] + [s2_id] + r1[\"stores\"][i+1:]\n                        cand_r2_stores = r2[\"stores\"][:j] + [s1_id] + r2[\"stores\"][j+1:]\n                        \n                        r1_cand_dc, r1_cand_conn = get_best_dc_for_route(cand_r1_stores)\n                        r1_internal = sum(dist(store_map[cand_r1_stores[k]], store_map[cand_r1_stores[k+1]]) for k in range(len(cand_r1_stores)-1))\n                        r1_new_cost = (r1_internal + r1_cand_conn) * 2.5 + 300.0\n                        \n                        r2_cand_dc, r2_cand_conn = get_best_dc_for_route(cand_r2_stores)\n                        r2_internal = sum(dist(store_map[cand_r2_stores[k]], store_map[cand_r2_stores[k+1]]) for k in range(len(cand_r2_stores)-1))\n                        r2_new_cost = (r2_internal + r2_cand_conn) * 2.5 + 300.0\n                        \n                        gain = (r1_old_cost + r2_old_cost) - (r1_new_cost + r2_new_cost)\n                        if gain > best_swap_gain + 1e-5:\n                            best_swap_gain = gain\n                            best_swap_r1_idx = i\n                            best_swap_r2_idx = j\n                            best_new_r1_stores = cand_r1_stores\n                            best_new_r2_stores = cand_r2_stores\n                            best_new_r1_dc_id = r1_cand_dc[\"id\"]\n                            best_new_r2_dc_id = r2_cand_dc[\"id\"]\n                \n                if best_swap_gain > 0:\n                    r1[\"stores\"] = best_new_r1_stores\n                    r1[\"dc\"] = best_new_r1_dc_id\n                    r2[\"stores\"] = best_new_r2_stores\n                    r2[\"dc\"] = best_new_r2_dc_id\n                    improved = True\n                    break\n            if improved:\n                break\n\n    # Final pass of 2-opt and Or-opt (intra-route relocations of length 1 and 2)\n    final_routes = []\n    for r_dict in optimized_routes:\n        r = r_dict[\"stores\"]\n        best_dc, _ = get_best_dc_for_route(r)\n        dc_id = best_dc[\"id\"]\n        \n        improved = True\n        while improved:\n            improved = False\n            n_r = len(r)\n            if n_r < 3:\n                break\n            \n            # Helper to calculate full path distance\n            def path_dist(path):\n                d_val = dist(best_dc, store_map[path[0]])\n                for idx in range(len(path) - 1):\n                    d_val += dist(store_map[path[idx]], store_map[path[idx+1]])\n                d_val += dist(store_map[path[-1]], best_dc)\n                return d_val\n\n            best_dist = path_dist(r)\n\n            # 2-opt\n            for i in range(n_r - 1):\n                for j in range(i + 1, n_r):\n                    new_r = r[:i] + r[i:j+1][::-1] + r[j+1:]\n                    d_val = path_dist(new_r)\n                    if d_val < best_dist - 1e-5:\n                        r = new_r\n                        best_dist = d_val\n                        improved = True\n                        break\n                if improved:\n                    break\n            if improved:\n                continue\n\n            # Or-opt: Relocating small segments of size 1 or 2\n            for segment_len in [1, 2]:\n                if n_r <= segment_len + 1:\n                    continue\n                for i in range(n_r - segment_len + 1):\n                    segment = r[i:i+segment_len]\n                    rem = r[:i] + r[i+segment_len:]\n                    for j in range(len(rem) + 1):\n                        new_r = rem[:j] + segment + rem[j:]\n                        d_val = path_dist(new_r)\n                        if d_val < best_dist - 1e-5:\n                            r = new_r\n                            best_dist = d_val\n                            improved = True\n                            break\n                    if improved:\n                        break\n                if improved:\n                    break\n\n        final_routes.append({\"dc\": dc_id, \"stores\": r})\n\n    return final_routes\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+  },
+  {
+   "idx": 67,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 68,
+   "score": -16459.523696801512,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S11",
+      "S10"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S04",
+      "S01"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 69,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 70,
+   "score": -15329.079208196568,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18",
+      "S27",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S09",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 71,
+   "score": -15278.205534577552,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07",
+      "S01"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S09",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 72,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 73,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18",
+      "S27",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S08",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 74,
+   "score": null,
+   "failed": true,
+   "new_best": false
+  },
+  {
+   "idx": 75,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S09",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 76,
+   "score": -15292.454859738524,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S14"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S24",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S09",
+      "S08",
+      "S01"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 77,
+   "score": -15332.83104009702,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S27",
+      "S18",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S01",
+      "S09",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 78,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S10",
+      "S05",
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S06",
+      "S03",
+      "S13"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S18",
+      "S27",
+      "S25"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S08",
+      "S09",
+      "S01",
+      "S04"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S19",
+      "S21",
+      "S17"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  },
+  {
+   "idx": 79,
+   "score": -15210.540100305741,
+   "failed": false,
+   "new_best": true,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S04",
+      "S01",
+      "S09",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S05",
+      "S10",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S23",
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "primary_cost": 15019.74,
+   "code": "\"\"\"Kmart multi-DC delivery routing \u2014 seed program for AlphaEvolve.\n\nA routing plan is a list of truck routes. Each route starts and ends at one\ndistribution centre (DC) and visits a sequence of stores whose total demand\nmust not exceed the truck capacity. Every store must be visited exactly once\nacross the whole plan.\n\nCost of a plan = sum over routes of (route distance km * cost_per_km\n                                     + fixed_cost_per_route).\n\nOnly build_routes() between the EVOLVE-BLOCK markers may be changed. It must\nreturn a list of dicts: [{\"dc\": <dc_id>, \"stores\": [<store_id>, ...]}, ...].\n\"\"\"\nimport math\n\n\ndef dist(a, b):\n    return math.hypot(a[\"x\"] - b[\"x\"], a[\"y\"] - b[\"y\"])\n\n\n# EVOLVE-BLOCK-START\ndef build_routes(dcs, stores, capacity):\n    # Map for quick store lookup by ID\n    store_map = {s[\"id\"]: s for s in stores}\n    \n    # Cache all pairwise distances up front\n    dc_map = {d[\"id\"]: d for d in dcs}\n    memo_dist = {}\n    \n    def get_dist(id1, id2):\n        key = (id1, id2) if id1 < id2 else (id2, id1)\n        if key not in memo_dist:\n            e1 = store_map[id1] if id1 in store_map else dc_map[id1]\n            e2 = store_map[id2] if id2 in store_map else dc_map[id2]\n            memo_dist[key] = dist(e1, e2)\n        return memo_dist[key]\n\n    def route_cost(dc_id, store_ids):\n        if not store_ids:\n            return 0.0\n        d_cost = get_dist(dc_id, store_ids[0])\n        for i in range(len(store_ids) - 1):\n            d_cost += get_dist(store_ids[i], store_ids[i+1])\n        d_cost += get_dist(store_ids[-1], dc_id)\n        return d_cost * 2.5 + 300.0\n\n    def optimize_route_2opt(dc_id, store_ids):\n        best_stores = list(store_ids)\n        best_dc = dc_id\n        # Dynamically determine the best DC for this set of stores\n        best_c = min(route_cost(d[\"id\"], best_stores) for d in dcs)\n        for d in dcs:\n            if route_cost(d[\"id\"], best_stores) == best_c:\n                best_dc = d[\"id\"]\n                break\n\n        improved = True\n        while improved:\n            improved = False\n            for i in range(len(best_stores) - 1):\n                for j in range(i + 1, len(best_stores)):\n                    new_stores = best_stores[:i] + best_stores[i:j+1][::-1] + best_stores[j+1:]\n                    new_c = route_cost(best_dc, new_stores)\n                    if new_c < best_c - 1e-5:\n                        best_stores = new_stores\n                        best_c = new_c\n                        improved = True\n                        break\n                if improved:\n                    break\n        return best_stores, best_c, best_dc\n\n    # 1. Initialize: Assign each store to its nearest DC as a single-store route\n    routes = []\n    for s in stores:\n        best_dc = min(dcs, key=lambda d: dist(s, d))\n        routes.append({\n            \"dc\": best_dc[\"id\"],\n            \"stores\": [s[\"id\"]],\n            \"load\": s[\"demand\"]\n        })\n\n    # 2. Savings and Merges with integrated 2-Opt\n    improved = True\n    while improved:\n        improved = False\n        best_saving = 0.0\n        best_merge = None  # (idx_i, idx_j, merged_stores, best_dc_id)\n        \n        n = len(routes)\n        for i in range(n):\n            for j in range(i + 1, n):\n                r1, r2 = routes[i], routes[j]\n                if r1[\"load\"] + r2[\"load\"] > capacity:\n                    continue\n                \n                c1 = route_cost(r1[\"dc\"], r1[\"stores\"]) + route_cost(r2[\"dc\"], r2[\"stores\"])\n                \n                # Check merge cost on all DCs\n                for dc_candidate in dcs:\n                    dc_id = dc_candidate[\"id\"]\n                    # Try simple concatenation combinations\n                    for opt in [r1[\"stores\"] + r2[\"stores\"], r2[\"stores\"] + r1[\"stores\"]]:\n                        # Quickly improve route configuration via 2-opt to find its true cost\n                        opt_stores, c2, opt_dc = optimize_route_2opt(dc_id, opt)\n                        saving = c1 - c2\n                        if saving > best_saving + 1e-5:\n                            best_saving = saving\n                            best_merge = (i, j, opt_stores, opt_dc)\n                            \n        if best_merge is not None:\n            i, j, merged_stores, best_dc_id = best_merge\n            # Re-evaluate the best DC dynamically to ensure optimal choice\n            opt_stores, opt_cost, final_dc = optimize_route_2opt(best_dc_id, merged_stores)\n            routes[i][\"stores\"] = opt_stores\n            routes[i][\"load\"] += routes[j][\"load\"]\n            routes[i][\"dc\"] = final_dc\n            routes.pop(j)\n            improved = True\n\n    # 3. Inter-route Local Search: Relocations (1-0) and Swaps (1-1)\n    # This phase performs both 1-0 relocations (moving a store to another route)\n    # and 1-1 swaps (exchanging stores between two routes) to escape local minima.\n    improved_ls = True\n    while improved_ls:\n        improved_ls = False\n        best_saving = 0.0\n        best_action = None  # Will hold either (\"relocate\", ...) or (\"swap\", ...)\n\n        # --- A. Check 1-0 Relocations ---\n        for i, r_from in enumerate(routes):\n            if len(r_from[\"stores\"]) <= 1:\n                continue\n            for s_id in r_from[\"stores\"]:\n                demand = store_map[s_id][\"demand\"]\n                \n                for j, r_to in enumerate(routes):\n                    if i == j:\n                        continue\n                    if r_to[\"load\"] + demand > capacity:\n                        continue\n                    \n                    baseline = route_cost(r_from[\"dc\"], r_from[\"stores\"]) + route_cost(r_to[\"dc\"], r_to[\"stores\"])\n                    temp_from_stores = [s for s in r_from[\"stores\"] if s != s_id]\n                    \n                    for pos in range(len(r_to[\"stores\"]) + 1):\n                        temp_to_stores = r_to[\"stores\"][:pos] + [s_id] + r_to[\"stores\"][pos:]\n                        opt_from, cost_from, dc_from = optimize_route_2opt(r_from[\"dc\"], temp_from_stores)\n                        opt_to, cost_to, dc_to = optimize_route_2opt(r_to[\"dc\"], temp_to_stores)\n                        \n                        saving = baseline - (cost_from + cost_to)\n                        if saving > best_saving + 1e-5:\n                            best_saving = saving\n                            best_action = (\"relocate\", i, j, s_id, opt_from, opt_to, dc_from, dc_to)\n\n        # --- B. Check 1-1 Swaps ---\n        for i in range(len(routes)):\n            for j in range(i + 1, len(routes)):\n                r1, r2 = routes[i], routes[j]\n                for s1_idx, s1_id in enumerate(r1[\"stores\"]):\n                    d1 = store_map[s1_id][\"demand\"]\n                    for s2_idx, s2_id in enumerate(r2[\"stores\"]):\n                        d2 = store_map[s2_id][\"demand\"]\n                        \n                        # Verify capacity constraints after exchange\n                        if r1[\"load\"] - d1 + d2 > capacity or r2[\"load\"] - d2 + d1 > capacity:\n                            continue\n                        \n                        baseline = route_cost(r1[\"dc\"], r1[\"stores\"]) + route_cost(r2[\"dc\"], r2[\"stores\"])\n                        \n                        temp_r1_stores = list(r1[\"stores\"])\n                        temp_r1_stores[s1_idx] = s2_id\n                        temp_r2_stores = list(r2[\"stores\"])\n                        temp_r2_stores[s2_idx] = s1_id\n                        \n                        opt_r1, cost_r1, dc_r1 = optimize_route_2opt(r1[\"dc\"], temp_r1_stores)\n                        opt_r2, cost_r2, dc_r2 = optimize_route_2opt(r2[\"dc\"], temp_r2_stores)\n                        \n                        saving = baseline - (cost_r1 + cost_r2)\n                        if saving > best_saving + 1e-5:\n                            best_saving = saving\n                            best_action = (\"swap\", i, j, s1_id, s2_id, opt_r1, opt_r2, dc_r1, dc_r2)\n\n        # Apply the best identified local search move\n        if best_action is not None:\n            if best_action[0] == \"relocate\":\n                _, i, j, s_id, opt_from, opt_to, dc_from, dc_to = best_action\n                d = store_map[s_id][\"demand\"]\n                routes[i][\"stores\"] = opt_from\n                routes[i][\"load\"] -= d\n                routes[i][\"dc\"] = dc_from\n                routes[j][\"stores\"] = opt_to\n                routes[j][\"load\"] += d\n                routes[j][\"dc\"] = dc_to\n            elif best_action[0] == \"swap\":\n                _, i, j, s1_id, s2_id, opt_r1, opt_r2, dc_r1, dc_r2 = best_action\n                d1 = store_map[s1_id][\"demand\"]\n                d2 = store_map[s2_id][\"demand\"]\n                routes[i][\"stores\"] = opt_r1\n                routes[i][\"load\"] = routes[i][\"load\"] - d1 + d2\n                routes[i][\"dc\"] = dc_r1\n                routes[j][\"stores\"] = opt_r2\n                routes[j][\"load\"] = routes[j][\"load\"] - d2 + d1\n                routes[j][\"dc\"] = dc_r2\n            \n            # Filter out any routes that became empty\n            routes = [r for r in routes if len(r[\"stores\"]) > 0]\n            improved_ls = True\n\n    # 4. Route Consolidation and Elimination Phase (Crucial for fixed cost reduction)\n    # Attempt to fully eliminate a route by packing all of its stores into other existing routes.\n    consolidation_improved = True\n    while consolidation_improved:\n        consolidation_improved = False\n        for target_idx, r_target in enumerate(routes):\n            target_stores = r_target[\"stores\"]\n            # We want to see if we can find space for all target_stores in the other routes\n            temp_routes = [r for idx, r in enumerate(routes) if idx != target_idx]\n            allocation = {} # store_id -> destination route index in temp_routes\n            possible = True\n            \n            # Sort target stores by demand descending to optimize bin-packing\n            sorted_target_stores = sorted(target_stores, key=lambda s_id: store_map[s_id][\"demand\"], reverse=True)\n            \n            # Create working loads for temp_routes\n            temp_loads = [r[\"load\"] for r in temp_routes]\n            \n            for s_id in sorted_target_stores:\n                demand = store_map[s_id][\"demand\"]\n                best_fit_idx = -1\n                best_extra_cost = float('inf')\n                \n                for r_idx, r in enumerate(temp_routes):\n                    if temp_loads[r_idx] + demand <= capacity:\n                        # Estimate insertion cost\n                        baseline_cost = route_cost(r[\"dc\"], r[\"stores\"])\n                        min_insert_cost = float('inf')\n                        for pos in range(len(r[\"stores\"]) + 1):\n                            test_stores = r[\"stores\"][:pos] + [s_id] + r[\"stores\"][pos:]\n                            cost = route_cost(r[\"dc\"], test_stores)\n                            if cost < min_insert_cost:\n                                min_insert_cost = cost\n                        extra_cost = min_insert_cost - baseline_cost\n                        if extra_cost < best_extra_cost:\n                            best_extra_cost = extra_cost\n                            best_fit_idx = r_idx\n                \n                if best_fit_idx != -1:\n                    temp_loads[best_fit_idx] += demand\n                    allocation[s_id] = best_fit_idx\n                else:\n                    possible = False\n                    break\n            \n            if possible:\n                # Calculate cost before elimination\n                before_cost = sum(route_cost(r[\"dc\"], r[\"stores\"]) for r in routes)\n                \n                # Build mock merged routes\n                mock_routes = [\n                    {\"dc\": r[\"dc\"], \"stores\": list(r[\"stores\"]), \"load\": r[\"load\"]}\n                    for r in temp_routes\n                ]\n                for s_id, r_idx in allocation.items():\n                    # Insert at optimal position\n                    best_pos = 0\n                    best_c = float('inf')\n                    r_mock = mock_routes[r_idx]\n                    for pos in range(len(r_mock[\"stores\"]) + 1):\n                        test_stores = r_mock[\"stores\"][:pos] + [s_id] + r_mock[\"stores\"][pos:]\n                        c = route_cost(r_mock[\"dc\"], test_stores)\n                        if c < best_c:\n                            best_c = c\n                            best_pos = pos\n                    r_mock[\"stores\"].insert(best_pos, s_id)\n                    r_mock[\"load\"] += store_map[s_id][\"demand\"]\n                \n                # Optimize mock routes using 2-opt\n                for r_mock in mock_routes:\n                    opt_s, opt_c, opt_dc = optimize_route_2opt(r_mock[\"dc\"], r_mock[\"stores\"])\n                    r_mock[\"stores\"] = opt_s\n                    r_mock[\"dc\"] = opt_dc\n                \n                after_cost = sum(route_cost(r[\"dc\"], r[\"stores\"]) for r in mock_routes)\n                \n                if after_cost < before_cost:\n                    routes = mock_routes\n                    consolidation_improved = True\n                    break\n\n    # Return final routes\n    return [{\"dc\": r[\"dc\"], \"stores\": r[\"stores\"]} for r in routes]\n# EVOLVE-BLOCK-END\n\n\ndef solve(instance):\n    return build_routes(instance[\"dcs\"], instance[\"stores\"],\n                        instance[\"truck_capacity\"])\n"
+  },
+  {
+   "idx": 80,
+   "score": -15332.831040097022,
+   "failed": false,
+   "new_best": false,
+   "routes": [
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S09",
+      "S01",
+      "S04",
+      "S08"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S02",
+      "S10",
+      "S05",
+      "S11"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S13",
+      "S03",
+      "S06"
+     ]
+    },
+    {
+     "dc": "DC-SOUTH",
+     "stores": [
+      "S07"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S12",
+      "S15"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S14",
+      "S20"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S16"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S17",
+      "S21",
+      "S19"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S25",
+      "S18",
+      "S27"
+     ]
+    },
+    {
+     "dc": "DC-CENTRAL",
+     "stores": [
+      "S22",
+      "S24"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S28"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S26",
+      "S23"
+     ]
+    },
+    {
+     "dc": "DC-NORTH",
+     "stores": [
+      "S29",
+      "S30"
+     ]
+    }
+   ],
+   "routes_illustrative": true
+  }
+ ]
+}

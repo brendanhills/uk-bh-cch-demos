@@ -1,0 +1,242 @@
+{
+  "description": "Fictional Kmart supply-chain network for AlphaEvolve demo",
+  "units": {
+    "distance": "km",
+    "demand": "pallets/week"
+  },
+  "truck_capacity": 34,
+  "cost_per_km": 2.5,
+  "fixed_cost_per_route": 300.0,
+  "dcs": [
+    {
+      "id": "DC-SOUTH",
+      "name": "Truganina DC",
+      "x": 210,
+      "y": 610
+    },
+    {
+      "id": "DC-CENTRAL",
+      "name": "Eastern Creek DC",
+      "x": 620,
+      "y": 380
+    },
+    {
+      "id": "DC-NORTH",
+      "name": "Larapinta DC",
+      "x": 800,
+      "y": 110
+    }
+  ],
+  "stores": [
+    {
+      "id": "S01",
+      "name": "Store 01",
+      "x": 212.7,
+      "y": 579.3,
+      "demand": 10
+    },
+    {
+      "id": "S02",
+      "name": "Store 02",
+      "x": 232.1,
+      "y": 665.8,
+      "demand": 7
+    },
+    {
+      "id": "S03",
+      "name": "Store 03",
+      "x": 117.4,
+      "y": 373.1,
+      "demand": 7
+    },
+    {
+      "id": "S04",
+      "name": "Store 04",
+      "x": 204.3,
+      "y": 583.6,
+      "demand": 7
+    },
+    {
+      "id": "S05",
+      "name": "Store 05",
+      "x": 257.9,
+      "y": 739.6,
+      "demand": 6
+    },
+    {
+      "id": "S06",
+      "name": "Store 06",
+      "x": 53.5,
+      "y": 528.5,
+      "demand": 14
+    },
+    {
+      "id": "S07",
+      "name": "Store 07",
+      "x": 115.3,
+      "y": 663.5,
+      "demand": 10
+    },
+    {
+      "id": "S08",
+      "name": "Store 08",
+      "x": 235.0,
+      "y": 587.2,
+      "demand": 8
+    },
+    {
+      "id": "S09",
+      "name": "Store 09",
+      "x": 195.0,
+      "y": 496.3,
+      "demand": 8
+    },
+    {
+      "id": "S10",
+      "name": "Store 10",
+      "x": 274.1,
+      "y": 745,
+      "demand": 7
+    },
+    {
+      "id": "S11",
+      "name": "Store 11",
+      "x": 275.2,
+      "y": 629.8,
+      "demand": 11
+    },
+    {
+      "id": "S12",
+      "name": "Store 12",
+      "x": 456.9,
+      "y": 237.9,
+      "demand": 13
+    },
+    {
+      "id": "S13",
+      "name": "Store 13",
+      "x": 315.6,
+      "y": 297.2,
+      "demand": 12
+    },
+    {
+      "id": "S14",
+      "name": "Store 14",
+      "x": 718.0,
+      "y": 417.5,
+      "demand": 16
+    },
+    {
+      "id": "S15",
+      "name": "Store 15",
+      "x": 454.5,
+      "y": 208.2,
+      "demand": 15
+    },
+    {
+      "id": "S16",
+      "name": "Store 16",
+      "x": 646.2,
+      "y": 412.6,
+      "demand": 16
+    },
+    {
+      "id": "S17",
+      "name": "Store 17",
+      "x": 643.7,
+      "y": 468.2,
+      "demand": 7
+    },
+    {
+      "id": "S18",
+      "name": "Store 18",
+      "x": 778.0,
+      "y": 180.0,
+      "demand": 12
+    },
+    {
+      "id": "S19",
+      "name": "Store 19",
+      "x": 600.2,
+      "y": 537.9,
+      "demand": 11
+    },
+    {
+      "id": "S20",
+      "name": "Store 20",
+      "x": 688.7,
+      "y": 465.9,
+      "demand": 16
+    },
+    {
+      "id": "S21",
+      "name": "Store 21",
+      "x": 600.0,
+      "y": 650.3,
+      "demand": 16
+    },
+    {
+      "id": "S22",
+      "name": "Store 22",
+      "x": 783.5,
+      "y": 443.9,
+      "demand": 14
+    },
+    {
+      "id": "S23",
+      "name": "Store 23",
+      "x": 782.2,
+      "y": 60.8,
+      "demand": 12
+    },
+    {
+      "id": "S24",
+      "name": "Store 24",
+      "x": 761.5,
+      "y": 346.1,
+      "demand": 14
+    },
+    {
+      "id": "S25",
+      "name": "Store 25",
+      "x": 806.8,
+      "y": 206.9,
+      "demand": 6
+    },
+    {
+      "id": "S26",
+      "name": "Store 26",
+      "x": 793.4,
+      "y": 145.3,
+      "demand": 11
+    },
+    {
+      "id": "S27",
+      "name": "Store 27",
+      "x": 759.9,
+      "y": 141.5,
+      "demand": 15
+    },
+    {
+      "id": "S28",
+      "name": "Store 28",
+      "x": 852.0,
+      "y": 59.1,
+      "demand": 16
+    },
+    {
+      "id": "S29",
+      "name": "Store 29",
+      "x": 582.2,
+      "y": 121.0,
+      "demand": 16
+    },
+    {
+      "id": "S30",
+      "name": "Store 30",
+      "x": 714.2,
+      "y": 140.1,
+      "demand": 9
+    }
+  ]
+}
