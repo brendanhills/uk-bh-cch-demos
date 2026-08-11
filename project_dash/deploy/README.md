@@ -6,7 +6,7 @@ This directory contains deployment pipelines and service shutdown controls for t
 
 ## ⚙️ Configuration (`.env`)
 
-Configure your authorized **Dashboard Viewers** (Google Groups and individual users), blocked domains, and GCP project settings in your root `.env` file (copied from `.env.example`):
+Configure your authorized **Dashboard Viewers**, **Dashboard Admins/Editors**, blocked domains, and GCP project settings in your root `.env` file (copied from `.env.example`):
 
 ```bash
 # --- Cloud Run Deployment Configuration ---
@@ -15,19 +15,22 @@ GCP_REGION="us-central1"
 GCP_SERVICE_NAME="f-dse-risk-dashboard-private"
 
 # --- Dashboard Viewer Access Control (IAM roles/run.invoker) ---
-# DASHBOARD_VIEWER_GROUPS: Google Groups granted viewer access to the dashboard
-DASHBOARD_VIEWER_GROUPS="your-team-group@google.com"
+# Viewers can access and view the live dashboard web application via Google SSO.
+DASHBOARD_VIEWER_GROUPS="f-dse-governance-team@google.com"
+DASHBOARD_VIEWER_USERS="brendanhills@google.com,colleague1@google.com"
 
-# DASHBOARD_VIEWER_USERS: Individual user accounts granted viewer access
-DASHBOARD_VIEWER_USERS="brendanhills@google.com,colleague@google.com"
+# --- Dashboard Admin / Editor Access Control (IAM roles/run.developer) ---
+# Admins/Editors can deploy updates, manage revisions, and configure the service.
+DASHBOARD_ADMIN_GROUPS="f-dse-lead-team@google.com"
+DASHBOARD_ADMIN_USERS="brendanhills@google.com,techlead@google.com"
 
-# BLOCKED_DOMAINS: Domains strictly forbidden from viewer access
+# --- Security & Domain Restrictions ---
 BLOCKED_DOMAINS="altostrat.com"
 ```
 
 ---
 
-## 🔒 Deploying with Restricted Viewer Access
+## 🔒 Deploying with Role-Based Access
 
 Once configured in `.env`, simply run:
 
@@ -35,16 +38,18 @@ Once configured in `.env`, simply run:
 # 1-Click deploy using .env configuration
 ./deploy/deploy_gcp.sh
 
-# Or optionally override/add extra viewer groups or users on the fly
-./deploy/deploy_gcp.sh --viewer-group "extra-group@google.com" --viewer-user "lead@google.com"
+# Or optionally override/add extra viewer or admin groups/users on the fly
+./deploy/deploy_gcp.sh \
+  --viewer-group "extra-viewers@google.com" \
+  --admin-user "lead-dev@google.com"
 ```
 
 ---
 
-## 🔍 Checking Service Status & Viewer IAM
+## 🔍 Checking Service Status & IAM Roles
 
 ```bash
-# Check live status, service URL, and currently bound Dashboard Viewers
+# Check live status, service URL, and currently bound Viewers and Admins
 ./deploy/deploy_gcp.sh --status
 ```
 
@@ -69,7 +74,7 @@ This immediately halts all ingress traffic and removes the running Cloud Run ser
 
 ## 📁 Files in this Directory
 
-- **`deploy_gcp.sh`**: Private Cloud Run pipeline supporting `.env` config, `--viewer-group`, `--viewer-user`, `--status`, and `--stop` flags.
+- **`deploy_gcp.sh`**: Private Cloud Run pipeline supporting `.env` config, `--viewer-group`, `--viewer-user`, `--admin-group`, `--admin-user`, `--status`, and `--stop` flags.
 - **`shutdown.sh` / `stop.sh`**: Immediate service shutdown script to take the dashboard offline.
 - **`deploy_c4a.py` / `deploy.sh`**: C4A Starter prototype pipeline.
 - **`Dockerfile` & `nginx.conf`**: Container specifications for Cloud Run port 8080.
