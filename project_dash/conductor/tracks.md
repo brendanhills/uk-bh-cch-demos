@@ -19,5 +19,5 @@
   *Link: [./tracks/tailored_stakeholder_views/index.md](./tracks/tailored_stakeholder_views/index.md)*
 
 ---
-- [ ] **Track: Dynamic Data Generation & Visualization Audit across All Tabs**
+- [~] **Track: Dynamic Data Generation & Visualization Audit across All Tabs**
   *Link: [./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md](./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md)*
