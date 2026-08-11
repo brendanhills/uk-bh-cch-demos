@@ -45,9 +45,4 @@ Format as 3 distinct, high-impact callout items answering *What is at risk?* and
 ### 3. "🔍 Leading Indicator Alert" (The Green-to-Red Sleeper Outlier):
 Identify the single critical path deliverable currently reported 🟢 GREEN on paper that is at highest risk of turning 🔴 RED in 4–6 weeks due to upstream compression (e.g., **Ref 1.15 Milestone 3 PDR**, where SRR shifting to September leaves a compressed 6-week window before the November PDR target).
 
----
 
-## Tone Modifier Directives (High Stakes & Zero Surprises):
-- **`executive` (Exec Concise):** High-stakes executive vigilance. Focus strictly on commercial exposure, the I-129 platform breakthrough, and the #1 decision needed from the Joint Board to prevent delay contagion.
-- **`technical` (Technical Drilldown):** Emphasize engineering gate dependencies, downstream compression on Milestone 3 PDR, GDC test/dev enclave readiness, and ATO-C security compliance.
-- **`governance` (Steering Committee Focus):** Emphasize contractual milestone sign-offs (Milestone 1 acceptance, Milestone 2 IBR at 85%), governance escalation closures, and Commonwealth stakeholder actions to avoid commercial dispute.

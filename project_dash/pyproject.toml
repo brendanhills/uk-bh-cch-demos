@@ -1,13 +1,10 @@
 [project]
-name = "project-dashboard-mockup"
-version = "0.1.0"
-description = "Project Dashboard Streamlit UI Mockup for Risk and Issue tracking"
+name = "project-dash"
+version = "2.0.0"
+description = "F-DSE Program Governance & Risk Intelligence Platform"
 authors = [
     { name = "Brendan Hills", email = "brendanhills@google.com" }
 ]
-dependencies = [
-    "streamlit>=1.36.0",
-    "pandas>=2.2.0",
-    "plotly>=5.22.0"
-]
-requires-python = ">=3.11"
+dependencies = []
+requires-python = ">=3.10"
+

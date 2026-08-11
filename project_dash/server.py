@@ -5,15 +5,17 @@ import urllib.parse
 import json
 import os
 import re
+import sys
 import subprocess
 from datetime import datetime
 
 PORT = 9000
-DIRECTORY = "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash"
-SNAPSHOTS_FILE = os.path.join(DIRECTORY, "src/data/weekly_snapshots.json")
+DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+SNAPSHOTS_FILE = os.path.join(DIRECTORY, "src", "data", "weekly_snapshots.json")
 
 # Pre-known Drive folder reports (representing live folder content)
 KNOWN_DRIVE_REPORTS = [
+    {"id": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu", "week": "Week 27", "date": "07 Aug 2026", "name": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu/view"},
     {"id": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC", "week": "Week 26", "date": "31 Jul 2026", "name": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf", "url": "https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view"},
     {"id": "13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz", "week": "Week 25", "date": "24 Jul 2026", "name": "Weekly Reporting - Week 25 - 24 Jul 2026.pdf", "url": "https://drive.google.com/file/d/13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz/view"},
     {"id": "100xnsVUDdlKVzxTgK26_lmjSYYUWnUhK", "week": "Week 24", "date": "17 Jul 2026", "name": "Weekly Reporting - Week 24 - 17 Jul 2026.pdf", "url": "https://drive.google.com/file/d/100xnsVUDdlKVzxTgK26_lmjSYYUWnUhK/view"},
@@ -24,6 +26,12 @@ KNOWN_DRIVE_REPORTS = [
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
+
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -55,12 +63,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def handle_sync_sheet(self):
         try:
-            data_path = os.path.join(DIRECTORY, "src/data/live_synced_data.json")
+            data_path = os.path.join(DIRECTORY, "src", "data", "live_synced_data.json")
             if os.path.exists(data_path):
                 with open(data_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
             else:
                 data = {"status": "ok", "risks": [], "issues": []}
+
+            if os.path.exists(SNAPSHOTS_FILE):
+                with open(SNAPSHOTS_FILE, 'r', encoding='utf-8') as sf:
+                    snap_data = json.load(sf)
+                    data['snapshots'] = snap_data.get('snapshots', {})
+
             self.send_json(data)
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
@@ -118,11 +132,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def process_ingest(self, params):
         try:
-            file_id = params.get('file_id', 'new-drive-file')
-            file_name = params.get('file_name', 'Weekly Reporting - Week 27 - 07 Aug 2026.pdf')
+            file_id = params.get('file_id') or 'new-drive-file'
+            file_name = params.get('file_name') or 'Weekly Reporting - Week 27 - 07 Aug 2026.pdf'
             
-            script_path = os.path.join(DIRECTORY, "scripts/ingest_weekly_report.py")
-            cmd = ["uv", "run", "python", script_path, "--file-id", file_id, "--name", file_name]
+            script_path = os.path.join(DIRECTORY, "scripts", "ingest_weekly_report.py")
+            cmd = [sys.executable, script_path, "--file-id", file_id, "--name", file_name]
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
 
             if result.returncode == 0:
@@ -138,8 +152,35 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
 
+def get_startup_urls(port=PORT):
+    """Return the list of clickable URLs for accessing the dashboard."""
+    return [
+        f"http://localhost:{port}",
+        f"http://127.0.0.1:{port}",
+    ]
+
+def get_startup_banner(port=PORT):
+    """Format and return the startup banner with clickable URLs."""
+    urls = get_startup_urls(port)
+    lines = [
+        "=" * 64,
+        "🚀 F-DSE Program Governance & Risk Intelligence Platform",
+        "=" * 64,
+        f"  👉 Dashboard URL (Local):    {urls[0]}",
+        f"  👉 Dashboard URL (Loopback): {urls[1]}",
+        f"  📡 API Sync Endpoint:        http://localhost:{port}/api/sync-sheet",
+        f"  📁 Drive Sync Endpoint:      http://localhost:{port}/api/check-drive-sync",
+        "=" * 64,
+        "Serving Project Dash with Drive Ingestion & Sync API. Press Ctrl+C to stop.",
+    ]
+    return "\n".join(lines)
+
 if __name__ == "__main__":
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
-        print(f"Serving Project Dash with Drive Ingestion & Sync API on port {PORT}...")
-        httpd.serve_forever()
+    try:
+        with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
+            print(get_startup_banner(PORT))
+            httpd.serve_forever()
+    except (KeyboardInterrupt, SystemExit):
+        print("\n🛑 Project Dash server stopped gracefully.")
+

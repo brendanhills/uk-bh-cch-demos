@@ -1,0 +1,15 @@
+# Virtual environments & dependencies
+.venv/
+__pycache__/
+*.pyc
+
+# C4A Deployment repo cache
+deploy/.repo/
+deploy/repo/
+.deploy/
+
+# Temporary data & scratch
+*.tmp
+/tmp/
+*.zip
+*.log

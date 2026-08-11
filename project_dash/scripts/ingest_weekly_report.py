@@ -5,7 +5,8 @@ import argparse
 import re
 from datetime import datetime
 
-DATA_FILE = "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/src/data/weekly_snapshots.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_FILE = os.path.join(BASE_DIR, "src", "data", "weekly_snapshots.json")
 
 def load_snapshots():
     if os.path.exists(DATA_FILE):
@@ -39,13 +40,16 @@ def ingest_file(file_id, file_name, week_number=None, report_date=None):
     # Mark all previous snapshots as not latest
     for k, v in data['snapshots'].items():
         v['isLatest'] = False
+        v['isCurrent'] = False
 
     # Create new week snapshot entry
     new_snapshot = {
         "weekNumber": week_number,
         "weekLabel": week_label,
+        "week": week_label,
         "date": report_date,
         "isLatest": True,
+        "isCurrent": True,
         "driveFileId": file_id,
         "driveFileName": file_name,
         "overallStatus": "🟡 AMBER (Stable)",

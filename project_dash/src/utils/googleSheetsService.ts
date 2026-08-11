@@ -116,15 +116,38 @@ export function mapRowsToRiskTickets(rows: Record<string, string>[]): RiskTicket
     const bundle = getVal('Bundle', 'Workstream') || 'F-DSE';
     const driverTreeRef = getVal('Driver Tree Ref', 'Driver Tree', 'Driver Ref') || '1.10b';
     
+    // Helper for rating text parsing
+    const parseRatingNum = (val: string, type: 'likelihood' | 'consequence'): number => {
+      if (!val) return type === 'likelihood' ? 3 : 2;
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 1 && num <= 5) return num;
+      const lower = val.toLowerCase();
+      if (type === 'likelihood') {
+        if (lower.includes('almost certain') || lower.includes('5')) return 5;
+        if (lower.includes('probable') || lower.includes('4')) return 4;
+        if (lower.includes('occasional') || lower.includes('3')) return 3;
+        if (lower.includes('improbable') || lower.includes('2')) return 2;
+        if (lower.includes('rare') || lower.includes('1')) return 1;
+        return 3;
+      } else {
+        if (lower.includes('catastrophic') || lower.includes('5')) return 5;
+        if (lower.includes('critical') || lower.includes('4')) return 4;
+        if (lower.includes('major') || lower.includes('3')) return 3;
+        if (lower.includes('moderate') || lower.includes('2')) return 2;
+        if (lower.includes('minor') || lower.includes('1')) return 1;
+        return 2;
+      }
+    };
+
     // Inherent ratings
-    const inLikelihood = parseInt(getVal('Inherent Likelihood', 'Inherent L'), 10) || 3;
-    const inConsequence = parseInt(getVal('Inherent Consequence', 'Inherent C'), 10) || 3;
+    const inLikelihood = parseRatingNum(getVal('Inherent Likelihood Rating', 'Inherent Likelihood', 'Inherent L'), 'likelihood');
+    const inConsequence = parseRatingNum(getVal('Inherent Consequence Rating', 'Inherent Consequence', 'Inherent C'), 'consequence');
     const inherentRiskScore = inLikelihood * inConsequence;
     const inherentRiskLevel = calculateRiskLevel(inherentRiskScore);
 
     // Residual ratings
-    const resLikelihood = parseInt(getVal('Residual Likelihood', 'Residual L'), 10) || 2;
-    const resConsequence = parseInt(getVal('Residual Consequence', 'Residual C'), 10) || 2;
+    const resLikelihood = parseRatingNum(getVal('Residual Likelihood Rating', 'Residual Likelihood', 'Residual L') || String(inLikelihood), 'likelihood');
+    const resConsequence = parseRatingNum(getVal('Residual Consequence Rating', 'Residual Consequence', 'Residual C') || String(inConsequence), 'consequence');
     const residualRiskScore = resLikelihood * resConsequence;
     const residualRiskLevel = calculateRiskLevel(residualRiskScore);
 

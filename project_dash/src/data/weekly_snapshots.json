@@ -1,12 +1,12 @@
 {
-  "lastSynced": "2026-08-07T13:50:00+10:00",
+  "lastSynced": "2026-08-11T13:22:08.337313",
   "driveFolderId": "1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C",
   "snapshots": {
     "w26": {
       "weekNumber": 26,
       "weekLabel": "Week 26",
       "date": "31 Jul 2026",
-      "isLatest": true,
+      "isLatest": false,
       "driveFileId": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC",
       "driveFileName": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf",
       "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
@@ -67,7 +67,9 @@
           "target": "Jul/Aug 2026",
           "deltaNote": "Escalated to direct stakeholder sessions via newly chartered Apps Focus Groups."
         }
-      ]
+      ],
+      "isCurrent": false,
+      "week": "Week 26"
     },
     "w25": {
       "weekNumber": 25,
@@ -134,7 +136,9 @@
           "target": "Jul 2026",
           "deltaNote": "Focus group charters established."
         }
-      ]
+      ],
+      "isCurrent": false,
+      "week": "Week 25"
     },
     "w24": {
       "weekNumber": 24,
@@ -201,7 +205,9 @@
           "target": "Jul 2026",
           "deltaNote": "Access to external system owners delayed."
         }
-      ]
+      ],
+      "isCurrent": false,
+      "week": "Week 24"
     },
     "w23": {
       "weekNumber": 23,
@@ -268,7 +274,9 @@
           "target": "Jun/Jul 2026",
           "deltaNote": "Discovery interviews starting."
         }
-      ]
+      ],
+      "isCurrent": false,
+      "week": "Week 23"
     },
     "w22": {
       "weekNumber": 22,
@@ -334,6 +342,77 @@
           "owner": "Team Google",
           "target": "Jun 2026",
           "deltaNote": "Survey sent to system owners."
+        }
+      ],
+      "isCurrent": false,
+      "week": "Week 22"
+    },
+    "w27": {
+      "weekNumber": 27,
+      "weekLabel": "Week 27",
+      "week": "Week 27",
+      "date": "07 Aug 2026",
+      "isLatest": true,
+      "isCurrent": true,
+      "driveFileId": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu",
+      "driveFileName": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables Cth Acceptance",
+          "plan": "GAP closure report created to work with the Cth for acceptance of milestone 1 deliverables.",
+          "owner": "COL Tim Minion / Adam Flint",
+          "target": "Aug 2026",
+          "deltaNote": "Continuing Cth review of SRP, V&V, and IMS deliverable acceptance."
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "E.01/E.02 Facilities & Connectivity",
+          "plan": "Validating schedule impacts and mitigating delivery approach whilst connectivity is established.",
+          "owner": "Aron Ward / Team Google",
+          "target": "Aug 2026",
+          "deltaNote": "Facility connectivity lead time under active mitigation."
+        },
+        {
+          "num": 3,
+          "status": "BLUE",
+          "ref": "1.10b (I-129)",
+          "title": "I-129 Delivered \u2022 GDC EE E.01 Test/Dev Ready",
+          "plan": "Platform successfully validated and environment build commenced, with early release provided to initial systems.",
+          "owner": "Tom Trobe / Daryl James",
+          "target": "Delivered / Monitoring",
+          "deltaNote": "Early release operational for test/dev systems."
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR) Glide Path",
+          "plan": "Iterative approach to prioritise System Requirements for CD1.5, development of glide path similar to IBR.",
+          "owner": "Scott Deacon / Dan Wurzer",
+          "target": "Sep 2026",
+          "deltaNote": "Prioritization glide path progressing."
+        },
+        {
+          "num": 5,
+          "status": "RED",
+          "ref": "3.1",
+          "title": "Application Discovery Report (ADR) Gap Closure",
+          "plan": "Address in the Apps Focus Groups, direct engagement with System Owners.",
+          "owner": "Steve Peel / Team Google",
+          "target": "Aug 2026",
+          "deltaNote": "Apps Focus Groups underway."
         }
       ]
     }
