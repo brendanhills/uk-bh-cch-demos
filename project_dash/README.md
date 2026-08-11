@@ -40,18 +40,18 @@ http://localhost:9000
 
 ## 🔒 Cloud Deployment & Operations Pipeline
 
-The platform includes a secured, private deployment pipeline to Google Cloud Run (**`uk-bh-experiments-argolis`**) configured via `.env` with Google Group IAM access control, domain security, and immediate shutdown capabilities:
+The platform includes a secured, private deployment pipeline to Google Cloud Run (**`uk-bh-experiments-argolis`**) configured via `.env` with explicit Dashboard Viewer IAM access control, domain security, and immediate shutdown capabilities:
 
-### 1. Configure Access Control in `.env`
-Copy `.env.example` to `.env` and set your authorized groups and users:
+### 1. Configure Dashboard Viewers in `.env`
+Copy `.env.example` to `.env` and configure your authorized viewer groups and users:
 ```bash
-# Allowed Google Groups (comma-separated list, e.g. team@google.com or team@twosync.google.com)
-ALLOWED_GROUPS="your-team-group@google.com"
+# DASHBOARD_VIEWER_GROUPS: Google Groups granted viewer access (roles/run.invoker)
+DASHBOARD_VIEWER_GROUPS="your-team-group@google.com"
 
-# Allowed Individual Users (comma-separated list of @google.com emails)
-ALLOWED_USERS="brendanhills@google.com,colleague@google.com"
+# DASHBOARD_VIEWER_USERS: Individual user accounts granted viewer access
+DASHBOARD_VIEWER_USERS="brendanhills@google.com,colleague@google.com"
 
-# Blocked Domains (strictly forbidden from receiving IAM invoker access)
+# BLOCKED_DOMAINS: Domains strictly forbidden from viewer access
 BLOCKED_DOMAINS="altostrat.com"
 ```
 
@@ -60,13 +60,13 @@ BLOCKED_DOMAINS="altostrat.com"
 # 1-Click deploy using settings from .env
 ./deploy/deploy_gcp.sh
 
-# Or optionally override/add groups or users via CLI flags
-./deploy/deploy_gcp.sh --group "extra-group@google.com" --user "lead@google.com"
+# Or optionally override/add viewers via CLI flags
+./deploy/deploy_gcp.sh --viewer-group "extra-group@google.com" --viewer-user "lead@google.com"
 ```
 
-### 3. Check Live Status & IAM Policies
+### 3. Check Live Status & Viewer IAM Policies
 ```bash
-# Check if the service is online, its URL, and current IAM bindings
+# Check if the service is online, its URL, and current Dashboard Viewer bindings
 ./deploy/deploy_gcp.sh --status
 ```
 
@@ -82,7 +82,7 @@ Whenever you need to immediately stop the service and take the dashboard offline
 ```
 
 ### 5. Domain Blocking & Security Rules
-* **Strict Least Privilege**: Deployed with `--no-allow-unauthenticated` so only explicitly authorized principals can invoke the service.
+* **Strict Least Privilege**: Deployed with `--no-allow-unauthenticated` so only explicitly authorized Dashboard Viewers can invoke the service.
 * **Domain Blocking**: Domains such as `altostrat.com` are strictly forbidden and blocked by pre-flight validation.
 
 ---
@@ -91,12 +91,12 @@ Whenever you need to immediately stop the service and take the dashboard offline
 
 ```
 project_dash/
-├── .env.example                # Environment template (Gemini API, deployment & IAM allowlist)
+├── .env.example                # Environment template (Gemini API, deployment & viewer allowlists)
 ├── index.html                  # Core Single-Page Application (HTML5 / Tailwind / Chart.js)
 ├── server.py                   # Python server with Drive sync and ingestion APIs
 ├── run_server.sh               # 1-Command tmux server manager (start, attach, restart, kill)
 ├── deploy/                     # Cloud deployment & shutdown operations
-│   ├── deploy_gcp.sh           # Private Cloud Run deployment with Google Group IAM & security
+│   ├── deploy_gcp.sh           # Private Cloud Run deployment with Dashboard Viewer IAM & security
 │   ├── shutdown.sh / stop.sh   # Immediate service shutdown script
 │   ├── deploy_c4a.py           # C4A Starter prototype pipeline
 │   ├── README.md               # Detailed deployment operations guide

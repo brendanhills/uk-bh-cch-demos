@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==============================================================================
 # F-DSE Risk Intelligence Platform — Private GCP Cloud Run Pipeline
-# Supports .env configuration, Google Group IAM binding, domain blocking,
+# Supports .env configuration for Dashboard Viewer Groups/Users, domain blocking,
 # live status checks, and instant shutdown.
 # ==============================================================================
 set -e
@@ -19,23 +19,21 @@ load_env() {
   fi
 
   if [[ -n "$env_file" ]]; then
-    # Read variables ignoring comments and blank lines
     while IFS='=' read -r key value; do
-      # Strip leading/trailing whitespace
       key=$(echo "$key" | xargs)
-      # Skip comments or empty lines
       if [[ -z "$key" || "$key" =~ ^# ]]; then
         continue
       fi
-      # Strip quotes from value
       value=$(echo "$value" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
       case "$key" in
-        GCP_PROJECT_ID)     ENV_PROJECT_ID="$value" ;;
-        GCP_REGION)         ENV_REGION="$value" ;;
-        GCP_SERVICE_NAME)   ENV_SERVICE_NAME="$value" ;;
-        ALLOWED_GROUPS)     ENV_GROUPS="$value" ;;
-        ALLOWED_USERS)      ENV_USERS="$value" ;;
-        BLOCKED_DOMAINS)    ENV_BLOCKED_DOMAINS="$value" ;;
+        GCP_PROJECT_ID)             ENV_PROJECT_ID="$value" ;;
+        GCP_REGION)                 ENV_REGION="$value" ;;
+        GCP_SERVICE_NAME)           ENV_SERVICE_NAME="$value" ;;
+        DASHBOARD_VIEWER_GROUPS)    ENV_VIEWER_GROUPS="$value" ;;
+        ALLOWED_GROUPS)             ENV_VIEWER_GROUPS="${ENV_VIEWER_GROUPS:-$value}" ;;
+        DASHBOARD_VIEWER_USERS)     ENV_VIEWER_USERS="$value" ;;
+        ALLOWED_USERS)              ENV_VIEWER_USERS="${ENV_VIEWER_USERS:-$value}" ;;
+        BLOCKED_DOMAINS)            ENV_BLOCKED_DOMAINS="$value" ;;
       esac
     done < "$env_file"
   fi
@@ -55,23 +53,26 @@ IFS=',' read -ra BLOCKED_DOMAINS <<< "$BLOCKED_DOMAINS_STR"
 usage() {
   echo "Usage: $0 [options]"
   echo ""
-  echo "Access Control Options (overrides or augments .env):"
-  echo "  --group <email>     Google Group email(s) (e.g. --group my-team@google.com or team@twosync.google.com)"
-  echo "  --user <emails>     Comma-separated user email(s) (e.g. --user alice@google.com,bob@google.com)"
+  echo "Dashboard Viewer Access Control (overrides or augments .env):"
+  echo "  --viewer-group, --group <email>   Google Group(s) granted viewer access (e.g. my-team@google.com or team@twosync.google.com)"
+  echo "  --viewer-user, --user <emails>    Comma-separated user email(s) granted viewer access (e.g. alice@google.com,bob@google.com)"
   echo ""
   echo "Service Management Commands:"
-  echo "  (default)           Build and deploy the dashboard to private Cloud Run with IAM restrictions"
-  echo "  --status, status    Check live status, endpoint URL, and current IAM policy"
+  echo "  (default)           Build and deploy the dashboard to private Cloud Run with viewer IAM restrictions"
+  echo "  --status, status    Check live status, endpoint URL, and current IAM viewer policy"
   echo "  --stop, --down, stop  Shut down the service and take it offline immediately"
   echo ""
   echo "Configuration (.env):"
-  echo "  Values can be set in .env using ALLOWED_GROUPS, ALLOWED_USERS, and BLOCKED_DOMAINS."
+  echo "  Viewer access lists are configured in .env via:"
+  echo "    • DASHBOARD_VIEWER_GROUPS=\"team@google.com\""
+  echo "    • DASHBOARD_VIEWER_USERS=\"user1@google.com,user2@google.com\""
+  echo "    • BLOCKED_DOMAINS=\"altostrat.com\""
   echo ""
   echo "Examples:"
-  echo "  ./deploy/deploy_gcp.sh                              # Uses settings defined in .env"
-  echo "  ./deploy/deploy_gcp.sh --group team@google.com      # Appends/overrides group"
-  echo "  ./deploy/deploy_gcp.sh --status                     # Checks service and IAM status"
-  echo "  ./deploy/deploy_gcp.sh --stop                       # Shuts down service"
+  echo "  ./deploy/deploy_gcp.sh                                     # Deploys with viewers defined in .env"
+  echo "  ./deploy/deploy_gcp.sh --viewer-group team@google.com      # Appends/overrides viewer group"
+  echo "  ./deploy/deploy_gcp.sh --status                            # Checks live service and viewer access list"
+  echo "  ./deploy/deploy_gcp.sh --stop                              # Shuts down service"
   exit 1
 }
 
@@ -84,7 +85,7 @@ validate_domain() {
   for blocked in "${BLOCKED_DOMAINS[@]}"; do
     blocked_trimmed=$(echo "$blocked" | xargs)
     if [[ -n "$blocked_trimmed" && ("$domain" == "$blocked_trimmed" || "$domain" == *."$blocked_trimmed") ]]; then
-      echo "❌ SECURITY ERROR: Domain '$domain' (from '$email') is BLOCKED and cannot be granted access." >&2
+      echo "❌ SECURITY ERROR: Domain '$domain' (from '$email') is BLOCKED and cannot be granted viewer access." >&2
       exit 1
     fi
   done
@@ -115,7 +116,7 @@ check_status() {
   echo "🔍 Checking status for $SERVICE_NAME in $PROJECT_ID ($REGION)..."
   if gcloud run services describe "$SERVICE_NAME" --project "$PROJECT_ID" --region "$REGION" --format="yaml(status.url,status.conditions)" 2>/dev/null; then
     echo ""
-    echo "🔒 Current IAM Access Policy:"
+    echo "🔒 Current Dashboard Viewers (IAM roles/run.invoker):"
     gcloud run services get-iam-policy "$SERVICE_NAME" --project "$PROJECT_ID" --region "$REGION" --flatten="bindings[].members" --format="table(bindings.role,bindings.members)"
   else
     echo "❌ Service is currently OFFLINE (not running)."
@@ -135,11 +136,11 @@ while [[ $# -gt 0 ]]; do
     --status|status)
       check_status
       ;;
-    --group|--groups)
+    --viewer-group|--viewer-groups|--group|--groups)
       GROUPS_FLAG="$2"
       shift 2
       ;;
-    --user|--users|--allow|--allow-emails)
+    --viewer-user|--viewer-users|--user|--users|--allow|--allow-emails)
       USERS_FLAG="$2"
       shift 2
       ;;
@@ -155,11 +156,11 @@ done
 
 cd "$PROJECT_ROOT"
 
-# Compile and validate principals from .env + CLI flags
-FINAL_PRINCIPALS=()
+# Compile and validate viewer principals from .env + CLI flags
+FINAL_VIEWERS=()
 
-# 1. Process Google Groups (.env + flag)
-ALL_GROUPS_STR="${ENV_GROUPS}"
+# 1. Process Dashboard Viewer Google Groups (.env + flag)
+ALL_GROUPS_STR="${ENV_VIEWER_GROUPS}"
 if [[ -n "$GROUPS_FLAG" ]]; then
   if [[ -n "$ALL_GROUPS_STR" ]]; then
     ALL_GROUPS_STR="${ALL_GROUPS_STR},${GROUPS_FLAG}"
@@ -175,13 +176,13 @@ if [[ -n "$ALL_GROUPS_STR" ]]; then
     if [[ -n "$g_trimmed" ]]; then
       entry="group:$g_trimmed"
       validate_domain "$entry"
-      FINAL_PRINCIPALS+=("$entry")
+      FINAL_VIEWERS+=("$entry")
     fi
   done
 fi
 
-# 2. Process Individual Users (.env + flag)
-ALL_USERS_STR="${ENV_USERS:-brendanhills@google.com}"
+# 2. Process Dashboard Viewer Individual Users (.env + flag)
+ALL_USERS_STR="${ENV_VIEWER_USERS:-brendanhills@google.com}"
 if [[ -n "$USERS_FLAG" ]]; then
   if [[ -n "$ALL_USERS_STR" ]]; then
     ALL_USERS_STR="${ALL_USERS_STR},${USERS_FLAG}"
@@ -197,13 +198,13 @@ if [[ -n "$ALL_USERS_STR" ]]; then
     if [[ -n "$u_trimmed" ]]; then
       entry="user:$u_trimmed"
       validate_domain "$entry"
-      FINAL_PRINCIPALS+=("$entry")
+      FINAL_VIEWERS+=("$entry")
     fi
   done
 fi
 
-if [[ ${#FINAL_PRINCIPALS[@]} -eq 0 ]]; then
-  echo "❌ Error: No allowed groups or users specified in .env or via CLI flags." >&2
+if [[ ${#FINAL_VIEWERS[@]} -eq 0 ]]; then
+  echo "❌ Error: No dashboard viewer groups or users specified in .env or via CLI flags." >&2
   exit 1
 fi
 
@@ -227,10 +228,10 @@ gcloud run deploy "$SERVICE_NAME" \
 # 2. Retrieve service URL
 SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --project "$PROJECT_ID" --region "$REGION" --format="value(status.url)")
 
-# 3. Apply restricted IAM Invoker permissions
-echo "🔒 Applying restricted IAM access control..."
-for member in "${FINAL_PRINCIPALS[@]}"; do
-  echo "   ➕ Granting Cloud Run Invoker access to: $member"
+# 3. Apply restricted IAM Invoker permissions to Dashboard Viewers
+echo "🔒 Applying restricted IAM access control for Dashboard Viewers..."
+for member in "${FINAL_VIEWERS[@]}"; do
+  echo "   ➕ Granting Dashboard Viewer access (roles/run.invoker) to: $member"
   gcloud run services add-iam-policy-binding "$SERVICE_NAME" \
     --project "$PROJECT_ID" \
     --region "$REGION" \
@@ -244,8 +245,8 @@ echo "=================================================================="
 echo "🎉 DEPLOYMENT COMPLETE & SECURED"
 echo "=================================================================="
 echo "  🌐 Private Service URL: $SERVICE_URL"
-echo "  🔒 Allowed Principals:"
-for member in "${FINAL_PRINCIPALS[@]}"; do
+echo "  👥 Authorized Dashboard Viewers:"
+for member in "${FINAL_VIEWERS[@]}"; do
   echo "     • $member"
 done
 echo "  🚫 Explicitly Blocked: ${BLOCKED_DOMAINS[*]}"
