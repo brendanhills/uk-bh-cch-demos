@@ -3,6 +3,7 @@
 # F-DSE Risk Intelligence Platform — Private GCP Cloud Run Pipeline
 # Supports .env configuration for Dashboard Viewers and Admins/Editors,
 # domain blocking, live status checks, and instant shutdown.
+# Rule: All Admins/Editors automatically inherit Viewer access.
 # ==============================================================================
 set -e
 
@@ -60,6 +61,8 @@ usage() {
   echo "  --viewer-user, --user <emails>    User email(s) granted VIEWER access (roles/run.invoker)"
   echo "  --admin-group <email>             Google Group(s) granted ADMIN/EDITOR access (roles/run.developer)"
   echo "  --admin-user <emails>             User email(s) granted ADMIN/EDITOR access (roles/run.developer)"
+  echo ""
+  echo "Note: All Admins/Editors automatically inherit Viewer permissions."
   echo ""
   echo "Service Management Commands:"
   echo "  (default)           Build and deploy the dashboard to private Cloud Run with IAM restrictions"
@@ -173,43 +176,6 @@ done
 
 cd "$PROJECT_ROOT"
 
-# --- Process Viewers ---
-FINAL_VIEWERS=()
-
-ALL_VIEWER_GROUPS_STR="${ENV_VIEWER_GROUPS}"
-if [[ -n "$VIEWER_GROUPS_FLAG" ]]; then
-  ALL_VIEWER_GROUPS_STR="${ALL_VIEWER_GROUPS_STR:+${ALL_VIEWER_GROUPS_STR},}${VIEWER_GROUPS_FLAG}"
-fi
-
-if [[ -n "$ALL_VIEWER_GROUPS_STR" ]]; then
-  IFS=',' read -ra GRP_LIST <<< "$ALL_VIEWER_GROUPS_STR"
-  for g in "${GRP_LIST[@]}"; do
-    g_trimmed=$(echo "$g" | xargs)
-    if [[ -n "$g_trimmed" ]]; then
-      entry="group:$g_trimmed"
-      validate_domain "$entry"
-      FINAL_VIEWERS+=("$entry")
-    fi
-  done
-fi
-
-ALL_VIEWER_USERS_STR="${ENV_VIEWER_USERS:-brendanhills@google.com}"
-if [[ -n "$VIEWER_USERS_FLAG" ]]; then
-  ALL_VIEWER_USERS_STR="${ALL_VIEWER_USERS_STR:+${ALL_VIEWER_USERS_STR},}${VIEWER_USERS_FLAG}"
-fi
-
-if [[ -n "$ALL_VIEWER_USERS_STR" ]]; then
-  IFS=',' read -ra USR_LIST <<< "$ALL_VIEWER_USERS_STR"
-  for u in "${USR_LIST[@]}"; do
-    u_trimmed=$(echo "$u" | xargs)
-    if [[ -n "$u_trimmed" ]]; then
-      entry="user:$u_trimmed"
-      validate_domain "$entry"
-      FINAL_VIEWERS+=("$entry")
-    fi
-  done
-fi
-
 # --- Process Admins / Editors ---
 FINAL_ADMINS=()
 
@@ -247,6 +213,61 @@ if [[ -n "$ALL_ADMIN_USERS_STR" ]]; then
   done
 fi
 
+# --- Process Viewers (including Automatic Admin Inheritance) ---
+FINAL_VIEWERS=()
+
+# Helper function to add viewer uniquely
+add_unique_viewer() {
+  local item="$1"
+  for existing in "${FINAL_VIEWERS[@]}"; do
+    if [[ "$existing" == "$item" ]]; then
+      return 0
+    fi
+  done
+  FINAL_VIEWERS+=("$item")
+}
+
+# 1. Explicit Viewer Groups
+ALL_VIEWER_GROUPS_STR="${ENV_VIEWER_GROUPS}"
+if [[ -n "$VIEWER_GROUPS_FLAG" ]]; then
+  ALL_VIEWER_GROUPS_STR="${ALL_VIEWER_GROUPS_STR:+${ALL_VIEWER_GROUPS_STR},}${VIEWER_GROUPS_FLAG}"
+fi
+
+if [[ -n "$ALL_VIEWER_GROUPS_STR" ]]; then
+  IFS=',' read -ra GRP_LIST <<< "$ALL_VIEWER_GROUPS_STR"
+  for g in "${GRP_LIST[@]}"; do
+    g_trimmed=$(echo "$g" | xargs)
+    if [[ -n "$g_trimmed" ]]; then
+      entry="group:$g_trimmed"
+      validate_domain "$entry"
+      add_unique_viewer "$entry"
+    fi
+  done
+fi
+
+# 2. Explicit Viewer Users
+ALL_VIEWER_USERS_STR="${ENV_VIEWER_USERS}"
+if [[ -n "$VIEWER_USERS_FLAG" ]]; then
+  ALL_VIEWER_USERS_STR="${ALL_VIEWER_USERS_STR:+${ALL_VIEWER_USERS_STR},}${VIEWER_USERS_FLAG}"
+fi
+
+if [[ -n "$ALL_VIEWER_USERS_STR" ]]; then
+  IFS=',' read -ra USR_LIST <<< "$ALL_VIEWER_USERS_STR"
+  for u in "${USR_LIST[@]}"; do
+    u_trimmed=$(echo "$u" | xargs)
+    if [[ -n "$u_trimmed" ]]; then
+      entry="user:$u_trimmed"
+      validate_domain "$entry"
+      add_unique_viewer "$entry"
+    fi
+  done
+fi
+
+# 3. RULE: All Admins/Editors are automatically Viewers
+for admin_entry in "${FINAL_ADMINS[@]}"; do
+  add_unique_viewer "$admin_entry"
+done
+
 echo "=================================================================="
 echo "🚀 Deploying F-DSE Risk Intelligence Dashboard (Private Mode)"
 echo "   Config Source:   .env"
@@ -267,8 +288,8 @@ gcloud run deploy "$SERVICE_NAME" \
 # 2. Retrieve service URL
 SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --project "$PROJECT_ID" --region "$REGION" --format="value(status.url)")
 
-# 3. Apply IAM Invoker permissions to Dashboard Viewers
-echo "🔒 Applying restricted IAM access control for Dashboard Viewers..."
+# 3. Apply IAM Invoker permissions to all Viewers (including inherited Admins)
+echo "🔒 Applying restricted IAM access control for Dashboard Viewers (roles/run.invoker)..."
 for member in "${FINAL_VIEWERS[@]}"; do
   echo "   👥 Granting Viewer access (roles/run.invoker) to: $member"
   gcloud run services add-iam-policy-binding "$SERVICE_NAME" \
@@ -279,21 +300,15 @@ for member in "${FINAL_VIEWERS[@]}"; do
     --quiet >/dev/null
 done
 
-# 4. Apply IAM Developer & Invoker permissions to Dashboard Admins/Editors
-echo "🔒 Applying restricted IAM access control for Dashboard Admins/Editors..."
+# 4. Apply IAM Developer permissions to Dashboard Admins/Editors
+echo "🔒 Applying restricted IAM access control for Dashboard Admins/Editors (roles/run.developer)..."
 for member in "${FINAL_ADMINS[@]}"; do
-  echo "   🛠️ Granting Admin/Editor access (roles/run.developer + invoker) to: $member"
+  echo "   🛠️ Granting Admin/Editor access (roles/run.developer) to: $member"
   gcloud run services add-iam-policy-binding "$SERVICE_NAME" \
     --project "$PROJECT_ID" \
     --region "$REGION" \
     --member="$member" \
     --role="roles/run.developer" \
-    --quiet >/dev/null
-  gcloud run services add-iam-policy-binding "$SERVICE_NAME" \
-    --project "$PROJECT_ID" \
-    --region "$REGION" \
-    --member="$member" \
-    --role="roles/run.invoker" \
     --quiet >/dev/null
 done
 
@@ -303,14 +318,14 @@ echo "🎉 DEPLOYMENT COMPLETE & SECURED"
 echo "=================================================================="
 echo "  🌐 Private Service URL: $SERVICE_URL"
 echo ""
-echo "  👥 Authorized Dashboard Viewers:"
+echo "  👥 Dashboard Viewers (Can view via Google SSO):"
 for member in "${FINAL_VIEWERS[@]}"; do
   echo "     • $member"
 done
 echo ""
-echo "  🛠️ Authorized Dashboard Admins / Editors:"
+echo "  🛠️ Dashboard Admins / Editors (Can deploy & manage):"
 for member in "${FINAL_ADMINS[@]}"; do
-  echo "     • $member"
+  echo "     • $member (inherits Viewer access)"
 done
 echo ""
 echo "  🚫 Explicitly Blocked Domains: ${BLOCKED_DOMAINS[*]}"
