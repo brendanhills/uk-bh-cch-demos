@@ -40,26 +40,37 @@ http://localhost:9000
 
 ## 🔒 Cloud Deployment & Operations Pipeline
 
-The platform includes a secured, private deployment pipeline to Google Cloud Run (**`uk-bh-experiments-argolis`**) with Google Group IAM access control, domain security, and immediate shutdown capabilities:
+The platform includes a secured, private deployment pipeline to Google Cloud Run (**`uk-bh-experiments-argolis`**) configured via `.env` with Google Group IAM access control, domain security, and immediate shutdown capabilities:
 
-### 1. Deploy with Google Group Access
+### 1. Configure Access Control in `.env`
+Copy `.env.example` to `.env` and set your authorized groups and users:
 ```bash
-# Deploy and grant access to a Google Group (e.g. @google.com or @twosync.google.com)
-./deploy/deploy_gcp.sh --group "your-team-group@google.com"
+# Allowed Google Groups (comma-separated list, e.g. team@google.com or team@twosync.google.com)
+ALLOWED_GROUPS="your-team-group@google.com"
 
-# Or deploy with a Google Group + individual user emails
-./deploy/deploy_gcp.sh \
-  --group "your-team-group@google.com" \
-  --user "lead@google.com"
+# Allowed Individual Users (comma-separated list of @google.com emails)
+ALLOWED_USERS="brendanhills@google.com,colleague@google.com"
+
+# Blocked Domains (strictly forbidden from receiving IAM invoker access)
+BLOCKED_DOMAINS="altostrat.com"
 ```
 
-### 2. Check Live Status & IAM Policies
+### 2. Deploy to Private Cloud Run
+```bash
+# 1-Click deploy using settings from .env
+./deploy/deploy_gcp.sh
+
+# Or optionally override/add groups or users via CLI flags
+./deploy/deploy_gcp.sh --group "extra-group@google.com" --user "lead@google.com"
+```
+
+### 3. Check Live Status & IAM Policies
 ```bash
 # Check if the service is online, its URL, and current IAM bindings
 ./deploy/deploy_gcp.sh --status
 ```
 
-### 3. Immediate Service Shutdown (Stop Server)
+### 4. Immediate Service Shutdown (Stop Server)
 Whenever you need to immediately stop the service and take the dashboard offline (like `sudo shutdown -h now`):
 ```bash
 # 1-Click Service Shutdown
@@ -70,7 +81,7 @@ Whenever you need to immediately stop the service and take the dashboard offline
 ./deploy/deploy_gcp.sh --stop
 ```
 
-### 4. Domain Blocking & Security Rules
+### 5. Domain Blocking & Security Rules
 * **Strict Least Privilege**: Deployed with `--no-allow-unauthenticated` so only explicitly authorized principals can invoke the service.
 * **Domain Blocking**: Domains such as `altostrat.com` are strictly forbidden and blocked by pre-flight validation.
 
@@ -80,6 +91,7 @@ Whenever you need to immediately stop the service and take the dashboard offline
 
 ```
 project_dash/
+├── .env.example                # Environment template (Gemini API, deployment & IAM allowlist)
 ├── index.html                  # Core Single-Page Application (HTML5 / Tailwind / Chart.js)
 ├── server.py                   # Python server with Drive sync and ingestion APIs
 ├── run_server.sh               # 1-Command tmux server manager (start, attach, restart, kill)

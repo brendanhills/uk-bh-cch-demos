@@ -13,3 +13,6 @@ deploy/repo/
 /tmp/
 *.zip
 *.log
+.env
+.env.local
+.env.*.local
