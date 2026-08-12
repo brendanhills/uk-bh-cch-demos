@@ -15,7 +15,16 @@
 - [ ] Task: Implement the soft guardrail refusal logic (polite refusal to share sensitive discharge details upon unannounced speaker change, asking for 2FA check)
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
-## Phase 3: Integration, Regression, & End-to-End Verification
-- [ ] Task: Run automated regression and code coverage suite (`pytest --cov=app`)
-- [ ] Task: Execute end-to-end manual verification plan across 2FA enrollment, continuous speech verification, and spouse/doctor handoff scenarios
+## Phase 3: Conversational Advice Audit Log & Session PII Auto-Cleanup
+- [ ] Task: Create structured audit logging module in `app/audit.py` to record clinical advice transactions to `app/logs/audit/clinical_advice.log`
+- [ ] Task: Integrate clinical advice logging into the chatbot's response/speech synthesis generation handlers (storing timestamp, text, and active 2FA state)
+- [ ] Task: Build session-bound media directory handlers to direct incoming webcam frames and audio files into `app/logs/sessions/{session_id}/`
+- [ ] Task: Implement WebSocket disconnect auto-purge routine in `app/main.py` that recursively and securely wipes the temporary session media directory
+- [ ] Task: Implement regex-based text anonymizer in `app/audit.py` to redact client phone numbers/names, with a dedicated interface for future Google SDP integration
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+
+## Phase 4: Integration, Regression, & End-to-End Verification
+- [ ] Task: Run automated regression and code coverage suite (`pytest --cov=app`)
+- [ ] Task: Execute end-to-end manual verification plan across 2FA enrollment, continuous speech verification, spouse/doctor handoff, advice audit logs, and post-session PII deletion
+- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+
