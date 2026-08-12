@@ -14,3 +14,7 @@
 - [~] **Track: ADK 2.0 Multi-Agent Concierge Workflow (#BUG-23, #BUG-25, #BUG-43, #BUG-45, #BUG-46)**
   *Link: [adk2_multi_agent_workflow_20260806](./tracks/adk2_multi_agent_workflow_20260806/index.md)*
 
+- [ ] **Track: Multimodal 2FA & Continuous Speaker Verification**
+  *Link: [multimodal_2fa_and_continuous_speaker_verification_20260812](./tracks/multimodal_2fa_and_continuous_speaker_verification_20260812/index.md)*
+
+
