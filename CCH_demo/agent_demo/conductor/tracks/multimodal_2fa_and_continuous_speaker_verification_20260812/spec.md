@@ -20,6 +20,18 @@
 - **Conversational Speaker Handoff:**
   - If the primary user says: *"I'm passing the phone to my husband"* or *"Please let Dr. Watson join"*, Gemini detects this conversational intent, registers the handoff, and updates the speaker profile to trust the secondary speaker—bypassing the immediate 2FA trigger.
 
+### 3. Phase 3: Conversational Advice Audit Log & Session-Bound PII Cleanup
+- **Clinical Advice Provenance Audit Log:** Create a human-readable, compliant audit log file (`app/logs/audit/clinical_advice.log`). Every time the chatbot delivers advice or instructions (medication, discharge steps, nurse details), log:
+  - Timestamp (ISO 8601) and Session ID.
+  - Exact medical advice/guidelines text delivered.
+  - The active user's security/authentication state at that moment (e.g., `2FA_VERIFIED`, `GUEST_AUTHORIZED`, `UNVERIFIED_PENDING`).
+  - Safe for demo presentation at the end of the call flow.
+- **Session-Bound PII Cleanup:**
+  - All webcam frames (taken for 2FA visual matching) and raw incoming voice buffers are stored solely in a temporary session directory (`app/logs/sessions/{session_id}/`).
+  - **Auto-Purge Handler:** When the session WebSocket disconnects, trigger a secure garbage collection routine to recursively delete all visual frames and raw audio from disk, leaving zero media footprint.
+  - **Text PII Anonymization:** Redact basic client phone numbers and names from the long-term clinical audit log using regex pre-processing.
+  - **Future SDP Integration Roadmap:** Design the logging interface to support Google Cloud Sensitive Data Protection (SDP) API integration in a subsequent phase for enterprise-grade DLP.
+
 ## Non-Functional Requirements
 - **Low Latency:** The parallel DSP audio analysis must run with `<10ms` processing overhead per audio chunk to keep the real-time bidirectional stream lag-free.
 - **Resilience:** Vision parsing must be resilient to screen glare, tilt, and moderate indoor lighting variations.
@@ -28,3 +40,6 @@
 - Triggering 2FA generates a random code and instructs the user to present it. Showing the correct physical code to the webcam successfully unlocks the session.
 - If a secondary speaker speaks without prior authorization, the assistant refuses sensitive medical requests and prompts for re-authentication.
 - If the authenticated user says *"Let my spouse join the conversation"*, the assistant permits the secondary speaker to talk without triggering security alerts.
+- Delivering medical advice automatically logs the transaction in the clinical advice audit log, showing the advice text alongside the active authentication state.
+- Disconnecting the call session securely purges all temporary 2FA webcam images and raw audio buffers from disk.
+
