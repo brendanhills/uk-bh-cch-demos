@@ -1509,11 +1509,15 @@
 
         function filterRiskExplorerByBundle(bundleKey) {
             switchTab('overview');
-            const searchInput = document.getElementById('riskSearchInput');
+            const searchInput = document.getElementById('explorerSearchInput');
             if (searchInput) {
                 searchInput.value = bundleKey;
-                renderRiskExplorer();
             }
+            renderRiskExplorer();
+            setTimeout(() => {
+                const sec = document.getElementById('riskExplorerSection');
+                if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         }
 
         async function triggerNotebookSync() {
@@ -3596,7 +3600,8 @@
             if (!modal) return;
 
             if (type === 'risk') {
-                const risk = LIVE_RISKS.find(r => r.id === itemId || String(r.displayId) === String(itemId));
+                const allRiskPool = (typeof LIVE_RISKS !== 'undefined' ? LIVE_RISKS : []).concat(typeof LIVE_TEAM_GOOGLE_RISKS !== 'undefined' ? LIVE_TEAM_GOOGLE_RISKS : []);
+                const risk = allRiskPool.find(r => r.id === itemId || String(r.displayId) === String(itemId));
                 if (!risk) return;
 
                 document.getElementById('itemDetailIcon').innerText = '🛡️';
