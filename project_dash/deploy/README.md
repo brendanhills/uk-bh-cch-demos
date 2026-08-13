@@ -1,6 +1,23 @@
 # F-DSE Dashboard Deployment & Operations Pipeline
 
-This directory contains deployment pipelines and service shutdown controls for the **F-DSE Risk Intelligence Platform**.
+This directory contains deployment pipelines, role-based access configuration, and service shutdown controls for the **F-DSE Risk Intelligence Platform**.
+
+---
+
+## 👥 Ganpati (MDB) & TwoSync Groups Architecture
+
+Access to the platform is managed through three dedicated Ganpati Prod groups synced to GCP via TwoSync:
+
+| Group Name | Ganpati Type | GCP IAM Identity | Target Audience & Permissions |
+| :--- | :--- | :--- | :--- |
+| **`monaro-risk-admin`** | `ADMIN` | `monaro-risk-admin@twosync.google.com` | **Admin / Ownership Group**: Owns and administers access policies for dev/prod groups. |
+| **`monaro-risk-dev`** | `TEAM` | `monaro-risk-dev@twosync.google.com` | **Developers / Editors**: Can deploy revisions and access development environments. |
+| **`monaro-risk-prod`** | `TEAM` | `monaro-risk-prod@twosync.google.com` | **Production Viewers**: Executive stakeholders (e.g. `allins@google.com`) and governance viewers. |
+
+### Useful Links
+* **Admin Group UI**: [https://ganpati2.corp.google.com/group/%25monaro-risk-admin.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-admin.prod)
+* **Dev Team UI**: [https://ganpati2.corp.google.com/group/%25monaro-risk-dev.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-dev.prod)
+* **Prod Team UI**: [https://ganpati2.corp.google.com/group/%25monaro-risk-prod.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-prod.prod)
 
 ---
 
@@ -16,13 +33,13 @@ GCP_SERVICE_NAME="f-dse-risk-dashboard-private"
 
 # --- Dashboard Viewer Access Control (IAM roles/run.invoker) ---
 # Viewers can access and view the live dashboard web application via Google SSO.
-DASHBOARD_VIEWER_GROUPS="f-dse-governance-team@google.com"
-DASHBOARD_VIEWER_USERS="brendanhills@google.com,colleague1@google.com"
+DASHBOARD_VIEWER_GROUPS="monaro-risk-prod@twosync.google.com"
+DASHBOARD_VIEWER_USERS="brendanhills@google.com,allins@google.com"
 
 # --- Dashboard Admin / Editor Access Control (IAM roles/run.developer) ---
 # Admins/Editors can deploy updates, manage revisions, and configure the service.
-DASHBOARD_ADMIN_GROUPS="f-dse-lead-team@google.com"
-DASHBOARD_ADMIN_USERS="brendanhills@google.com,techlead@google.com"
+DASHBOARD_ADMIN_GROUPS="monaro-risk-dev@twosync.google.com"
+DASHBOARD_ADMIN_USERS="brendanhills@google.com"
 
 # --- Security & Domain Restrictions ---
 BLOCKED_DOMAINS="altostrat.com"
@@ -40,8 +57,8 @@ Once configured in `.env`, simply run:
 
 # Or optionally override/add extra viewer or admin groups/users on the fly
 ./deploy/deploy_gcp.sh \
-  --viewer-group "extra-viewers@google.com" \
-  --admin-user "lead-dev@google.com"
+  --viewer-group "monaro-risk-prod@twosync.google.com" \
+  --admin-group "monaro-risk-dev@twosync.google.com"
 ```
 
 ---

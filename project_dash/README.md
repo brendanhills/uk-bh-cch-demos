@@ -23,6 +23,34 @@ Interactive Executive Cockpit and Risk Intelligence Platform built for the **Fut
 
 ---
 
+## 👥 Access Control & Ganpati (MDB) Groups
+
+Authentication and access control are governed through Google-native **Ganpati (MDB)** Prod groups synced to Google Cloud via **TwoSync**:
+
+| Group Name | Ganpati Namespace / Type | TwoSync Identity (GCP IAM) | Purpose & Target Audience |
+| :--- | :--- | :--- | :--- |
+| **`monaro-risk-admin`** | `prod` / `ADMIN` | `monaro-risk-admin@twosync.google.com` | **Admin / Ownership Group**: Administers access rules and owns the dev/prod team groups. Self-owned by technical leads. |
+| **`monaro-risk-dev`** | `prod` / `TEAM` | `monaro-risk-dev@twosync.google.com` | **Development & Engineering**: Engineers and data developers who can deploy updates and access dev/staging builds. |
+| **`monaro-risk-prod`** | `prod` / `TEAM` | `monaro-risk-prod@twosync.google.com` | **Production Stakeholders & Viewers**: Executive stakeholders (e.g. `allins@google.com`), PMs, and cross-functional governance viewers. |
+
+### Adding Members to Groups
+1. Open the group in Ganpati:
+   - **Admin**: [https://ganpati2.corp.google.com/group/%25monaro-risk-admin.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-admin.prod)
+   - **Dev**: [https://ganpati2.corp.google.com/group/%25monaro-risk-dev.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-dev.prod)
+   - **Prod (Viewers)**: [https://ganpati2.corp.google.com/group/%25monaro-risk-prod.prod](https://ganpati2.corp.google.com/group/%25monaro-risk-prod.prod)
+2. Navigate to the **Children** tab $\rightarrow$ click **Propose New Children**.
+3. Add the individual Googler LDAPs (members can be from any team or organization across Google).
+4. Submitting the proposal automatically approves it (since `monaro-risk-admin` owns the groups).
+
+### TwoSync Registration
+To sync Ganpati groups to GCP IAM rosters (`*@twosync.google.com`), run:
+```bash
+/google/src/head/depot/google3/security/twosync/tools/register.sh --group monaro-risk-dev
+/google/src/head/depot/google3/security/twosync/tools/register.sh --group monaro-risk-prod
+```
+
+---
+
 ## 🚀 Local Quickstart
 
 ```bash
@@ -40,32 +68,32 @@ http://localhost:9000
 
 ## 🔒 Cloud Deployment & Operations Pipeline
 
-The platform includes a secured, private deployment pipeline to Google Cloud Run (**`uk-bh-experiments-argolis`**) configured via `.env` with distinct **Dashboard Viewer** and **Dashboard Admin/Editor** IAM access controls, domain security, and immediate shutdown capabilities:
+The platform includes a secured, private deployment pipeline to Google Cloud Run configured via `.env` with explicit Dashboard Viewer and Admin access controls, domain security, and immediate shutdown capabilities:
 
 ### 1. Configure Role-Based Access in `.env`
 Copy `.env.example` to `.env` and configure your authorized viewers and admins:
 ```bash
 # --- Dashboard Viewers (Can view dashboard via Google SSO) ---
-DASHBOARD_VIEWER_GROUPS="f-dse-governance-team@google.com"
-DASHBOARD_VIEWER_USERS="brendanhills@google.com,colleague1@google.com"
+DASHBOARD_VIEWER_GROUPS="monaro-risk-prod@twosync.google.com"
+DASHBOARD_VIEWER_USERS="brendanhills@google.com,allins@google.com"
 
 # --- Dashboard Admins / Editors (Can deploy updates and manage revisions) ---
-DASHBOARD_ADMIN_GROUPS="f-dse-lead-team@google.com"
-DASHBOARD_ADMIN_USERS="brendanhills@google.com,techlead@google.com"
+DASHBOARD_ADMIN_GROUPS="monaro-risk-dev@twosync.google.com"
+DASHBOARD_ADMIN_USERS="brendanhills@google.com"
 
 # --- Security & Domain Restrictions ---
 BLOCKED_DOMAINS="altostrat.com"
 ```
 
-### 2. Deploy to Private Cloud Run
+### 2. Deploy to Cloud Run
 ```bash
 # 1-Click deploy using settings from .env
 ./deploy/deploy_gcp.sh
 
 # Or optionally override/add viewers or admins via CLI flags
 ./deploy/deploy_gcp.sh \
-  --viewer-group "extra-viewers@google.com" \
-  --admin-user "lead-dev@google.com"
+  --viewer-group "monaro-risk-prod@twosync.google.com" \
+  --admin-group "monaro-risk-dev@twosync.google.com"
 ```
 
 ### 3. Check Live Status & Role Policies
