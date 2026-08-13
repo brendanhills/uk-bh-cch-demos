@@ -3,6 +3,15 @@
 from typing import Any, Dict, List
 
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why Tools (scheduling & EMR)?
+#
+# WHY TOOLS HERE (INSTEAD OF AN AGENT)?
+# 1. External System Side-Effects: Connects to hospital databases (calendar & EMR systems).
+# 2. Deterministic Slot Matching: Returns exact appointment time slots and practitioner names
+#    preventing hallucinated nurse schedules.
+# ==============================================================================
+
 def get_available_support_times(
     requested_date: str, service_type: str = "Pediatric Nurse Visit"
 ) -> Dict[str, Any]:

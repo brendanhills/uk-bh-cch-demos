@@ -3,6 +3,16 @@
 from typing import Any, Dict
 
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why a Tool (calculate_home_care_financials)?
+#
+# WHY A TOOL HERE (INSTEAD OF AN AGENT)?
+# 1. Exact Mathematical Computation: LLMs are notoriously unreliable at arithmetic.
+#    Using Python math guarantees precise Medicare/NDIS subsidy calculations and totals.
+# 2. Spoken Formatting Helper: Returns both raw float numbers and natural spoken English
+#    currency strings ("so you'd pay $127.50 in total") ready for voice output.
+# ==============================================================================
+
 def calculate_home_care_financials(
     number_of_visits: int,
     base_rate_per_visit: float = 150.00,

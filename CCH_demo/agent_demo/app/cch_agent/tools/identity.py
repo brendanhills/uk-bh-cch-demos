@@ -4,6 +4,16 @@ from typing import Optional
 from google.adk.tools import ToolContext
 
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why a Tool (record_patient_identity)?
+#
+# WHY A TOOL HERE (INSTEAD OF AN AGENT)?
+# 1. State Persistence Side-Effect: Mutates ADK's global `tool_context.state` dictionary directly
+#    so caller name ("Brendan"), child name ("Leo"), and phone numbers persist across all agents.
+# 2. Instant Zero-LLM Execution (< 5ms): Instant memory write in Python without additional
+#    sub-agent delegation overhead.
+# ==============================================================================
+
 def record_patient_identity(
     caller_name: Optional[str] = None,
     patient_name: Optional[str] = None,

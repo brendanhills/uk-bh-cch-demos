@@ -20,6 +20,16 @@ SOAP_GENERATOR_INSTRUCTION = f"""
 </instructions>
 """
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why a Sub-Agent (soap_generator)?
+#
+# WHY A SUB-AGENT HERE?
+# 1. Specialized Text Synthesis Prompt: Carries clinical record formatting rules
+#    (Subjective, Objective, Assessment, Plan) without polluting general voice instructions.
+# 2. Dual Re-use (Live API & REST API): Invoked both by the multi-agent router during live
+#    calls AND by the FastAPI endpoint (@app.post("/api/session/soap_note")) for medical exports.
+# ==============================================================================
+
 soap_generator = Agent(
     name="soap_generator",
     model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),

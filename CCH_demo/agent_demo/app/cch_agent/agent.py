@@ -5,6 +5,8 @@ from google.adk.agents import Agent
 from google.adk.tools import AgentTool
 
 from cch_agent.persona import CCH_SHARED_PERSONA
+from cch_agent.tools import validate_phone_number, record_patient_identity, google_search
+from cch_agent.tools.telemetry import TimedAgentTool
 from cch_agent.sub_agents import (
     patient_verifier,
     document_scanner,
@@ -34,15 +36,36 @@ ROUTER_INSTRUCTION = f"""
 </instructions>
 """
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Router Agent vs. Tools & Sub-Agents
+# 
+# 1. WHY AN AGENT (cch_concierge_router)?
+#    - Maintains real-time conversational state over Gemini Live WebSocket sessions.
+#    - Enforces hospital persona ("Jennie"), system prompt guardrails, and conversational flow.
+#    - Dynamically evaluates user turn intent to choose between fast-path tools or sub-agent delegation.
+#
+# 2. WHY DIRECT ROUTER TOOLS (validate_phone_number, record_patient_identity)?
+#    - Fast-Path Execution (< 10ms): High-frequency actions executed directly in Python memory.
+#    - Zero Extra LLM Latency: Bypasses sub-agent delegation turns for instant identity validation.
+#
+# 3. WHY SUB-AGENTS (patient_verifier, document_scanner, visit_scheduler, soap_generator)?
+#    - Encapsulated Prompt Scope: Each sub-agent carries specialized instructions & context.
+#    - Unstructured Reasoning: Sub-agents handle fuzzy tasks like extracting text from medical paper photos.
+#    - Performance Optimized: Wrapped in TimedAgentTool(..., skip_summarization=True) for ≤0.5s turns.
+# ==============================================================================
+
 # Master Concierge Router Agent configured for Live API BIDI WebSocket Session
 agent = Agent(
     name="cch_concierge_router",
     model=os.getenv("LIVE_MODEL_ID", "gemini-live-2.5-flash-native-audio"),
     tools=[
-        AgentTool(patient_verifier),
-        AgentTool(document_scanner),
-        AgentTool(visit_scheduler),
-        AgentTool(soap_generator),
+        validate_phone_number,    # Direct Fast-Path Tool (<10ms execution)
+        record_patient_identity,  # Direct Fast-Path Tool (<10ms execution)
+        google_search,            # Direct Search Grounding Tool
+        TimedAgentTool(patient_verifier),   # Sub-Agent Delegated Tool (≤0.5s turn)
+        TimedAgentTool(document_scanner),   # Sub-Agent Delegated Tool (Multimodal OCR)
+        TimedAgentTool(visit_scheduler),    # Sub-Agent Delegated Tool (Scheduling Logic)
+        TimedAgentTool(soap_generator),     # Sub-Agent Delegated Tool (Clinical Notes)
     ],
     instruction=ROUTER_INSTRUCTION,
 )
