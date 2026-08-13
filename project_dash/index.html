@@ -1509,11 +1509,35 @@
 
         function filterRiskExplorerByBundle(bundleKey) {
             switchTab('overview');
+            activeMatrixCellFilter = null;
+            currentQuickFilter = 'all';
             const searchInput = document.getElementById('explorerSearchInput');
-            if (searchInput) {
-                searchInput.value = bundleKey;
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('filterCategorySelect');
+            if (catSelect) catSelect.value = 'all';
+
+            const bundleSelect = document.getElementById('filterBundleSelect');
+            if (bundleSelect) {
+                let found = false;
+                for (let i = 0; i < bundleSelect.options.length; i++) {
+                    if (bundleSelect.options[i].value === bundleKey || bundleSelect.options[i].value.startsWith(bundleKey)) {
+                        bundleSelect.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    const opt = document.createElement('option');
+                    opt.value = bundleKey;
+                    opt.text = bundleKey;
+                    bundleSelect.add(opt);
+                    bundleSelect.value = bundleKey;
+                }
             }
+
+            renderRiskHeatmap();
             renderRiskExplorer();
+
             setTimeout(() => {
                 const sec = document.getElementById('riskExplorerSection');
                 if (sec) sec.scrollIntoView({ behavior: 'smooth' });
@@ -1539,8 +1563,16 @@
             const grid = document.getElementById('matrixGridTeamGoogle');
             if (!grid) return;
 
+            const gridScores = [
+                [12, 17, 22, 24, 25],
+                [11, 16, 20, 21, 23],
+                [6,  10, 15, 18, 19],
+                [4,  5,  9,  13, 14],
+                [1,  2,  3,  7,  8]
+            ];
+
             const filteredRisks = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => {
-                if (teamGoogleMatrixStatus === 'open') return r.status === 'Active' || r.status === 'Issue Eventuated';
+                if (teamGoogleMatrixStatus === 'open') return r.status !== 'Closed';
                 if (teamGoogleMatrixStatus === 'active') return r.status === 'Active';
                 if (teamGoogleMatrixStatus === 'eventuated') return r.status === 'Issue Eventuated';
                 if (teamGoogleMatrixStatus === 'closed') return r.status === 'Closed';
@@ -1551,34 +1583,39 @@
             if (countEl) countEl.innerText = filteredRisks.length + ' Risks';
 
             let html = '';
-            for (let l = 5; l >= 1; l--) {
-                for (let c = 1; c <= 5; c++) {
-                    const score = l * c;
+            for (let rowIdx = 0; rowIdx < 5; rowIdx++) {
+                const c = 5 - rowIdx;
+                for (let colIdx = 0; colIdx < 5; colIdx++) {
+                    const l = colIdx + 1;
+                    const score = gridScores[rowIdx][colIdx];
+
                     const inCell = filteredRisks.filter(r => {
                         const rL = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
                         const rC = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
                         return rL === l && rC === c;
                     });
 
-                    let bgClass = 'bg-emerald-500 text-white';
-                    if (score >= 18) bgClass = 'bg-red-600 text-white font-black';
-                    else if (score >= 12) bgClass = 'bg-orange-500 text-white font-bold';
-                    else if (score >= 6) bgClass = 'bg-amber-400 text-slate-900 font-bold';
-                    else bgClass = 'bg-emerald-500 text-white font-bold';
+                    let bgClass = 'bg-[#93c47d] text-slate-900';
+                    if (score >= 23) bgClass = 'bg-[#ea4335] text-white';
+                    else if (score >= 18) bgClass = 'bg-[#ff9900] text-white';
+                    else if (score >= 13) bgClass = 'bg-[#fdfdb9] text-amber-950 font-medium';
+                    else if (score >= 7) bgClass = 'bg-[#34a853] text-white';
 
                     const isSelected = teamGoogleActiveMatrixCellFilter && teamGoogleActiveMatrixCellFilter.l === l && teamGoogleActiveMatrixCellFilter.c === c;
-                    const ringClass = isSelected ? 'ring-4 ring-blue-700 ring-offset-2 scale-105 z-10' : 'hover:opacity-90';
+                    const ringClass = isSelected ? 'ring-4 ring-blue-600 ring-offset-2 scale-105 z-20 shadow-md' : 'hover:scale-[1.02]';
 
-                    html += '<div onclick="filterTeamGoogleMatrixCell(' + l + ', ' + c + ')" class="' + bgClass + ' ' + ringClass + ' h-14 rounded-xl flex flex-col items-center justify-center p-1 cursor-pointer transition-all shadow-xs relative">';
-                    html += '<span class="text-[10px] opacity-75 font-mono">L' + l + '×C' + c + '</span>';
-                    html += '<span class="text-base font-extrabold">' + inCell.length + '</span>';
+                    html += '<div onclick="filterTeamGoogleMatrixCell(' + l + ', ' + c + ', ' + score + ')" class="hm-cell ' + bgClass + ' ' + ringClass + ' p-3.5 rounded-xl text-center font-bold text-sm flex items-center justify-center cursor-pointer transition-all relative select-none">';
+                    html += score;
+                    if (inCell.length > 0) {
+                        html += '<span class="hm-circle ring-2 ring-blue-500">' + inCell.length + '</span>';
+                    }
                     html += '</div>';
                 }
             }
             grid.innerHTML = html;
 
             // Update Top 3 KPI Cards
-            const critCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => (r.status === 'Active') && ((r.residualLikelihood * r.residualConsequence) >= 16)).length;
+            const critCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => (r.status !== 'Closed') && ((teamGoogleMatrixRating === 'inherent' ? r.inherentRiskScore : r.residualRiskScore) >= 16)).length;
             const activeCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => r.status === 'Active').length;
             const closedCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => r.status === 'Closed').length;
 
@@ -1590,6 +1627,40 @@
             if (elCls) elCls.innerText = closedCount;
         }
 
+        function filterTeamGoogleMatrixCell(l, c, score) {
+            if (teamGoogleActiveMatrixCellFilter && teamGoogleActiveMatrixCellFilter.l === l && teamGoogleActiveMatrixCellFilter.c === c) {
+                clearTeamGoogleActiveCellFilter();
+                return;
+            }
+            teamGoogleActiveMatrixCellFilter = { l, c, score };
+
+            const searchInput = document.getElementById('teamGoogleRiskSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('teamGoogleRiskCategoryFilter');
+            if (catSelect) catSelect.value = 'all';
+
+            const banner = document.getElementById('teamGoogleActiveCellFilterBanner');
+            const bannerText = document.getElementById('teamGoogleActiveCellFilterText');
+            if (banner && bannerText) {
+                bannerText.innerText = '📍 Filtered by Heatmap Cell: Likelihood ' + l + ', Consequence ' + c + ' (Score ' + score + ')';
+                banner.classList.remove('hidden');
+            }
+
+            renderTeamGoogleHeatmap();
+            renderTeamGoogleRiskExplorer();
+
+            const explorerSec = document.getElementById('teamGoogleRiskExplorerSection');
+            if (explorerSec) explorerSec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearTeamGoogleActiveCellFilter() {
+            teamGoogleActiveMatrixCellFilter = null;
+            const banner = document.getElementById('teamGoogleActiveCellFilterBanner');
+            if (banner) banner.classList.add('hidden');
+            renderTeamGoogleHeatmap();
+            renderTeamGoogleRiskExplorer();
+        }
+
         function renderTeamGoogleRiskExplorer() {
             const container = document.getElementById('teamGoogleRiskListContainer');
             if (!container) return;
@@ -1598,7 +1669,7 @@
             const catVal = document.getElementById('teamGoogleRiskCategoryFilter')?.value || 'all';
 
             const filtered = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => {
-                if (teamGoogleMatrixStatus === 'open' && !(r.status === 'Active' || r.status === 'Issue Eventuated')) return false;
+                if (teamGoogleMatrixStatus === 'open' && (r.status === 'Closed')) return false;
                 if (teamGoogleMatrixStatus === 'active' && r.status !== 'Active') return false;
                 if (teamGoogleMatrixStatus === 'eventuated' && r.status !== 'Issue Eventuated') return false;
                 if (teamGoogleMatrixStatus === 'closed' && r.status !== 'Closed') return false;
@@ -1612,7 +1683,7 @@
                 }
 
                 if (searchVal) {
-                    const matchText = ((r.id || '') + ' ' + (r.displayId || '') + ' ' + (r.riskName || '') + ' ' + (r.riskOwner || '') + ' ' + (r.causeDescription || '') + ' ' + (r.treatmentPlan || '')).toLowerCase();
+                    const matchText = ((r.id || '') + ' ' + (r.displayId || '') + ' ' + (r.riskName || '') + ' ' + (r.riskOwner || '') + ' ' + (r.causeDescription || '') + ' ' + (r.treatmentPlan || '') + ' ' + (r.bundle || '') + ' ' + (r.driverTreeRef || '')).toLowerCase();
                     if (!matchText.includes(searchVal)) return false;
                 }
 
@@ -1620,58 +1691,63 @@
             });
 
             const countEl = document.getElementById('teamGoogleExplorerCount');
-            if (countEl) countEl.innerText = filtered.length + ' Risks';
+            if (countEl) countEl.innerText = `${filtered.length} Risks`;
 
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs">No Team Google risks found matching current filters.</div>';
+                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Team Google risks match the selected filter criteria. <button onclick="clearTeamGoogleActiveCellFilter()" class="text-blue-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>';
                 return;
             }
 
             let html = '';
             filtered.forEach(r => {
-                const score = r.residualLikelihood * r.residualConsequence;
+                const score = teamGoogleMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
                 let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                if (score >= 18) scoreBadgeClass = 'bg-red-100 text-red-800 border-red-300 font-bold';
-                else if (score >= 12) scoreBadgeClass = 'bg-orange-100 text-orange-800 border-orange-300 font-bold';
-                else if (score >= 6) scoreBadgeClass = 'bg-amber-100 text-amber-900 border-amber-300';
+                if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
+                else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
+                else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
 
-                const statusBadge = r.status === 'Active' ? 'bg-blue-100 text-blue-800' : (r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-red-100 text-red-800');
-
-                html += '<div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/50 hover:bg-white transition-all space-y-2.5">';
-                html += '  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">';
-                html += '    <div class="flex items-center gap-2 flex-wrap">';
-                html += '      <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">' + (r.displayId || r.id) + '</span>';
-                html += '      <span class="text-xs px-2 py-0.5 rounded-full font-bold ' + statusBadge + '">' + r.status + '</span>';
-                html += '      <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">' + (r.causeCategory || 'Platform') + '</span>';
-                html += '      <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">Driver Ref: ' + (r.driverTreeRef || '1.10b') + '</span>';
+                html += '<div onclick="openItemDetailModal(\'risk\', \'' + r.id + '\')" class="bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3 cursor-pointer group">';
+                html += '  <div class="flex items-start justify-between gap-3">';
+                html += '    <div class="space-y-1 flex-1">';
+                html += '      <div class="flex items-center gap-2 flex-wrap">';
+                html += '        <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">' + (r.displayId || r.id) + '</span>';
+                html += '        <span class="text-xs font-bold px-2 py-0.5 rounded-full ' + (r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') + '">' + (r.status || 'Active') + '</span>';
+                html += '        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">' + (r.causeCategory || 'Platform') + '</span>';
+                html += '        <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ' + (r.driverTreeRef || '1.10b') + '</span>';
+                if (r.bundle) {
+                    html += '    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">' + r.bundle + '</span>';
+                }
+                html += '      </div>';
+                html += '      <h4 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-snug">' + (r.riskName || r.riskDescription) + '</h4>';
                 html += '    </div>';
-                html += '    <div class="flex items-center gap-2">';
-                html += '      <span class="text-xs text-slate-500">Inherent: <b class="font-mono text-slate-700">' + (r.inherentRiskScore || r.inherentLikelihood * r.inherentConsequence) + '</b></span>';
-                html += '      <span class="text-xs px-2.5 py-0.5 rounded-full border ' + scoreBadgeClass + '">Residual Score: ' + score + ' (L' + r.residualLikelihood + '×C' + r.residualConsequence + ')</span>';
+                html += '    <div class="text-right shrink-0">';
+                html += '      <span class="text-[10px] text-slate-400 block font-medium">Inherent: ' + (r.inherentRiskScore || '-') + '</span>';
+                html += '      <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ' + scoreBadgeClass + '">Residual: ' + (r.residualRiskScore || score) + '</span>';
                 html += '    </div>';
                 html += '  </div>';
 
-                html += '  <div>';
-                html += '    <h4 class="text-sm font-bold text-slate-900">' + r.riskName + '</h4>';
-                html += '    <p class="text-xs text-slate-600 mt-1">' + (r.riskDescription || r.causeDescription) + '</p>';
-                html += '  </div>';
+                if (r.riskDescription) {
+                    html += '  <p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">' + r.riskDescription + '</p>';
+                }
 
-                html += '  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-white p-3 rounded-lg border border-slate-200/60">';
+                html += '  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">';
                 html += '    <div>';
-                html += '      <span class="text-slate-400 font-semibold uppercase text-[10px] block">Root Cause / Trigger:</span>';
-                html += '      <span class="text-slate-700">' + (r.causeDescription || 'N/A') + '</span>';
+                html += '      <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>';
+                html += '      <span class="text-slate-700">' + (r.causeDescription || 'Engineering deliverable execution trigger.') + '</span>';
                 html += '    </div>';
                 html += '    <div>';
-                html += '      <span class="text-slate-400 font-semibold uppercase text-[10px] block">Treatment Plan / Mitigation:</span>';
-                html += '      <span class="text-slate-700 font-medium">' + (r.treatmentPlan || 'N/A') + '</span>';
+                html += '      <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>';
+                html += '      <span class="text-slate-700">' + (r.treatmentPlan || 'Active Google engineering mitigation controls.') + '</span>';
                 html += '    </div>';
                 html += '  </div>';
 
-                html += '  <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-200/60">';
-                html += '    <div>Lead Owner: <span class="font-bold text-slate-700">' + (r.riskOwner || 'Team Google') + '</span> (Treatment: ' + (r.treatmentOwner || r.riskOwner) + ')</div>';
-                html += '    <div>Target Date: <span class="font-bold font-mono text-slate-700">' + (r.targetDate || '2026-08-31') + '</span></div>';
+                html += '  <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">';
+                html += '    <span class="font-medium">Lead Owner: <strong class="text-slate-800">👤 ' + (r.riskOwner || 'Team Google') + '</strong></span>';
+                html += '    <div class="flex items-center gap-3">';
+                html += '      <span>Target Date: <strong class="text-slate-800 font-mono">' + (r.targetDate || '2026-08-31') + '</strong></span>';
+                html += '      <span class="text-blue-600 font-bold group-hover:underline text-[11px]">Inspect Full Detail ↗</span>';
+                html += '    </div>';
                 html += '  </div>';
-
                 html += '</div>';
             });
 
@@ -2839,7 +2915,12 @@
                 if (statusFilter === 'Issue Eventuated' && r.status !== 'Issue Eventuated') return false;
                 if (statusFilter === 'Closed' && r.status !== 'Closed') return false;
 
-                if (bundleFilter !== 'all' && (!r.bundle || !r.bundle.includes(bundleFilter))) return false;
+                if (bundleFilter !== 'all') {
+                    const mappingEntry = (typeof BUNDLE_ANNEX_MAPPING !== 'undefined' && BUNDLE_ANNEX_MAPPING[bundleFilter]) ? BUNDLE_ANNEX_MAPPING[bundleFilter] : null;
+                    const isDirectBundleMatch = r.bundle && (r.bundle === bundleFilter || r.bundle.includes(bundleFilter));
+                    const isMappedIdMatch = mappingEntry && mappingEntry.jointRisks && mappingEntry.jointRisks.includes(r.id);
+                    if (!isDirectBundleMatch && !isMappedIdMatch) return false;
+                }
                 if (catFilter !== 'all' && (!r.causeCategory || !r.causeCategory.toLowerCase().includes(catFilter.toLowerCase()))) return false;
                 if (govFilter !== 'all' && (!r.governanceLevel || !r.governanceLevel.toLowerCase().includes(govFilter.toLowerCase()))) return false;
 
@@ -3047,6 +3128,19 @@
             }
 
             activeMatrixCellFilter = { l, c, score };
+
+            // Reset conflicting search text and dropdowns so cell risks show immediately
+            const searchInput = document.getElementById('explorerSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('filterCategorySelect');
+            if (catSelect) catSelect.value = 'all';
+            const bundleSelect = document.getElementById('filterBundleSelect');
+            if (bundleSelect) bundleSelect.value = 'all';
+            const govSelect = document.getElementById('filterGovSelect');
+            if (govSelect) govSelect.value = 'all';
+            currentQuickFilter = 'all';
+            updateQuickFilterButtonsUI();
+
             const filterBanner = document.getElementById('activeCellFilterBanner');
             if (filterBanner) filterBanner.classList.remove('hidden');
             
@@ -3072,7 +3166,7 @@
             
             const explorerSection = document.getElementById('riskExplorerSection');
             if (explorerSection) {
-                explorerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                explorerSection.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
