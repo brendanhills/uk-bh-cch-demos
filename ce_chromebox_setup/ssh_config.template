@@ -1,0 +1,33 @@
+##### Primary Cloudtop Host (Clean, Independent Shell Sessions & VS Code)
+Host <YOUR_CLOUDTOP_NAME>.c.googlers.com <YOUR_CLOUDTOP_NAME> cloudtop ct
+  HostName <YOUR_CLOUDTOP_NAME>.c.googlers.com
+  User <YOUR_LDAP>
+  AddressFamily inet
+  IdentitiesOnly yes
+
+##### Dedicated Background Tunnel Host (Web Dev & Colab Ports)
+Host cloudtop-tunnel
+  HostName <YOUR_CLOUDTOP_NAME>.c.googlers.com
+  User <YOUR_LDAP>
+  AddressFamily inet
+  ExitOnForwardFailure yes
+  IdentitiesOnly yes
+  LocalForward 9000 127.0.0.1:9000
+  LocalForward 9090 127.0.0.1:9090
+  LocalForward 9900 127.0.0.1:9900
+  LocalForward 8888 127.0.0.1:8888
+  LocalForward 5387 127.0.0.1:5387
+
+##### GitHub
+Host github.com
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+
+##### Global Defaults (No Multiplexing, Optimized WebSocket KeepAlive)
+Host *
+  TCPKeepAlive no
+  ServerAliveInterval 15
+  ServerAliveCountMax 3
+  ConnectTimeout 30
+  ConnectionAttempts 3
+  ForwardX11 no
