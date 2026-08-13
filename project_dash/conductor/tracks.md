@@ -24,3 +24,7 @@
 ---
 - [~] **Track: Cloud-Native IDP Deployment with TwoSync Google SSO**
   *Link: [./tracks/c4a_idp_nexus_deployment_20260811/index.md](./tracks/c4a_idp_nexus_deployment_20260811/index.md)*
+
+---
+- [ ] **Track: Team Google Risk Register Integration & Multi-Register Governance**
+  *Link: [./tracks/team_google_risk_register_integration_20260813/index.md](./tracks/team_google_risk_register_integration_20260813/index.md)*
