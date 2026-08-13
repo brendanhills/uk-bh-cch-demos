@@ -28,3 +28,7 @@
 ---
 - [ ] **Track: Team Google Risk Register Integration & Multi-Register Governance**
   *Link: [./tracks/team_google_risk_register_integration_20260813/index.md](./tracks/team_google_risk_register_integration_20260813/index.md)*
+
+---
+- [ ] **Track: Gemini Notebook Ingestion, Contract Blueprint Traceability, and Workspace Sync Integration**
+  *Link: [./tracks/gemini_notebook_blueprint_sync_20260813/index.md](./tracks/gemini_notebook_blueprint_sync_20260813/index.md)*
