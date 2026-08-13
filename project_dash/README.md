@@ -157,3 +157,26 @@ project_dash/
 ## 📢 Team Showcase & Feedback
 
 For weekly project team walkthroughs, showcase scripts, and delta updates, refer to [`TEAM_PRESENTATION_GUIDE.md`](./TEAM_PRESENTATION_GUIDE.md).
+
+---
+
+## 🛡️ Architecture Guardrails & Engineering Best Practices
+
+To maintain data integrity, eliminate UI breakages, and uphold production-grade reliability across single-page applications and multi-register governance platforms:
+
+### 1. Mandatory AST/Syntax Validation for Inline Web App Scripts
+* **Rule**: Whenever modifying JavaScript inside `.html` or single-file SPA templates:
+  1. Extract inline script blocks and execute `node -c <script_file.js>` to verify zero unescaped template quotes or syntax anomalies (`SyntaxError: Unexpected string`).
+  2. Execute a simulated DOM runtime execution test to confirm global functions (`switchTab`, `initApp`, `renderExecBriefing`) initialize without runtime exceptions before declaring task completion.
+
+### 2. Search & Heatmap Drill-Down Filter State Isolation
+* **Rule**: When interacting with targeted analytical widgets (e.g., clicking a 5×5 Risk Heatmap cell or Blueprint Bundle badge):
+  - Isolate the filter state by automatically clearing conflicting free-form search text (`explorerSearchInput.value = ''`) and overlapping category dropdowns.
+  - This prevents accidental `AND` filter collisions that cause false "0 results" empty states.
+
+### 3. Multi-Register Governance Separation Standard
+* **Rule**: When hosting internal vendor workstreams (e.g., *Team Google Delivery Tasks*) alongside multi-party consortium governance (e.g., *Joint Program Risk Register*):
+  - Maintain clean data tagging and isolation in memory.
+  - Provide dedicated cockpit views with distinct visual branding (e.g., Google Blue theme vs. Joint Slate theme).
+  - Dynamically roll up multi-register totals in Executive Decision Briefings with clear source pill badges.
+  - Unify all sync pipelines into a single-pane-of-glass Live Sync Hub.
