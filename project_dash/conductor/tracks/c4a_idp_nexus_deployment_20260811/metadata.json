@@ -1,8 +1,8 @@
 {
   "id": "c4a_idp_nexus_deployment_20260811",
-  "name": "Cloud-Native IDP Deployment with TwoSync Google SSO",
+  "name": "Production Deployment, Drive-Native Storage & Turnkey Handover",
   "type": "feature",
-  "status": "new",
+  "status": "in_progress",
   "created_at": "2026-08-11T15:58:00+10:00",
-  "updated_at": "2026-08-11T15:58:00+10:00"
+  "updated_at": "2026-08-13T18:55:00+10:00"
 }

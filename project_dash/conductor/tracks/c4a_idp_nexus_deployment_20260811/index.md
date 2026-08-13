@@ -1,4 +1,4 @@
-# Track: Cloud-Native IDP Deployment with TwoSync Google SSO
+# Track: Production Deployment, Drive-Native Storage & Turnkey Handover
 
 - [Specification](./spec.md)
 - [Implementation Plan](./plan.md)

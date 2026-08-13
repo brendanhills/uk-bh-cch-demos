@@ -1,27 +1,27 @@
-# Specification: Cloud-Native IDP Deployment with TwoSync Google SSO
+# Specification: Production Deployment, Drive-Native Storage & Turnkey Handover
 
 ## 1. Overview
-Deploy the F-DSE Program Governance & Risk Intelligence Platform to Google's official Cloud-Native Internal Developer Platform (C4A IDP / Nexus). This establishes dedicated, team-owned Cloud Run infrastructure with automated CI/CD and strict Google SSO access control governed by your TwoSync team group.
+Deploy the **F-DSE Program Governance & Risk Intelligence Platform** using Google Drive as the Single Source of Truth for storage and ingestion, enforce strict Google SSO access control via Ganpati/TwoSync groups, and deliver a comprehensive Turnkey Handover Package (`HANDOVER_GUIDE.md`) enabling immediate, self-service operation by the project team (`allins@`, `sdeacon@`, `waynedavis@`).
 
 ## 2. Functional Requirements
-- **Nexus Provisioning**: Provision a dedicated Static Website / Web App application via Nexus UI (`go/idp`).
-- **Access Control (Google SSO)**: Restrict Cloud Run invocation to the authorized TwoSync Ganpati group (`<team>@twosync.google.com`) and designated team emails.
-- **Repository Integration**: Sync local frontend code (`index.html`, `assets/`) to the team's dedicated GitHub Enterprise repository (`depot.code.corp.goog`).
-- **Automated CI/CD**: Merging PRs into `main` automatically triggers GitHub Actions to build and deploy container revisions to Cloud Run.
-- **Local Deployment & Operations Suite**:
-  - `deploy/deploy.sh`: 1-click script to sync local changes, create branch, and open PR.
-  - `deploy/shutdown.sh`: 1-click script to immediately take the service offline.
-  - `deploy/README.md`: Step-by-step developer guide.
+- **Google Drive Storage Backend**: All weekly PDF risk reports, Google Sheets registers, and `weekly_snapshots.json` persist directly in the team's shared Google Drive folder, eliminating any GCP Cloud Storage bucket dependencies.
+- **Interactive User-Triggered Ingestion**: Dashboard users can trigger Google Drive synchronization, weekly PDF ingestion, and Gemini 3.5 Pro executive synthesis directly from the web UI.
+- **Strict Access Control (Google SSO & TwoSync)**: Restrict access exclusively to authorized Ganpati Prod groups:
+  - `monaro-risk-prod` (Executive stakeholders and viewers, e.g. `allins@google.com`)
+  - `monaro-risk-dev` (Developers, engineers, editors)
+  - `monaro-risk-admin` (Admins and technical leads)
+- **Turnkey Handover Package (`HANDOVER_GUIDE.md`)**: Complete, zero-tribal-knowledge operational manual covering architecture, daily operations, Ganpati user management, 1-command startup, deployment, and emergency shutdown.
+- **Corporate Environment Guardrails**: Strict prohibition of Argolis sandboxes (`altostrat.com`) for production workloads.
 
-## 3. Security & Non-Functional Requirements
-- **Google Corporate SSO**: Enforced at the infrastructure level by Google Cloud IAP / UberProxy.
-- **Least Privilege**: Only authorized TwoSync group members and explicit `@google.com` accounts can access the application.
-- **Domain Guardrails**: Strict exclusion of non-corporate domains (e.g. `altostrat.com`).
-- **Operational Simplicity**: Fully managed cloud-native stack without requiring manual Borg or google3 configuration.
+## 3. Non-Functional & Operational Requirements
+- **Zero Ongoing Maintenance for Creator**: Turnkey documentation and automated tooling allow the receiving team to maintain and update the platform independently.
+- **High Performance & Sub-Millisecond Switching**: High-speed vanilla HTML5/JS single-page architecture (`index.html`) with embedded audio briefing player.
+- **Operational Safety**: 1-click immediate shutdown script (`./deploy/shutdown.sh`).
 
 ## 4. Acceptance Criteria
-- [ ] Application scaffolded in Nexus with dedicated GCP Project and GHES repository.
-- [ ] TwoSync team group registered and bound to Cloud Run Invoker IAM policy.
-- [ ] Initial deployment verified live on Cloud Run with Google SSO authentication.
-- [ ] Deployment scripts in `deploy/` verified with dry-run and live test.
-- [ ] Service shutdown script verified to take the service offline immediately.
+- [ ] Google Drive storage and ingestion pipeline verified in `server.py`.
+- [ ] User-triggered Drive sync and report ingestion tested and functional.
+- [ ] Ganpati groups documented and synced via TwoSync.
+- [ ] Comprehensive `HANDOVER_GUIDE.md` created and validated.
+- [ ] Project tech specs (`tech-stack.md` and `product.md`) updated.
+- [ ] All code, scripts, and documentation committed and pushed to repository.

@@ -1,31 +1,28 @@
-# Implementation Plan: Cloud-Native IDP Deployment with TwoSync Google SSO
+# Implementation Plan: Production Deployment, Drive-Native Storage & Turnkey Handover
 
-## Phase 1: Nexus Scaffolding & Access Control Setup
-- [ ] Task: Group Registration & Pre-flight Setup
-  - [ ] Identify/Create Team Ganpati MDB group
-  - [ ] Register Ganpati group with TwoSync (`/google/src/head/depot/google3/security/twosync/tools/register.sh --group <group_name>`)
-- [ ] Task: Nexus Application Provisioning
-  - [ ] Open Nexus UI (`go/idp` / `https://nexus.corp.google.com/create/idp`)
-  - [ ] Select Static Website template and enter Application ID & Team parameters
-  - [ ] Complete automated resource provisioning (GCP Project & GHES Repo)
-- [ ] Task: Phase 1 Verification & Checkpoint (Verify repository and project links)
+## Phase 1: Google Drive Storage & Ingestion Pipeline
+- [ ] Task: Enhance `server.py` for Google Drive-Native Storage & Snapshots
+  - [ ] Support loading and saving `weekly_snapshots.json` to Google Drive folder / local cache
+  - [ ] Ensure API endpoints (`/api/sync-sheet`, `/api/ingest-report`, `/api/check-drive-sync`, `/api/sync-notebook`) respond reliably to user-triggered UI actions
+- [ ] Task: Connect Interactive Ingestion in UI (`index.html`)
+  - [ ] Verify UI buttons ("Sync with Drive", "Ingest Weekly Report") trigger backend APIs with visual progress feedback
+- [ ] Task: Phase 1 Verification & Checkpoint (Verify interactive ingestion and snapshot persistence)
 
-## Phase 2: Codebase Packaging & Initial Rollout
-- [ ] Task: Repository Synchronization
-  - [ ] Clone newly provisioned GHES repo into `deploy/.repo`
-  - [ ] Sync `index.html` and `assets/` into repository
-- [ ] Task: Initial PR & Automated Deployment
-  - [ ] Commit and push initial deployment branch to GitHub Enterprise
-  - [ ] Open Pull Request and merge to `main`
-  - [ ] Verify GitHub Actions builds container and deploys to Cloud Run
-- [ ] Task: Phase 2 Verification & Checkpoint (Verify live Cloud Run URL with Google SSO)
+## Phase 2: Deployment & Operations Tooling
+- [ ] Task: Finalize Deployment & Lifecycle Scripts
+  - [ ] Verify `run_server.sh` 1-command tmux lifecycle (start, attach, restart, kill)
+  - [ ] Verify `deploy/deploy_gcp.sh` and `deploy/shutdown.sh`
+  - [ ] Update `.env.example` with Google Drive and Ganpati TwoSync configurations
+- [ ] Task: Phase 2 Verification & Checkpoint
 
-## Phase 3: Operations Tooling & Access Verification
-- [ ] Task: Update Deployment & Shutdown Scripts
-  - [ ] Update `deploy/deploy.sh` with the new GHES repo target
-  - [ ] Update `deploy/shutdown.sh` to target the dedicated IDP Cloud Run service
-- [ ] Task: Verification & Security Audit
-  - [ ] Verify Google SSO authentication enforces TwoSync group access
-  - [ ] Test immediate service shutdown via `./deploy/shutdown.sh`
-  - [ ] Document URLs and workflow in `README.md`
+## Phase 3: Turnkey Handover Package & Tech Specs Update
+- [ ] Task: Update Project Tech Specs
+  - [ ] Update `conductor/tech-stack.md` with Drive-native storage and Ganpati/TwoSync architecture
+  - [ ] Update `conductor/product.md` with F-DSE platform definition and handover context
+- [ ] Task: Create Turnkey Handover Package (`HANDOVER_GUIDE.md`)
+  - [ ] Architecture overview and Google Drive folder structure
+  - [ ] Daily user operations and live ingestion guide
+  - [ ] Access management guide for `monaro-risk-admin`, `monaro-risk-dev`, `monaro-risk-prod`
+  - [ ] 1-command startup, deployment, and emergency shutdown procedures
+- [ ] Task: Update `README.md` and commit all assets to remote repository
 - [ ] Task: Phase 3 Verification & Checkpoint

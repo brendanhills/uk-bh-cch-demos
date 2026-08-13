@@ -617,5 +617,41 @@
     "status": "Fix Implemented",
     "context": "project_dash",
     "image_path": "/usr/local/google/home/brendanhills/.gemini/jetski/brain/aedc9272-8531-43bd-8bd2-f8db67dfa6af/.user_uploaded/media_1786610175591.png"
+  },
+  {
+    "id": 36,
+    "type": "Bug",
+    "title": "5x5 Heatmap Matrix axes and labels are inverted / opposite",
+    "description": "In both the Joint Program and Team Google 5x5 matrices, the axes and labels are inverted: the top horizontal column headers display Likelihood ratings (1 Rare to 5 Almost Certain) with a misleading label 'Consequence \u2193', while the vertical row headers display Consequence levels (Catastrophic to Minor). The matrix orientation and axis headers need to be aligned with the canonical standard.",
+    "cause": "Top-left axis label 'Consequence \u2193' above horizontal Likelihood columns (1 Rare to 5 Almost Certain) and vertical Consequence rows causes confusion about matrix orientation.",
+    "plan": "Standardize matrix axis headers across both Joint and Team Google heatmaps: add explicit 'Likelihood (X-Axis) \u2192' column banner, 'Consequence (Y-Axis) \u2193' row indicator, and unambiguous cell coordinates.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-13",
+    "date_triaged": "2026-08-13",
+    "date_resolved": "",
+    "priority": "P1",
+    "impact": "Medium",
+    "risk": "Low",
+    "phase": "Phase 3",
+    "status": "Investigated",
+    "context": "project_dash"
+  },
+  {
+    "id": 37,
+    "type": "Bug",
+    "title": "Joint Program risk cards and Team Google risk cards have inconsistent interaction patterns",
+    "description": "Risk statement cards across the Joint Program tab and Team Google tab have inconsistent interactions and button affordances: Joint Program cards feature in-line expandable accordions ('\u25be View Root Cause & Mitigation'), while Team Google cards use modal popups ('Inspect Full Detail \u2197'). Both card systems should share the unified, canonical design system with both in-line expansion and full detail modal inspection.",
+    "cause": "renderRiskExplorer and renderTeamGoogleRiskExplorer use divergent card templates (in-line accordion vs modal popup trigger).",
+    "plan": "Unify risk card templates across both registers so all cards support BOTH in-line accordion expansion ('\u25be View Root Cause & Mitigation') and full modal inspection ('Inspect Full Detail \u2197'), with consistent Blueprint badges and control deltas.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-13",
+    "date_triaged": "2026-08-13",
+    "date_resolved": "",
+    "priority": "P1",
+    "impact": "Medium",
+    "risk": "Low",
+    "phase": "Phase 3",
+    "status": "Investigated",
+    "context": "project_dash"
   }
 ]
