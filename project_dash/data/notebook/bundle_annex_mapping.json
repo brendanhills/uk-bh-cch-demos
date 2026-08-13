@@ -1,0 +1,361 @@
+{
+  "Bundle B": {
+    "annex": "Annex B (Security)",
+    "sourceId": "src-01",
+    "title": "System Security Plan & ATO-C Accreditation",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.6 GFF"
+    ],
+    "jointRisks": [
+      "RSK-055",
+      "RSK-034",
+      "RSK-002",
+      "RSK-015"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-004",
+      "TG-RSK-003",
+      "TG-RSK-010",
+      "TG-RSK-011",
+      "TG-RSK-009",
+      "TG-RSK-001",
+      "TG-RSK-005",
+      "TG-RSK-007",
+      "TG-RSK-002",
+      "TG-RSK-008",
+      "TG-RSK-006",
+      "TG-RSK-012"
+    ],
+    "issues": [
+      "ISS-002",
+      "ISS-011"
+    ],
+    "activeJointRiskCount": 2,
+    "activeTeamRiskCount": 11,
+    "totalActiveRisks": 13
+  },
+  "Bundle C": {
+    "annex": "Annex C (AI/ML)",
+    "sourceId": "src-02",
+    "title": "AI & ML Analytics Enclave Architecture",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.14",
+      "3.1"
+    ],
+    "jointRisks": [
+      "RSK-100"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-003",
+      "TG-RSK-010",
+      "TG-RSK-009",
+      "TG-RSK-007",
+      "TG-RSK-002",
+      "TG-RSK-006"
+    ],
+    "issues": [
+      "ISS-005"
+    ],
+    "activeJointRiskCount": 0,
+    "activeTeamRiskCount": 5,
+    "totalActiveRisks": 5
+  },
+  "Bundle D": {
+    "annex": "Annex D (Data)",
+    "sourceId": "src-03",
+    "title": "Data Integration & Cross-Domain Diode Ingestion",
+    "version": "v0.1",
+    "driverTreeRefs": [
+      "3.1"
+    ],
+    "jointRisks": [
+      "RSK-066"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-004",
+      "TG-RSK-003",
+      "TG-RSK-010",
+      "TG-RSK-011",
+      "TG-RSK-009",
+      "TG-RSK-001",
+      "TG-RSK-005",
+      "TG-RSK-007",
+      "TG-RSK-002",
+      "TG-RSK-008",
+      "TG-RSK-006",
+      "TG-RSK-012"
+    ],
+    "issues": [
+      "ISS-008",
+      "ISS-014"
+    ],
+    "activeJointRiskCount": 1,
+    "activeTeamRiskCount": 11,
+    "totalActiveRisks": 12
+  },
+  "Bundle E": {
+    "annex": "Annex E (Governance)",
+    "sourceId": "src-04",
+    "title": "Governance, Verification & Acceptance Framework",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.2b"
+    ],
+    "jointRisks": [
+      "RSK-070",
+      "RSK-096",
+      "RSK-069",
+      "RSK-071",
+      "RSK-102",
+      "RSK-078",
+      "RSK-094",
+      "RSK-104",
+      "RSK-089",
+      "RSK-072",
+      "RSK-067",
+      "RSK-073",
+      "RSK-088",
+      "RSK-090",
+      "RSK-062",
+      "RSK-076",
+      "RSK-095",
+      "RSK-077",
+      "RSK-055",
+      "RSK-091",
+      "RSK-075",
+      "RSK-068",
+      "RSK-087",
+      "RSK-056",
+      "RSK-105",
+      "RSK-093",
+      "RSK-092",
+      "RSK-103",
+      "RSK-074"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-004",
+      "TG-RSK-003",
+      "TG-RSK-010",
+      "TG-RSK-011",
+      "TG-RSK-009",
+      "TG-RSK-001",
+      "TG-RSK-005",
+      "TG-RSK-007",
+      "TG-RSK-002",
+      "TG-RSK-008",
+      "TG-RSK-006",
+      "TG-RSK-012"
+    ],
+    "issues": [
+      "ISS-001",
+      "ISS-019"
+    ],
+    "activeJointRiskCount": 27,
+    "activeTeamRiskCount": 11,
+    "totalActiveRisks": 38
+  },
+  "Bundle F": {
+    "annex": "Annex F (Network)",
+    "sourceId": "src-05",
+    "title": "Network Architecture & Sovereign Interconnects",
+    "version": "v0.1",
+    "driverTreeRefs": [
+      "1.6 GFF"
+    ],
+    "jointRisks": [
+      "RSK-051",
+      "RSK-029",
+      "RSK-011"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-012",
+      "TG-RSK-005"
+    ],
+    "issues": [
+      "ISS-003"
+    ],
+    "activeJointRiskCount": 2,
+    "activeTeamRiskCount": 4,
+    "totalActiveRisks": 6
+  },
+  "Bundle G": {
+    "annex": "Annex G (Identity)",
+    "sourceId": "src-06",
+    "title": "Identity, Federation & Role-Based Access Control",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.6 GFF"
+    ],
+    "jointRisks": [
+      "RSK-070",
+      "RSK-096",
+      "RSK-069",
+      "RSK-071",
+      "RSK-102",
+      "RSK-078",
+      "RSK-094",
+      "RSK-104",
+      "RSK-089",
+      "RSK-072",
+      "RSK-067",
+      "RSK-073",
+      "RSK-088",
+      "RSK-090",
+      "RSK-062",
+      "RSK-076",
+      "RSK-095",
+      "RSK-077",
+      "RSK-055",
+      "RSK-091",
+      "RSK-075",
+      "RSK-068",
+      "RSK-087",
+      "RSK-056",
+      "RSK-105",
+      "RSK-093",
+      "RSK-092",
+      "RSK-103",
+      "RSK-074"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-007"
+    ],
+    "issues": [
+      "ISS-007"
+    ],
+    "activeJointRiskCount": 27,
+    "activeTeamRiskCount": 1,
+    "totalActiveRisks": 28
+  },
+  "Bundle H": {
+    "annex": "Annex H (Infra)",
+    "sourceId": "src-07",
+    "title": "Managed Infrastructure & GDC Hardware Enclave",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.10b"
+    ],
+    "jointRisks": [
+      "RSK-043",
+      "RSK-063",
+      "RSK-042",
+      "RSK-083",
+      "RSK-027",
+      "RSK-061",
+      "RSK-085",
+      "RSK-030",
+      "RSK-041",
+      "RSK-080",
+      "RSK-066",
+      "RSK-079",
+      "RSK-106",
+      "RSK-026",
+      "RSK-101",
+      "RSK-081",
+      "RSK-082",
+      "RSK-035",
+      "RSK-107",
+      "RSK-084",
+      "RSK-086"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-012",
+      "TG-RSK-005"
+    ],
+    "issues": [
+      "ISS-004",
+      "ISS-012"
+    ],
+    "activeJointRiskCount": 11,
+    "activeTeamRiskCount": 4,
+    "totalActiveRisks": 15
+  },
+  "Bundle J": {
+    "annex": "Annex J (DR/Backup)",
+    "sourceId": "src-08",
+    "title": "Disaster Recovery, Backup & Continuous Availability",
+    "version": "v0.1",
+    "driverTreeRefs": [
+      "1.10b"
+    ],
+    "jointRisks": [
+      "RSK-066",
+      "RSK-034",
+      "RSK-063"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-012"
+    ],
+    "issues": [
+      "ISS-009"
+    ],
+    "activeJointRiskCount": 2,
+    "activeTeamRiskCount": 1,
+    "totalActiveRisks": 3
+  },
+  "Bundle K": {
+    "annex": "Annex K (Migration)",
+    "sourceId": "src-09",
+    "title": "Application Discovery & System Migration Roadmap",
+    "version": "v0.1",
+    "driverTreeRefs": [
+      "3.1"
+    ],
+    "jointRisks": [
+      "RSK-019",
+      "RSK-062"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-004"
+    ],
+    "issues": [
+      "ISS-016"
+    ],
+    "activeJointRiskCount": 2,
+    "activeTeamRiskCount": 1,
+    "totalActiveRisks": 3
+  },
+  "Bundle L": {
+    "annex": "Annex L (Ops/SLA)",
+    "sourceId": "src-10",
+    "title": "Operations, Monitoring & SLA Governance",
+    "version": "v0.2",
+    "driverTreeRefs": [
+      "1.2b"
+    ],
+    "jointRisks": [
+      "RSK-010",
+      "RSK-062",
+      "RSK-031",
+      "RSK-045",
+      "RSK-100",
+      "RSK-029"
+    ],
+    "teamGoogleRisks": [
+      "TG-RSK-004",
+      "TG-RSK-003",
+      "TG-RSK-010",
+      "TG-RSK-011",
+      "TG-RSK-009",
+      "TG-RSK-001",
+      "TG-RSK-005",
+      "TG-RSK-007",
+      "TG-RSK-002",
+      "TG-RSK-008",
+      "TG-RSK-006",
+      "TG-RSK-012"
+    ],
+    "issues": [
+      "ISS-018"
+    ],
+    "activeJointRiskCount": 4,
+    "activeTeamRiskCount": 11,
+    "totalActiveRisks": 15
+  }
+}

@@ -94,9 +94,11 @@ class TestAllDashboardsDynamicSync(unittest.TestCase):
         views = [
             'id="view-exec-briefing"',
             'id="view-overview"',
+            'id="view-team-google"',
             'id="view-issues"',
             'id="view-trends"',
             'id="view-driver-tree"',
+            'id="view-blueprints"',
             'id="view-ledger"'
         ]
         for v in views:
@@ -193,6 +195,64 @@ class TestAllDashboardsDynamicSync(unittest.TestCase):
         self.assertIn('openTimelineDrilldownModal', self.html_content)
         self.assertIn("mode: 'index'", self.html_content)
         self.assertIn("intersect: false", self.html_content)
+
+
+    def test_team_google_tab_and_renderers_exist(self):
+        """Verify Team Google navigation tab and renderer functions exist in index.html."""
+        self.assertIn('id="tab-team-google"', self.html_content)
+        self.assertIn('renderTeamGoogleHeatmap', self.html_content)
+        self.assertIn('renderTeamGoogleRiskExplorer', self.html_content)
+        self.assertIn('id="matrixGridTeamGoogle"', self.html_content)
+        self.assertIn('id="teamGoogleRiskListContainer"', self.html_content)
+
+    def test_sync_sheet_includes_multi_registers(self):
+        """Verify DashboardHandler handle_sync_sheet payload includes teamGoogleRisks and registers metadata."""
+        class DummyHandler:
+            def __init__(self):
+                self.sent_data = None
+                self.sent_code = None
+            def send_json(self, data, status_code=200):
+                self.sent_data = data
+                self.sent_code = status_code
+        dummy = DummyHandler()
+        server.DashboardHandler.handle_sync_sheet(dummy)
+        self.assertEqual(dummy.sent_code, 200)
+        self.assertIn('teamGoogleRisks', dummy.sent_data)
+        self.assertIn('registers', dummy.sent_data)
+        self.assertIn('joint', dummy.sent_data['registers'])
+        self.assertIn('teamGoogle', dummy.sent_data['registers'])
+
+
+    def test_notebook_sync_endpoints(self):
+        """Verify DashboardHandler handle_check_notebook_sync and handle_sync_notebook return 200 and valid catalogs."""
+        class DummyHandler:
+            def __init__(self):
+                self.sent_data = None
+                self.sent_code = None
+            def send_json(self, data, status_code=200):
+                self.sent_data = data
+                self.sent_code = status_code
+        
+        # Test check sync
+        dummy1 = DummyHandler()
+        server.DashboardHandler.handle_check_notebook_sync(dummy1)
+        self.assertEqual(dummy1.sent_code, 200)
+        self.assertIn('sources', dummy1.sent_data)
+        self.assertEqual(dummy1.sent_data['totalSources'], 17)
+        self.assertIn('bundleMapping', dummy1.sent_data)
+
+        # Test sync trigger
+        dummy2 = DummyHandler()
+        server.DashboardHandler.handle_sync_notebook(dummy2)
+        self.assertEqual(dummy2.sent_code, 200)
+        self.assertEqual(dummy2.sent_data['status'], 'ok')
+
+    def test_blueprints_tab_and_renderers_exist(self):
+        """Verify Blueprint Knowledge navigation tab and renderer functions exist in index.html."""
+        self.assertIn('id="tab-blueprints"', self.html_content)
+        self.assertIn('renderBlueprintKnowledge', self.html_content)
+        self.assertIn('id="bundleAnnexCardsContainer"', self.html_content)
+        self.assertIn('id="researchDocsContainer"', self.html_content)
 
 if __name__ == "__main__":
     unittest.main()

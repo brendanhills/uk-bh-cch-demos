@@ -18,8 +18,14 @@ Interactive Executive Cockpit and Risk Intelligence Platform built for the **Fut
    - Dynamic Burndown and Risk Cause Category distribution with `Weekly`, `Bi-Weekly`, and `Monthly` granularity.
 5. **Contractual Delivery & Gap Close Horizon**:
    - CD1 Driver Tree linking Level 2 Contractual Milestones to high-priority remediation plans.
-6. **Live Google Drive & Sheets Sync API**:
-   - Local Python server (`server.py`) handling real-time Google Sheets sync, weekly PDF report ingestion, and Time Machine historical snapshots.
+6. **Multi-Register Governance Cockpit**:
+   - **Combined Executive Summary**: Unified leadership synthesis aggregating Joint Program and Team Google risks.
+   - **Joint Program Risks (107)**: Dedicated 5×5 matrix for overarching multi-party delivery obligations (Accenture/Google/Cth).
+   - **Team Google Risks**: Dedicated 5×5 cockpit for Google-internal engineering tasks, GDC air-gap infrastructure, and mitigations.
+7. **Gemini Notebook & Contract Blueprint Knowledge Base**:
+   - Ingests **Project Monaro Contract Notebook** (`acdbb29b-8632-4fc7-9ba8-2357beeff141`, 17 sources).
+   - Bidirectional contract traceability mapping Bundles A through L / Annexes B through L directly to risks and issues.
+   - Differential sync engine and 1-click Workspace Sync (`/api/sync-notebook`).
 
 ---
 

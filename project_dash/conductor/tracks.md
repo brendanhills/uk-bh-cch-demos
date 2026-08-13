@@ -26,9 +26,9 @@
   *Link: [./tracks/c4a_idp_nexus_deployment_20260811/index.md](./tracks/c4a_idp_nexus_deployment_20260811/index.md)*
 
 ---
-- [ ] **Track: Team Google Risk Register Integration & Multi-Register Governance**
+- [x] **Track: Team Google Risk Register Integration & Multi-Register Governance**
   *Link: [./tracks/team_google_risk_register_integration_20260813/index.md](./tracks/team_google_risk_register_integration_20260813/index.md)*
 
 ---
-- [ ] **Track: Gemini Notebook Ingestion, Contract Blueprint Traceability, and Workspace Sync Integration**
+- [x] **Track: Gemini Notebook Ingestion, Contract Blueprint Traceability, and Workspace Sync Integration**
   *Link: [./tracks/gemini_notebook_blueprint_sync_20260813/index.md](./tracks/gemini_notebook_blueprint_sync_20260813/index.md)*

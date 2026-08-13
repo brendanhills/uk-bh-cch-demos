@@ -39,6 +39,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_sync_sheet()
         elif parsed.path == '/api/check-drive-sync':
             self.handle_check_drive_sync()
+        elif parsed.path == '/api/check-notebook-sync':
+            self.handle_check_notebook_sync()
+        elif parsed.path == '/api/sync-notebook':
+            self.handle_sync_notebook()
         elif parsed.path == '/api/ingest-report':
             self.handle_ingest_report(parsed.query)
         else:
@@ -51,6 +55,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length).decode('utf-8')
             params = json.loads(body) if body else {}
             self.process_ingest(params)
+        elif parsed.path == '/api/sync-notebook':
+            self.handle_sync_notebook()
         else:
             super().do_POST()
 
@@ -76,6 +82,58 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     data['snapshots'] = snap_data.get('snapshots', {})
 
             self.send_json(data)
+        except Exception as e:
+            self.send_json({"error": str(e)}, 500)
+
+    
+    def handle_check_notebook_sync(self):
+        try:
+            cat_path = os.path.join(DIRECTORY, "data", "notebook", "sources_catalog.json")
+            mapping_path = os.path.join(DIRECTORY, "data", "notebook", "bundle_annex_mapping.json")
+            cat_data = {}
+            mapping_data = {}
+            if os.path.exists(cat_path):
+                with open(cat_path, "r", encoding="utf-8") as f:
+                    cat_data = json.load(f)
+            if os.path.exists(mapping_path):
+                with open(mapping_path, "r", encoding="utf-8") as f:
+                    mapping_data = json.load(f)
+
+            response = {
+                "status": "ok",
+                "notebookId": cat_data.get("notebookId", "acdbb29b-8632-4fc7-9ba8-2357beeff141"),
+                "notebookTitle": cat_data.get("notebookTitle", "Project Monaro Contract Notebook"),
+                "notebookUrl": cat_data.get("notebookUrl", "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141"),
+                "lastSynced": cat_data.get("lastSynced"),
+                "totalSources": cat_data.get("totalSources", len(cat_data.get("sources", []))),
+                "sources": cat_data.get("sources", []),
+                "bundleMapping": mapping_data
+            }
+            self.send_json(response)
+        except Exception as e:
+            self.send_json({"error": str(e)}, 500)
+
+    def handle_sync_notebook(self):
+        try:
+            script_path = os.path.join(DIRECTORY, "scripts", "sync_notebook.py")
+            cmd = [sys.executable, script_path]
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
+
+            if result.returncode == 0:
+                cat_path = os.path.join(DIRECTORY, "data", "notebook", "sources_catalog.json")
+                mapping_path = os.path.join(DIRECTORY, "data", "notebook", "bundle_annex_mapping.json")
+                with open(cat_path, "r", encoding="utf-8") as f:
+                    cat_data = json.load(f)
+                with open(mapping_path, "r", encoding="utf-8") as f:
+                    mapping_data = json.load(f)
+                self.send_json({
+                    "status": "ok",
+                    "message": "Successfully synchronized Gemini Notebook sources and bundle mappings",
+                    "catalog": cat_data,
+                    "bundleMapping": mapping_data
+                })
+            else:
+                self.send_json({"error": result.stderr or "Sync notebook script failed"}, 500)
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
 
