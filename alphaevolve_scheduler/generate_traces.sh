@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Change directory to the script's own folder to ensure local execution
+cd "$(dirname "$0")"
+
 # Sequential pre-computation of our 3 Operational Scenarios
 exec > generate.log 2>&1
 echo "Starting Sequential Scenario Pre-Computation (ETA ~6-8 mins)..."
