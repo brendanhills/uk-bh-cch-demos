@@ -22,5 +22,5 @@
 - [~] **Track: Dynamic Data Generation & Visualization Audit across All Tabs**
   *Link: [./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md](./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md)*
 ---
-- [ ] **Track: Cloud-Native IDP Deployment with TwoSync Google SSO**
+- [~] **Track: Cloud-Native IDP Deployment with TwoSync Google SSO**
   *Link: [./tracks/c4a_idp_nexus_deployment_20260811/index.md](./tracks/c4a_idp_nexus_deployment_20260811/index.md)*
