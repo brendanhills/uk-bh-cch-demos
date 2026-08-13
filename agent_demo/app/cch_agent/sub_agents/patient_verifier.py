@@ -27,6 +27,18 @@ PATIENT_VERIFIER_INSTRUCTION = f"""
 </instructions>
 """
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why a Sub-Agent (patient_verifier)?
+#
+# WHY A SUB-AGENT HERE?
+# 1. Specialized System Instruction Rules: Enforces strict Australian phone verification rules
+#    (e.g., landline 02/03/07/08 vs mobile 04 rules) and prevents repetitive verification loops.
+# 2. Encapsulated Session State Mutations: Calls identity tools to persist validated patient
+#    records into session memory without polluting the main router's instruction context.
+# 3. Dedicated Model Configuration: Uses `SUB_AGENT_MODEL` (gemini-2.5-flash) for low-cost,
+#    unary multi-turn reasoning focused solely on identity confirmation.
+# ==============================================================================
+
 patient_verifier = Agent(
     name="patient_verifier",
     model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),

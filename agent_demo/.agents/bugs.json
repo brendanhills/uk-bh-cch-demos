@@ -248,9 +248,10 @@
     "title": "User requests session export / generation of conversation transcript and clinical SOAP summary note",
     "description": "Add functionality/feature to export or generate a full conversation transcript and formatted clinical SOAP (Subjective, Objective, Assessment, Plan) note document upon session completion.",
     "date": "2026-08-04",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P1",
     "impact": "High",
+    "review_notes": "Audited 2026-08-13: Code and automated unit tests complete (test_soap_note_endpoint.py passing). Pending manual verification by user.",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "produce a transcript and SOAP document\nFollow-up: 23 is high priority FR"
   },
@@ -271,9 +272,10 @@
     "title": "Future Enhancement: Enable Google Search Grounding for real-time web lookups",
     "description": "Optional future enhancement: Enable google_search tool for external web search grounding on non-latency-sensitive modes or background agent queries.",
     "date": "2026-08-04",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P3",
     "impact": "Low",
+    "review_notes": "Audited 2026-08-13: Google Search tool integrated into search_tools.py and phone_validator.py. Pending manual verification by user.",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "add google_search as a possible future enhancement"
   },
@@ -408,11 +410,12 @@
     "title": "Zero-config dynamic multi-lingual ASR speech recognition (automatic language detection for any language)",
     "description": "Enable zero-config dynamic multilingual ASR speech recognition so the app automatically auto-detects spoken language in real-time across any global language (English, Arabic, Hindi, Spanish, Vietnamese, German, Japanese, etc.) without requiring pre-configured language hints or .env variables.",
     "date": "2026-08-05",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P2",
     "impact": "High",
     "risk": "Medium",
     "phase": "Phase 2",
+    "review_notes": "Audited 2026-08-13: Dynamic ASR configuration implemented and unit-tested in test_transcription_config.py. Pending manual verification by user.",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "That seems to be a hard coded solution - it will work for this demo, but as a future enhancement we need it to handle any multilingual conversation\nFollow-up: 40 and 37 are possible duplicates?\nFollow-up: do we really need to do 40? Or can we just solve 37?"
   },
@@ -509,11 +512,12 @@
     "title": "Persist captured document image attachments to disk and log file paths in call transcripts",
     "description": "Save raw JPEG bytes of attached document images to app/logs/attachments/<session_id>_<timestamp>.jpg and record the saved image file path in call_transcripts.log for audit trails and clinical reviews. Note: Visual document artifact component of #BUG-39.",
     "date": "2026-08-05",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P2",
     "impact": "Medium",
     "risk": "Low",
     "phase": "Phase 4",
+    "review_notes": "Audited 2026-08-13: Attachment persistence code and unit test (test_attachment_persistence.py) complete. Pending manual verification by user.",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "Save attached document images to app/logs/attachments/<session_id>_<timestamp>.jpg and record the file path in call_transcripts.log\nFollow-up: bug 45 and 39 are related"
   },
@@ -523,11 +527,12 @@
     "title": "Recognize and validate Australian phone number formats during initial patient engagement",
     "description": "Enhance initial engagement instructions and session state validation to accurately recognize Australian mobile (e.g. 04xx xxx xxx, +61 4xx xxx xxx) and landline phone numbers (e.g. 02, 03, 07, 08 area codes) when provided by the parent.",
     "date": "2026-08-05",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P1",
     "impact": "High",
     "risk": "Low",
     "phase": "Phase 2",
+    "review_notes": "Audited 2026-08-13: Phone validation logic and unit test (test_phone_validator.py) complete. Pending manual verification by user.",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "detect an australian phone number"
   },
@@ -628,5 +633,20 @@
     "phase": "Phase 1",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "output which subagent or tool is being called in the Event Console."
+  },
+  {
+    "id": "BUG-54",
+    "type": "FR",
+    "title": "Pre-warming mechanism for agent loading, prompt caching, and UI warming status flag",
+    "description": "Implement a startup pre-warming pipeline that eager-loads all ADK sub-agents into Python memory and pre-caches system prompt instructions/personas (`CCH_SHARED_PERSONA`) on server boot, accompanied by a 'warming up' status flag in the Web UI to notify users when the demo environment is ready.",
+    "date": "2026-08-13",
+    "status": "Investigated",
+    "priority": "P2",
+    "impact": "Medium",
+    "risk": "Low",
+    "phase": "Phase 1",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo/agent_demo",
+    "raw_report": "FR pre-warming of the demo.  For example can we load all the agents into python memory, and cache all the prompts before the demo starts.  Have some sort of \"warming up\" flag to let the demo user know that they should wait before showing the demo."
   }
 ]
+

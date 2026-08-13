@@ -14,9 +14,10 @@ from app.cch_agent.sub_agents import (
 def test_master_router_agent_configuration():
     """Verify master router agent is configured with sub-agent tools."""
     assert router_agent.name == "cch_concierge_router"
-    assert len(router_agent.tools) == 4
+    sub_agent_tools = [tool for tool in router_agent.tools if isinstance(tool, AgentTool)]
+    assert len(sub_agent_tools) == 4
     
-    tool_agent_names = [tool.agent.name for tool in router_agent.tools if isinstance(tool, AgentTool)]
+    tool_agent_names = [tool.agent.name for tool in sub_agent_tools]
     assert "patient_verifier" in tool_agent_names
     assert "document_scanner" in tool_agent_names
     assert "visit_scheduler" in tool_agent_names

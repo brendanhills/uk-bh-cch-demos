@@ -418,6 +418,29 @@ function connectWebsocket() {
     const adkEvent = JSON.parse(event.data);
     console.log("[AGENT TO CLIENT] ", adkEvent);
 
+    // Check for request_document_scan function call (#BUG-48)
+    if (adkEvent.calls || adkEvent.functionCalls) {
+      const calls = adkEvent.calls || adkEvent.functionCalls || [];
+      for (const call of calls) {
+        if (call.name === "request_document_scan") {
+          console.log("[AUTO-CAMERA #BUG-48] Triggering camera from request_document_scan tool call");
+          if (viewfinderContainer && viewfinderContainer.style.display === "none") {
+            openViewfinder();
+          }
+        }
+      }
+    }
+    if (adkEvent.content && adkEvent.content.parts) {
+      for (const part of adkEvent.content.parts) {
+        if (part.functionCall && part.functionCall.name === "request_document_scan") {
+          console.log("[AUTO-CAMERA #BUG-48] Triggering camera from part.functionCall");
+          if (viewfinderContainer && viewfinderContainer.style.display === "none") {
+            openViewfinder();
+          }
+        }
+      }
+    }
+
     // Log to console panel
     let eventSummary = 'Event';
     let eventEmoji = '📨'; // Default emoji
@@ -1309,4 +1332,87 @@ function audioRecorderHandler(pcmData) {
     console.log("[CLIENT TO AGENT] Sent audio chunk: %s bytes", pcmData.byteLength);
   }
 }
+
+/**
+ * Clinical SOAP Note Export Modal Handlers (#BUG-23)
+ */
+const soapNoteButton = document.getElementById("soapNoteButton");
+const soapModal = document.getElementById("soapModal");
+const soapModalLoading = document.getElementById("soapModalLoading");
+const soapPaperDoc = document.getElementById("soapPaperDoc");
+const soapNoteContent = document.getElementById("soapNoteContent");
+const closeSoapModalBtn = document.getElementById("closeSoapModalBtn");
+const closeSoapFooterBtn = document.getElementById("closeSoapFooterBtn");
+const copySoapBtn = document.getElementById("copySoapBtn");
+const printSoapBtn = document.getElementById("printSoapBtn");
+
+async function openSoapModal() {
+  if (!soapModal) return;
+  soapModal.style.display = "flex";
+  if (soapModalLoading) soapModalLoading.style.display = "flex";
+  if (soapPaperDoc) soapPaperDoc.style.display = "none";
+
+  try {
+    const response = await fetch("/api/session/soap_note", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_id: sessionId || "demo-session",
+        user_id: userId || "demo-user"
+      })
+    });
+    const data = await response.json();
+
+    if (soapModalLoading) soapModalLoading.style.display = "none";
+    if (soapPaperDoc) soapPaperDoc.style.display = "block";
+
+    const soapText = data.soap_note || "No clinical note generated.";
+    if (soapNoteContent) {
+      // Basic formatting for Markdown headers & bold text in paper view
+      const formattedHtml = soapText
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/^# (.*$)/gim, '<h1 style="color:#1a73e8; font-size:1.4rem; border-bottom:2px solid #e8f0fe; padding-bottom:4px; margin-top:1rem;">$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2 style="color:#1a73e8; font-size:1.2rem; border-bottom:1px solid #e8f0fe; padding-bottom:4px; margin-top:0.8rem;">$1</h2>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      soapNoteContent.innerHTML = formattedHtml;
+    }
+  } catch (err) {
+    console.error("Error fetching SOAP note:", err);
+    if (soapModalLoading) soapModalLoading.style.display = "none";
+    if (soapPaperDoc) soapPaperDoc.style.display = "block";
+    if (soapNoteContent) {
+      soapNoteContent.innerHTML = `<p style="color:#d93025;"><strong>Error:</strong> Failed to fetch SOAP note from backend: ${err.message}</p>`;
+    }
+  }
+}
+
+function closeSoapModal() {
+  if (soapModal) soapModal.style.display = "none";
+}
+
+function copySoapToClipboard() {
+  if (soapNoteContent) {
+    const textToCopy = soapNoteContent.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      if (copySoapBtn) {
+        const origText = copySoapBtn.innerText;
+        copySoapBtn.innerText = "✅ Copied!";
+        setTimeout(() => { copySoapBtn.innerText = origText; }, 2000);
+      }
+    }).catch(err => {
+      console.error("Failed to copy SOAP note:", err);
+    });
+  }
+}
+
+function printSoapNote() {
+  window.print();
+}
+
+if (soapNoteButton) soapNoteButton.addEventListener("click", openSoapModal);
+if (closeSoapModalBtn) closeSoapModalBtn.addEventListener("click", closeSoapModal);
+if (closeSoapFooterBtn) closeSoapFooterBtn.addEventListener("click", closeSoapModal);
+if (copySoapBtn) copySoapBtn.addEventListener("click", copySoapToClipboard);
+if (printSoapBtn) printSoapBtn.addEventListener("click", printSoapNote);
 

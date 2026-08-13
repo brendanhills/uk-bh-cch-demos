@@ -30,6 +30,17 @@ VISIT_SCHEDULER_INSTRUCTION = f"""
 </instructions>
 """
 
+# ==============================================================================
+# DEMO ARCHITECTURE RATIONALE: Why a Sub-Agent (visit_scheduler)?
+#
+# WHY A SUB-AGENT HERE?
+# 1. Multi-Step Tool Orchestration: Coordinates complex multi-tool workflows:
+#    Checking nurse slot availability -> Calculating Medicare/NDIS subsidies ->
+#    Scheduling appointment -> Updating hospital EMR database records.
+# 2. Domain Tool Isolation: Isolates financial calculation & appointment calendar tools away
+#    from the primary conversation router to avoid tool registration clutter on the Live API model.
+# ==============================================================================
+
 visit_scheduler = Agent(
     name="visit_scheduler",
     model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),

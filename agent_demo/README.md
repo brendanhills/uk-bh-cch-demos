@@ -40,6 +40,71 @@ The application follows ADK's recommended concurrent task pattern:
 - **Upstream Task**: Receives WebSocket messages and forwards to `LiveRequestQueue`
 - **Downstream Task**: Processes `run_live()` events and sends to WebSocket client
 
+## Architectural Rationale: Agents vs. Tools (Demo Guide)
+
+When presenting this demo to stakeholders, use this guide to explain the technical decisions behind **Agents** vs. **Tools** and **Direct Router Tools** vs. **Delegated Sub-Agents**.
+
+### 1. Comparative Overview Matrix
+
+| Concept | Purpose & Responsibilities | When to Use | Examples in Demo |
+| :--- | :--- | :--- | :--- |
+| **Router Agent** | Real-time WebSocket conversation state, hospital persona ("Jennie"), turn orchestration. | Top-level entrypoint maintaining Live API session context & voice persona. | `cch_concierge_router` (`gemini-live-2.5-flash-native-audio`) |
+| **Sub-Agent** | Multi-turn reasoning, specialized prompt instructions, unstructured document/image analysis. | Tasks requiring dedicated prompts, domain isolation, or fuzzy/multimodal extraction. | `document_scanner`, `visit_scheduler`, `patient_verifier`, `soap_generator` |
+| **Direct Fast-Path Tool** | Deterministic Python functions (< 10ms execution) bound directly to the Router Agent. | High-frequency, exact operations needed instantly during greetings/verification. | `validate_phone_number`, `record_patient_identity` |
+| **Domain Tool** | Math calculations, external database side-effects, API triggers bound to Sub-Agents. | Exact arithmetic, calendar slot lookups, database record persistence. | `calculate_home_care_financials`, `schedule_home_care_visit`, `request_document_scan` |
+
+---
+
+### 2. Why use an Agent (or Sub-Agent)?
+
+An **Agent** in Google ADK encapsulates a **model configuration**, a **system instruction prompt**, and a set of **bound tools**.
+
+1. **Reasoning Flexibility & Unstructured Input**:
+   - Unlike deterministic code, an agent handles natural human speech, unstructured discharge paper photos, and fuzzy user intents ("I'm worried about Sarah's post-op fever").
+2. **Dedicated Prompt Guardrails & Role Scope**:
+   - Isolating domain instructions into sub-agents (`patient_verifier`, `document_scanner`) prevents "prompt bloat" on the main router. Each sub-agent focuses on a single responsibility with strict guardrails (e.g. strict rules against hallucinating document vision).
+3. **Independent Model Selection**:
+   - The master router uses `gemini-live-2.5-flash-native-audio` for bidirectional voice streaming, while sub-agents use `gemini-2.5-flash` for low-cost, fast unary text/vision processing.
+
+---
+
+### 3. Why use a Tool?
+
+A **Tool** is a Python function provided to an agent so it can perform actions outside LLM inference.
+
+1. **Deterministic Accuracy (Zero Hallucination)**:
+   - LLMs are prone to arithmetic errors and regex formatting mistakes. Python tools guarantee 100% exact math (`calculate_home_care_financials`) and regex parsing (`validate_phone_number`).
+2. **State & Database Side-Effects**:
+   - Tools directly mutate session memory (`tool_context.state`), save document uploads to disk, and update hospital EMR records (`update_hospital_emr`).
+3. **Client UI Interoperability**:
+   - Tools act as actionable bridges between agent intelligence and client Web UI. For example, `request_document_scan` emits a function call event that automatically pops open the browser camera viewfinder.
+
+---
+
+### 4. Direct Router Tools vs. Delegated Sub-Agents (Fast-Path Optimization)
+
+To achieve sub-second responsiveness during live voice calls:
+
+- **Direct Router Fast-Path (< 10ms)**: High-frequency tools (`validate_phone_number`, `record_patient_identity`) are bound directly to `cch_concierge_router`. They execute in-memory in Python within < 10ms without triggering secondary sub-agent LLM turns.
+- **Delegated Sub-Agents (≤ 0.5s)**: Complex workflows (`document_scanner`, `visit_scheduler`) are delegated to sub-agents wrapped with `TimedAgentTool(..., skip_summarization=True)`. Bypassing secondary LLM response summarization ensures sub-agent turns complete in under 500 milliseconds.
+
+---
+
+### 5. Prompt Consolidation & Gemini Context Caching
+
+#### A. Shared Persona Consolidation (`CCH_SHARED_PERSONA`)
+All 5 agents in the system import [`app/cch_agent/persona.py`](file:///home/brendanhills/dev/uk-bh-experiments/CCH_demo/agent_demo/app/cch_agent/persona.py#L6-L16) to share common guardrail instructions:
+- **Single Persona Rule**: Enforces that callers speak to only one assistant ("Jennie") without hearing internal sub-agent or transfer mentions.
+- **No Re-Greetings / No Filler**: Ensures sub-agents jump straight to helping without repeating canned greetings ("Hello", "G'day") or filler platitudes ("No worries at all").
+
+#### B. Can Shared Prompts Be Cached for Performance & Cost?
+**Yes!** Using **Gemini Context Caching** (`genai.caching.CachedContent` in Google GenAI SDK / Vertex AI):
+- **~75% Input Cost Savings**: Cached tokens are billed at a discounted rate ($0.075/1M vs $0.30/1M tokens on Gemini Flash).
+- **Up to 40% Faster Time-To-First-Token (TTFT)**: Gemini bypasses re-tokenizing the shared system instructions and persona on every turn.
+- **Production Scale**: In production deployments, combining `CCH_SHARED_PERSONA` with hospital policy manuals, medical glossaries, and tool schemas easily exceeds Gemini's 32,768 token caching threshold.
+
+---
+
 ## Prerequisites
 
 - Python 3.10 or higher

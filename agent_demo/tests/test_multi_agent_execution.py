@@ -37,11 +37,12 @@ def test_sub_agent_models_are_unary_api_compatible():
 
 
 def test_router_agent_tools_wrapping():
-    """Verify master router agent tools are valid AgentTool instances."""
+    """Verify master router agent sub-agent tools are valid AgentTool instances."""
     from google.adk.tools import AgentTool
 
-    assert len(router_agent.tools) == 4
-    for tool in router_agent.tools:
+    sub_agent_tools = [tool for tool in router_agent.tools if isinstance(tool, AgentTool)]
+    assert len(sub_agent_tools) == 4
+    for tool in sub_agent_tools:
         assert isinstance(tool, AgentTool)
         assert tool.agent is not None
         assert "live-" not in tool.agent.model.lower()
