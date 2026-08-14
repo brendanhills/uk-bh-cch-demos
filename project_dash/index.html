@@ -914,19 +914,19 @@
                 </div>
             </div>
 
-            <!-- Table Container with Dynamic Viewport Height -->
+            <!-- Table Container with Proportional Column Widths & Dynamic Viewport Height -->
             <div class="flex-1 overflow-x-auto overflow-y-auto border border-slate-200 rounded-2xl bg-white shadow-xs">
-                <table class="w-full text-left text-xs border-collapse">
+                <table class="table-fixed w-full text-left text-xs border-collapse min-w-[950px]">
                     <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10 shadow-2xs">
                         <tr>
-                            <th class="p-3.5">ID</th>
-                            <th class="p-3.5">Status</th>
-                            <th class="p-3.5">Owner</th>
-                            <th class="p-3.5">Driver Ref</th>
-                            <th class="p-3.5">Issue Statement &amp; Name</th>
-                            <th class="p-3.5">Severity</th>
-                            <th class="p-3.5">Governance Action Plan</th>
-                            <th class="p-3.5 text-right">Details</th>
+                            <th class="w-14 p-3 text-center">ID</th>
+                            <th class="w-20 p-3">Status</th>
+                            <th class="w-32 p-3">Owner</th>
+                            <th class="w-24 p-3 text-center">Driver Ref</th>
+                            <th class="w-72 p-3">Issue Statement &amp; Name</th>
+                            <th class="w-20 p-3 text-center">Severity</th>
+                            <th class="p-3">Governance Action Plan</th>
+                            <th class="w-24 p-3 text-right">Details</th>
                         </tr>
                     </thead>
                     <tbody id="issueTableBody" class="divide-y divide-slate-100 font-medium">
@@ -2018,14 +2018,19 @@
         
         // --- GEMINI AI SYNTHESIS & NOTEBOOKLM PODCAST LOGIC ---
                 const PODCAST_SCRIPTS = {
+            w27: [
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "0:00", text: "Welcome to the F-DSE Executive Briefing for Week 27, ending 7th of August, 2026. I'm Alex with Jordan, reviewing the key delivery movements, critical path shifts, and executive decisions required for this cycle." },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", voice: "en-AU", time: "0:18", text: "Thank you, Alex. The primary delivery breakthrough this week is the operational enablement of deliverable reference 1.10b — the GDC Enterprise E.01 Test and Development environment, which has now been delivered to Enabling Services." },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "0:42", text: "That resolves a major infrastructure blocker for Capability Drop 1. However, our overall program posture remains Amber. Jordan, what are the primary attention items for the Executive Committee?" },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", voice: "en-AU", time: "1:05", text: "The top priority is Commonwealth Acceptance of Milestone 1 artefacts (Ref 1.2b), currently in active gap closure. Additionally, the SRR prioritization glide path (Ref 1.14) is moving towards September baseline alignment." },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "1:28", text: "And on the multi-stream risk posture, net risk mitigation across all 107 Joint risks and 12 Team Google risks reduced average residual risk exposure from 15.4 to 8.4." },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", voice: "en-AU", time: "1:38", text: "Looking ahead, early system onboarding on E.01 is underway, with the next critical gate being the IBR milestone review." },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "1:42", text: "Thank you for listening to the F-DSE Executive Briefing. Direct deliverable and risk references are linked across the dashboard." }
+            ],
             w26: [
-                { speaker: "Alex", voice: "en-AU", text: "Welcome to the F-DSE Executive Briefing for Week 26, ending 31st of July, 2026. I'm Alex with Jordan, reviewing the key delivery movements, critical path shifts, and executive decisions required for this cycle." },
-                { speaker: "Jordan", voice: "en-AU", text: "Thank you, Alex. The primary delivery breakthrough this week is the successful validation of the GDC Enterprise E.01 Test and Development environment, deliverable reference 1.10b. Following a 5-week platform delay, this item has now been delivered, enabling initial system onboarding to commence." },
-                { speaker: "Alex", voice: "en-AU", text: "That resolves a major infrastructure blocker for Capability Drop 1. However, our overall program posture remains at Amber. Jordan, what are the key schedule realignments driving that status?" },
-                { speaker: "Jordan", voice: "en-AU", text: "There are two key realignments: First, the Systems Requirements Review, reference 1.14, has been re-targeted to September 2026 to establish an iterative requirements glide path for Capability Drop 1.5. Second, facility connectivity for E.01 and E.02 has been adjusted to August to accommodate telecommunications lead times." },
-                { speaker: "Alex", voice: "en-AU", text: "Looking at portfolio risk mitigation, average residual risk has compressed from 15.4 down to 8.4 across all 107 registered risks—a 7-point reduction in exposure." },
-                { speaker: "Jordan", voice: "en-AU", text: "Looking ahead into August, executive leadership focus is centered on two priorities: finalizing Commonwealth acceptance for Milestone 1 deliverable artefacts, and maintaining Milestone 2 IBR on schedule for late August review." },
-                { speaker: "Alex", voice: "en-AU", text: "Thank you for listening to the F-DSE Executive Briefing. Details and direct deliverable references are available in the interactive dashboard." }
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "0:00", text: "Welcome to the F-DSE Executive Briefing for Week 26, ending 31st of July, 2026. I'm Alex with Jordan, reviewing the key delivery movements, critical path shifts, and executive decisions required for this cycle." },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", voice: "en-AU", time: "0:18", text: "Thank you, Alex. The primary delivery breakthrough this week is the validation of GDC Enterprise E.01 Test/Dev environment, deliverable reference 1.10b." },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "0:42", text: "That is a critical milestone for Capability Drop 1." }
             ]
         };
 
@@ -2076,16 +2081,19 @@
             const container = document.getElementById('podcastTranscriptContainer');
             if (!container) return;
 
-            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
+            const script = (typeof PODCAST_SCRIPTS !== 'undefined' && (PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w27 || PODCAST_SCRIPTS.w26)) || [];
             container.innerHTML = script.map((line, idx) => `
                 <div class="p-3 rounded-xl border ${line.speaker === 'Alex' ? 'bg-indigo-50/70 border-indigo-200' : 'bg-purple-50/70 border-purple-200'} flex items-start gap-3">
-                    <span class="text-xl p-1 bg-white rounded-lg shadow-2xs">${line.avatar}</span>
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <strong class="text-slate-900">${line.speaker}</strong>
-                            <span class="text-[10px] text-slate-500 font-medium">(${line.role})</span>
+                    <span class="text-xl p-1.5 bg-white rounded-lg shadow-2xs">${line.avatar || '🎙️'}</span>
+                    <div class="space-y-1 flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <strong class="text-slate-900 font-bold">${line.speaker}</strong>
+                                <span class="text-[10px] text-slate-500 font-medium">(${line.role || 'Briefing Analyst'})</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold">${line.time || '0:00'}</span>
                         </div>
-                        <p class="text-slate-800 leading-relaxed font-normal">${line.text}</p>
+                        <p class="text-slate-800 leading-relaxed font-normal text-xs">${line.text}</p>
                     </div>
                 </div>
             `).join('');
@@ -3984,18 +3992,36 @@
                 const statusBadge = isClosed ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-800 border border-amber-200';
                 const sevBadge = (i.severity === 'High' || i.severity === 'Critical') ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-100 text-slate-700';
 
+                // Extract clean concise ref code (e.g. '1.10b') from multi-word title
+                let conciseRef = i.driverTreeRef || '';
+                if (conciseRef) {
+                    const match = conciseRef.match(/(?:Ref\s*)?([0-9]+\.[0-9]+[a-z]?)/i);
+                    if (match) {
+                        conciseRef = 'Ref ' + match[1];
+                    } else {
+                        conciseRef = conciseRef.length > 12 ? conciseRef.substring(0, 10) + '...' : conciseRef;
+                    }
+                }
+
+                const fullStatement = i.issueName || i.issueDescription || i.issueStatement || '';
+                const fullActionPlan = i.actionPlan || i.governanceNextSteps || 'Active validation of schedule impacts.';
+
                 html += `
                     <tr onclick="openItemDetailModal('issue', '${i.id}')" class="hover:bg-indigo-50/40 cursor-pointer transition-colors group">
-                        <td class="p-3.5 font-mono font-bold text-indigo-700 whitespace-nowrap">${i.displayId || i.id}</td>
-                        <td class="p-3.5 whitespace-nowrap"><span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${statusBadge}">${i.status || 'Active'}</span></td>
-                        <td class="p-3.5 text-slate-800 font-semibold whitespace-nowrap">👤 ${i.owner || i.issueOwner || 'Tom Trobe'}</td>
-                        <td class="p-3.5 whitespace-nowrap">
-                            ${i.driverTreeRef ? `<span class="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${i.driverTreeRef}</span>` : '<span class="text-slate-400 font-mono text-xs">N/A</span>'}
+                        <td class="w-14 p-3 font-mono font-bold text-indigo-700 text-center whitespace-nowrap">${i.displayId || i.id}</td>
+                        <td class="w-20 p-3 whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded-full ${statusBadge}">${i.status || 'Active'}</span></td>
+                        <td class="w-32 p-3 text-slate-800 font-semibold truncate" title="${i.owner || i.issueOwner || 'Tom Trobe'}">👤 ${i.owner || i.issueOwner || 'Tom Trobe'}</td>
+                        <td class="w-24 p-3 text-center whitespace-nowrap">
+                            ${conciseRef ? `<button onclick="event.stopPropagation(); jumpToDriverRef('${conciseRef.replace('Ref ', '')}')" class="font-mono text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 cursor-pointer">${conciseRef}</button>` : '<span class="text-slate-400 font-mono text-xs">N/A</span>'}
                         </td>
-                        <td class="p-3.5 text-slate-900 group-hover:text-indigo-700 font-bold max-w-xs truncate">${i.issueName || i.issueDescription || i.issueStatement}</td>
-                        <td class="p-3.5 whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded ${sevBadge}">${i.severity || 'Medium'}</span></td>
-                        <td class="p-3.5 text-slate-600 text-xs max-w-sm truncate">${i.actionPlan || i.governanceNextSteps || 'Active validation of schedule impacts.'}</td>
-                        <td class="p-3.5 text-right whitespace-nowrap"><span class="text-indigo-600 font-bold text-xs group-hover:underline">Inspect ↗</span></td>
+                        <td class="w-72 p-3 text-slate-900 group-hover:text-indigo-700 font-bold truncate" title="${fullStatement}">${fullStatement}</td>
+                        <td class="w-20 p-3 text-center whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded ${sevBadge}">${i.severity || 'Medium'}</span></td>
+                        <td class="p-3 text-slate-600 text-xs truncate" title="${fullActionPlan}">${fullActionPlan}</td>
+                        <td class="w-24 p-3 text-right whitespace-nowrap">
+                            <button onclick="event.stopPropagation(); openItemDetailModal('issue', '${i.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-lg border border-indigo-200 cursor-pointer transition-all shadow-2xs">
+                                <span>Inspect ↗</span>
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
