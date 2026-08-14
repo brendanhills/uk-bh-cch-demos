@@ -1,12 +1,22 @@
 # UK BH Experiments Monorepo (`uk-bh-experiments`)
 
-A multi-project monorepo containing customer demos, prototypes, learning environments, and experimental harnesses.
+A multi-project monorepo containing Google Cloud Customer Engineering prototypes, AI agent harnesses, customer demonstrations, and developer setup toolkits.
+
+---
+
+## 🛠️ Featured Developer Toolkits
+
+| Toolkit | Description | Documentation |
+| :--- | :--- | :--- |
+| **[ce_chromebox_setup](ce_chromebox_setup/README.md)** | **Chromebook (Bruschetta) to Cloudtop remote development setup.** Single-touch Titan Key authentication, automated port conflict resolution, loop-protected background port tunnels (`9000`, `9090`, `8888`, `5387`), and rapid VS Code targeting. | [View Setup Guide](ce_chromebox_setup/README.md) |
+| **[antigravity_suite](antigravity_suite/)** | Agent tooling, extensions, and workflow plugins. | [View Suite](antigravity_suite/) |
+| **[custom_harness](custom_harness/)** | Custom evaluation and agent testing harnesses. | [View Harness](custom_harness/) |
 
 ---
 
 ## 🏛️ Monorepo Architecture
 
-Each subfolder under `~/dev/uk-bh-experiments/*` represents an independent customer demo or project workspace (e.g. `capita`, `BudgetDemo`, `custom_harness`, `HealthDirect`, `belron`).
+Each subfolder under `~/dev/uk-bh-experiments/*` represents an independent project workspace (e.g. `capita`, `BudgetDemo`, `custom_harness`, `HealthDirect`, `ce_chromebox_setup`).
 
 To keep development clean, isolated, and easy to roll back across 40+ project subfolders, this repository enforces a **Single `dev` Branch + Path-Scoped Subfolder Tagging** workflow.
 
