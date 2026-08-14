@@ -54,6 +54,29 @@ python3 scripts/ingest_weekly_report.py --file-id "<DRIVE_FILE_ID>" --name "Week
 
 ---
 
+
+---
+
+## 📚 How to Add & Sync Additional Gemini Notebooks
+
+The dashboard supports a **Generalized Multi-Notebook Architecture**. You can connect multiple Gemini Notebooks (e.g. *Contract Notebook*, *Technical Architecture Blueprints*, *Security ATO Accreditation*, *Commercial SLAs*).
+
+### 1. Adding a New Gemini Notebook (1 Command)
+To register and synchronize a new Gemini Notebook, run:
+```bash
+python3 scripts/sync_notebook.py \
+  --notebook-id "<GEMINI_NOTEBOOK_UUID>" \
+  --title "Technical Architecture & System Blueprints" \
+  --slug "tech_blueprints" \
+  --category "Architecture & Engineering" \
+  --description "Vertex AI Enclaves, Diode Ingestion, and GDC Infrastructure Specifications"
+```
+
+### 2. How It Works in the UI:
+1. The dashboard reads the central registry at `data/notebooks/registry.json`.
+2. A **Notebook Dropdown Selector** appears in the header of the Contractual & Blueprint Knowledge tab.
+3. Switching notebooks instantly swaps the 17+ ingested documents, token counts, category breakdowns, and dynamic risk mappings!
+
 ## 🚀 Running & Deploying the Dashboard
 
 ### 1. Running Locally or on Cloudtop (1-Command Runner)

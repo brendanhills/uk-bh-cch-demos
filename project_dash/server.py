@@ -39,10 +39,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_sync_sheet()
         elif parsed.path == '/api/check-drive-sync':
             self.handle_check_drive_sync()
+        elif parsed.path == '/api/notebooks':
+            self.handle_list_notebooks()
         elif parsed.path == '/api/check-notebook-sync':
-            self.handle_check_notebook_sync()
+            self.handle_check_notebook_sync(parsed.query)
         elif parsed.path == '/api/sync-notebook':
-            self.handle_sync_notebook()
+            self.handle_sync_notebook(parsed.query)
         elif parsed.path == '/api/ingest-report':
             self.handle_ingest_report(parsed.query)
         else:
@@ -86,24 +88,67 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json({"error": str(e)}, 500)
 
     
-    def handle_check_notebook_sync(self):
+    def handle_list_notebooks(self):
         try:
-            cat_path = os.path.join(DIRECTORY, "data", "notebook", "sources_catalog.json")
-            mapping_path = os.path.join(DIRECTORY, "data", "notebook", "bundle_annex_mapping.json")
+            reg_path = os.path.join(DIRECTORY, "data", "notebooks", "registry.json")
+            if os.path.exists(reg_path):
+                with open(reg_path, "r", encoding="utf-8") as f:
+                    registry = json.load(f)
+            else:
+                registry = {"activeNotebookId": "acdbb29b-8632-4fc7-9ba8-2357beeff141", "notebooks": []}
+            self.send_json(registry)
+        except Exception as e:
+            self.send_json({"error": str(e)}, 500)
+
+    def handle_check_notebook_sync(self, query_str=""):
+        try:
+            params = urllib.parse.parse_qs(query_str) if query_str else {}
+            slug = params.get('slug', [''])[0]
+            nb_id = params.get('notebook_id', [''])[0]
+
+            reg_path = os.path.join(DIRECTORY, "data", "notebooks", "registry.json")
+            registry = {}
+            if os.path.exists(reg_path):
+                with open(reg_path, "r", encoding="utf-8") as f:
+                    registry = json.load(f)
+
+            notebooks = registry.get("notebooks", [])
+            target = None
+            if slug:
+                target = next((n for n in notebooks if n.get("slug") == slug), None)
+            elif nb_id:
+                target = next((n for n in notebooks if n.get("id") == nb_id), None)
+            if not target and notebooks:
+                target = notebooks[0]
+
             cat_data = {}
             mapping_data = {}
-            if os.path.exists(cat_path):
-                with open(cat_path, "r", encoding="utf-8") as f:
-                    cat_data = json.load(f)
-            if os.path.exists(mapping_path):
-                with open(mapping_path, "r", encoding="utf-8") as f:
-                    mapping_data = json.load(f)
+            if target:
+                cat_path = os.path.join(DIRECTORY, target.get("catalogFile", "data/notebook/sources_catalog.json"))
+                mapping_path = os.path.join(DIRECTORY, target.get("mappingFile", "data/notebook/bundle_annex_mapping.json"))
+                if os.path.exists(cat_path):
+                    with open(cat_path, "r", encoding="utf-8") as f:
+                        cat_data = json.load(f)
+                if os.path.exists(mapping_path):
+                    with open(mapping_path, "r", encoding="utf-8") as f:
+                        mapping_data = json.load(f)
+            else:
+                cat_path = os.path.join(DIRECTORY, "data", "notebook", "sources_catalog.json")
+                mapping_path = os.path.join(DIRECTORY, "data", "notebook", "bundle_annex_mapping.json")
+                if os.path.exists(cat_path):
+                    with open(cat_path, "r", encoding="utf-8") as f:
+                        cat_data = json.load(f)
+                if os.path.exists(mapping_path):
+                    with open(mapping_path, "r", encoding="utf-8") as f:
+                        mapping_data = json.load(f)
 
             response = {
                 "status": "ok",
-                "notebookId": cat_data.get("notebookId", "acdbb29b-8632-4fc7-9ba8-2357beeff141"),
-                "notebookTitle": cat_data.get("notebookTitle", "Project Monaro Contract Notebook"),
-                "notebookUrl": cat_data.get("notebookUrl", "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141"),
+                "registry": registry,
+                "activeNotebook": target,
+                "notebookId": cat_data.get("notebookId", target.get("id", "acdbb29b-8632-4fc7-9ba8-2357beeff141") if target else "acdbb29b-8632-4fc7-9ba8-2357beeff141"),
+                "notebookTitle": cat_data.get("notebookTitle", target.get("title", "Project Monaro Contract Notebook") if target else "Project Monaro Contract Notebook"),
+                "notebookUrl": target.get("url", "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141") if target else "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141",
                 "lastSynced": cat_data.get("lastSynced"),
                 "totalSources": cat_data.get("totalSources", len(cat_data.get("sources", []))),
                 "sources": cat_data.get("sources", []),
@@ -113,24 +158,37 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
 
-    def handle_sync_notebook(self):
+    def handle_sync_notebook(self, query_str=""):
         try:
+            params = urllib.parse.parse_qs(query_str) if query_str else {}
+            nb_id = params.get('notebook_id', ['acdbb29b-8632-4fc7-9ba8-2357beeff141'])[0]
+            title = params.get('title', [''])[0]
+            slug = params.get('slug', [''])[0]
+
             script_path = os.path.join(DIRECTORY, "scripts", "sync_notebook.py")
-            cmd = [sys.executable, script_path]
+            cmd = [sys.executable, script_path, "--notebook-id", nb_id]
+            if title: cmd.extend(["--title", title])
+            if slug: cmd.extend(["--slug", slug])
+
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
 
             if result.returncode == 0:
                 cat_path = os.path.join(DIRECTORY, "data", "notebook", "sources_catalog.json")
                 mapping_path = os.path.join(DIRECTORY, "data", "notebook", "bundle_annex_mapping.json")
-                with open(cat_path, "r", encoding="utf-8") as f:
-                    cat_data = json.load(f)
-                with open(mapping_path, "r", encoding="utf-8") as f:
-                    mapping_data = json.load(f)
+                cat_data = {}
+                mapping_data = {}
+                if os.path.exists(cat_path):
+                    with open(cat_path, "r", encoding="utf-8") as f:
+                        cat_data = json.load(f)
+                if os.path.exists(mapping_path):
+                    with open(mapping_path, "r", encoding="utf-8") as f:
+                        mapping_data = json.load(f)
                 self.send_json({
                     "status": "ok",
                     "message": "Successfully synchronized Gemini Notebook sources and bundle mappings",
                     "catalog": cat_data,
-                    "bundleMapping": mapping_data
+                    "bundleMapping": mapping_data,
+                    "totalSources": len(cat_data.get("sources", []))
                 })
             else:
                 self.send_json({"error": result.stderr or "Sync notebook script failed"}, 500)

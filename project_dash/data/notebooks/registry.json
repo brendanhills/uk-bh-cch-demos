@@ -1,0 +1,17 @@
+{
+  "activeNotebookId": "acdbb29b-8632-4fc7-9ba8-2357beeff141",
+  "notebooks": [
+    {
+      "id": "acdbb29b-8632-4fc7-9ba8-2357beeff141",
+      "slug": "monaro_contracts",
+      "title": "Project Monaro Contract Notebook",
+      "category": "Contract & Governance",
+      "description": "Commonwealth Head Agreement Schedules 4 & 7, Solution Blueprints Annex B through L, and Level 2 CD1 Milestones.",
+      "url": "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141",
+      "catalogFile": "data/notebooks/monaro_contracts_catalog.json",
+      "mappingFile": "data/notebooks/monaro_contracts_mapping.json",
+      "totalSources": 17,
+      "lastSynced": "2026-08-14T13:23:38.156263"
+    }
+  ]
+}

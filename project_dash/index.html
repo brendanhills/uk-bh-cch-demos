@@ -1130,9 +1130,15 @@
                         <p class="text-xs text-slate-500 mt-0.5">Bidirectional traceability between contract solution blueprints (Bundles A through L) and live governance risks &amp; issues.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-3">
-                        <a href="https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all">
+                        <div class="flex items-center gap-2">
+                            <label for="notebookSelectorSelect" class="text-xs font-semibold text-slate-500">Notebook:</label>
+                            <select id="notebookSelectorSelect" onchange="switchActiveNotebook(this.value)" class="text-xs font-bold text-purple-900 bg-purple-50/80 hover:bg-purple-100 border border-purple-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 cursor-pointer shadow-2xs transition-all">
+                                <option value="monaro_contracts">Project Monaro Contract Notebook (17 Sources)</option>
+                            </select>
+                        </div>
+                        <a id="activeNotebookExternalLink" href="https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                            <span>Open in NotebookLM ↗</span>
+                            <span id="activeNotebookOpenLabel">Open in NotebookLM ↗</span>
                         </a>
                         <button onclick="triggerNotebookSync()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer">
                             <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -1584,6 +1590,73 @@
                 const sec = document.getElementById('riskExplorerSection');
                 if (sec) sec.scrollIntoView({ behavior: 'smooth' });
             }, 100);
+        }
+
+        
+        let NOTEBOOK_REGISTRY = null;
+        let ACTIVE_NOTEBOOK_SLUG = 'monaro_contracts';
+
+        async function initNotebookRegistry() {
+            try {
+                const resp = await fetch('/api/notebooks');
+                if (resp.ok) {
+                    NOTEBOOK_REGISTRY = await resp.json();
+                    renderNotebookDropdown();
+                }
+            } catch (err) {
+                console.log('Using local registry fallback for notebooks');
+            }
+        }
+
+        function renderNotebookDropdown() {
+            const select = document.getElementById('notebookSelectorSelect');
+            if (!select || !NOTEBOOK_REGISTRY || !NOTEBOOK_REGISTRY.notebooks) return;
+
+            select.innerHTML = '';
+            NOTEBOOK_REGISTRY.notebooks.forEach(nb => {
+                const opt = document.createElement('option');
+                opt.value = nb.slug || nb.id;
+                opt.text = nb.title + ' (' + (nb.totalSources || 0) + ' Sources)';
+                if (nb.slug === ACTIVE_NOTEBOOK_SLUG || nb.id === ACTIVE_NOTEBOOK_SLUG) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        }
+
+        async function switchActiveNotebook(slug) {
+            ACTIVE_NOTEBOOK_SLUG = slug;
+            try {
+                const resp = await fetch('/api/check-notebook-sync?slug=' + encodeURIComponent(slug));
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.activeNotebook) {
+                        const extLink = document.getElementById('activeNotebookExternalLink');
+                        if (extLink && data.activeNotebook.url) {
+                            extLink.href = data.activeNotebook.url;
+                        }
+                    }
+                    if (data.sources) {
+                        NOTEBOOK_CATALOG = {
+                            notebookId: data.notebookId,
+                            notebookTitle: data.notebookTitle,
+                            notebookUrl: data.notebookUrl,
+                            sources: data.sources,
+                            lastSynced: data.lastSynced,
+                            totalSources: data.totalSources
+                        };
+                    }
+                    if (data.bundleMapping) {
+                        BUNDLE_ANNEX_MAPPING = data.bundleMapping;
+                    }
+                    const countBadge = document.getElementById('blueprintSourcesCount');
+                    if (countBadge) countBadge.innerText = (data.totalSources || 0) + ' Sources';
+
+                    renderBlueprintKnowledge();
+                }
+            } catch (err) {
+                console.error('Error switching notebook:', err);
+            }
         }
 
         async function triggerNotebookSync() {

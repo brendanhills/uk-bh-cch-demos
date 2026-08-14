@@ -253,6 +253,24 @@ class TestAllDashboardsDynamicSync(unittest.TestCase):
         self.assertIn('renderBlueprintKnowledge', self.html_content)
         self.assertIn('id="bundleAnnexCardsContainer"', self.html_content)
         self.assertIn('id="researchDocsContainer"', self.html_content)
+        self.assertIn('id="notebookSelectorSelect"', self.html_content)
+        self.assertIn('switchActiveNotebook', self.html_content)
+
+    def test_multi_notebook_registry_and_endpoints(self):
+        """Verify multi-notebook registry file and /api/notebooks endpoint."""
+        class DummyHandler(server.DashboardHandler):
+            def __init__(self):
+                self.sent_data = None
+                self.sent_code = None
+            def send_json(self, data, status_code=200):
+                self.sent_data = data
+                self.sent_code = status_code
+
+        dummy = DummyHandler()
+        server.DashboardHandler.handle_list_notebooks(dummy)
+        self.assertEqual(dummy.sent_code, 200)
+        self.assertIn('notebooks', dummy.sent_data)
+        self.assertGreaterEqual(len(dummy.sent_data['notebooks']), 1)
 
 if __name__ == "__main__":
     unittest.main()

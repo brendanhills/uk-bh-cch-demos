@@ -19,7 +19,7 @@
 - [~] **Track: Dynamic Data Generation & Visualization Audit across All Tabs**
   *Link: [./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md](./tracks/audit_and_dynamic_data_all_tabs_20260811/index.md)*
 ---
-- [~] **Track: Production Deployment, Drive-Native Storage & Turnkey Handover**
+- [x] **Track: Production Deployment, Drive-Native Storage & Turnkey Handover**
   *Link: [./tracks/c4a_idp_nexus_deployment_20260811/index.md](./tracks/c4a_idp_nexus_deployment_20260811/index.md)*
 ---
 - [x] **Track: Team Google Risk Register Integration & Multi-Register Governance**
@@ -27,3 +27,6 @@
 ---
 - [x] **Track: Gemini Notebook Contract Blueprint Sync & Knowledge Base**
   *Link: [./tracks/gemini_notebook_blueprint_sync_20260813/index.md](./tracks/gemini_notebook_blueprint_sync_20260813/index.md)*
+---
+- [x] **Track: Zero-Server Client-Only Architecture, Drive-Native Storage & Multi-Notebook Registry**
+  *Link: [./tracks/zero_server_client_architecture_20260814/index.md](./tracks/zero_server_client_architecture_20260814/index.md)*
