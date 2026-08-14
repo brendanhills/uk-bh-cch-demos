@@ -294,7 +294,15 @@ chmod +x ~/bin/tunnel-shell
 
 ## 7. Troubleshooting Runbook
 
-### Issue 1: Multiple Security Key Popups in a Row
+### Issue 1: `localhost:<PORT>` Shows an Old Version (Different from Cloudtop URL)
+* **Cause:** A local dev server (Python, Node, Docker) was started directly inside Bruschetta on that port, intercepting `localhost:<PORT>` before the SSH tunnel.
+* **Fix:** Kill the local Bruschetta process and restart the tunnel:
+  ```bash
+  sudo kill -9 $(lsof -t -i :9000) 2>/dev/null || true
+  tunnel-restart
+  ```
+
+### Issue 2: Multiple Security Key Popups in a Row
 * **Cause:** `autossh` was launched in the background before credentials were valid, or `IdentitiesOnly yes` is missing.
 * **Fix:**
   ```bash
@@ -302,14 +310,14 @@ chmod +x ~/bin/tunnel-shell
   ```
   Ensure `IdentitiesOnly yes` is present in `~/.ssh/config` and run `ct` first to authenticate in the foreground.
 
-### Issue 2: Port Locked (`Address in use`)
-* **Cause:** A previous hung SSH process is still listening on port 9000 or 8888.
+### Issue 3: Port Locked (`Address in use`)
+* **Cause:** A previous hung SSH process is still listening on port 9000 or 8888 in Bruschetta.
 * **Fix:**
   ```bash
   sudo kill -9 $(lsof -t -i :9000 -i :8888) 2>/dev/null || true
   tunnel-restart
   ```
 
-### Issue 3: `Connection closed by UNKNOWN port 65535`
+### Issue 4: `Connection closed by UNKNOWN port 65535`
 * **Cause:** SSO master cookie expired.
 * **Fix:** Run `ct` to trigger roadwarrior authentication.
