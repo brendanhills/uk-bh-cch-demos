@@ -10,22 +10,22 @@
     "jointRisks": [
       "RSK-034",
       "RSK-055",
-      "RSK-015",
-      "RSK-002"
+      "RSK-002",
+      "RSK-015"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-011",
-      "TG-RSK-008",
-      "TG-RSK-005",
+      "TG-RSK-004",
       "TG-RSK-010",
       "TG-RSK-003",
-      "TG-RSK-007",
-      "TG-RSK-002",
-      "TG-RSK-004",
+      "TG-RSK-006",
+      "TG-RSK-005",
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-011",
       "TG-RSK-012",
       "TG-RSK-009",
-      "TG-RSK-001",
-      "TG-RSK-006"
+      "TG-RSK-002",
+      "TG-RSK-007"
     ],
     "issues": [
       "ISS-002",
@@ -50,10 +50,10 @@
     "teamGoogleRisks": [
       "TG-RSK-010",
       "TG-RSK-003",
-      "TG-RSK-007",
-      "TG-RSK-002",
+      "TG-RSK-006",
       "TG-RSK-009",
-      "TG-RSK-006"
+      "TG-RSK-002",
+      "TG-RSK-007"
     ],
     "issues": [
       "ISS-005"
@@ -74,18 +74,18 @@
       "RSK-066"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-011",
-      "TG-RSK-008",
-      "TG-RSK-005",
+      "TG-RSK-004",
       "TG-RSK-010",
       "TG-RSK-003",
-      "TG-RSK-007",
-      "TG-RSK-002",
-      "TG-RSK-004",
+      "TG-RSK-006",
+      "TG-RSK-005",
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-011",
       "TG-RSK-012",
       "TG-RSK-009",
-      "TG-RSK-001",
-      "TG-RSK-006"
+      "TG-RSK-002",
+      "TG-RSK-007"
     ],
     "issues": [
       "ISS-008",
@@ -104,49 +104,49 @@
       "1.2b"
     ],
     "jointRisks": [
-      "RSK-093",
-      "RSK-089",
-      "RSK-074",
-      "RSK-070",
-      "RSK-062",
+      "RSK-076",
+      "RSK-088",
       "RSK-094",
+      "RSK-087",
+      "RSK-062",
+      "RSK-089",
+      "RSK-090",
+      "RSK-104",
+      "RSK-096",
+      "RSK-075",
+      "RSK-067",
+      "RSK-077",
+      "RSK-069",
+      "RSK-091",
+      "RSK-102",
       "RSK-092",
       "RSK-056",
-      "RSK-088",
-      "RSK-075",
+      "RSK-070",
       "RSK-072",
       "RSK-068",
-      "RSK-091",
-      "RSK-071",
-      "RSK-069",
-      "RSK-078",
-      "RSK-095",
-      "RSK-087",
-      "RSK-055",
-      "RSK-076",
-      "RSK-103",
-      "RSK-104",
-      "RSK-090",
-      "RSK-105",
-      "RSK-077",
-      "RSK-067",
+      "RSK-074",
       "RSK-073",
-      "RSK-102",
-      "RSK-096"
+      "RSK-093",
+      "RSK-071",
+      "RSK-055",
+      "RSK-103",
+      "RSK-105",
+      "RSK-095",
+      "RSK-078"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-011",
-      "TG-RSK-008",
-      "TG-RSK-005",
+      "TG-RSK-004",
       "TG-RSK-010",
       "TG-RSK-003",
-      "TG-RSK-007",
-      "TG-RSK-002",
-      "TG-RSK-004",
+      "TG-RSK-006",
+      "TG-RSK-005",
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-011",
       "TG-RSK-012",
       "TG-RSK-009",
-      "TG-RSK-001",
-      "TG-RSK-006"
+      "TG-RSK-002",
+      "TG-RSK-007"
     ],
     "issues": [
       "ISS-001",
@@ -165,15 +165,15 @@
       "1.6 GFF"
     ],
     "jointRisks": [
+      "RSK-029",
       "RSK-011",
-      "RSK-051",
-      "RSK-029"
+      "RSK-051"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-005",
+      "TG-RSK-012",
       "TG-RSK-008",
-      "TG-RSK-001",
-      "TG-RSK-012"
+      "TG-RSK-005",
+      "TG-RSK-001"
     ],
     "issues": [
       "ISS-003"
@@ -191,35 +191,35 @@
       "1.6 GFF"
     ],
     "jointRisks": [
-      "RSK-093",
-      "RSK-089",
-      "RSK-074",
-      "RSK-070",
-      "RSK-062",
+      "RSK-076",
+      "RSK-088",
       "RSK-094",
+      "RSK-087",
+      "RSK-062",
+      "RSK-089",
+      "RSK-090",
+      "RSK-104",
+      "RSK-096",
+      "RSK-075",
+      "RSK-067",
+      "RSK-077",
+      "RSK-069",
+      "RSK-091",
+      "RSK-102",
       "RSK-092",
       "RSK-056",
-      "RSK-088",
-      "RSK-075",
+      "RSK-070",
       "RSK-072",
       "RSK-068",
-      "RSK-091",
-      "RSK-071",
-      "RSK-069",
-      "RSK-078",
-      "RSK-095",
-      "RSK-087",
-      "RSK-055",
-      "RSK-076",
-      "RSK-103",
-      "RSK-104",
-      "RSK-090",
-      "RSK-105",
-      "RSK-077",
-      "RSK-067",
+      "RSK-074",
       "RSK-073",
-      "RSK-102",
-      "RSK-096"
+      "RSK-093",
+      "RSK-071",
+      "RSK-055",
+      "RSK-103",
+      "RSK-105",
+      "RSK-095",
+      "RSK-078"
     ],
     "teamGoogleRisks": [
       "TG-RSK-007"
@@ -240,33 +240,33 @@
       "1.10b"
     ],
     "jointRisks": [
-      "RSK-079",
-      "RSK-101",
+      "RSK-106",
+      "RSK-043",
       "RSK-080",
-      "RSK-081",
-      "RSK-082",
-      "RSK-035",
-      "RSK-061",
-      "RSK-041",
       "RSK-107",
+      "RSK-084",
       "RSK-026",
       "RSK-083",
-      "RSK-066",
-      "RSK-085",
+      "RSK-101",
+      "RSK-030",
       "RSK-042",
       "RSK-086",
-      "RSK-030",
-      "RSK-106",
+      "RSK-063",
+      "RSK-066",
+      "RSK-082",
+      "RSK-061",
+      "RSK-079",
+      "RSK-085",
+      "RSK-081",
       "RSK-027",
-      "RSK-084",
-      "RSK-043",
-      "RSK-063"
+      "RSK-035",
+      "RSK-041"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-005",
+      "TG-RSK-012",
       "TG-RSK-008",
-      "TG-RSK-001",
-      "TG-RSK-012"
+      "TG-RSK-005",
+      "TG-RSK-001"
     ],
     "issues": [
       "ISS-004",
@@ -308,8 +308,8 @@
       "3.1"
     ],
     "jointRisks": [
-      "RSK-062",
-      "RSK-019"
+      "RSK-019",
+      "RSK-062"
     ],
     "teamGoogleRisks": [
       "TG-RSK-004"
@@ -331,25 +331,25 @@
     ],
     "jointRisks": [
       "RSK-031",
-      "RSK-029",
-      "RSK-010",
       "RSK-062",
+      "RSK-045",
       "RSK-100",
-      "RSK-045"
+      "RSK-010",
+      "RSK-029"
     ],
     "teamGoogleRisks": [
-      "TG-RSK-011",
-      "TG-RSK-008",
-      "TG-RSK-005",
+      "TG-RSK-004",
       "TG-RSK-010",
       "TG-RSK-003",
-      "TG-RSK-007",
-      "TG-RSK-002",
-      "TG-RSK-004",
+      "TG-RSK-006",
+      "TG-RSK-005",
+      "TG-RSK-008",
+      "TG-RSK-001",
+      "TG-RSK-011",
       "TG-RSK-012",
       "TG-RSK-009",
-      "TG-RSK-001",
-      "TG-RSK-006"
+      "TG-RSK-002",
+      "TG-RSK-007"
     ],
     "issues": [
       "ISS-018"
