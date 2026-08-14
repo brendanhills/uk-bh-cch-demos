@@ -41,7 +41,7 @@ Before setting up this workflow, ensure you have:
 ## 2. Directory Structure
 
 ```text
-ce_chromebox_setup/
+ce_chromebook_setup/
 ├── README.md                          # Comprehensive guide, visual diagrams, and troubleshooting
 ├── images/
 │   └── chromeos_terminal_setup.png    # Screenshot of ChromeOS Terminal connection profile
