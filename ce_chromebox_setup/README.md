@@ -230,12 +230,37 @@ Reload with `source ~/.bashrc`.
 
 ## 6. Native ChromeOS Terminal Connections (Optional Alternative)
 
-If you want instant, 1-click terminal access to Cloudtop directly from the ChromeOS shelf without launching the Bruschetta VM, you can configure a direct SSH connection profile in the native **ChromeOS Terminal App**.
+If you want instant, 1-click terminal access to Cloudtop directly from the ChromeOS shelf without launching the Bruschetta VM, you can configure direct SSH connection profiles in the native **ChromeOS Terminal App**.
 
-### Why the `tunnel-shell` Helper is Needed
-The native ChromeOS Terminal runs as a WebAssembly PWA and does not allow complex ANSI escape sequences or quotes inside its command configuration box. 
+You can set up two distinct profile types:
+1. **Quick Shell Profile:** An instant shell tab for running commands without port forwarding.
+2. **Tunnel Shell Profile:** A dedicated tab that forwards dev web ports (`9000`, `9090`, `8888`) with an identifiable visual banner.
 
-To give you an identifiable colored prompt (`[TUNNEL:9000]`) and banner that reminds you not to close this port-forwarding window, we use a small helper script on Cloudtop.
+---
+
+### A. Quick Shell Profile (Standard Remote Shell)
+
+For quick access to an interactive shell on Cloudtop:
+
+![ChromeOS Terminal Quick Shell Profile](images/chromeos_terminal_setup.png)
+
+1. Open **Terminal** on ChromeOS $\rightarrow$ Click **Terminal settings** $\rightarrow$ **SSH** $\rightarrow$ **Add new**.
+2. Fill in the fields:
+   * **Profile Name:** `Cloudtop quick shell`
+   * **Command Box:** *(ChromeOS automatically prefixes `ssh `, so do not type `ssh`)*:
+     ```text
+     <LDAP_USERNAME>@<CLOUDTOP_NAME>.c.googlers.com -o ServerAliveInterval=15 -o ServerAliveCountMax=3
+     ```
+   * **Identity:** `[Default]`
+   * **SSH relay server options:** `--config=google`
+
+---
+
+### B. Tunnel Shell Profile (With Web Port Forwarding)
+
+Because the native ChromeOS Terminal runs as a WebAssembly PWA, it does not allow complex ANSI escape sequences or quotes inside its command configuration box. 
+
+To give you an identifiable colored prompt (`[TUNNEL:9000]`) and banner that reminds you not to close this port-forwarding window, use a helper script on Cloudtop:
 
 #### Step 1: Create the helper script on Cloudtop
 On your Cloudtop, create `~/bin/tunnel-shell` (from [`cloudtop/tunnel-shell`](cloudtop/tunnel-shell)):
@@ -254,18 +279,16 @@ TUNNEL_EOF
 chmod +x ~/bin/tunnel-shell
 ```
 
-#### Step 2: Configure ChromeOS Terminal Settings
-1. Open the **Terminal** app on ChromeOS $\rightarrow$ Click **Terminal settings** $\rightarrow$ **SSH**.
-2. Click **Add new** and fill in the fields as shown below:
-
-![ChromeOS Terminal Profile Configuration](images/chromeos_terminal_setup.png)
-
-* **Command Box:** *(Note: ChromeOS automatically prefixes `ssh `, so do not include `ssh`)*:
-  ```text
-  <LDAP_USERNAME>@<CLOUDTOP_NAME>.c.googlers.com -L 9000:localhost:9000 -L 9090:localhost:9090 -L 9900:localhost:9900 -L 8888:localhost:8888 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -t ~/bin/tunnel-shell
-  ```
-* **Identity:** `[Default]`
-* **SSH relay server options:** `--config=google`
+#### Step 2: Configure ChromeOS Terminal Tunnel Profile
+1. In ChromeOS Terminal settings $\rightarrow$ **SSH** $\rightarrow$ **Add new**.
+2. Configure the profile:
+   * **Profile Name:** `Cloudtop Tunnel (9000, 9090, 8888)`
+   * **Command Box:**
+     ```text
+     <LDAP_USERNAME>@<CLOUDTOP_NAME>.c.googlers.com -L 9000:localhost:9000 -L 9090:localhost:9090 -L 9900:localhost:9900 -L 8888:localhost:8888 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -t ~/bin/tunnel-shell
+     ```
+   * **Identity:** `[Default]`
+   * **SSH relay server options:** `--config=google`
 
 ---
 
