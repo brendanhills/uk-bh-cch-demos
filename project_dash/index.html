@@ -3816,9 +3816,6 @@
 
             if (!item) return;
 
-            const modalContent = document.getElementById('itemDetailContent');
-            if (!modalContent) return;
-
             // Blueprint Annex resolution
             const bundleKey = item.bundle || 'Bundle B (Security & Governance)';
             let mappedAnnex = 'Annex B (Contract Management)';
@@ -3835,66 +3832,75 @@
                 }
             }
 
-            let html = `
-                <div class="space-y-4">
-                    <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="font-mono text-xs font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">${item.displayId || item.id}</span>
-                                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${item.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${item.status || 'Active'}</span>
-                                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${item.causeCategory || item.impactCategory || 'Platform'}</span>
-                                ${item.driverTreeRef ? `<span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${item.driverTreeRef}</span>` : ''}
-                            </div>
-                            <h3 class="text-base font-bold text-slate-900">${item.riskName || item.issueName || item.riskDescription || item.issueDescription}</h3>
-                        </div>
-                        <button onclick="closeItemDetailModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg text-lg cursor-pointer">✕</button>
-                    </div>
+            const isGoogleRisk = item.sourceRegister === 'teamGoogle' || item.sourceLabel === 'Team Google' || String(item.id).startsWith('TG-');
+            const isIssue = type === 'issue' || item.issueStatement;
+            const isClosed = item.status === 'Closed';
+            const statusBadgeClass = isClosed ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            const headerTitle = item.riskName || item.issueName || item.riskDescription || item.issueDescription;
 
-                    ${(item.riskDescription || item.issueStatement) ? `
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
-                            <span class="font-bold text-slate-500 uppercase text-[10px] block">Full Statement:</span>
-                            <p class="leading-relaxed">${item.riskDescription || item.issueStatement}</p>
-                        </div>
-                    ` : ''}
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                        <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1">
-                            <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
-                            <p class="text-slate-800 leading-relaxed">${item.causeDescription || item.impactDescription || 'N/A'}</p>
-                        </div>
-                        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 space-y-1">
-                            <span class="font-bold text-emerald-800 uppercase text-[10px] block">Treatment Plan / Mitigation:</span>
-                            <p class="text-slate-800 leading-relaxed">${item.treatmentPlan || item.actionPlan || item.governanceNextSteps || 'Under active governance remediation.'}</p>
-                        </div>
-                    </div>
-
-                    <!-- Contract Blueprint Grounding Card -->
-                    <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-4 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm">📘</span>
-                                <strong class="text-xs font-bold text-purple-900">Contract Blueprint Traceability</strong>
-                                <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded border border-purple-200 font-mono">${mappedAnnex}</span>
-                            </div>
-                            <a href="${notebookDocUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-purple-700 hover:text-purple-900 bg-white border border-purple-200 px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1">
-                                <span>Open in NotebookLM</span>
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                            </a>
-                        </div>
-                        <p class="text-xs text-purple-950/80 leading-relaxed">${mappedBundleDesc}</p>
-                    </div>
-
-                    <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-                        <span>Lead Owner: <strong class="text-slate-800">👤 ${item.riskOwner || item.issueOwner || item.owner || 'Joint Team'}</strong></span>
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] m-4">
+                    <div class="bg-slate-900 p-5 text-white flex justify-between items-center shrink-0">
                         <div class="flex items-center gap-3">
-                            ${item.targetDate ? `<span>Target Date: <strong class="font-mono text-slate-800">${item.targetDate}</strong></span>` : ''}
-                            <button onclick="closeItemDetailModal()" class="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg cursor-pointer">Close</button>
+                            <div class="p-2 bg-white/10 rounded-xl text-xl">${isIssue ? '⚠️' : (isGoogleRisk ? '🛡️' : '📋')}</div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-sm font-black font-mono px-2 py-0.5 bg-white/20 rounded">${item.displayId || item.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">${item.status || 'Active'}</span>
+                                    ${isGoogleRisk ? '<span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-600 text-white">Team Google</span>' : ''}
+                                    ${item.residualRiskScore ? `<span class="text-xs font-mono font-black px-2 py-0.5 rounded bg-indigo-600 text-white">Score: ${item.residualRiskScore}</span>` : ''}
+                                </div>
+                                <h2 class="text-base font-bold text-white mt-1 line-clamp-1">${headerTitle}</h2>
+                            </div>
+                        </div>
+                        <button onclick="closeItemDetailModal()" class="text-white/80 hover:text-white p-1 rounded-lg text-lg cursor-pointer">✕</button>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto space-y-4 text-xs">
+                        ${(item.riskDescription || item.issueStatement) ? `
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                                <span class="font-bold text-slate-500 uppercase text-[10px] block">Full Statement:</span>
+                                <p class="leading-relaxed">${item.riskDescription || item.issueStatement}</p>
+                            </div>
+                        ` : ''}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1">
+                                <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                <p class="text-slate-800 leading-relaxed">${item.causeDescription || item.impactDescription || 'N/A'}</p>
+                            </div>
+                            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 space-y-1">
+                                <span class="font-bold text-emerald-800 uppercase text-[10px] block">Treatment Plan / Mitigation:</span>
+                                <p class="text-slate-800 leading-relaxed">${item.treatmentPlan || item.actionPlan || item.governanceNextSteps || 'Under active governance remediation.'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Contract Blueprint Grounding Card -->
+                        <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-4 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">📘</span>
+                                    <strong class="text-xs font-bold text-purple-900">Contract Blueprint Traceability</strong>
+                                    <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded border border-purple-200 font-mono">${mappedAnnex}</span>
+                                </div>
+                                <a href="${notebookDocUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-purple-700 hover:text-purple-900 bg-white border border-purple-200 px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1">
+                                    <span>Open in NotebookLM</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
+                            </div>
+                            <p class="text-xs text-purple-950/80 leading-relaxed">${mappedBundleDesc}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                            <span>Lead Owner: <strong class="text-slate-800">👤 ${item.riskOwner || item.issueOwner || item.owner || 'Joint Team'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                ${item.targetDate ? `<span>Target Date: <strong class="font-mono text-slate-800">${item.targetDate}</strong></span>` : ''}
+                                <button onclick="closeItemDetailModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg cursor-pointer">Close</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
-
-            modalContent.innerHTML = html;
             modal.classList.remove('hidden');
         }
 

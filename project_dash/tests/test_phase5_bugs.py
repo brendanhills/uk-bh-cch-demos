@@ -17,7 +17,7 @@ class TestPhase5Bugs(unittest.TestCase):
         self.assertIn("renderIssueTable", body, "switchTab must call renderIssueTable when tab-issues is selected")
 
     def test_bug_49_open_item_detail_modal_matches_google_risk_id(self):
-        """Bug #49: openItemDetailModal must match stringified ID on LIVE_TEAM_GOOGLE_RISKS."""
+        """Bug #49: openItemDetailModal must match stringified ID on LIVE_TEAM_GOOGLE_RISKS and open modal."""
         idx = self.html.find("function openItemDetailModal")
         idx_end = self.html.find("function ", idx + 30)
         body = self.html[idx:idx_end]
@@ -26,6 +26,8 @@ class TestPhase5Bugs(unittest.TestCase):
             "openItemDetailModal must use robust string-based ID comparison for both LIVE_RISKS and LIVE_TEAM_GOOGLE_RISKS"
         )
         self.assertIn("LIVE_TEAM_GOOGLE_RISKS", body, "openItemDetailModal must query LIVE_TEAM_GOOGLE_RISKS")
+        self.assertIn("modal.classList.remove('hidden')", body, "openItemDetailModal must unhide the modal")
+        self.assertIn("Team Google", body, "openItemDetailModal must render Team Google badge when inspecting a Google risk")
 
     def test_bug_50_risk_cards_have_blueprint_badges_and_links(self):
         """Bug #50: Risk cards in Joint Program and Team Google must render Blueprint Annex badges/links."""
