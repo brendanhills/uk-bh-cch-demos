@@ -36,16 +36,21 @@ class TestPhase4Bugs(unittest.TestCase):
 
     def test_bug_40_matrix_axes_standardized_across_both_registers(self):
         """Bug #40: Both Joint and Team Google matrices must have X=Likelihood and Y=Consequence."""
+        # Check Joint matrix renderer
         idx_joint = self.html.find("function renderRiskHeatmap")
         body_joint = self.html[idx_joint:idx_joint+2500]
         self.assertTrue("Rare" in body_joint and "Almost Certain" in body_joint, "Joint Heatmap X-axis must have Rare to Almost Certain")
-        
+        self.assertIn("Consequence (Y) ↓ / Likelihood (X) →", body_joint, "Joint Heatmap must have standard axis title")
+
+        # Check Team Google matrix renderer
         idx_google = self.html.find("function renderTeamGoogleHeatmap")
         body_google = self.html[idx_google:idx_google+3000]
-        self.assertTrue(
-            "matrixGridTeamGoogle" in body_google,
-            "Team Google Heatmap must render into matrixGridTeamGoogle with standardized grid coordinates"
-        )
+        self.assertIn("Consequence (Y) ↓ / Likelihood (X) →", body_google, "Team Google Heatmap must have standard axis title")
+        self.assertTrue("Rare" in body_google and "Almost Certain" in body_google, "Team Google Heatmap must have Rare to Almost Certain")
+        
+        # Verify old rotated / inverted labels are removed from static HTML
+        self.assertNotIn("[writing-mode:vertical-rl]", self.html, "Rotated vertical Likelihood label must be removed")
+        self.assertNotIn("<div>1 - Minor</div>", self.html, "Bottom Consequence row labels must be removed from HTML")
 
     def test_bug_46_driver_tree_interactive_drilldowns(self):
         """Bug #46: CD1 Driver Tree cards must support interactive drill-downs and jumps."""

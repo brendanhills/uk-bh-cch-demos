@@ -814,30 +814,9 @@
                     </div>
                 </div>
 
-                <!-- 5x5 Grid Container for Team Google -->
-                <div class="overflow-x-auto pb-2">
-                    <div class="min-w-[500px]">
-                        <div class="flex">
-                            <div class="w-12 flex items-center justify-center font-bold text-slate-400 text-xs [writing-mode:vertical-rl] rotate-180 select-none">
-                                Likelihood
-                            </div>
-                            <div class="flex-1">
-                                <div class="grid grid-cols-5 gap-1.5" id="matrixGridTeamGoogle">
-                                    <!-- Rendered dynamically via renderTeamGoogleHeatmap() -->
-                                </div>
-                                <div class="grid grid-cols-5 gap-1.5 mt-2 text-center text-[11px] font-bold text-slate-500">
-                                    <div>1 - Minor</div>
-                                    <div>2 - Moderate</div>
-                                    <div>3 - Major</div>
-                                    <div>4 - Critical</div>
-                                    <div>5 - Catastrophic</div>
-                                </div>
-                                <div class="text-center font-bold text-slate-400 text-xs mt-1 select-none">
-                                    Consequence
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Standardized 5x5 Grid Container for Team Google (Identical layout to Joint Program) -->
+                <div class="pt-2 overflow-x-auto">
+                    <div class="min-w-[650px]" id="matrixGridTeamGoogle"></div>
                 </div>
 
                 <!-- Matrix Active Cell Filter Alert -->
@@ -1693,49 +1672,56 @@
             const countEl = document.getElementById('teamGoogleMatrixCount');
             if (countEl) countEl.innerText = filteredRisks.length + ' Risks';
 
-            let html = '';
-            for (let rowIdx = 0; rowIdx < 5; rowIdx++) {
-                const c = 5 - rowIdx;
-                for (let colIdx = 0; colIdx < 5; colIdx++) {
-                    const l = colIdx + 1;
-                    const score = gridScores[rowIdx][colIdx];
+            const consequences = ['Catastrophic', 'Critical', 'Major', 'Moderate', 'Minor'];
+
+            let html = `
+                <div class="grid grid-cols-6 gap-2.5 mb-2.5 text-xs font-bold text-slate-600 text-center uppercase tracking-wider">
+                    <div class="text-left font-extrabold text-slate-800 normal-case">Consequence (Y) ↓ / Likelihood (X) →</div>
+                    <div>1 Rare</div><div>2 Improbable</div><div>3 Occasional</div><div>4 Probable</div><div>5 Almost Certain</div>
+                </div>
+            `;
+
+            for (let cIdx = 0; cIdx < 5; cIdx++) {
+                const consequenceVal = 5 - cIdx;
+                const cName = consequences[cIdx];
+                html += `<div class="grid grid-cols-6 gap-2.5 mb-2.5 items-center">`;
+                html += `<div class="text-xs font-bold text-slate-800">${cName}</div>`;
+
+                for (let lIdx = 0; lIdx < 5; lIdx++) {
+                    const likelihoodVal = lIdx + 1;
+                    const score = gridScores[cIdx][lIdx];
 
                     const inCell = filteredRisks.filter(r => {
                         const rL = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
                         const rC = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
-                        return rL === l && rC === c;
+                        return rL === likelihoodVal && rC === consequenceVal;
                     });
 
-                    let bgClass = 'bg-[#93c47d] text-slate-900';
-                    if (score >= 23) bgClass = 'bg-[#ea4335] text-white';
-                    else if (score >= 18) bgClass = 'bg-[#ff9900] text-white';
-                    else if (score >= 13) bgClass = 'bg-[#fdfdb9] text-amber-950 font-medium';
-                    else if (score >= 7) bgClass = 'bg-[#34a853] text-white';
+                    const isSelected = teamGoogleActiveMatrixCellFilter && 
+                                       teamGoogleActiveMatrixCellFilter.l === likelihoodVal && 
+                                       teamGoogleActiveMatrixCellFilter.c === consequenceVal;
 
-                    const isSelected = teamGoogleActiveMatrixCellFilter && teamGoogleActiveMatrixCellFilter.l === l && teamGoogleActiveMatrixCellFilter.c === c;
-                    const ringClass = isSelected ? 'ring-4 ring-blue-600 ring-offset-2 scale-105 z-20 shadow-md' : 'hover:scale-[1.02]';
+                    let bgClass = 'bg-emerald-500 text-white';
+                    if (score >= 23) bgClass = 'bg-red-600 text-white';
+                    else if (score >= 18) bgClass = 'bg-amber-500 text-white';
+                    else if (score >= 13) bgClass = 'bg-amber-100 text-slate-800';
+                    else if (score >= 6) bgClass = 'bg-emerald-600 text-white';
+                    else bgClass = 'bg-emerald-400 text-slate-900';
 
-                    html += '<div onclick="filterTeamGoogleMatrixCell(' + l + ', ' + c + ', ' + score + ')" class="hm-cell ' + bgClass + ' ' + ringClass + ' p-3.5 rounded-xl text-center font-bold text-sm flex items-center justify-center cursor-pointer transition-all relative select-none">';
-                    html += score;
-                    if (inCell.length > 0) {
-                        html += '<span class="hm-circle ring-2 ring-blue-500">' + inCell.length + '</span>';
-                    }
-                    html += '</div>';
+                    const ringClass = isSelected ? 'ring-4 ring-blue-600 ring-offset-2 scale-[1.03] z-10 shadow-lg' : 'hover:scale-[1.02] hover:shadow-md';
+
+                    html += `
+                        <button onclick="filterTeamGoogleMatrixCell(${likelihoodVal}, ${consequenceVal}, ${score})"
+                                class="h-12 rounded-xl flex items-center justify-center gap-1.5 font-mono text-sm font-extrabold transition-all cursor-pointer ${bgClass} ${ringClass}">
+                            <span>${score}</span>
+                            ${inCell.length > 0 ? `<span class="w-5 h-5 rounded-full bg-blue-600 text-white border-2 border-white text-[11px] font-sans font-bold flex items-center justify-center shadow-xs">${inCell.length}</span>` : ''}
+                        </button>
+                    `;
                 }
+                html += `</div>`;
             }
+
             grid.innerHTML = html;
-
-            // Update Top 3 KPI Cards
-            const critCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => (r.status !== 'Closed') && ((teamGoogleMatrixRating === 'inherent' ? r.inherentRiskScore : r.residualRiskScore) >= 16)).length;
-            const activeCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => r.status === 'Active').length;
-            const closedCount = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => r.status === 'Closed').length;
-
-            const elCrit = document.getElementById('cardCriticalCountTeamGoogle');
-            const elAct = document.getElementById('cardActiveCountTeamGoogle');
-            const elCls = document.getElementById('cardClosedCountTeamGoogle');
-            if (elCrit) elCrit.innerText = critCount;
-            if (elAct) elAct.innerText = activeCount;
-            if (elCls) elCls.innerText = closedCount;
         }
 
         function filterTeamGoogleMatrixCell(l, c, score) {
