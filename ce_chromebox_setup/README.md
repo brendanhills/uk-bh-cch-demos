@@ -19,7 +19,7 @@ Before setting up this workflow, ensure you have:
   ```bash
   sudo apt install -y autossh
   ```
-* **VS Code Desktop (Optional):** Installed inside Bruschetta if using desktop IDE ([go/vscode-glinux](http://go/vscode-glinux)).
+* **VS Code Desktop (Optional):** Installed inside Bruschetta ([go/vscode](http://go/vscode)).
 
 ---
 
@@ -28,7 +28,7 @@ Before setting up this workflow, ensure you have:
 ### Core Requirements (What this Setup Solves)
 * **Dual Environment Productivity:** Work seamlessly both locally in Bruschetta and remotely on Cloudtop.
 * **Remote Web App Access:** Run web apps, staging APIs, or Jupyter/Colab servers on Cloudtop (e.g. ports `9000`, `9090`, `8888`) and interact with them immediately in your Chromebook browser via `http://localhost:<PORT>`.
-* **Flexible AI Tooling:** Run **Jetski** remotely on Cloudtop or **Antigravity / VS Code** on your Chromebook.
+* **Flexible AI Tooling & Rapid Response:** Run **Jetski** remotely on Cloudtop or **Antigravity / VS Code** locally on your Chromebook for snappy, low-latency editing and rapid responsiveness.
 * **Instant, Independent Terminal Tabs:** Open, work in, and close any number of fresh Cloudtop tabs in <200ms without state collision or port locks.
 * **Single-Touch Morning Authentication:** Prevent runaway Titan Security Key popup loops (5–7+ prompts) and SSH key probing freezes.
 
