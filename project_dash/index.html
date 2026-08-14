@@ -1742,55 +1742,61 @@
 
             let html = '';
             filtered.forEach(r => {
+                const isExpanded = expandedCardIds.has(r.id);
                 const score = teamGoogleMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
                 let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
                 if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
                 else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
                 else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
 
-                html += '<div onclick="openItemDetailModal(\'risk\', \'' + r.id + '\')" class="bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3 cursor-pointer group">';
-                html += '  <div class="flex items-start justify-between gap-3">';
-                html += '    <div class="space-y-1 flex-1">';
-                html += '      <div class="flex items-center gap-2 flex-wrap">';
-                html += '        <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">' + (r.displayId || r.id) + '</span>';
-                html += '        <span class="text-xs font-bold px-2 py-0.5 rounded-full ' + (r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') + '">' + (r.status || 'Active') + '</span>';
-                html += '        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">' + (r.causeCategory || 'Platform') + '</span>';
-                html += '        <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ' + (r.driverTreeRef || '1.10b') + '</span>';
-                if (r.bundle) {
-                    html += '    <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">' + r.bundle + '</span>';
-                }
-                html += '      </div>';
-                html += '      <h4 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-snug">' + (r.riskName || r.riskDescription) + '</h4>';
-                html += '    </div>';
-                html += '    <div class="text-right shrink-0">';
-                html += '      <span class="text-[10px] text-slate-400 block font-medium">Inherent: ' + (r.inherentRiskScore || '-') + '</span>';
-                html += '      <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ' + scoreBadgeClass + '">Residual: ' + (r.residualRiskScore || score) + '</span>';
-                html += '    </div>';
-                html += '  </div>';
+                html += `
+                    <div class="bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 flex-1 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">${r.displayId || r.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${r.status || 'Active'}</span>
+                                    <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${r.causeCategory || 'Platform'}</span>
+                                    <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${r.driverTreeRef || '1.10b'}</span>
+                                    ${r.bundle ? `<span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">${r.bundle}</span>` : ''}
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 hover:text-blue-700 transition-colors leading-snug">${r.riskName || r.riskDescription}</h4>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] text-slate-400 block font-medium">Inherent: ${r.inherentRiskScore || '-'}</span>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Residual: ${r.residualRiskScore || score}</span>
+                            </div>
+                        </div>
 
-                if (r.riskDescription) {
-                    html += '  <p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">' + r.riskDescription + '</p>';
-                }
+                        ${r.riskDescription ? `<p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">${r.riskDescription}</p>` : ''}
 
-                html += '  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">';
-                html += '    <div>';
-                html += '      <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>';
-                html += '      <span class="text-slate-700">' + (r.causeDescription || 'Engineering deliverable execution trigger.') + '</span>';
-                html += '    </div>';
-                html += '    <div>';
-                html += '      <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>';
-                html += '      <span class="text-slate-700">' + (r.treatmentPlan || 'Active Google engineering mitigation controls.') + '</span>';
-                html += '    </div>';
-                html += '  </div>';
+                        <!-- In-line Expandable Details -->
+                        <div id="cardDetails_${r.id}" class="${isExpanded ? '' : 'hidden'} space-y-2.5 pt-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                    <span class="text-slate-700">${r.causeDescription || 'Engineering deliverable execution trigger.'}</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>
+                                    <span class="text-slate-700">${r.treatmentPlan || 'Active Google engineering mitigation controls.'}</span>
+                                </div>
+                            </div>
+                        </div>
 
-                html += '  <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">';
-                html += '    <span class="font-medium">Lead Owner: <strong class="text-slate-800">👤 ' + (r.riskOwner || 'Team Google') + '</strong></span>';
-                html += '    <div class="flex items-center gap-3">';
-                html += '      <span>Target Date: <strong class="text-slate-800 font-mono">' + (r.targetDate || '2026-08-31') + '</strong></span>';
-                html += '      <span class="text-blue-600 font-bold group-hover:underline text-[11px]">Inspect Full Detail ↗</span>';
-                html += '    </div>';
-                html += '  </div>';
-                html += '</div>';
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                            <span class="font-medium">Lead Owner: <strong class="text-slate-800">👤 ${r.riskOwner || 'Team Google'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleCardExpansion('${r.id}')" class="text-blue-600 hover:text-blue-800 font-bold text-[11px] cursor-pointer">
+                                    ${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause & Mitigation'}
+                                </button>
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-blue-600 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                                    <span>Inspect Full Detail ↗</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
 
             container.innerHTML = html;
@@ -2938,6 +2944,21 @@
             checkDriveSyncStatus();
         }
 
+                const expandedCardIds = new Set();
+        function toggleCardExpansion(cardId) {
+            if (expandedCardIds.has(cardId)) {
+                expandedCardIds.delete(cardId);
+            } else {
+                expandedCardIds.add(cardId);
+            }
+            const el = document.getElementById('cardDetails_' + cardId);
+            if (el) {
+                el.classList.toggle('hidden');
+            }
+            renderRiskExplorer();
+            renderTeamGoogleRiskExplorer();
+        }
+
         function renderRiskExplorer() {
             const search = (document.getElementById('explorerSearchInput')?.value || '').toLowerCase().trim();
             const bundleFilter = document.getElementById('filterBundleSelect')?.value || 'all';
@@ -3002,229 +3023,74 @@
 
             document.getElementById('explorerMatchCount').innerText = `${filtered.length} Matched`;
 
-            const cardsContainer = document.getElementById('explorerCardsContainer');
-            if (cardsContainer) {
-                if (filtered.length === 0) {
-                    cardsContainer.innerHTML = `<div class="col-span-2 text-center py-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 italic text-xs">No risk statements match the selected search and filter criteria. <button onclick="resetAllFilters()" class="text-indigo-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>`;
-                } else {
-                    cardsContainer.innerHTML = filtered.map(r => {
-                        const isExpanded = expandedRiskIds.has(r.id);
-                        const score = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
-                        
-                        let scoreBadge = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-                        if (score >= 23) scoreBadge = 'bg-red-600 text-white font-extrabold shadow-2xs';
-                        else if (score >= 18) scoreBadge = 'bg-amber-500 text-white font-extrabold shadow-2xs';
-                        else if (score >= 13) scoreBadge = 'bg-yellow-100 text-yellow-900 border-yellow-300';
+            const container = document.getElementById('riskCardsContainer');
+            if (!container) return;
 
-                        let statusBadge = '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Active</span>';
-                        if (r.status === 'Issue Eventuated') {
-                            statusBadge = '<span class="bg-purple-100 text-purple-800 border border-purple-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full whitespace-nowrap animate-pulse">⚠️ Eventuated Issue</span>';
-                        } else if (r.status === 'Closed') {
-                            statusBadge = '<span class="bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Closed</span>';
-                        }
-
-                        const delta = (r.inherentRiskScore || 9) - (r.residualRiskScore || 4);
-                        const deltaBadge = delta > 0 
-                            ? `<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-[10px] whitespace-nowrap">Δ -${delta} (Mitigated)</span>` 
-                            : `<span class="text-slate-500 font-bold bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 text-[10px] whitespace-nowrap">Δ 0 (Unchanged)</span>`;
-
-                        const rawTitle = cleanField(r.riskName || r.riskDescription || 'Untitled Risk Statement');
-                        const ownerClean = cleanField(r.riskOwner || 'Team Google');
-                        const bundleClean = cleanField(r.bundle && r.bundle.length < 25 ? r.bundle : 'F-DSE');
-                        let refClean = cleanField(r.driverTreeRef || '1.10b');
-                        if (refClean.length > 25) refClean = refClean.split(' ')[0] || '1.10b';
-
-                        return `
-                            <div class="bg-white border ${r.status === 'Issue Eventuated' ? 'border-purple-300 ring-1 ring-purple-100' : 'border-slate-200'} rounded-xl p-4 space-y-3 hover:border-indigo-400 hover:shadow-xs transition-all flex flex-col justify-between min-h-[160px]">
-                                
-                                <div class="space-y-2">
-                                    <div class="flex items-start justify-between gap-2.5">
-                                        <div class="flex items-start gap-2 flex-1 min-w-0">
-                                            <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap shrink-0">ID ${r.displayId || r.id}</span>
-                                            <div class="flex-1 min-w-0">
-                                                <h4 class="text-xs font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2rem]" title="${rawTitle}">${rawTitle}</h4>
-                                                <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[10px] text-slate-500">
-                                                    <span class="font-semibold text-slate-700 truncate max-w-[120px] whitespace-nowrap">👤 ${ownerClean}</span>
-                                                    <span>•</span>
-                                                    <span class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-medium truncate max-w-[110px]">${bundleClean}</span>
-                                                    <span>•</span>
-                                                    <span class="font-mono text-indigo-700 font-semibold truncate max-w-[130px]">Ref ${refClean}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-col items-end gap-1 shrink-0">
-                                            <div class="flex items-center gap-1 font-mono text-xs">
-                                                <span class="text-[10px] text-slate-500 font-sans">${currentMatrixRating === 'inherent' ? 'Inherent' : 'Residual'}:</span>
-                                                <span class="px-2 py-0.5 rounded-md font-black ${scoreBadge}">${score}</span>
-                                            </div>
-                                            ${statusBadge}
-                                        </div>
-                                    </div>
-
-                                    <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                                        <div class="flex items-center gap-1.5 text-slate-600">
-                                            <span class="font-semibold">Control Delta:</span>
-                                            <span class="font-mono font-bold text-slate-800">Inherent ${r.inherentRiskScore || 9}</span>
-                                            <span class="text-slate-400">➔</span>
-                                            <span class="font-mono font-bold text-indigo-700">Residual ${r.residualRiskScore || 4}</span>
-                                            ${deltaBadge}
-                                        </div>
-                                        <div class="text-slate-500 text-[10px]">
-                                            Target: <strong class="text-slate-800 font-mono">${r.targetDate || '2026-08-31'}</strong>
-                                        </div>
-                                    </div>
-
-                                    ${isExpanded ? `
-                                        <div class="pt-2 border-t border-slate-100 space-y-2.5 text-xs animate-fadeIn">
-                                            ${r.riskDescription ? `
-                                                <div>
-                                                    <span class="font-bold text-slate-700 text-[10px] uppercase block">Risk Narrative:</span>
-                                                    <p class="text-slate-600 text-[11px] leading-relaxed bg-slate-50/70 p-2 rounded border border-slate-100">${r.riskDescription}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            ${r.causeDescription ? `
-                                                <div>
-                                                    <span class="font-bold text-amber-800 text-[10px] uppercase block">Root Cause Trigger:</span>
-                                                    <p class="text-slate-600 text-[11px] leading-relaxed bg-amber-50/40 p-2 rounded border border-amber-100">${r.causeDescription}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            ${r.treatmentPlan ? `
-                                                <div>
-                                                    <span class="font-bold text-emerald-800 text-[10px] uppercase block">Mitigation / Treatment Plan:</span>
-                                                    <p class="text-slate-600 text-[11px] leading-relaxed bg-emerald-50/40 p-2 rounded border border-emerald-100">${r.treatmentPlan}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-500 bg-slate-50 p-2 rounded font-mono">
-                                                <div>Governance: <strong>${r.governanceLevel || 'Internal Google'}</strong></div>
-                                                <div>Category: <strong>${r.causeCategory || 'Governance'}</strong></div>
-                                                <div>Date Raised: <strong>${r.dateRaised || '12-Nov-2025'}</strong></div>
-                                                <div>Mitigation Owner: <strong>${r.treatmentOwner || r.riskOwner}</strong></div>
-                                            </div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-
-                                <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                                    <button onclick="toggleRiskCardExpand('${r.id}')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer">
-                                        <span>${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause &amp; Mitigation'}</span>
-                                    </button>
-
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="highlightHeatmapCell(${r.inherentLikelihood || 3}, ${r.inherentConsequence || 3}, ${r.inherentRiskScore || 9})" class="text-[10px] text-slate-500 hover:text-indigo-600 font-semibold cursor-pointer underline">
-                                            Locate in Matrix ⤤
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        `;
-                    }).join('');
-                }
-            }
-
-            const tableContainer = document.getElementById('explorerTableContainer');
-            if (tableContainer && explorerViewMode === 'table') {
-                tableContainer.innerHTML = `
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[1000px]">
-                        <thead class="sticky top-0 bg-slate-100 text-slate-800 uppercase font-bold text-[11px] border-b border-slate-200">
-                            <tr>
-                                <th class="p-3">ID</th>
-                                <th class="p-3">Risk Headline &amp; Name</th>
-                                <th class="p-3">Owner</th>
-                                <th class="p-3">Bundle</th>
-                                <th class="p-3">Driver Ref</th>
-                                <th class="p-3 text-center">Inherent</th>
-                                <th class="p-3 text-center">Residual</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Target Date</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 bg-white font-medium">
-                            ${filtered.map(r => `
-                                <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
-                                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">ID ${r.displayId || r.id}</span></td>
-                                    <td class="p-3 font-bold text-slate-900 max-w-md">${cleanField(r.riskName || r.riskDescription || 'Untitled')}</td>
-                                    <td class="p-3 font-semibold text-slate-700">${cleanField(r.riskOwner)}</td>
-                                    <td class="p-3 font-mono text-[11px] text-slate-600">${cleanField(r.bundle || 'F-DSE')}</td>
-                                    <td class="p-3 font-mono text-indigo-700 font-bold">${cleanField(r.driverTreeRef || '1.10b')}</td>
-                                    <td class="p-3 text-center font-mono font-bold">${r.inherentRiskScore || 9}</td>
-                                    <td class="p-3 text-center font-mono font-bold text-indigo-700">${r.residualRiskScore || 4}</td>
-                                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap ${r.status === 'Issue Eventuated' ? 'bg-purple-100 text-purple-800 border-purple-300' : (r.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200')}">${r.status || 'Active'}</span></td>
-                                    <td class="p-3 font-mono text-slate-500">${r.targetDate || '2026-08-31'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            }
-        }
-
-        function highlightHeatmapCell(l, c, score, pushHistory = true) {
-            // Toggle off if clicking the already active cell
-            if (activeMatrixCellFilter && activeMatrixCellFilter.l === l && activeMatrixCellFilter.c === c) {
-                clearActiveCellFilter(pushHistory);
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Joint Program risks match current filter criteria. <button onclick="clearActiveCellFilter()" class="text-indigo-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>';
                 return;
             }
 
-            activeMatrixCellFilter = { l, c, score };
+            let html = '';
+            filtered.forEach(r => {
+                const isExpanded = expandedCardIds.has(r.id);
+                const score = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
+                let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
+                else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
+                else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
 
-            // Reset conflicting search text and dropdowns so cell risks show immediately
-            const searchInput = document.getElementById('explorerSearchInput');
-            if (searchInput) searchInput.value = '';
-            const catSelect = document.getElementById('filterCategorySelect');
-            if (catSelect) catSelect.value = 'all';
-            const bundleSelect = document.getElementById('filterBundleSelect');
-            if (bundleSelect) bundleSelect.value = 'all';
-            const govSelect = document.getElementById('filterGovSelect');
-            if (govSelect) govSelect.value = 'all';
-            currentQuickFilter = 'all';
-            updateQuickFilterButtonsUI();
+                html += `
+                    <div class="bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 flex-1 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-mono text-xs font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">${r.displayId || r.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${r.status || 'Active'}</span>
+                                    <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${r.causeCategory || 'Governance'}</span>
+                                    ${r.driverTreeRef ? `<span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${r.driverTreeRef}</span>` : ''}
+                                    ${r.bundle ? `<span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">${r.bundle}</span>` : ''}
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 hover:text-indigo-700 transition-colors leading-snug">${r.riskName || r.riskDescription}</h4>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] text-slate-400 block font-medium">Inherent: ${r.inherentRiskScore || '-'}</span>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Residual: ${r.residualRiskScore || score}</span>
+                            </div>
+                        </div>
 
-            const filterBanner = document.getElementById('activeCellFilterBanner');
-            if (filterBanner) filterBanner.classList.remove('hidden');
-            
-            const filterText = document.getElementById('activeCellFilterText');
-            if (filterText) {
-                filterText.innerText = `📍 Filtered by 5x5 Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
-            }
-            
-            const overviewTab = document.getElementById('view-overview');
-            if (overviewTab && overviewTab.classList.contains('hidden')) {
-                switchTab('overview', false);
-            }
-            
-            if (pushHistory) {
-                history.pushState({ tab: 'overview', cellFilter: { l, c, score } }, '', '#overview-cell-' + l + '-' + c);
-            }
-            
-            renderRiskHeatmap();
-            renderTeamGoogleHeatmap();
-            renderBlueprintKnowledge();
-            renderTeamGoogleRiskExplorer();
-            renderRiskExplorer();
-            
-            const explorerSection = document.getElementById('riskExplorerSection');
-            if (explorerSection) {
-                explorerSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
+                        ${r.riskDescription ? `<p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">${r.riskDescription}</p>` : ''}
 
-        function clearActiveCellFilter(pushHistory = true) {
-            activeMatrixCellFilter = null;
-            const filterBanner = document.getElementById('activeCellFilterBanner');
-            if (filterBanner) filterBanner.classList.add('hidden');
-            
-            if (pushHistory) {
-                history.pushState({ tab: 'overview' }, '', '#overview');
-            }
-            renderRiskHeatmap();
-            renderTeamGoogleHeatmap();
-            renderBlueprintKnowledge();
-            renderTeamGoogleRiskExplorer();
-            renderRiskExplorer();
+                        <!-- In-line Expandable Details -->
+                        <div id="cardDetails_${r.id}" class="${isExpanded ? '' : 'hidden'} space-y-2.5 pt-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                    <span class="text-slate-700">${r.causeDescription || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>
+                                    <span class="text-slate-700">${r.treatmentPlan || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                            <span class="font-medium">Owner: <strong class="text-slate-800">👤 ${r.riskOwner || 'Joint Team'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleCardExpansion('${r.id}')" class="text-indigo-600 hover:text-indigo-800 font-bold text-[11px] cursor-pointer">
+                                    ${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause & Mitigation'}
+                                </button>
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-indigo-700 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                                    <span>Inspect Full Detail ↗</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         function renderMatrix() { return renderRiskHeatmap();
@@ -3677,7 +3543,7 @@
 
             let html = `
                 <div class="grid grid-cols-6 gap-2.5 mb-2.5 text-xs font-bold text-slate-600 text-center uppercase tracking-wider">
-                    <div class="text-left font-extrabold text-slate-800">Consequence ↓</div>
+                    <div class="text-left font-extrabold text-slate-800 normal-case">Consequence (Y) ↓ / Likelihood (X) →</div>
                     <div>1 Rare</div><div>2 Improbable</div><div>3 Occasional</div><div>4 Probable</div><div>5 Almost Certain</div>
                 </div>
             `;
@@ -3721,6 +3587,72 @@
         }
 
                                 // --- EXEC BRIEFING V2 (CANONICAL NUMBERING, CLEAN TITLES & 1-CLICK DETAILS) ---
+        
+        function highlightHeatmapCell(l, c, score, pushHistory = true) {
+            if (activeMatrixCellFilter && activeMatrixCellFilter.l === l && activeMatrixCellFilter.c === c) {
+                clearActiveCellFilter(pushHistory);
+                return;
+            }
+
+            activeMatrixCellFilter = { l, c, score };
+
+            // Clear any conflicting search input or bundle filter so cell risks show immediately
+            const searchInput = document.getElementById('explorerSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('filterCategorySelect');
+            if (catSelect) catSelect.value = 'all';
+            const bundleSelect = document.getElementById('filterBundleSelect');
+            if (bundleSelect) bundleSelect.value = 'all';
+            const govSelect = document.getElementById('filterGovSelect');
+            if (govSelect) govSelect.value = 'all';
+            currentQuickFilter = 'all';
+            updateQuickFilterButtonsUI();
+
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.remove('hidden');
+            
+            const filterText = document.getElementById('activeCellFilterText');
+            if (filterText) {
+                filterText.innerText = `📍 Filtered by 5x5 Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
+            }
+            
+            const overviewTab = document.getElementById('view-overview');
+            if (overviewTab && overviewTab.classList.contains('hidden')) {
+                switchTab('overview', false);
+            }
+            
+            if (pushHistory) {
+                history.pushState({ tab: 'overview', cellFilter: { l, c, score } }, '', '#overview-cell-' + l + '-' + c);
+            }
+            
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+            
+            const explorerSection = document.getElementById('riskExplorerSection');
+            if (explorerSection) {
+                explorerSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function clearActiveCellFilter(pushHistory = true) {
+            activeMatrixCellFilter = null;
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.add('hidden');
+            
+            if (pushHistory) {
+                history.pushState({ tab: 'overview' }, '', '#overview');
+            }
+            
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+        }
+
         function cleanField(txt) {
             if (!txt) return '';
             return String(txt)
