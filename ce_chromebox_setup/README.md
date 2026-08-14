@@ -242,17 +242,17 @@ You can set up two distinct profile types:
 
 For quick access to an interactive shell on Cloudtop:
 
-![ChromeOS Terminal Quick Shell Profile](images/chromeos_terminal_setup.png)
-
 1. Open **Terminal** on ChromeOS $\rightarrow$ Click **Terminal settings** $\rightarrow$ **SSH** $\rightarrow$ **Add new**.
-2. Fill in the fields:
+2. Fill in the profile fields:
    * **Profile Name:** `Cloudtop quick shell`
-   * **Command Box:** *(ChromeOS automatically prefixes `ssh `, so do not type `ssh`)*:
+   * **Command Box:** *(Note: ChromeOS automatically prefixes `ssh `, so do not type `ssh`)*:
      ```text
      <LDAP_USERNAME>@<CLOUDTOP_NAME>.c.googlers.com -o ServerAliveInterval=15 -o ServerAliveCountMax=3
      ```
    * **Identity:** `[Default]`
    * **SSH relay server options:** `--config=google`
+
+![ChromeOS Terminal Quick Shell Profile](images/chromeos_terminal_setup.png)
 
 ---
 
