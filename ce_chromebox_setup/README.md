@@ -93,7 +93,7 @@ Host *
 
 ---
 
-### `bruschetta_bashrc.sh` (Example Template for `~/.bashrc`)
+### `.bashrc.example` (Example Template for Bruschetta `~/.bashrc`)
 
 ```bash
 # --- Visual Styling (Green Laptop Theme) ---
@@ -134,7 +134,7 @@ alias tunnel-restart='tunnel-stop; sleep 1; tunnel'
 
 ## 3. Visual Terminal Styling (Distinguishing Local vs Remote)
 
-### Cloudtop `cloudtop_bashrc.sh` (Purple Theme + Badge for Cloudtop `~/.bashrc`)
+### `.bashrc.cloudtop.example` (Purple Theme + Badge for Cloudtop `~/.bashrc`)
 ```bash
 PS1='\[\e]0;☁️ Cloudtop: \w\a\]\[\033[01;35m\]☁️  \h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
