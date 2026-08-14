@@ -1766,24 +1766,23 @@
             const catVal = document.getElementById('teamGoogleRiskCategoryFilter')?.value || 'all';
 
             const filtered = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => {
-                if (teamGoogleMatrixStatus === 'open' && (r.status === 'Closed')) return false;
+                if (teamGoogleActiveMatrixCellFilter) {
+                    const l = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
+                    const c = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
+                    if (l !== teamGoogleActiveMatrixCellFilter.l || c !== teamGoogleActiveMatrixCellFilter.c) return false;
+                }
+
+                if (teamGoogleMatrixStatus === 'open' && r.status === 'Closed') return false;
                 if (teamGoogleMatrixStatus === 'active' && r.status !== 'Active') return false;
                 if (teamGoogleMatrixStatus === 'eventuated' && r.status !== 'Issue Eventuated') return false;
                 if (teamGoogleMatrixStatus === 'closed' && r.status !== 'Closed') return false;
 
-                if (catVal !== 'all' && r.causeCategory !== catVal) return false;
-
-                if (teamGoogleActiveMatrixCellFilter) {
-                    const rL = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
-                    const rC = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
-                    if (rL !== teamGoogleActiveMatrixCellFilter.l || rC !== teamGoogleActiveMatrixCellFilter.c) return false;
-                }
+                if (catVal !== 'all' && (!r.causeCategory || !r.causeCategory.includes(catVal))) return false;
 
                 if (searchVal) {
-                    const matchText = ((r.id || '') + ' ' + (r.displayId || '') + ' ' + (r.riskName || '') + ' ' + (r.riskOwner || '') + ' ' + (r.causeDescription || '') + ' ' + (r.treatmentPlan || '') + ' ' + (r.bundle || '') + ' ' + (r.driverTreeRef || '')).toLowerCase();
-                    if (!matchText.includes(searchVal)) return false;
+                    const hay = ((r.id || '') + ' ' + (r.displayId || '') + ' ' + (r.riskName || '') + ' ' + (r.riskDescription || '') + ' ' + (r.causeDescription || '') + ' ' + (r.riskOwner || '') + ' ' + (r.treatmentPlan || '')).toLowerCase();
+                    return hay.includes(searchVal);
                 }
-
                 return true;
             });
 
@@ -1791,7 +1790,7 @@
             if (countEl) countEl.innerText = `${filtered.length} Risks`;
 
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Team Google risks match the selected filter criteria. <button onclick="clearTeamGoogleActiveCellFilter()" class="text-blue-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>';
+                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Team Google risks match current filter criteria. <button onclick="clearTeamGoogleMatrixCellFilter()" class="text-blue-600 font-bold underline ml-2 cursor-pointer">Clear Filters</button></div>';
                 return;
             }
 
@@ -1804,6 +1803,18 @@
                 else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
                 else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
 
+                // Blueprint Annex resolution
+                const bundleKey = r.bundle || 'Bundle B (Security & Governance)';
+                let mappedAnnex = 'Annex H (Infra & Security)';
+                if (typeof BUNDLE_ANNEX_MAPPING !== 'undefined') {
+                    for (const [k, v] of Object.entries(BUNDLE_ANNEX_MAPPING)) {
+                        if (bundleKey.includes(k) || (v.googleRisks && v.googleRisks.includes(r.id))) {
+                            mappedAnnex = v.annex;
+                            break;
+                        }
+                    }
+                }
+
                 html += `
                     <div class="bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3">
                         <div class="flex items-start justify-between gap-3">
@@ -1812,8 +1823,10 @@
                                     <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">${r.displayId || r.id}</span>
                                     <span class="text-xs font-bold px-2 py-0.5 rounded-full ${r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${r.status || 'Active'}</span>
                                     <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${r.causeCategory || 'Platform'}</span>
-                                    <span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${r.driverTreeRef || '1.10b'}</span>
-                                    ${r.bundle ? `<span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">${r.bundle}</span>` : ''}
+                                    ${r.driverTreeRef ? `<span class="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Ref ${r.driverTreeRef}</span>` : ''}
+                                    <button onclick="event.stopPropagation(); jumpToBlueprintBundle('${bundleKey}')" class="text-xs font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-2 py-0.5 rounded border border-purple-300 flex items-center gap-1 cursor-pointer transition-all shadow-2xs">
+                                        <span>📘 ${mappedAnnex}</span>
+                                    </button>
                                 </div>
                                 <h4 class="text-sm font-bold text-slate-900 hover:text-blue-700 transition-colors leading-snug">${r.riskName || r.riskDescription}</h4>
                             </div>
@@ -1825,16 +1838,15 @@
 
                         ${r.riskDescription ? `<p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">${r.riskDescription}</p>` : ''}
 
-                        <!-- In-line Expandable Details -->
                         <div id="cardDetails_${r.id}" class="${isExpanded ? '' : 'hidden'} space-y-2.5 pt-1">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
                                 <div>
                                     <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
-                                    <span class="text-slate-700">${r.causeDescription || 'Engineering deliverable execution trigger.'}</span>
+                                    <span class="text-slate-700">${r.causeDescription || 'N/A'}</span>
                                 </div>
                                 <div>
-                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>
-                                    <span class="text-slate-700">${r.treatmentPlan || 'Active Google engineering mitigation controls.'}</span>
+                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Mitigation / Delivery Task:</span>
+                                    <span class="text-slate-700">${r.treatmentPlan || 'N/A'}</span>
                                 </div>
                             </div>
                         </div>
@@ -1845,7 +1857,7 @@
                                 <button onclick="toggleCardExpansion('${r.id}')" class="text-blue-600 hover:text-blue-800 font-bold text-[11px] cursor-pointer">
                                     ${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause & Mitigation'}
                                 </button>
-                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-blue-600 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-blue-700 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
                                     <span>Inspect Full Detail ↗</span>
                                 </button>
                             </div>
@@ -1853,7 +1865,6 @@
                     </div>
                 `;
             });
-
             container.innerHTML = html;
         }
 
@@ -1931,7 +1942,7 @@
                 const tab = document.getElementById('tab-' + k);
                 if (el) el.classList.add('hidden');
                 if (tab) {
-                    tab.classList.remove('active');
+                    tab.classList.remove('active', 'bg-indigo-600', 'bg-blue-600', 'text-white');
                     tab.classList.add('bg-white', 'text-slate-700');
                 }
             });
@@ -1942,13 +1953,36 @@
             if (activeTab) {
                 activeTab.classList.add('active');
                 activeTab.classList.remove('bg-white', 'text-slate-700');
+                if (tabKey === 'team-google') {
+                    activeTab.classList.add('bg-blue-600', 'text-white', 'shadow-xs');
+                } else {
+                    activeTab.classList.add('bg-indigo-600', 'text-white', 'shadow-xs');
+                }
             }
 
             if (pushHistory && window.location.hash !== '#' + tabKey) {
                 history.pushState({ tab: tabKey }, '', '#' + tabKey);
             }
 
-            if (tabKey === 'trends') renderTrendsCharts();
+            if (tabKey === 'overview') {
+                if (typeof renderRiskHeatmap === 'function') renderRiskHeatmap();
+                if (typeof renderRiskExplorer === 'function') renderRiskExplorer();
+            } else if (tabKey === 'team-google') {
+                if (typeof renderTeamGoogleHeatmap === 'function') renderTeamGoogleHeatmap();
+                if (typeof renderTeamGoogleRiskExplorer === 'function') renderTeamGoogleRiskExplorer();
+            } else if (tabKey === 'issues') {
+                if (typeof renderIssueTable === 'function') renderIssueTable();
+            } else if (tabKey === 'trends') {
+                if (typeof renderTrendsCharts === 'function') renderTrendsCharts();
+            } else if (tabKey === 'exec-briefing') {
+                if (typeof renderExecBriefing === 'function') renderExecBriefing();
+            } else if (tabKey === 'blueprints') {
+                if (typeof renderBlueprintKnowledge === 'function') renderBlueprintKnowledge();
+            } else if (tabKey === 'driver-tree') {
+                if (typeof renderDriverTree === 'function') renderDriverTree();
+            } else if (tabKey === 'ledger') {
+                if (typeof renderLedger === 'function') renderLedger();
+            }
         }
 
         // Handle Browser Back and Forward Buttons (popstate & hashchange)
@@ -3771,10 +3805,13 @@
             if (!modal) return;
 
             let item = null;
-            if (type === 'risk') {
-                item = LIVE_RISKS.find(r => r.id === itemId || r.displayId === itemId) || (LIVE_TEAM_GOOGLE_RISKS || []).find(r => r.id === itemId || r.displayId === itemId);
+            const targetIdStr = String(itemId).trim();
+
+            if (type === 'risk' || type === 'google_risk') {
+                item = LIVE_RISKS.find(r => String(r.id).trim() === targetIdStr || String(r.displayId).trim() === targetIdStr) || 
+                       (LIVE_TEAM_GOOGLE_RISKS || []).find(r => String(r.id).trim() === targetIdStr || String(r.displayId).trim() === targetIdStr);
             } else if (type === 'issue') {
-                item = LIVE_ISSUES.find(i => i.id === itemId || i.displayId === itemId);
+                item = LIVE_ISSUES.find(i => String(i.id).trim() === targetIdStr || String(i.displayId).trim() === targetIdStr);
             }
 
             if (!item) return;
@@ -3790,7 +3827,7 @@
 
             if (typeof BUNDLE_ANNEX_MAPPING !== 'undefined') {
                 for (const [k, v] of Object.entries(BUNDLE_ANNEX_MAPPING)) {
-                    if (bundleKey.includes(k) || (v.jointRisks && v.jointRisks.includes(item.id))) {
+                    if (bundleKey.includes(k) || (v.jointRisks && v.jointRisks.includes(item.id)) || (v.googleRisks && v.googleRisks.includes(item.id))) {
                         mappedAnnex = v.annex;
                         mappedBundleDesc = v.title;
                         break;
@@ -3831,7 +3868,7 @@
                         </div>
                     </div>
 
-                    <!-- Contract Blueprint Grounding Card (Common to both Risks & Issues) -->
+                    <!-- Contract Blueprint Grounding Card -->
                     <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-4 space-y-2">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
@@ -3889,19 +3926,76 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-mono font-black text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200">${r.displayId || r.id}</span>
                                 <span class="text-xs font-medium text-slate-500 truncate">${r.causeCategory || 'Platform'}</span>
-                                ${r.driverTreeRef ? `<span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${r.driverTreeRef}</span>` : ''}
+                                ${r.driverTreeRef ? `<button onclick="event.stopPropagation(); jumpToDriverRef('${r.driverTreeRef}')" class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${r.driverTreeRef} ↗</button>` : ''}
                             </div>
                             <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">${r.riskName || r.riskDescription}</h4>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Score: ${score}</span>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${r.riskOwner || 'Joint Team'}</span>
+                        <div class="text-right shrink-0 flex items-center gap-3">
+                            <div>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Score: ${score}</span>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${r.riskOwner || 'Joint Team'}</span>
+                            </div>
+                            <span class="text-indigo-600 font-bold text-xs group-hover:underline">Inspect ↗</span>
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
         }
+
+        
+        function renderIssueTable() {
+            const searchVal = (document.getElementById('issueSearchInput')?.value || '').toLowerCase().trim();
+            const tbody = document.getElementById('issueTableBody');
+            if (!tbody) return;
+
+            const filtered = (LIVE_ISSUES || []).filter(i => {
+                if (!searchVal) return true;
+                const matchText = [
+                    i.id,
+                    i.displayId,
+                    i.issueName,
+                    i.issueDescription,
+                    i.issueStatement,
+                    i.owner,
+                    i.issueOwner,
+                    i.driverTreeRef,
+                    i.severity,
+                    i.actionPlan,
+                    i.governanceNextSteps
+                ].join(' ').toLowerCase();
+                return matchText.includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-12 text-slate-400 text-xs italic">No issues match current search query.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(i => {
+                const isClosed = i.status === 'Closed';
+                const statusBadge = isClosed ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-800 border border-amber-200';
+                const sevBadge = (i.severity === 'High' || i.severity === 'Critical') ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-100 text-slate-700';
+
+                html += `
+                    <tr onclick="openItemDetailModal('issue', '${i.id}')" class="hover:bg-indigo-50/40 cursor-pointer transition-colors group">
+                        <td class="p-3.5 font-mono font-bold text-indigo-700 whitespace-nowrap">${i.displayId || i.id}</td>
+                        <td class="p-3.5 whitespace-nowrap"><span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${statusBadge}">${i.status || 'Active'}</span></td>
+                        <td class="p-3.5 text-slate-800 font-semibold whitespace-nowrap">👤 ${i.owner || i.issueOwner || 'Tom Trobe'}</td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            ${i.driverTreeRef ? `<span class="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${i.driverTreeRef}</span>` : '<span class="text-slate-400 font-mono text-xs">N/A</span>'}
+                        </td>
+                        <td class="p-3.5 text-slate-900 group-hover:text-indigo-700 font-bold max-w-xs truncate">${i.issueName || i.issueDescription || i.issueStatement}</td>
+                        <td class="p-3.5 whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded ${sevBadge}">${i.severity || 'Medium'}</span></td>
+                        <td class="p-3.5 text-slate-600 text-xs max-w-sm truncate">${i.actionPlan || i.governanceNextSteps || 'Active validation of schedule impacts.'}</td>
+                        <td class="p-3.5 text-right whitespace-nowrap"><span class="text-indigo-600 font-bold text-xs group-hover:underline">Inspect ↗</span></td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
 
         function renderTop5Issues() {
             const container = document.getElementById('execTopIssuesFullList');
@@ -3930,6 +4024,100 @@
                 `;
             });
             container.innerHTML = html;
+        }
+
+
+        
+        const PODCAST_TRANSCRIPT = [
+            { time: '0:00', speaker: 'Alex', role: 'Program Analyst', text: 'Welcome to the F-DSE Executive Briefing for Week 27, ending 7th of August, 2026. I\'m Alex with Jordan, reviewing the key delivery movements, critical path shifts, and executive decisions required for this cycle.' },
+            { time: '0:18', speaker: 'Jordan', role: 'Technical Director', text: 'Thank you, Alex. The primary delivery breakthrough this week is the operational enablement of deliverable reference 1.10b — the GDC Enterprise E.01 Test and Development environment, which has now been delivered to Enabling Services.' },
+            { time: '0:42', speaker: 'Alex', role: 'Program Analyst', text: 'That is a critical milestone for Capability Drop 1. However, our overall program posture remains Amber. Jordan, what are the primary attention items for the Executive Committee?' },
+            { time: '1:05', speaker: 'Jordan', role: 'Technical Director', text: 'The top priority is Commonwealth Acceptance of Milestone 1 artefacts (Ref 1.2b), currently in active gap closure. Additionally, the SRR prioritization glide path (Ref 1.14) is moving towards September baseline alignment.' },
+            { time: '1:28', speaker: 'Alex', role: 'Program Analyst', text: 'And on the multi-stream risk posture, net risk mitigation across all 107 Joint risks and 12 Team Google risks reduced average residual risk exposure from 15.4 to 8.4.' }
+        ];
+
+        isPodcastPlaying = false;
+        let podcastTimer = null;
+        let podcastCurrentSeconds = 0;
+
+        function togglePodcastPlay() {
+            const btn = document.getElementById('podcastPlayBtn');
+            const icon = document.getElementById('podcastPlayIcon');
+            const timeEl = document.getElementById('podcastTimeDisplay');
+
+            if (isPodcastPlaying) {
+                isPodcastPlaying = false;
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                if (podcastTimer) clearInterval(podcastTimer);
+                if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+                return;
+            }
+
+            isPodcastPlaying = true;
+            if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+
+            // Web Speech Synthesis Dual-Voice Fallback
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const fullDialogue = PODCAST_TRANSCRIPT.map(t => `${t.speaker}: ${t.text}`).join(' ');
+                const utter = new SpeechSynthesisUtterance(fullDialogue);
+                utter.rate = 1.05;
+                utter.pitch = 1.0;
+                utter.onend = () => {
+                    isPodcastPlaying = false;
+                    if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+                    if (podcastTimer) clearInterval(podcastTimer);
+                    podcastCurrentSeconds = 0;
+                    if (timeEl) timeEl.innerText = '0:00 / 1:45';
+                };
+                window.speechSynthesis.speak(utter);
+            }
+
+            if (podcastTimer) clearInterval(podcastTimer);
+            podcastTimer = setInterval(() => {
+                if (!isPodcastPlaying) return;
+                podcastCurrentSeconds++;
+                if (podcastCurrentSeconds > 105) {
+                    podcastCurrentSeconds = 0;
+                    isPodcastPlaying = false;
+                    clearInterval(podcastTimer);
+                }
+                const mins = Math.floor(podcastCurrentSeconds / 60);
+                const secs = String(podcastCurrentSeconds % 60).padStart(2, '0');
+                if (timeEl) timeEl.innerText = `${mins}:${secs} / 1:45`;
+            }, 1000);
+        }
+
+        function openTranscriptModal() {
+            const modal = document.getElementById('audioTranscriptModal');
+            const container = document.getElementById('transcriptContainer');
+            if (!modal || !container) return;
+
+            let html = '';
+            PODCAST_TRANSCRIPT.forEach(t => {
+                const isAlex = t.speaker === 'Alex';
+                const avatarBg = isAlex ? 'bg-indigo-600' : 'bg-purple-600';
+                html += `
+                    <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="w-8 h-8 rounded-full ${avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0">
+                            ${t.speaker[0]}
+                        </div>
+                        <div class="space-y-1 flex-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <strong class="text-xs text-slate-900 font-bold">${t.speaker}</strong>
+                                    <span class="text-[10px] text-slate-500 font-medium">(${t.role})</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 font-bold">${t.time}</span>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed">${t.text}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            modal.classList.remove('hidden');
         }
 
 
