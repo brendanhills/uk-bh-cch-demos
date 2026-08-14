@@ -25,10 +25,10 @@ ce_chromebox_setup/
 │
 ├── chromebook/                        # --- Files for Chromebook (Bruschetta VM) ---
 │   ├── ssh_config.template            # ~/.ssh/config template (no multiplexing, IdentitiesOnly)
-│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, tunnel daemon, codetop, green theme)
+│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, tunnel daemon, codetop, optional theme)
 │
 └── cloudtop/                          # --- Files for Cloudtop Workstation ---
-    ├── bashrc_additions.sh            # ~/.bashrc snippet (purple cloud theme & login banner)
+    ├── bashrc_additions.sh            # ~/.bashrc snippet (optional purple cloud theme & login banner)
     └── tunnel-shell                   # Helper script for ChromeOS native Terminal SWA
 ```
 
@@ -132,11 +132,14 @@ Host *
   ForwardX11 no
 ```
 
-#### Step 2: Add Functions & Visual Styling to `~/.bashrc`
-Append the contents of [`chromebook/bashrc_additions.sh`](chromebook/bashrc_additions.sh) to your Bruschetta `~/.bashrc`:
+#### Step 2: Add Functions & Aliases to `~/.bashrc`
+Append the contents of [`chromebook/bashrc_additions.sh`](chromebook/bashrc_additions.sh) to your Bruschetta `~/.bashrc`.
+
+> [!TIP]
+> **Note on Visual Styling (Optional):** The first line (`PS1=...`) sets a distinctive green laptop badge (`💻 bruschetta:~$`) and dynamic tab titles to help you distinguish local tabs from remote Cloudtop tabs. If you prefer your existing prompt, feel free to omit that line.
 
 ```bash
-# --- Visual Styling (Green Laptop Theme) ---
+# --- Visual Styling (Optional: Green Laptop Theme & Tab Title) ---
 PS1='\[\e]0;💻 Bruschetta: \w\a\]\[\033[01;32m\]💻 bruschetta\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # --- VS Code Remote on Cloudtop (Defaults to ~/dev) ---
@@ -172,13 +175,13 @@ Reload with `source ~/.bashrc`.
 
 ---
 
-### Part 2: On your Cloudtop Workstation
+### Part 2: On your Cloudtop Workstation (Optional)
 
-#### Step 1: Add Visual Styling & Banner to `~/.bashrc`
-Connect to Cloudtop (`ct`) and append the contents of [`cloudtop/bashrc_additions.sh`](cloudtop/bashrc_additions.sh) to `~/.bashrc`:
+#### Step 1: Visual Prompt & Banner (Optional)
+To visually distinguish your remote Cloudtop shells from local Chromebook shells, connect to Cloudtop (`ct`) and optionally append [`cloudtop/bashrc_additions.sh`](cloudtop/bashrc_additions.sh) to `~/.bashrc` on Cloudtop:
 
 ```bash
-# --- Cloudtop Visual Styling (Purple Cloud Theme + Banner) ---
+# --- Cloudtop Visual Styling (Optional: Purple Cloud Theme + Banner) ---
 PS1='\[\e]0;☁️ Cloudtop: \w\a\]\[\033[01;35m\]☁️  \h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 if [[ -z "$VIRTUAL_ENV" && -t 1 ]]; then
@@ -189,7 +192,7 @@ fi
 ```
 Reload with `source ~/.bashrc`.
 
-#### Step 2 (Optional): ChromeOS Native Terminal SWA Helper
+#### Step 2: ChromeOS Native Terminal SWA Helper (Optional)
 If you use native ChromeOS Terminal links (without Bruschetta), copy [`cloudtop/tunnel-shell`](cloudtop/tunnel-shell) to `~/bin/tunnel-shell` on Cloudtop:
 ```bash
 mkdir -p ~/bin
