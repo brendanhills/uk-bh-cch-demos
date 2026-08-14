@@ -8,11 +8,15 @@ The **F-DSE Program Governance & Risk Intelligence Platform** (Monaro Risk Dashb
 - **Technical & Program Leads:** Steve Deacon (`sdeacon@google.com`), Wayne Davis (`waynedavis@google.com`), and Brendan Hills (`brendanhills@google.com`).
 - **Delivery & Governance Teams:** Program managers, risk owners, and engineering leads monitoring Level 2 Contractual Milestones.
 
+## Mandatory Architectural & Security Invariants
+1. **Zero GCP Cloud Projects**: Operates completely free of Google Cloud Projects, Cloud Billing, GCS buckets, or cloud servers.
+2. **Drive-Native Data-Layer Access Restriction**: User access restriction is enforced at the Google Workspace / Google Drive shared folder level via Ganpati group permissions (`monaro-risk-prod` and `monaro-risk-dev`).
+3. **Turnkey Zero-Maintenance Handover**: Pure client-side SPA requiring zero cloud server on-call or container maintenance for the author after handover.
+
 ## Key Features & Capabilities
 1. **Executive Decision Briefing (Gemini 3.5 Pro)**: Exception-first synthesis, Top 3 Action items, Early Warning Sleeper Outliers, and Neural Australian Audio Briefing.
 2. **Interactive 5×5 Risk Heatmap**: Dynamic Inherent vs. Residual matrix toggling, active focus rings, and 1-click citation jumps.
 3. **Interactive Live Ingestion**: User-triggered Google Drive sync, PDF report ingestion, and snapshot persistence.
 4. **Contractual Delivery (CD1) Horizon**: Milestone driver tree mapping contractual commitments to high-priority remediation plans.
-5. **Google Drive-Native Storage**: Zero-cloud-bucket architecture using shared Google Drive for all snapshots and PDFs.
-6. **Strict Google SSO Access Control**: Restricted to `monaro-risk-prod` and `monaro-risk-dev` Ganpati groups.
-7. **Turnkey Handover**: Complete operator manual (`HANDOVER_GUIDE.md`) allowing immediate, self-service handover to the team.
+5. **Multi-Notebook Knowledge Base**: Dynamic UI switcher and CLI sync for multiple Gemini Notebooks.
+6. **Turnkey Handover**: Complete operator manual (`HANDOVER_GUIDE.md`) allowing immediate, self-service handover to the team.
