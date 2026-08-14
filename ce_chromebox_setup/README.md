@@ -1,19 +1,39 @@
 # Chromebook (Bruschetta) to Cloudtop Remote Development Setup
 
-A battle-tested, high-reliability configuration guide and copy-paste toolkit for Google Customer Engineers working remotely from a **Chromebook (ChromeOS / Bruschetta gLinux VM)** connected to **Google Cloudtop**.
+A personal configuration guide and copy-paste toolkit for working productively from a **Chromebook (ChromeOS / Bruschetta gLinux VM)** connected to **Google Cloudtop**.
+
+> [!NOTE]
+> This is a personal setup designed to maximize daily developer productivity and eliminate SSH/tunnel friction. While it works reliably for my workflow, it has not yet been broadly tested across all team configurations.
 
 ---
 
-## 1. Why this Setup Exists
+## 0. Prerequisites
 
-Connecting to Cloudtop from a Chromebook over Google's WebSocket proxy (`sup-ssh-relay`) often encounters common friction points:
-* **Multiplexing Deadlocks (`ControlMaster`):** Shared SSH sockets break when laptops sleep or switch networks, permanently locking forwarded ports with `Address already in use`.
-* **Security Key Prompt Loops:** `autossh` backgrounding before authentication causes endless Titan Security Key popup loops (5–7+ popups).
-* **Identity Probing Failures:** SSH attempts to probe every FIDO2 slot and corporate key sequentially, triggering multiple key touches per connection.
-* **Overloaded File Watchers:** Opening `$HOME` over VS Code Remote-SSH recursively indexes `~/.cache`, `~/.local`, and `~/.antigravity`, causing 10,000+ Git change warnings and extension host freezes.
-* **Keepalive Conflicts:** `TCPKeepAlive yes` sends raw OS TCP ACK probes that fail through WebSocket relays.
+Before setting up this workflow, ensure you have:
 
-This setup resolves all of these issues with **zero socket multiplexing conflicts**, **single-touch morning authentication**, and **isolated, sub-200ms terminal sessions**.
+* **Bruschetta VM:** Managed gLinux virtual machine on ChromeOS ([go/bruschetta](http://go/bruschetta)).
+* **Google Cloudtop Workstation:** Provisioned and accessible ([go/cloudtop](http://go/cloudtop)).
+* **Security Key (Titan Key / FIDO2):** Authenticated for SSO and CorpSSH ([go/sk](http://go/sk)).
+* **`roadwarrior` (`rw`):** Standard remote access utility ([go/roadwarrior](http://go/roadwarrior)).
+* **`autossh`:** Port-forwarding daemon installed in Bruschetta:
+  ```bash
+  sudo apt install -y autossh
+  ```
+* **VS Code Desktop (Optional):** Installed inside Bruschetta if using desktop IDE ([go/vscode-glinux](http://go/vscode-glinux)).
+
+---
+
+## 1. Goals, Requirements & Scope
+
+### Core Requirements (What this Setup Solves)
+* **Dual Environment Productivity:** Work seamlessly both locally in Bruschetta and remotely on Cloudtop.
+* **Remote Web App Access:** Run web apps, staging APIs, or Jupyter/Colab servers on Cloudtop (e.g. ports `9000`, `9090`, `8888`) and interact with them immediately in your Chromebook browser via `http://localhost:<PORT>`.
+* **Flexible AI Tooling:** Run **Jetski** remotely on Cloudtop or **Antigravity / VS Code** on your Chromebook.
+* **Instant, Independent Terminal Tabs:** Open, work in, and close any number of fresh Cloudtop tabs in <200ms without state collision or port locks.
+* **Single-Touch Morning Authentication:** Prevent runaway Titan Security Key popup loops (5–7+ prompts) and SSH key probing freezes.
+
+### Out of Scope (Explicit Non-Goals)
+* **Session Multiplexing & Connection Pooling:** Complex pooling tools like `shpool`, `tmux` socket forwarding, or OpenSSH `ControlMaster` socket sharing are intentionally excluded. They create socket deadlocks when laptops sleep or disconnect, permanently locking ports with `Address already in use`.
 
 ---
 
@@ -83,7 +103,7 @@ flowchart TD
 
 ## 4. Setup Walkthrough
 
-Because remote development involves both your local client and remote workstation, setup is divided into two transparent copy-paste steps:
+Setup is divided into two straightforward copy-paste parts:
 
 ---
 
@@ -178,7 +198,7 @@ Reload with `source ~/.bashrc`.
 ### Part 2: On your Cloudtop Workstation (Optional)
 
 #### Step 1: Visual Prompt & Banner (Optional)
-To visually distinguish your remote Cloudtop shells from local Chromebook shells, connect to Cloudtop (`ct`) and optionally append [`cloudtop/bashrc_additions.sh`](cloudtop/bashrc_additions.sh) to `~/.bashrc` on Cloudtop:
+To visually distinguish remote Cloudtop shells from local Chromebook shells, connect to Cloudtop (`ct`) and optionally append [`cloudtop/bashrc_additions.sh`](cloudtop/bashrc_additions.sh) to `~/.bashrc` on Cloudtop:
 
 ```bash
 # --- Cloudtop Visual Styling (Optional: Purple Cloud Theme + Banner) ---
