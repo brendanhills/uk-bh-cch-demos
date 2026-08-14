@@ -47,7 +47,7 @@ ce_chromebox_setup/
 │
 ├── chromebook/                        # --- Files for Chromebook (Bruschetta VM) ---
 │   ├── ssh_config.template            # ~/.ssh/config template (no multiplexing, IdentitiesOnly)
-│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, tunnel daemon, codetop, optional theme)
+│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, smart tunnel with conflict check, codetop)
 │
 └── cloudtop/                          # --- Files for Cloudtop Workstation ---
     ├── bashrc_additions.sh            # ~/.bashrc snippet (optional purple cloud theme & login banner)
@@ -67,7 +67,7 @@ flowchart TD
     end
 
     subgraph Tab2 ["Bruschetta Tab 2 (Web Ports)"]
-        T["2. <code>tunnel</code><br><i>Starts background autossh daemon with loop protection</i>"]
+        T["2. <code>tunnel</code><br><i>Checks local port conflicts, clears rogue PIDs, starts autossh daemon</i>"]
     end
 
     subgraph TabN ["Bruschetta Tab 3+ (Throughout Day)"]
@@ -88,7 +88,7 @@ flowchart TD
 | Step | Location | Command | Description |
 | :--- | :--- | :--- | :--- |
 | **1. Morning Connect & Auth** | Bruschetta Tab 1 | `ct` | Auto-detects credential state. Prompts once for password/security key if expired, wakes Cloudtop, and opens your primary shell. |
-| **2. Start Web Ports** | Bruschetta Tab 2 | `tunnel` | Launches background `autossh` daemon with loop protection (`AUTOSSH_MAXSTART=1`). Connects silently with verified credentials. |
+| **2. Start Web Ports** | Bruschetta Tab 2 | `tunnel` | Checks for local port hijacking (Python/Node/Docker), clears conflicts, and launches background `autossh` daemon with loop protection (`AUTOSSH_MAXSTART=1`). |
 | **3. Open More Shell Tabs** | New Bruschetta Tabs | `ct` | Opens additional fresh, independent SSH tabs on Cloudtop in <200ms. |
 | **4. Open VS Code** | Bruschetta Tab | `codetop [project]` | Launches VS Code connected to targeted project folder (avoids root `$HOME` file-watcher overload). |
 
@@ -96,7 +96,7 @@ flowchart TD
 
 | Task | Command | Expected Output |
 | :--- | :--- | :--- |
-| **Start Tunnel** | `tunnel` | Authenticates via `rw`, starts daemon $\rightarrow$ `✅ Background tunnel active` |
+| **Start Tunnel** | `tunnel` | Checks port conflicts, authenticates via `rw`, starts daemon $\rightarrow$ `✅ Background tunnel active` |
 | **Check Status** | `tunnel-status` | Displays running `autossh` PID and command line. |
 | **Stop Tunnel** | `tunnel-stop` | `🛑 Tunnel stopped` |
 | **Restart Tunnel** | `tunnel-restart` | Stops and restarts the background daemon. |
@@ -187,8 +187,37 @@ ct() {
 
 alias rw='rw --check_remaining --check_remaining_duration=8h --remote_gcertstatus_args="--check_remaining=8h"'
 
-# --- Background Port Tunnel Management (With Auto-Auth & Loop Protection) ---
-alias tunnel='AUTOSSH_MAXSTART=1 rw --nossh_interactively --check_remaining --check_remaining_duration=8h --remote_gcertstatus_args="--check_remaining=8h" cloudtop && AUTOSSH_MAXSTART=1 autossh -M 0 -f -N cloudtop-tunnel && echo "✅ Background tunnel active (ports 9000, 9090, 9900, 8888, 5387)"'
+# --- Background Port Tunnel Management (With Pre-Flight Conflict Check) ---
+unalias tunnel 2>/dev/null || true
+tunnel() {
+  local ports=(9000 9090 9900 8888 5387)
+  local cleared=0
+
+  # Check if any dev ports are hijacked by local Bruschetta processes (Python, Node, Docker)
+  for p in "${ports[@]}"; do
+    local pid
+    pid=$(lsof -t -i :"$p" 2>/dev/null || true)
+    if [[ -n "$pid" ]]; then
+      local pname
+      pname=$(ps -p "$pid" -o comm= 2>/dev/null || echo "PID $pid")
+      if [[ "$pname" != "autossh" && "$pname" != "ssh" ]]; then
+        echo -e "\033[1;33m⚠️ Port $p is held by local '$pname' (PID $pid) in Bruschetta.\033[0m"
+        echo "   Releasing port to prevent localhost:$p hijack..."
+        kill -9 "$pid" 2>/dev/null || sudo kill -9 "$pid" 2>/dev/null || true
+        cleared=1
+      fi
+    fi
+  done
+
+  if [[ $cleared -eq 1 ]]; then
+    sleep 0.5
+  fi
+
+  AUTOSSH_MAXSTART=1 rw --nossh_interactively --check_remaining --check_remaining_duration=8h --remote_gcertstatus_args="--check_remaining=8h" cloudtop && \
+  AUTOSSH_MAXSTART=1 autossh -M 0 -f -N cloudtop-tunnel && \
+  echo "✅ Background tunnel active (ports 9000, 9090, 9900, 8888, 5387)"
+}
+
 alias tunnel-status='pgrep -fa "autossh.*cloudtop-tunnel" || echo "❌ Tunnel is not running"'
 alias tunnel-stop='pkill -f "autossh.*cloudtop-tunnel" && echo "🛑 Tunnel stopped"'
 alias tunnel-restart='tunnel-stop; sleep 1; tunnel'
