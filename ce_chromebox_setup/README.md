@@ -263,13 +263,6 @@ If you need instant terminal access directly in ChromeOS without starting the Br
   tunnel-restart
   ```
 
-### Issue 3: VS Code Shows ">10,000 Changes in Git" or Slow Extension Loading
-* **Cause:** An accidental `.git` folder was created in root `$HOME`.
-* **Fix:** Run on Cloudtop:
-  ```bash
-  rm -rf ~/.git
-  ```
-
-### Issue 4: `Connection closed by UNKNOWN port 65535`
+### Issue 3: `Connection closed by UNKNOWN port 65535`
 * **Cause:** SSO master cookie expired.
 * **Fix:** Run `ct` to trigger roadwarrior authentication.
