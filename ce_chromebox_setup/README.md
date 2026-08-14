@@ -31,6 +31,7 @@ Before setting up this workflow, ensure you have:
 * **Flexible AI Tooling & Rapid Response:** Run **Jetski** remotely on Cloudtop or **Antigravity / VS Code** locally on your Chromebook for snappy, low-latency editing and rapid responsiveness.
 * **Instant, Independent Terminal Tabs:** Open, work in, and close any number of fresh Cloudtop tabs in <200ms without state collision or port locks.
 * **Single-Touch Morning Authentication:** Prevent runaway Titan Security Key popup loops (5–7+ prompts) and SSH key probing freezes.
+* **Automated Port Conflict Healing:** Pre-flight scan automatically detects and clears rogue local processes in Bruschetta that try to hijack forwarded ports (`9000`, `9090`, `8888`, `5387`).
 
 ### Out of Scope (Explicit Non-Goals)
 * **Session Multiplexing & Connection Pooling:** Complex pooling tools like `shpool`, `tmux` socket forwarding, or OpenSSH `ControlMaster` socket sharing are intentionally excluded. They create socket deadlocks when laptops sleep or disconnect, permanently locking ports with `Address already in use`.
@@ -47,7 +48,7 @@ ce_chromebox_setup/
 │
 ├── chromebook/                        # --- Files for Chromebook (Bruschetta VM) ---
 │   ├── ssh_config.template            # ~/.ssh/config template (no multiplexing, IdentitiesOnly)
-│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, smart tunnel with conflict check, codetop)
+│   └── bashrc_additions.sh            # ~/.bashrc snippet (smart ct, auto-healing tunnel, codetop)
 │
 └── cloudtop/                          # --- Files for Cloudtop Workstation ---
     ├── bashrc_additions.sh            # ~/.bashrc snippet (optional purple cloud theme & login banner)
@@ -67,7 +68,7 @@ flowchart TD
     end
 
     subgraph Tab2 ["Bruschetta Tab 2 (Web Ports)"]
-        T["2. <code>tunnel</code><br><i>Checks local port conflicts, clears rogue PIDs, starts autossh daemon</i>"]
+        T["2. <code>tunnel</code><br><i>Scans local ports, kills rogue PIDs, starts autossh daemon</i>"]
     end
 
     subgraph TabN ["Bruschetta Tab 3+ (Throughout Day)"]
@@ -88,7 +89,7 @@ flowchart TD
 | Step | Location | Command | Description |
 | :--- | :--- | :--- | :--- |
 | **1. Morning Connect & Auth** | Bruschetta Tab 1 | `ct` | Auto-detects credential state. Prompts once for password/security key if expired, wakes Cloudtop, and opens your primary shell. |
-| **2. Start Web Ports** | Bruschetta Tab 2 | `tunnel` | Checks for local port hijacking (Python/Node/Docker), clears conflicts, and launches background `autossh` daemon with loop protection (`AUTOSSH_MAXSTART=1`). |
+| **2. Start Web Ports** | Bruschetta Tab 2 | `tunnel` | Automatically scans for local port conflicts (Python/Node/Docker), clears rogue PIDs, and launches background `autossh` daemon with loop protection (`AUTOSSH_MAXSTART=1`). |
 | **3. Open More Shell Tabs** | New Bruschetta Tabs | `ct` | Opens additional fresh, independent SSH tabs on Cloudtop in <200ms. |
 | **4. Open VS Code** | Bruschetta Tab | `codetop [project]` | Launches VS Code connected to targeted project folder (avoids root `$HOME` file-watcher overload). |
 
@@ -96,10 +97,10 @@ flowchart TD
 
 | Task | Command | Expected Output |
 | :--- | :--- | :--- |
-| **Start Tunnel** | `tunnel` | Checks port conflicts, authenticates via `rw`, starts daemon $\rightarrow$ `✅ Background tunnel active` |
+| **Start Tunnel** | `tunnel` | Scans ports, clears rogue local processes, authenticates via `rw`, starts daemon $\rightarrow$ `✅ Background tunnel active` |
 | **Check Status** | `tunnel-status` | Displays running `autossh` PID and command line. |
 | **Stop Tunnel** | `tunnel-stop` | `🛑 Tunnel stopped` |
-| **Restart Tunnel** | `tunnel-restart` | Stops and restarts the background daemon. |
+| **Restart Tunnel** | `tunnel-restart` | Stops and restarts the background daemon with fresh pre-flight checks. |
 
 ---
 
@@ -187,13 +188,13 @@ ct() {
 
 alias rw='rw --check_remaining --check_remaining_duration=8h --remote_gcertstatus_args="--check_remaining=8h"'
 
-# --- Background Port Tunnel Management (With Pre-Flight Conflict Check) ---
+# --- Background Port Tunnel Management (With Automated Conflict Healing) ---
 unalias tunnel 2>/dev/null || true
 tunnel() {
   local ports=(9000 9090 9900 8888 5387)
   local cleared=0
 
-  # Check if any dev ports are hijacked by local Bruschetta processes (Python, Node, Docker)
+  # Scan for rogue local processes in Bruschetta hijacking our forwarded ports
   for p in "${ports[@]}"; do
     local pid
     pid=$(lsof -t -i :"$p" 2>/dev/null || true)
