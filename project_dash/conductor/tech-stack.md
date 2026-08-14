@@ -2,15 +2,13 @@
 
 ## 1. Primary Architecture & Hosting
 - **Frontend Architecture:** High-performance, zero-build Single Page Application (`index.html`) using modern JavaScript ES6+, Tailwind CSS, and Chart.js.
-- **Backend API & Server:** Python 3.11+ server (`server.py`) providing REST endpoints on port 9000 (local) and 8080 (Cloud Run container).
-- **Hosting Targets:**
-  - Local & Cloudtop execution via 1-command tmux manager (`run_server.sh`).
-  - Google Cloud Run containerized deployment behind Google SSO.
+- **Runtime Model:** **Zero-Server / Browser-Direct Architecture**. No permanent backend server runs in the cloud; client-side browser orchestrates Google Drive and Gemini APIs.
+- **Local / Cloudtop Runner:** Optional Python 3.11+ server (`server.py`) managed via 1-command tmux lifecycle (`run_server.sh`) on port 9000.
 
 ## 2. Data & Storage Layer (Google Drive-Native)
-- **Primary Source of Truth:** Google Drive Shared Folder / Workspace Storage (no external GCS bucket required).
+- **Primary Source of Truth:** Google Drive Shared Folder / Workspace Storage (zero GCP bucket overhead).
 - **Weekly Ingestion Pipeline:** Google Drive PDF reports (Week 27, 26, 25...) and Google Sheets risk registers.
-- **Historical Persistence:** `weekly_snapshots.json` and `live_synced_data.json` stored in Google Drive and cached locally.
+- **Historical Persistence:** `weekly_snapshots.json` and `live_synced_data.json` stored in Google Drive and cached in browser `localStorage` / local JSON.
 - **User-Triggered Ingestion:** On-demand sync and PDF extraction triggered directly from the web UI.
 
 ## 3. AI & Intelligence Layer
@@ -19,7 +17,7 @@
 - **Contract Analysis:** Google Gemini Notebook integration (`notebook.google.com`) mapping contractual annexes to delivery drivers.
 
 ## 4. Access Control & Security
-- **Authentication:** Google Single Sign-On (SSO) enforced via Cloud IAM / Identity-Aware Proxy.
+- **Authentication:** Google Single Sign-On (SSO) enforced via Corporate UberProxy / Google Workspace.
 - **Ganpati Access Groups:**
   - `monaro-risk-admin`: Admin and infrastructure ownership group.
   - `monaro-risk-dev` (`monaro-risk-dev@twosync.google.com`): Developer and editor access.

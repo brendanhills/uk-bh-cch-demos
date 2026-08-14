@@ -14,5 +14,5 @@ The **F-DSE Program Governance & Risk Intelligence Platform** (Monaro Risk Dashb
 3. **Interactive Live Ingestion**: User-triggered Google Drive sync, PDF report ingestion, and snapshot persistence.
 4. **Contractual Delivery (CD1) Horizon**: Milestone driver tree mapping contractual commitments to high-priority remediation plans.
 5. **Google Drive-Native Storage**: Zero-cloud-bucket architecture using shared Google Drive for all snapshots and PDFs.
-6. **Strict Google SSO Access Control**: Restricted to `monaro-risk-prod` and `monaro-risk-dev` Ganpati groups via TwoSync.
+6. **Strict Google SSO Access Control**: Restricted to `monaro-risk-prod` and `monaro-risk-dev` Ganpati groups.
 7. **Turnkey Handover**: Complete operator manual (`HANDOVER_GUIDE.md`) allowing immediate, self-service handover to the team.
