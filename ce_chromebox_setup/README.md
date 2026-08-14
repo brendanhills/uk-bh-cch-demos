@@ -42,6 +42,8 @@ Before setting up this workflow, ensure you have:
 ```text
 ce_chromebox_setup/
 ├── README.md                          # Comprehensive guide, visual diagrams, and troubleshooting
+├── images/
+│   └── chromeos_terminal_setup.png    # Screenshot of ChromeOS Terminal connection profile
 │
 ├── chromebook/                        # --- Files for Chromebook (Bruschetta VM) ---
 │   ├── ssh_config.template            # ~/.ssh/config template (no multiplexing, IdentitiesOnly)
@@ -236,11 +238,16 @@ chmod +x ~/bin/tunnel-shell
 
 ## 6. Native ChromeOS Terminal Links (No Bruschetta VM Needed)
 
-If you need instant terminal access directly in ChromeOS without starting the Bruschetta VM:
-* **Command Box:** (ChromeOS Terminal already includes `ssh `, so do not type `ssh`):
+If you need instant terminal access directly in ChromeOS without starting the Bruschetta VM, you can configure an SSH connection profile in ChromeOS Terminal Settings:
+
+![ChromeOS Terminal Profile Configuration](images/chromeos_terminal_setup.png)
+
+### Configuration Profile Fields:
+* **Command Box:** (Note: ChromeOS Terminal automatically prefixes `ssh `, so do not type `ssh`):
   ```text
   <USER>@<CLOUDTOP_NAME>.c.googlers.com -L 9000:localhost:9000 -L 9090:localhost:9090 -L 9900:localhost:9900 -L 8888:localhost:8888 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -t ~/bin/tunnel-shell
   ```
+* **Identity:** `[Default]`
 * **SSH relay server options:** `--config=google`
 
 ---
