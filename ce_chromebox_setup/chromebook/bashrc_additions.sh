@@ -3,10 +3,10 @@
 # Add this content to ~/.bashrc on your Chromebook / Bruschetta VM
 # ==============================================================================
 
-# --- Visual Styling (Green Laptop Theme) ---
+# --- Visual Styling (Green Laptop Theme & Dynamic Tab Title) ---
 PS1='\[\e]0;💻 Bruschetta: \w\a\]\[\033[01;32m\]💻 bruschetta\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
-# --- VS Code Remote on Cloudtop (Defaults to ~/dev) ---
+# --- VS Code Remote on Cloudtop (Defaults to ~/dev, Avoids Root $HOME Overload) ---
 unalias codetop 2>/dev/null || true
 codetop() {
   local target="${1:-/usr/local/google/home/$USER/dev}"
@@ -16,10 +16,9 @@ codetop() {
   code --remote ssh-remote+cloudtop "$target"
 }
 
-# --- Smart Cloudtop Shell Connect ---
+# --- Smart Cloudtop Connect (Auto-Authenticates via Roadwarrior If Expired) ---
 unalias ct 2>/dev/null || true
 ct() {
-  # If local CorpSSH/LOAS certificate is expired or missing, auto-authenticate via roadwarrior
   if command -v gcertstatus >/dev/null 2>&1 && ! gcertstatus --check_ssh_certs >/dev/null 2>&1; then
     echo "🔑 Morning credentials expired. Authenticating via roadwarrior..."
     rw --check_remaining --check_remaining_duration=8h --remote_gcertstatus_args="--check_remaining=8h" cloudtop "$@"

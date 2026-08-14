@@ -1,14 +1,14 @@
 ##### Primary Cloudtop Host (Clean, Independent Shell Sessions & VS Code)
-Host <YOUR_CLOUDTOP_NAME>.c.googlers.com <YOUR_CLOUDTOP_NAME> cloudtop ct
-  HostName <YOUR_CLOUDTOP_NAME>.c.googlers.com
-  User <YOUR_LDAP>
+Host <CLOUDTOP_NAME>.c.googlers.com <CLOUDTOP_NAME> cloudtop ct
+  HostName <CLOUDTOP_NAME>.c.googlers.com
+  User <LDAP_USERNAME>
   AddressFamily inet
   IdentitiesOnly yes
 
 ##### Dedicated Background Tunnel Host (Web Dev & Colab Ports)
 Host cloudtop-tunnel
-  HostName <YOUR_CLOUDTOP_NAME>.c.googlers.com
-  User <YOUR_LDAP>
+  HostName <CLOUDTOP_NAME>.c.googlers.com
+  User <LDAP_USERNAME>
   AddressFamily inet
   ExitOnForwardFailure yes
   IdentitiesOnly yes

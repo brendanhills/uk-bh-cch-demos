@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Helper script on Cloudtop when connecting via ChromeOS Native Terminal SWA
+# Helper script placed in ~/bin/tunnel-shell on Cloudtop when connecting via ChromeOS Native Terminal SWA
 echo -e "\033[1;36m====================================================\033[0m"
 echo -e "\033[1;33m  ⚡ CLOUDTOP PORT TUNNEL ACTIVE (DO NOT CLOSE) ⚡  \033[0m"
 echo -e "\033[1;36m====================================================\033[0m"
