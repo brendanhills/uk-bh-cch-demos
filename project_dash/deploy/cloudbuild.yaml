@@ -93,38 +93,38 @@ steps:
           --member="user:allins@google.com" \
           --role="roles/run.invoker" || true
 
-        # 3. Grant IAP-secured Web App User role to allowlisted groups and leads
-        gcloud iap web add-iam-policy-binding \
+        # 3. Grant IAP-secured Web App User role using gcloud beta iap web
+        gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
           --service="monaro-risk-dash-dev" \
           --region="us-central1" \
           --member="group:monaro-risk-dev@google.com" \
-          --role="roles/iap.httpsResourceAccessor" || true
+          --role="roles/iap.httpsResourceAccessor"
 
-        gcloud iap web add-iam-policy-binding \
+        gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
           --service="monaro-risk-dash-dev" \
           --region="us-central1" \
           --member="group:monaro-risk-dev@twosync.google.com" \
-          --role="roles/iap.httpsResourceAccessor" || true
+          --role="roles/iap.httpsResourceAccessor"
 
-        gcloud iap web add-iam-policy-binding \
-          --project=$PROJECT_ID \
-          --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
-          --member="user:brendanhills@google.com" \
-          --role="roles/iap.httpsResourceAccessor" || true
-
-        gcloud iap web add-iam-policy-binding \
+        gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
           --service="monaro-risk-dash-dev" \
           --region="us-central1" \
           --member="user:allins@google.com" \
-          --role="roles/iap.httpsResourceAccessor" || true
+          --role="roles/iap.httpsResourceAccessor"
+
+        gcloud beta iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="user:brendanhills@google.com" \
+          --role="roles/iap.httpsResourceAccessor"
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
