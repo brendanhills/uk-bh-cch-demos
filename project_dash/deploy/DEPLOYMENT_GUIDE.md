@@ -2,8 +2,6 @@
 
 This guide documents the end-to-end, reproducible deployment procedure for the **Project Monaro Risk Dashboard** on **Google Cloud Run**, automated via **Google Cloud Build** triggers on GitHub push events, and secured with **Identity-Aware Proxy (IAP)** for seamless corporate Google SSO authentication.
 
-All steps below reflect the streamlined, verified setup, with all exploratory troubleshooting, permission gaps, and repository linking quirks resolved.
-
 ---
 
 ## 🏗️ Architecture & Security Model
@@ -49,25 +47,45 @@ flowchart LR
 
 ---
 
-## 📋 Step 1: GCP Project Initialization & APIs
+## 📋 Step 1: GCP Project Initialization & Required APIs
 
-Enable all required Google Cloud APIs for container building, hosting, logging, and access proxying:
+Enable all required Google Cloud APIs for container build execution, artifact management, runtime hosting, identity proxying, logging, and storage:
 
 ```bash
 gcloud services enable \
     run.googleapis.com \
     cloudbuild.googleapis.com \
     artifactregistry.googleapis.com \
+    logging.googleapis.com \
+    iam.googleapis.com \
+    iamcredentials.googleapis.com \
     iap.googleapis.com \
     cloudresourcemanager.googleapis.com \
+    storage.googleapis.com \
+    secretmanager.googleapis.com \
     --project="monaro-risk-dev"
 ```
+
+### API Reference Table
+
+| API Name | Service Identifier | Purpose / Why Needed |
+| :--- | :--- | :--- |
+| **Cloud Run Admin API** | `run.googleapis.com` | Manages Cloud Run service lifecycles and revisions. |
+| **Cloud Build API** | `cloudbuild.googleapis.com` | Orchestrates automated CI/CD container build pipelines. |
+| **Artifact Registry API** | `artifactregistry.googleapis.com` | Stores and manages versioned Docker container images. |
+| **Cloud Logging API** | `logging.googleapis.com` | Ingests build logs, access logs, and container stdout/stderr. |
+| **Identity and Access Management (IAM) API** | `iam.googleapis.com` | Manages service accounts, roles, and resource policies. |
+| **IAM Service Account Credentials API** | `iamcredentials.googleapis.com` | Handles short-lived token generation and OIDC auth. |
+| **Cloud Identity-Aware Proxy (IAP) API** | `iap.googleapis.com` | Enforces corporate Google SSO login at the edge. |
+| **Cloud Resource Manager API** | `cloudresourcemanager.googleapis.com` | Sets and verifies project-level and resource-level IAM policies. |
+| **Cloud Storage API** | `storage.googleapis.com` | Backing store for Cloud Build artifacts and source staging. |
+| **Secret Manager API** | `secretmanager.googleapis.com` | Secure storage and access for sensitive credentials/keys. |
 
 ---
 
 ## 👤 Step 2: Dedicated Service Account Setup
 
-Cloud Build runs under a dedicated, least-privilege Service Account to perform builds, manage Artifact Registry images, deploy Cloud Run services, and write build logs.
+Cloud Build runs under a dedicated Service Account (`github-deployer@<PROJECT_ID>.iam.gserviceaccount.com`) with the permissions required to build images, push to Artifact Registry, deploy to Cloud Run, manage IAP bindings, and write build telemetry.
 
 ### 1. Create the Service Account:
 ```bash
@@ -78,44 +96,66 @@ gcloud iam service-accounts create github-deployer \
 ```
 
 ### 2. Grant Required IAM Roles:
-Assign the exact set of required roles to `github-deployer@monaro-risk-dev.iam.gserviceaccount.com`:
+Assign all required roles to `github-deployer@monaro-risk-dev.iam.gserviceaccount.com`:
 
 ```bash
 SA_EMAIL="github-deployer@monaro-risk-dev.iam.gserviceaccount.com"
 PROJECT_ID="monaro-risk-dev"
 
-# Cloud Run deployment and management
+# 1. Cloud Run Deployment & Service Management
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/run.admin"
 
-# Artifact Registry image pushing and creation
+# 2. Artifact Registry Docker Image Creation & Push
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/artifactregistry.admin"
 
-# Act as the runtime service identity
+# 3. Cloud Build Execution & Trigger Management
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:$SA_EMAIL" \
+    --role="roles/cloudbuild.builds.editor"
+
+# 4. Act as the Runtime Service Account Identity
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/iam.serviceAccountUser"
 
-# Write build execution logs to Cloud Logging
+# 5. Write Execution Logs to Cloud Logging
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/logging.logWriter"
 
-# Manage IAP configurations
+# 6. Manage Cloud Storage Source & Build Cache Buckets
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:$SA_EMAIL" \
+    --role="roles/storage.admin"
+
+# 7. Manage Identity-Aware Proxy (IAP) Policies
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/iap.admin"
 ```
+
+### Role Reference Table
+
+| Role Display Name | Role ID | Purpose |
+| :--- | :--- | :--- |
+| **Cloud Run Admin** | `roles/run.admin` | Full control over deploying and configuring Cloud Run services. |
+| **Artifact Registry Administrator** | `roles/artifactregistry.admin` | Create Docker repositories and push/pull container images. |
+| **Cloud Build Editor** | `roles/cloudbuild.builds.editor` | Execute builds and manage Cloud Build operations. |
+| **Service Account User** | `roles/iam.serviceAccountUser` | Authorize Cloud Build to run as the runtime service identity. |
+| **Logs Writer** | `roles/logging.logWriter` | Stream build step output to Cloud Logging. |
+| **Storage Admin** | `roles/storage.admin` | Read/write source tarballs and build caches in GCS staging buckets. |
+| **IAP Policy Admin** | `roles/iap.admin` | Configure Identity-Aware Proxy settings and access rules. |
 
 ---
 
 ## 🔗 Step 3: Connect GitHub to Google Cloud Build
 
 > [!NOTE]
-> Use standard **Cloud Build Repositories (GitHub App)** rather than Developer Connect to avoid cross-organization OAuth redirection errors.
+> Use standard **Cloud Build Repositories (GitHub App)** rather than Developer Connect to avoid cross-organization OAuth redirection issues.
 
 1. In Pantheon, open **[Cloud Build > Repositories (1st gen)](https://pantheon.corp.google.com/cloud-build/repositories/1st-gen?project=monaro-risk-dev)**.
 2. Click **"CONNECT REPOSITORY"**.
