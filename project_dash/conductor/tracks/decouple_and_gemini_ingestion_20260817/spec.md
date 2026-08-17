@@ -43,11 +43,14 @@ To maximize UI responsiveness and eliminate runtime mathematical variance, the i
 - **FR 4.5 - Native Multi-Speaker Audio Briefing**: Generates dual-host dialogue transcript (`Alex` and `Jordan`) and native multi-speaker audio using `types.SpeechConfig(multi_speaker_voice_config=...)` with prebuilt voices `Puck` and `Aoede`, saving to `data/<project>/assets/podcast_w<N>.mp3`.
 
 ### 2.5. Project-Scoped Master Ingestion Orchestrator (`scripts/ingest_data.py`)
-- **FR 5.1 - Unified Project Ingestion CLI**: Implement `scripts/ingest_data.py --project=<name>` (e.g. `--project=f-dse` or `--project=sample`):
-  1. Reads `data/<project>/config.json` to identify external data sources (Google Sheet IDs, Drive folder IDs, Gemini Notebook IDs).
-  2. Ingests and synchronizes all project datasets into `data/<project>/`.
-  3. Executes the Gemini 3.5 generation pipeline for the latest reporting week.
-  4. Runs the Ingestion Pre-Computation Suite to build `data/<project>/precomputed_analytics.json`.
+- **FR 5.1 - Unified Multi-Project Ingestion CLI**: Implement `scripts/ingest_data.py` supporting single or batch multi-project ingestion:
+  - **Explicit Project**: `--project=<slug>` targets a specific project (e.g. `--project=f-dse`).
+  - **Default Projects from .env**: When `--project` is omitted, it reads `DEFAULT_PROJECTS` (or `PROJECTS`, e.g. `DEFAULT_PROJECTS="f-dse,sample"`) from `.env` and ingests all configured projects sequentially in one command. If unconfigured, falls back to `sample`.
+  - **Execution Steps Per Project**:
+    1. Reads `data/<project>/config.json` to identify external data sources (Google Sheet IDs, Drive folder IDs, Gemini Notebook IDs).
+    2. Ingests and synchronizes all project datasets into `data/<project>/`.
+    3. Executes the Gemini 3.5 generation pipeline for the latest reporting week.
+    4. Runs the Ingestion Pre-Computation Suite to build `data/<project>/precomputed_analytics.json`.
 - **FR 5.2 - Backend Ingestion & Regeneration APIs (`server.py`)**:
   - `POST /api/ingest-data`: Webhook triggering full ingestion for a given project slug.
   - `POST /api/regenerate-briefing`: Allows 1-click on-demand AI briefing re-generation for any week directly from the dashboard web UI.

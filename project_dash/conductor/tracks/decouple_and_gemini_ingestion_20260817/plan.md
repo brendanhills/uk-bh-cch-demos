@@ -25,7 +25,8 @@
 - [ ] Task 2.1: Write unit test for project ingestion orchestrator
   - [ ] Create `tests/test_ingest_data.py` testing project configuration parsing and multi-stream sync
 - [ ] Task 2.2: Implement Master Ingestion CLI `scripts/ingest_data.py`
-  - [ ] Parse `--project=<slug>` argument and load `data/<project>/config.json`
+  - [ ] Support explicit `--project=<slug>` or default to comma-separated `DEFAULT_PROJECTS` list from `.env` (fallback to `sample`)
+  - [ ] Iterate through target projects and load `data/<project>/config.json`
   - [ ] Ingest configured Google Sheets into `data/<project>/risks.json` and `data/<project>/issues.json`
   - [ ] Ingest configured Google Drive reports into `data/<project>/snapshots.json`
   - [ ] Ingest configured Gemini Notebooks into `data/<project>/knowledge.json`
