@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==============================================================================
-# Package Project Monaro Risk Dashboard Bundle
-# Creates a standalone zip containing index.html, assets, data, and docs.
+# Package Project Monaro Risk Dashboard Minimal Bundle (~500 KB)
+# Creates a lightweight zip containing only the standalone UI and active audio.
 # ==============================================================================
 set -e
 
@@ -10,33 +10,30 @@ cd "$SCRIPT_DIR"
 
 OUTPUT_ZIP="dashboard_bundle.zip"
 
-echo "📦 Packaging Project Monaro Risk Dashboard..."
+echo "📦 Packaging Project Monaro Risk Dashboard (Minimal Bundle)..."
 rm -f "$OUTPUT_ZIP"
 
-# Create zip bundle with core standalone files
-zip -r "$OUTPUT_ZIP" \
+# Include only essential standalone files: index.html, active audio, and docs
+zip -9 "$OUTPUT_ZIP" \
     index.html \
-    assets/ \
-    data/ \
-    src/ \
-    HANDOVER_GUIDE.md \
+    assets/podcast_w27.mp3 \
     README.md \
-    -x "*.DS_Store" "*__pycache__*" "*.git*"
+    HANDOVER_GUIDE.md
 
 ZIP_SIZE=$(du -h "$OUTPUT_ZIP" | cut -f1)
 
 echo ""
 echo "=================================================================="
-echo "✅ Dashboard packaged successfully: $OUTPUT_ZIP ($ZIP_SIZE)"
+echo "✅ Minimal Dashboard Packaged: $OUTPUT_ZIP ($ZIP_SIZE)"
 echo "=================================================================="
-echo "🔗 Ways to share with team members:"
+echo "🔗 Sharing options for allowlisted team members:"
 echo ""
-echo "1️⃣ Direct HTTP Download (from corp network / Cloudtop):"
+echo "1️⃣ Direct HTTP Download (from Cloudtop):"
 echo "   http://uk-bh-cloudtop.c.googlers.com:9000/$OUTPUT_ZIP"
 echo ""
-echo "2️⃣ Download via curl on another machine/Cloudtop:"
+echo "2️⃣ Terminal download via curl:"
 echo "   curl -O http://uk-bh-cloudtop.c.googlers.com:9000/$OUTPUT_ZIP"
 echo ""
-echo "3️⃣ Local file path on this Cloudtop:"
+echo "3️⃣ Copy/Attach to Team Google Drive Shared Folder:"
 echo "   $SCRIPT_DIR/$OUTPUT_ZIP"
 echo "=================================================================="
