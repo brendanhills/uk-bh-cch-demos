@@ -1,29 +1,29 @@
 # Implementation Plan: Decouple Dashboard Content for GitHub & Automated Gemini Ingestion Pipeline
 
 ## Phase 1: Gemini 3.5 Ingestion Engine & Pre-Computation Suite (TDD)
-- [ ] Task 1.1: Write unit tests for Gemini 3.5 generation and pre-computation engine
-  - [ ] Create `tests/test_gemini_generator.py` testing ADC/key credential initialization
-  - [ ] Test structured JSON validation for multi-tone synthesis, Top 3 actions, and Sleeper Outliers using `gemini-3.5-flash`
-  - [ ] Create `tests/test_precomputed_analytics.py` validating 5×5 matrix cell coordinates, longitudinal trend series, and burndown calculations
-- [ ] Task 1.2: Implement `scripts/gemini_generator.py`
-  - [ ] Build `get_gemini_client()` supporting ADC Vertex AI (`vertexai=True`) with `GEMINI_API_KEY` fallback
-  - [ ] Implement `generate_executive_synthesis()` using `gemini-3.5-flash` with structured JSON schemas
-  - [ ] Implement `generate_multispeaker_podcast()` with `MultiSpeakerVoiceConfig` (`Puck` / `Aoede`)
-- [ ] Task 1.3: Implement Ingestion Pre-Computation Engine in `scripts/precompute_analytics.py`
-  - [ ] Pre-calculate 5×5 heatmap cell coordinate maps, inherent vs residual counts, and severity band totals
-  - [ ] Pre-calculate Chart.js time series (Intake, Closures, Backlog, Burndown Score, Cause Categories) across Weekly, Bi-Weekly, and Monthly granularities
-  - [ ] Pre-calculate solution blueprint bundle-to-risk mappings and active counter badges
-  - [ ] Pre-calculate schedule squeeze float metrics and full-text search token indexes
-- [ ] Task 1.4: Update Prompt Templates
-  - [ ] Refactor `prompts/exec_summary_prompt.md` for JSON schema output compatibility
-  - [ ] Create `prompts/podcast_prompt.md` for dual-host executive dialogue generation
+- [x] Task 1.1: Write unit tests for Gemini 3.5 generation and pre-computation engine
+  - [x] Create `tests/test_gemini_generator.py` testing ADC/key credential initialization
+  - [x] Test structured JSON validation for multi-tone synthesis, Top 3 actions, and Sleeper Outliers using `gemini-3.5-flash`
+  - [x] Create `tests/test_precomputed_analytics.py` validating 5×5 matrix cell coordinates, longitudinal trend series, and burndown calculations
+- [x] Task 1.2: Implement `scripts/gemini_generator.py`
+  - [x] Build `get_gemini_client()` supporting ADC Vertex AI (`vertexai=True`) with `GEMINI_API_KEY` fallback
+  - [x] Implement `generate_executive_synthesis()` using `gemini-3.5-flash` with structured JSON schemas
+  - [x] Implement `generate_multispeaker_podcast()` with `MultiSpeakerVoiceConfig` (`Puck` / `Aoede`)
+- [x] Task 1.3: Implement Ingestion Pre-Computation Engine in `scripts/precompute_analytics.py`
+  - [x] Pre-calculate 5×5 heatmap cell coordinate maps, inherent vs residual counts, and severity band totals
+  - [x] Pre-calculate Chart.js time series (Intake, Closures, Backlog, Burndown Score, Cause Categories) across Weekly, Bi-Weekly, and Monthly granularities
+  - [x] Pre-calculate solution blueprint bundle-to-risk mappings and active counter badges
+  - [x] Pre-calculate schedule squeeze float metrics and full-text search token indexes
+- [x] Task 1.4: Update Prompt Templates
+  - [x] Refactor `prompts/exec_summary_prompt.md` for JSON schema output compatibility
+  - [x] Create `prompts/podcast_prompt.md` for dual-host executive dialogue generation
 - [ ] Task 1.5: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 2: Master Ingestion Orchestrator (`scripts/ingest_data.py`)
 - [ ] Task 2.1: Write unit test for project ingestion orchestrator
-  - [ ] Create `tests/test_ingest_data.py` testing project configuration parsing and multi-stream sync
+  - [x] Create `tests/test_ingest_data.py` testing project configuration parsing and multi-stream sync
 - [ ] Task 2.2: Implement Master Ingestion CLI `scripts/ingest_data.py`
   - [ ] Support explicit `--project=<slug>` or default to comma-separated `DEFAULT_PROJECTS` list from `.env` (fallback to `sample`)
   - [ ] Iterate through target projects and load `data/<project>/config.json`
@@ -38,7 +38,7 @@
 
 ## Phase 3: Project Aurora Sample Dataset & Directory Isolation (`data/`)
 - [ ] Task 3.1: Write data integrity unit test for Project Aurora sample schema
-  - [ ] Create `tests/test_sample_dataset.py` validating all JSON schema invariants
+  - [x] Create `tests/test_sample_dataset.py` validating all JSON schema invariants
 - [ ] Task 3.2: Create `data/sample/config.json`
   - [ ] Define Project Aurora branding, titles, theme colors, external URLs, and 4 KPI pillars
   - [ ] Configure feature toggle flags for all 8 tabs
@@ -80,7 +80,7 @@
 
 ## Phase 5: Backend Server Parameterization & On-Demand APIs (`server.py`)
 - [ ] Task 5.1: Write unit tests for server routes
-  - [ ] Create `tests/test_server_parameterized.py` for `/api/sync-sheet`, `/api/ingest-data`, and `/api/regenerate-briefing`
+  - [x] Create `tests/test_server_parameterized.py` for `/api/sync-sheet`, `/api/ingest-data`, and `/api/regenerate-briefing`
 - [ ] Task 5.2: Parameterize `server.py`
   - [ ] Remove all hardcoded Google Drive IDs, Sheet URLs, and specific folder structures
   - [ ] Read active project directory dynamically from `.env` and `config.json`
