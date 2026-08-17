@@ -54,26 +54,26 @@
   - [x] Add generic sample audio snippet `data/sample/podcast_sample.mp3`
 - [x] Task 3.6: Migrate existing F-DSE project files into isolated `data/f-dse/`
   - [x] Move proprietary live registers, snapshots, and blueprints into `data/f-dse/`
-- [ ] Task 3.7: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task 3.7: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 4: Presentation Engine Decoupling & Dynamic Project Routing (`index.html`)
-- [ ] Task 4.1: Implement `async function loadDashboardData()` in `index.html`
-  - [ ] Parse URL search parameters (`?project=sample`, `?project=f-dse`, `?project=<slug>`)
-  - [ ] Load `config.json` and `precomputed_analytics.json` from the target project directory
-- [ ] Task 4.2: Strip all embedded static datasets from `index.html`
-  - [ ] Remove hardcoded `LIVE_RISKS`, `LIVE_TEAM_GOOGLE_RISKS`, `NOTEBOOK_CATALOG`, `BUNDLE_ANNEX_MAPPING`, `WEEKLY_SNAPSHOTS`, `PODCAST_SCRIPTS`, `GEMINI_PARAGRAPHS`
-  - [ ] Bind in-memory global state to loaded JSON datasets
-- [ ] Task 4.3: Implement Dynamic Tab Rendering & KPI Pillars
-  - [ ] Conditionally render navigation tabs based on `config.features[tab].enabled`
-  - [ ] Dynamically render global header branding, vendor badges, and 4 KPI summary cards
-- [ ] Task 4.4: Dynamic Executive Briefing & Time Machine Integration
-  - [ ] Wire Executive Briefing hero card, tone selector, Top 3 actions, and Sleeper Outliers to active snapshot
-  - [ ] Wire neural podcast player and transcript modal to active snapshot dialogue array
-  - [ ] Ensure Time Machine history rewinds and restores dynamic snapshots smoothly
-- [ ] Task 4.5: AST Syntax and DOM Validation
-  - [ ] Validate inline JavaScript using `node -c`
+- [x] Task 4.1: Implement `async function loadDashboardData()` in `index.html`
+  - [x] Parse URL search parameters (`?project=sample`, `?project=f-dse`, `?project=<slug>`)
+  - [x] Load `config.json` and `precomputed_analytics.json` from the target project directory
+- [x] Task 4.2: Strip all embedded static datasets from `index.html`
+  - [x] Remove hardcoded `LIVE_RISKS`, `LIVE_TEAM_GOOGLE_RISKS`, `NOTEBOOK_CATALOG`, `BUNDLE_ANNEX_MAPPING`, `WEEKLY_SNAPSHOTS`, `PODCAST_SCRIPTS`, `GEMINI_PARAGRAPHS`
+  - [x] Bind in-memory global state to loaded JSON datasets
+- [x] Task 4.3: Implement Dynamic Tab Rendering & KPI Pillars
+  - [x] Conditionally render navigation tabs based on `config.features[tab].enabled`
+  - [x] Dynamically render global header branding, vendor badges, and 4 KPI summary cards
+- [x] Task 4.4: Dynamic Executive Briefing & Time Machine Integration
+  - [x] Wire Executive Briefing hero card, tone selector, Top 3 actions, and Sleeper Outliers to active snapshot
+  - [x] Wire neural podcast player and transcript modal to active snapshot dialogue array
+  - [x] Ensure Time Machine history rewinds and restores dynamic snapshots smoothly
+- [x] Task 4.5: AST Syntax and DOM Validation
+  - [x] Validate inline JavaScript using `node -c`
 - [ ] Task 4.6: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---

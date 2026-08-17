@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "program": "F-DSE",
+  "capabilityDrops": [
+    {
+      "id": "CD1.0",
+      "name": "Capability Drop 1.0 (Core Baseline)",
+      "targetDate": "2026-08-31",
+      "status": "Amber",
+      "gates": [
+        {
+          "ref": "1.2b",
+          "name": "Milestone 1 Deliverables Acceptance",
+          "owner": "Michael Maconachie",
+          "status": "Amber",
+          "dueDate": "2026-08-31"
+        },
+        {
+          "ref": "1.6 GFF",
+          "name": "Government Furnished Facilities (GFF) Handover",
+          "owner": "Susan Allin",
+          "status": "Amber",
+          "dueDate": "2026-09-15"
+        },
+        {
+          "ref": "1.10b",
+          "name": "Platform Ready Test/Dev - GDC EE E.01",
+          "owner": "Tom Trobe",
+          "status": "Green",
+          "dueDate": "2026-08-07"
+        },
+        {
+          "ref": "1.14",
+          "name": "Systems Requirements Review (SRR)",
+          "owner": "Scott Deacon",
+          "status": "Amber",
+          "dueDate": "2026-09-30"
+        }
+      ]
+    },
+    {
+      "id": "CD1.5",
+      "name": "Capability Drop 1.5 (Advanced Enclave & Analytics)",
+      "targetDate": "2026-11-30",
+      "status": "Green",
+      "gates": [
+        {
+          "ref": "1.15",
+          "name": "Milestone 3 Preliminary Design Review (PDR)",
+          "owner": "Michael Maconachie",
+          "status": "Green",
+          "dueDate": "2026-11-15"
+        },
+        {
+          "ref": "3.1",
+          "name": "Cross-Domain Data Diode Ingestion Bridge",
+          "owner": "Steve Peel",
+          "status": "Green",
+          "dueDate": "2026-11-30"
+        }
+      ]
+    }
+  ]
+}

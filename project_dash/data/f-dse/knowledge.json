@@ -1,0 +1,119 @@
+{
+  "notebookId": "acdbb29b-8632-4fc7-9ba8-2357beeff141",
+  "notebookTitle": "Project Monaro Contract Notebook",
+  "notebookUrl": "https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141",
+  "lastSynced": "2026-08-13T18:14:35.728237",
+  "totalSources": 17,
+  "sources": [
+    {
+      "id": "src-01",
+      "title": "Annex B - System Security Plan & ATO-C Accreditation (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle B",
+      "category": "Solution Blueprint",
+      "tokens": 42500,
+      "version": "v0.2",
+      "lastModified": "2026-07-28T14:30:00Z",
+      "summary": "Governs security controls, ISM compliance, air-gapped cryptographic boundary, and ATO-C certification criteria."
+    },
+    {
+      "id": "src-02",
+      "title": "Annex C - AI & ML Analytics Enclave Architecture (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle C",
+      "category": "Solution Blueprint",
+      "tokens": 38200,
+      "version": "v0.2",
+      "lastModified": "2026-07-30T10:15:00Z",
+      "summary": "Defines Vertex AI on-premise model serving, TensorRT-LLM optimization, fine-tuning harness, and groundings vector storage."
+    },
+    {
+      "id": "src-03",
+      "title": "Annex D - Data Integration & Cross-Domain Diode Ingestion (v0.1).pdf",
+      "type": "PDF",
+      "bundle": "Bundle D",
+      "category": "Solution Blueprint",
+      "tokens": 31400,
+      "version": "v0.1",
+      "lastModified": "2026-07-15T09:00:00Z",
+      "summary": "Covers high-assurance data diodes, multi-speed Kafka message bus, legacy schema normalization, and automated ingestion quarantine."
+    },
+    {
+      "id": "src-04",
+      "title": "Annex E - Governance, Verification & Acceptance Framework (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle E",
+      "category": "Solution Blueprint",
+      "tokens": 29800,
+      "version": "v0.2",
+      "lastModified": "2026-08-01T16:00:00Z",
+      "summary": "Standard Operating Procedures for joint deliverable sign-offs, milestone verification gates, and Cth acceptance criteria."
+    },
+    {
+      "id": "src-05",
+      "title": "Annex F - Network Architecture & Sovereign Interconnects (v0.1).pdf",
+      "type": "PDF",
+      "bundle": "Bundle F",
+      "category": "Solution Blueprint",
+      "tokens": 35600,
+      "version": "v0.1",
+      "lastModified": "2026-07-18T11:45:00Z",
+      "summary": "Dedicated fiber interconnect topology, BGP peering, encrypted MACsec links, and air-gapped facility connectivity."
+    },
+    {
+      "id": "src-06",
+      "title": "Annex G - Identity, Federation & Role-Based Access Control (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle G",
+      "category": "Solution Blueprint",
+      "tokens": 27400,
+      "version": "v0.2",
+      "lastModified": "2026-07-25T13:20:00Z",
+      "summary": "SAML 2.0 / OIDC customer identity federation, multi-factor PKI smartcard authentication, and fine-grained ABAC permissions."
+    },
+    {
+      "id": "src-07",
+      "title": "Annex H - Managed Infrastructure & GDC Hardware Enclave (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle H",
+      "category": "Solution Blueprint",
+      "tokens": 51200,
+      "version": "v0.2",
+      "lastModified": "2026-08-05T15:10:00Z",
+      "summary": "Air-gapped Google Distributed Cloud (GDC) hardware deployment, rack topologies, power/cooling requirements, and bare-metal lifecycle."
+    },
+    {
+      "id": "src-08",
+      "title": "Annex J - Disaster Recovery, Backup & Continuous Availability (v0.1).pdf",
+      "type": "PDF",
+      "bundle": "Bundle J",
+      "category": "Solution Blueprint",
+      "tokens": 26100,
+      "version": "v0.1",
+      "lastModified": "2026-07-12T08:30:00Z",
+      "summary": "Target RTO/RPO requirements (<4 hours), automated distributed snapshot hydration, and cold-start cluster recovery."
+    },
+    {
+      "id": "src-09",
+      "title": "Annex K - Application Discovery & System Migration Roadmap (v0.1).pdf",
+      "type": "PDF",
+      "bundle": "Bundle K",
+      "category": "Solution Blueprint",
+      "tokens": 33900,
+      "version": "v0.1",
+      "lastModified": "2026-07-22T17:00:00Z",
+      "summary": "Application discovery reports (ADR), containerization readiness assessments, and multi-phase legacy migration glide paths."
+    },
+    {
+      "id": "src-10",
+      "title": "Annex L - Operations, Monitoring & SLA Governance (v0.2).pdf",
+      "type": "PDF",
+      "bundle": "Bundle L",
+      "category": "Solution Blueprint",
+      "tokens": 30500,
+      "version": "v0.2",
+      "lastModified": "2026-08-02T12:00:00Z",
+      "summary": "Monarch/Mash telemetry metrics, incident escalation tiers, sovereign operational staffing, and SLA credits/penalties."
+    }
+  ]
+}
