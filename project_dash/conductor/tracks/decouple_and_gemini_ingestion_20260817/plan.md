@@ -74,30 +74,30 @@
   - [x] Ensure Time Machine history rewinds and restores dynamic snapshots smoothly
 - [x] Task 4.5: AST Syntax and DOM Validation
   - [x] Validate inline JavaScript using `node -c`
-- [ ] Task 4.6: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task 4.6: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 5: Backend Server Parameterization & On-Demand APIs (`server.py`)
-- [ ] Task 5.1: Write unit tests for server routes
+- [x] Task 5.1: Write unit tests for server routes
   - [x] Create `tests/test_server_parameterized.py` for `/api/sync-sheet`, `/api/ingest-data`, and `/api/regenerate-briefing`
-- [ ] Task 5.2: Parameterize `server.py`
-  - [ ] Remove all hardcoded Google Drive IDs, Sheet URLs, and specific folder structures
-  - [ ] Read active project directory dynamically from `.env` and `config.json`
-- [ ] Task 5.3: Implement `POST /api/ingest-data` & `POST /api/regenerate-briefing` Endpoints
-  - [ ] Allow triggering `ingest_data.py` and on-demand AI briefing regeneration from web UI
-- [ ] Task 5.4: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task 5.2: Parameterize `server.py`
+  - [x] Remove all hardcoded Google Drive IDs, Sheet URLs, and specific folder structures
+  - [x] Read active project directory dynamically from `.env` and `config.json`
+- [x] Task 5.3: Implement `POST /api/ingest-data` & `POST /api/regenerate-briefing` Endpoints
+  - [x] Allow triggering `ingest_data.py` and on-demand AI briefing regeneration from web UI
+- [x] Task 5.4: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 6: Repository Sanitization, Git Hygiene & Documentation
-- [ ] Task 6.1: Configure Strict `.gitignore`
-  - [ ] Exclude `.env`, private project folders (`data/f-dse/`, `data/local/`), private MP3s, and local sync caches
-- [ ] Task 6.2: Create `.env.example`
-  - [ ] Document ADC authentication, `ACTIVE_PROJECT`, model options, and project configuration
-- [ ] Task 6.3: Rewrite Open-Source `README.md`
-  - [ ] Document project architecture, zero-server static hosting, local quickstart, dataset customization, and ingestion pipeline
-- [ ] Task 6.4: End-to-End Integration Verification
-  - [ ] Run complete test suite: `python3 -m unittest discover tests`
-  - [ ] Verify both sample mode (`?project=sample`) and private mode (`?project=f-dse`) execute with zero errors
-- [ ] Task 6.5: Final Track Review & Checkpoint
+- [x] Task 6.1: Configure Strict `.gitignore`
+  - [x] Exclude `.env`, private project folders (`data/f-dse/`, `data/local/`), private MP3s, and local sync caches
+- [x] Task 6.2: Create `.env.example`
+  - [x] Document ADC authentication, `ACTIVE_PROJECT`, model options, and project configuration
+- [x] Task 6.3: Rewrite Open-Source `README.md`
+  - [x] Document project architecture, zero-server static hosting, local quickstart, dataset customization, and ingestion pipeline
+- [x] Task 6.4: End-to-End Integration Verification
+  - [x] Run complete test suite: `python3 -m unittest discover tests`
+  - [x] Verify both sample mode (`?project=sample`) and private mode (`?project=f-dse`) execute with zero errors
+- [x] Task 6.5: Final Track Review & Checkpoint

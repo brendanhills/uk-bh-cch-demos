@@ -8,11 +8,26 @@ deploy/.repo/
 deploy/repo/
 .deploy/
 
+# Environment configurations & secrets
+.env
+.env.local
+.env.*.local
+*.secret
+*.pem
+*.key
+
+# Private & Proprietary Datasets (Keep data/sample/ public)
+data/f-dse/
+data/local/
+data/private/
+
+# Generated Audio Media (Preserve sample showcase snippet)
+data/*/*.mp3
+data/*/*.wav
+!data/sample/podcast_sample.mp3
+
 # Temporary data & scratch
 *.tmp
 /tmp/
 *.zip
 *.log
-.env
-.env.local
-.env.*.local

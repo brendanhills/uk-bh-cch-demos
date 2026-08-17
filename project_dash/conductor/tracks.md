@@ -31,5 +31,5 @@
 - [x] **Track: Zero-Server Client-Only Architecture, Drive-Native Storage & Multi-Notebook Registry**
   *Link: [./tracks/zero_server_client_architecture_20260814/index.md](./tracks/zero_server_client_architecture_20260814/index.md)*
 ---
-- [~] **Track: Decouple Dashboard Content for GitHub & Automated Gemini Ingestion Pipeline**
+- [x] **Track: Decouple Dashboard Content for GitHub & Automated Gemini Ingestion Pipeline**
   *Link: [./tracks/decouple_and_gemini_ingestion_20260817/index.md](./tracks/decouple_and_gemini_ingestion_20260817/index.md)*
