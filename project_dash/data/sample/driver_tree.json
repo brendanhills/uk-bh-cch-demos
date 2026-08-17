@@ -1,0 +1,80 @@
+{
+  "capabilityDrops": [
+    {
+      "id": "CD1.0",
+      "name": "Capability Drop 1.0 (Core Sovereign Enclave MVP)",
+      "status": "IN_PROGRESS",
+      "targetDate": "Oct 2026",
+      "gates": [
+        {
+          "ref": "1.2b",
+          "name": "Milestone 1 Architecture & V&V Acceptance",
+          "status": "AMBER",
+          "owner": "David Vance"
+        },
+        {
+          "ref": "1.4c",
+          "name": "High-Throughput Data Diode Pipeline",
+          "status": "GREEN",
+          "owner": "Liam Patel"
+        },
+        {
+          "ref": "1.6 GFF",
+          "name": "Facilities & Sovereign Optical Connectivity",
+          "status": "AMBER",
+          "owner": "Aron Ward"
+        },
+        {
+          "ref": "1.8b",
+          "name": "Vertex AI Foundation Model Fine-Tuning Enclave",
+          "status": "GREEN",
+          "owner": "Elena Rostova"
+        },
+        {
+          "ref": "1.10b",
+          "name": "Core Sovereign Compute & Storage Hardware",
+          "status": "BLUE",
+          "owner": "Marcus Chen"
+        },
+        {
+          "ref": "1.12",
+          "name": "Integrated Telemetry & Observability Mesh",
+          "status": "GREEN",
+          "owner": "Tom Trobe"
+        }
+      ]
+    },
+    {
+      "id": "CD1.5",
+      "name": "Capability Drop 1.5 (Multi-Enclave Federation & Advanced AI)",
+      "status": "PLANNED",
+      "targetDate": "Feb 2027",
+      "gates": [
+        {
+          "ref": "1.14",
+          "name": "Systems Requirements Review (SRR) CD1.5 Baseline",
+          "status": "RED",
+          "owner": "David Vance"
+        },
+        {
+          "ref": "1.15",
+          "name": "Milestone 3 Preliminary Design Review (PDR)",
+          "status": "GREEN",
+          "owner": "David Vance"
+        },
+        {
+          "ref": "1.18",
+          "name": "Cross-Domain Autonomous Agent Guardrails",
+          "status": "PLANNED",
+          "owner": "Elena Rostova"
+        },
+        {
+          "ref": "1.22",
+          "name": "Disaster Recovery Automated Site Failover",
+          "status": "PLANNED",
+          "owner": "Marcus Chen"
+        }
+      ]
+    }
+  ]
+}

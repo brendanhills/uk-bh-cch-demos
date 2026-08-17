@@ -1,0 +1,83 @@
+{
+  "project": {
+    "slug": "sample",
+    "name": "Project Aurora",
+    "title": "Enterprise AI & Sovereign Cloud Modernization",
+    "organization": "Global Enterprise Transformation Board",
+    "logoIcon": "\ud83c\udf0c",
+    "heroTag": "Enterprise Sovereign Enclave \u2022 AI Platform Modernization",
+    "primaryRegisterName": "Joint Program Register",
+    "secondaryRegisterName": "Team Cloud Register",
+    "links": {
+      "charter": "https://example.com/aurora/charter",
+      "architecture": "https://example.com/aurora/architecture",
+      "tracker": "https://example.com/aurora/jira"
+    }
+  },
+  "kpiPillars": [
+    {
+      "id": "commercial",
+      "label": "Commercial & Budget",
+      "value": "\ud83d\udfe2 ON TRACK",
+      "subtext": "Milestone payments aligned to baseline schedule"
+    },
+    {
+      "id": "milestone",
+      "label": "Milestone Gate 2 (IBR)",
+      "value": "\ud83d\udfe1 IN PROGRESS (88%)",
+      "subtext": "System requirements review on critical path"
+    },
+    {
+      "id": "security",
+      "label": "ATO & Cyber Security",
+      "value": "\ud83d\udfe2 ACCREDITED",
+      "subtext": "Sovereign enclave security controls validated"
+    },
+    {
+      "id": "escalations",
+      "label": "Critical Escalations",
+      "value": "\ud83d\udd34 4 ITEMS",
+      "subtext": "3 technical blockers under active mitigation"
+    }
+  ],
+  "sources": {
+    "googleSheets": {
+      "enabled": false
+    },
+    "googleDrive": {
+      "enabled": false
+    },
+    "geminiNotebooks": {
+      "enabled": false
+    }
+  },
+  "features": {
+    "executiveBriefing": {
+      "enabled": true
+    },
+    "riskMatrix": {
+      "enabled": true
+    },
+    "secondaryRegister": {
+      "enabled": true
+    },
+    "issues": {
+      "enabled": true
+    },
+    "trends": {
+      "enabled": true
+    },
+    "knowledgeBase": {
+      "enabled": true
+    },
+    "driverTree": {
+      "enabled": true
+    },
+    "ledger": {
+      "enabled": true
+    },
+    "audioBriefing": {
+      "enabled": true
+    }
+  }
+}

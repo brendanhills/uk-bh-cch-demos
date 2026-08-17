@@ -1,0 +1,2130 @@
+{
+  "matrices": {
+    "primary": {
+      "residual": {
+        "open": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 1,
+              "itemIds": [
+                "RSK-065"
+              ]
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 2,
+              "itemIds": [
+                "RSK-002",
+                "RSK-066"
+              ]
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-007",
+                "RSK-009"
+              ]
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-036",
+                "RSK-037"
+              ]
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 4,
+              "itemIds": [
+                "RSK-006",
+                "RSK-008",
+                "RSK-062",
+                "RSK-063"
+              ]
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 8,
+              "itemIds": [
+                "RSK-019",
+                "RSK-026",
+                "RSK-034",
+                "RSK-055",
+                "RSK-056",
+                "RSK-064",
+                "RSK-097",
+                "RSK-100"
+              ]
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 40,
+              "itemIds": [
+                "RSK-012",
+                "RSK-033",
+                "RSK-038",
+                "RSK-042",
+                "RSK-043",
+                "RSK-044",
+                "RSK-045",
+                "RSK-046",
+                "RSK-047",
+                "RSK-048",
+                "RSK-049",
+                "RSK-050",
+                "RSK-051",
+                "RSK-052",
+                "RSK-053",
+                "RSK-054",
+                "RSK-057",
+                "RSK-058",
+                "RSK-059",
+                "RSK-060",
+                "RSK-067",
+                "RSK-068",
+                "RSK-069",
+                "RSK-070",
+                "RSK-071",
+                "RSK-072",
+                "RSK-073",
+                "RSK-074",
+                "RSK-075",
+                "RSK-076",
+                "RSK-077",
+                "RSK-078",
+                "RSK-081",
+                "RSK-083",
+                "RSK-090",
+                "RSK-096",
+                "RSK-102",
+                "RSK-103",
+                "RSK-104",
+                "RSK-105"
+              ]
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 2,
+              "itemIds": [
+                "RSK-022",
+                "RSK-099"
+              ]
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 2,
+              "itemIds": [
+                "RSK-024",
+                "RSK-027"
+              ]
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-018",
+                "RSK-093"
+              ]
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 6,
+              "itemIds": [
+                "RSK-003",
+                "RSK-005",
+                "RSK-028",
+                "RSK-089",
+                "RSK-092",
+                "RSK-098"
+              ]
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 7,
+              "itemIds": [
+                "RSK-025",
+                "RSK-029",
+                "RSK-035",
+                "RSK-039",
+                "RSK-040",
+                "RSK-041",
+                "RSK-094"
+              ]
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 11,
+              "itemIds": [
+                "RSK-010",
+                "RSK-015",
+                "RSK-016",
+                "RSK-020",
+                "RSK-021",
+                "RSK-023",
+                "RSK-031",
+                "RSK-079",
+                "RSK-084",
+                "RSK-087",
+                "RSK-088"
+              ]
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 1,
+              "itemIds": [
+                "RSK-030"
+              ]
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 1,
+              "itemIds": [
+                "RSK-004"
+              ]
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 2,
+              "itemIds": [
+                "RSK-106",
+                "RSK-107"
+              ]
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 1,
+              "itemIds": [
+                "RSK-061"
+              ]
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 4,
+              "itemIds": [
+                "RSK-085",
+                "RSK-086",
+                "RSK-091",
+                "RSK-095"
+              ]
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 1,
+              "itemIds": [
+                "RSK-101"
+              ]
+            }
+          },
+          "totalCount": 99,
+          "criticalCount": 29,
+          "eventuatedCount": 21,
+          "unactionedCount": 0
+        },
+        "all": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 1,
+              "itemIds": [
+                "RSK-065"
+              ]
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 2,
+              "itemIds": [
+                "RSK-002",
+                "RSK-066"
+              ]
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-007",
+                "RSK-009"
+              ]
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-036",
+                "RSK-037"
+              ]
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 4,
+              "itemIds": [
+                "RSK-006",
+                "RSK-008",
+                "RSK-062",
+                "RSK-063"
+              ]
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 8,
+              "itemIds": [
+                "RSK-019",
+                "RSK-026",
+                "RSK-034",
+                "RSK-055",
+                "RSK-056",
+                "RSK-064",
+                "RSK-097",
+                "RSK-100"
+              ]
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 44,
+              "itemIds": [
+                "RSK-011",
+                "RSK-012",
+                "RSK-013",
+                "RSK-014",
+                "RSK-017",
+                "RSK-033",
+                "RSK-038",
+                "RSK-042",
+                "RSK-043",
+                "RSK-044",
+                "RSK-045",
+                "RSK-046",
+                "RSK-047",
+                "RSK-048",
+                "RSK-049",
+                "RSK-050",
+                "RSK-051",
+                "RSK-052",
+                "RSK-053",
+                "RSK-054",
+                "RSK-057",
+                "RSK-058",
+                "RSK-059",
+                "RSK-060",
+                "RSK-067",
+                "RSK-068",
+                "RSK-069",
+                "RSK-070",
+                "RSK-071",
+                "RSK-072",
+                "RSK-073",
+                "RSK-074",
+                "RSK-075",
+                "RSK-076",
+                "RSK-077",
+                "RSK-078",
+                "RSK-081",
+                "RSK-083",
+                "RSK-090",
+                "RSK-096",
+                "RSK-102",
+                "RSK-103",
+                "RSK-104",
+                "RSK-105"
+              ]
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 3,
+              "itemIds": [
+                "RSK-022",
+                "RSK-032",
+                "RSK-099"
+              ]
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 2,
+              "itemIds": [
+                "RSK-024",
+                "RSK-027"
+              ]
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 3,
+              "itemIds": [
+                "RSK-001",
+                "RSK-018",
+                "RSK-093"
+              ]
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 6,
+              "itemIds": [
+                "RSK-003",
+                "RSK-005",
+                "RSK-028",
+                "RSK-089",
+                "RSK-092",
+                "RSK-098"
+              ]
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 7,
+              "itemIds": [
+                "RSK-025",
+                "RSK-029",
+                "RSK-035",
+                "RSK-039",
+                "RSK-040",
+                "RSK-041",
+                "RSK-094"
+              ]
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 11,
+              "itemIds": [
+                "RSK-010",
+                "RSK-015",
+                "RSK-016",
+                "RSK-020",
+                "RSK-021",
+                "RSK-023",
+                "RSK-031",
+                "RSK-079",
+                "RSK-084",
+                "RSK-087",
+                "RSK-088"
+              ]
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 1,
+              "itemIds": [
+                "RSK-030"
+              ]
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 1,
+              "itemIds": [
+                "RSK-004"
+              ]
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 2,
+              "itemIds": [
+                "RSK-106",
+                "RSK-107"
+              ]
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 3,
+              "itemIds": [
+                "RSK-061",
+                "RSK-080",
+                "RSK-082"
+              ]
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 4,
+              "itemIds": [
+                "RSK-085",
+                "RSK-086",
+                "RSK-091",
+                "RSK-095"
+              ]
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 1,
+              "itemIds": [
+                "RSK-101"
+              ]
+            }
+          },
+          "totalCount": 107,
+          "criticalCount": 32,
+          "eventuatedCount": 21,
+          "unactionedCount": 0
+        }
+      },
+      "inherent": {
+        "open": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-007",
+                "RSK-009"
+              ]
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-036",
+                "RSK-037"
+              ]
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 1,
+              "itemIds": [
+                "RSK-008"
+              ]
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 5,
+              "itemIds": [
+                "RSK-005",
+                "RSK-019",
+                "RSK-026",
+                "RSK-055",
+                "RSK-056"
+              ]
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 41,
+              "itemIds": [
+                "RSK-012",
+                "RSK-033",
+                "RSK-034",
+                "RSK-038",
+                "RSK-042",
+                "RSK-043",
+                "RSK-044",
+                "RSK-045",
+                "RSK-046",
+                "RSK-047",
+                "RSK-048",
+                "RSK-049",
+                "RSK-050",
+                "RSK-051",
+                "RSK-052",
+                "RSK-053",
+                "RSK-054",
+                "RSK-057",
+                "RSK-058",
+                "RSK-059",
+                "RSK-060",
+                "RSK-067",
+                "RSK-068",
+                "RSK-069",
+                "RSK-070",
+                "RSK-071",
+                "RSK-072",
+                "RSK-073",
+                "RSK-074",
+                "RSK-075",
+                "RSK-076",
+                "RSK-077",
+                "RSK-078",
+                "RSK-081",
+                "RSK-083",
+                "RSK-090",
+                "RSK-096",
+                "RSK-102",
+                "RSK-103",
+                "RSK-104",
+                "RSK-105"
+              ]
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 2,
+              "itemIds": [
+                "RSK-022",
+                "RSK-087"
+              ]
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 2,
+              "itemIds": [
+                "RSK-024",
+                "RSK-027"
+              ]
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 1,
+              "itemIds": [
+                "RSK-093"
+              ]
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 7,
+              "itemIds": [
+                "RSK-003",
+                "RSK-018",
+                "RSK-028",
+                "RSK-089",
+                "RSK-092",
+                "RSK-097",
+                "RSK-100"
+              ]
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 11,
+              "itemIds": [
+                "RSK-002",
+                "RSK-025",
+                "RSK-029",
+                "RSK-035",
+                "RSK-039",
+                "RSK-040",
+                "RSK-041",
+                "RSK-062",
+                "RSK-064",
+                "RSK-065",
+                "RSK-094"
+              ]
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 10,
+              "itemIds": [
+                "RSK-010",
+                "RSK-015",
+                "RSK-016",
+                "RSK-020",
+                "RSK-021",
+                "RSK-023",
+                "RSK-031",
+                "RSK-066",
+                "RSK-084",
+                "RSK-088"
+              ]
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 1,
+              "itemIds": [
+                "RSK-030"
+              ]
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-004",
+                "RSK-006"
+              ]
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 1,
+              "itemIds": [
+                "RSK-098"
+              ]
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 2,
+              "itemIds": [
+                "RSK-061",
+                "RSK-063"
+              ]
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 7,
+              "itemIds": [
+                "RSK-079",
+                "RSK-085",
+                "RSK-086",
+                "RSK-091",
+                "RSK-095",
+                "RSK-106",
+                "RSK-107"
+              ]
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 2,
+              "itemIds": [
+                "RSK-099",
+                "RSK-101"
+              ]
+            }
+          },
+          "totalCount": 99,
+          "criticalCount": 37,
+          "eventuatedCount": 21,
+          "unactionedCount": 0
+        },
+        "all": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-007",
+                "RSK-009"
+              ]
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-036",
+                "RSK-037"
+              ]
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 1,
+              "itemIds": [
+                "RSK-008"
+              ]
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 5,
+              "itemIds": [
+                "RSK-005",
+                "RSK-019",
+                "RSK-026",
+                "RSK-055",
+                "RSK-056"
+              ]
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 45,
+              "itemIds": [
+                "RSK-011",
+                "RSK-012",
+                "RSK-013",
+                "RSK-014",
+                "RSK-017",
+                "RSK-033",
+                "RSK-034",
+                "RSK-038",
+                "RSK-042",
+                "RSK-043",
+                "RSK-044",
+                "RSK-045",
+                "RSK-046",
+                "RSK-047",
+                "RSK-048",
+                "RSK-049",
+                "RSK-050",
+                "RSK-051",
+                "RSK-052",
+                "RSK-053",
+                "RSK-054",
+                "RSK-057",
+                "RSK-058",
+                "RSK-059",
+                "RSK-060",
+                "RSK-067",
+                "RSK-068",
+                "RSK-069",
+                "RSK-070",
+                "RSK-071",
+                "RSK-072",
+                "RSK-073",
+                "RSK-074",
+                "RSK-075",
+                "RSK-076",
+                "RSK-077",
+                "RSK-078",
+                "RSK-081",
+                "RSK-083",
+                "RSK-090",
+                "RSK-096",
+                "RSK-102",
+                "RSK-103",
+                "RSK-104",
+                "RSK-105"
+              ]
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 3,
+              "itemIds": [
+                "RSK-022",
+                "RSK-032",
+                "RSK-087"
+              ]
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 2,
+              "itemIds": [
+                "RSK-024",
+                "RSK-027"
+              ]
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 2,
+              "itemIds": [
+                "RSK-001",
+                "RSK-093"
+              ]
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 7,
+              "itemIds": [
+                "RSK-003",
+                "RSK-018",
+                "RSK-028",
+                "RSK-089",
+                "RSK-092",
+                "RSK-097",
+                "RSK-100"
+              ]
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 11,
+              "itemIds": [
+                "RSK-002",
+                "RSK-025",
+                "RSK-029",
+                "RSK-035",
+                "RSK-039",
+                "RSK-040",
+                "RSK-041",
+                "RSK-062",
+                "RSK-064",
+                "RSK-065",
+                "RSK-094"
+              ]
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 10,
+              "itemIds": [
+                "RSK-010",
+                "RSK-015",
+                "RSK-016",
+                "RSK-020",
+                "RSK-021",
+                "RSK-023",
+                "RSK-031",
+                "RSK-066",
+                "RSK-084",
+                "RSK-088"
+              ]
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 1,
+              "itemIds": [
+                "RSK-030"
+              ]
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 2,
+              "itemIds": [
+                "RSK-004",
+                "RSK-006"
+              ]
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 1,
+              "itemIds": [
+                "RSK-098"
+              ]
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 4,
+              "itemIds": [
+                "RSK-061",
+                "RSK-063",
+                "RSK-080",
+                "RSK-082"
+              ]
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 7,
+              "itemIds": [
+                "RSK-079",
+                "RSK-085",
+                "RSK-086",
+                "RSK-091",
+                "RSK-095",
+                "RSK-106",
+                "RSK-107"
+              ]
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 2,
+              "itemIds": [
+                "RSK-099",
+                "RSK-101"
+              ]
+            }
+          },
+          "totalCount": 107,
+          "criticalCount": 40,
+          "eventuatedCount": 21,
+          "unactionedCount": 0
+        }
+      }
+    },
+    "secondary": {
+      "residual": {
+        "open": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 0,
+              "itemIds": []
+            }
+          },
+          "totalCount": 0,
+          "criticalCount": 0,
+          "eventuatedCount": 0,
+          "unactionedCount": 0
+        },
+        "all": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 0,
+              "itemIds": []
+            }
+          },
+          "totalCount": 0,
+          "criticalCount": 0,
+          "eventuatedCount": 0,
+          "unactionedCount": 0
+        }
+      },
+      "inherent": {
+        "open": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 0,
+              "itemIds": []
+            }
+          },
+          "totalCount": 0,
+          "criticalCount": 0,
+          "eventuatedCount": 0,
+          "unactionedCount": 0
+        },
+        "all": {
+          "cells": {
+            "1_1": {
+              "likelihood": 1,
+              "consequence": 1,
+              "score": 1,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_2": {
+              "likelihood": 1,
+              "consequence": 2,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_3": {
+              "likelihood": 1,
+              "consequence": 3,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_4": {
+              "likelihood": 1,
+              "consequence": 4,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "1_5": {
+              "likelihood": 1,
+              "consequence": 5,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_1": {
+              "likelihood": 2,
+              "consequence": 1,
+              "score": 2,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_2": {
+              "likelihood": 2,
+              "consequence": 2,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_3": {
+              "likelihood": 2,
+              "consequence": 3,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_4": {
+              "likelihood": 2,
+              "consequence": 4,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "2_5": {
+              "likelihood": 2,
+              "consequence": 5,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_1": {
+              "likelihood": 3,
+              "consequence": 1,
+              "score": 3,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_2": {
+              "likelihood": 3,
+              "consequence": 2,
+              "score": 6,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_3": {
+              "likelihood": 3,
+              "consequence": 3,
+              "score": 9,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_4": {
+              "likelihood": 3,
+              "consequence": 4,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "3_5": {
+              "likelihood": 3,
+              "consequence": 5,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_1": {
+              "likelihood": 4,
+              "consequence": 1,
+              "score": 4,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_2": {
+              "likelihood": 4,
+              "consequence": 2,
+              "score": 8,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_3": {
+              "likelihood": 4,
+              "consequence": 3,
+              "score": 12,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_4": {
+              "likelihood": 4,
+              "consequence": 4,
+              "score": 16,
+              "count": 0,
+              "itemIds": []
+            },
+            "4_5": {
+              "likelihood": 4,
+              "consequence": 5,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_1": {
+              "likelihood": 5,
+              "consequence": 1,
+              "score": 5,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_2": {
+              "likelihood": 5,
+              "consequence": 2,
+              "score": 10,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_3": {
+              "likelihood": 5,
+              "consequence": 3,
+              "score": 15,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_4": {
+              "likelihood": 5,
+              "consequence": 4,
+              "score": 20,
+              "count": 0,
+              "itemIds": []
+            },
+            "5_5": {
+              "likelihood": 5,
+              "consequence": 5,
+              "score": 25,
+              "count": 0,
+              "itemIds": []
+            }
+          },
+          "totalCount": 0,
+          "criticalCount": 0,
+          "eventuatedCount": 0,
+          "unactionedCount": 0
+        }
+      }
+    }
+  },
+  "trends": {
+    "labels": [
+      "Week 22",
+      "Week 23",
+      "Week 24",
+      "Week 25",
+      "Week 26",
+      "Week 27"
+    ],
+    "burndown": {
+      "inherentScores": [
+        15.4,
+        15.6,
+        15.8,
+        16.0,
+        16.2,
+        16.4
+      ],
+      "residualScores": [
+        12.0,
+        11.3,
+        10.6,
+        9.8,
+        9.1,
+        8.4
+      ],
+      "deltaCompression": -8.0
+    },
+    "backlog": {
+      "totalVolume": [
+        92,
+        95,
+        98,
+        101,
+        104,
+        107
+      ],
+      "intake": [
+        3,
+        4,
+        5,
+        2,
+        3,
+        2
+      ],
+      "closed": [
+        1,
+        2,
+        2,
+        4,
+        3,
+        5
+      ]
+    },
+    "causeCategories": {
+      "labels": [
+        "Engineering/Platform",
+        "Security/Compliance",
+        "Schedule",
+        "Architecture",
+        "Governance",
+        "Supply Chain/Delivery"
+      ],
+      "counts": [
+        0,
+        0,
+        28,
+        0,
+        33,
+        0
+      ]
+    }
+  },
+  "blueprintMappings": {},
+  "scheduleSqueeze": [
+    {
+      "title": "Milestone Gate 2 (IBR) Compression",
+      "lead": "Adam Flint",
+      "gateDate": "26-Aug-2026",
+      "varianceDays": "0 Days (On Baseline)",
+      "status": "GREEN",
+      "detail": "Contractual IBR review on track with 90% artefact readiness."
+    },
+    {
+      "title": "SRR to PDR Float Compression",
+      "lead": "Dan Wurzer / Scott Deacon",
+      "gateDate": "15-Sep-2026 -> 15-Nov-2026",
+      "varianceDays": "-14 Days Float",
+      "status": "AMBER",
+      "detail": "SRR shift to September compresses downstream PDR preparation window to 6 weeks."
+    },
+    {
+      "title": "Facilities to Enclave Ready Squeeze",
+      "lead": "Tom Trobe / Daryl James",
+      "gateDate": "30-Aug-2026",
+      "varianceDays": "-5 Days Buffer",
+      "status": "AMBER",
+      "detail": "Optical interconnect cabling lead time tightening facility handover margin."
+    }
+  ],
+  "searchTokens": {
+    "bundles": [
+      "A",
+      "A, H, J",
+      "A.02",
+      "AIC Plan",
+      "All",
+      "G (Environments)",
+      "H",
+      "H and J",
+      "J",
+      "L",
+      "N/A",
+      "Programme",
+      "all/ programme"
+    ],
+    "causes": [
+      "Contract & Legal",
+      "Cost",
+      "Governance Assurance",
+      "Industry",
+      "Interoperability",
+      "Legal/Contract",
+      "Reputation",
+      "Schedule",
+      "Scope",
+      "Security & Cyber",
+      "Technical Maturity",
+      "Technical Performance"
+    ],
+    "owners": [
+      "0                   Susan Allin",
+      "1                     Tom Trobe",
+      "1                   Mick Devine",
+      "2                     Tom Trobe",
+      "2                   Mick Devine",
+      "3                     Tom Trobe",
+      "3                    Lisa Brown",
+      "4                   John Hyland",
+      "4                   Susan Allin",
+      "4                  Scott Deacon",
+      "5                     Doug Turk",
+      "6                  Scott Deacon",
+      "7            Christy Karamzalis",
+      "8                     Tom Trobe",
+      "9                   John Hyland",
+      "9            Michael Maconachie",
+      "Dan Williams",
+      "Doug Turk",
+      "Drew Armstrong",
+      "John Hyland",
+      "John Hyland - (ACN Bundle A)",
+      "Lisa Brown",
+      "Michael Maconachie",
+      "Scott Deacon",
+      "Steven Pecotic",
+      "Susan Allin",
+      "Team Google",
+      "Tom Trobe",
+      "e                    Lisa Brown",
+      "e                   John Hyland",
+      "e                Steven Pecotic"
+    ],
+    "totalRiskCount": 107,
+    "totalIssueCount": 29
+  }
+}

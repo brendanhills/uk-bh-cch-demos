@@ -1,0 +1,85 @@
+{
+  "project": {
+    "slug": "f-dse",
+    "name": "Australian Defence F-DSE",
+    "title": "Federated Defence Secret Environment",
+    "organization": "Joint Executive Board",
+    "logoIcon": "\ud83d\udee1\ufe0f",
+    "heroTag": "F-DSE Delivery Governance \u2022 Joint & Team Google Risk Portfolio",
+    "primaryRegisterName": "Joint Program Register",
+    "secondaryRegisterName": "Team Google Register",
+    "links": {
+      "charter": "https://example.com/fdse/charter",
+      "sheets": "https://docs.google.com/spreadsheets/d/1X-fdse-sheet-id"
+    }
+  },
+  "kpiPillars": [
+    {
+      "id": "commercial",
+      "label": "Commercial & Budget",
+      "value": "\ud83d\udfe2 ON TRACK",
+      "subtext": "Milestone payments aligned to baseline schedule"
+    },
+    {
+      "id": "milestone",
+      "label": "Milestone 2 (IBR)",
+      "value": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+      "subtext": "System requirements review on critical path"
+    },
+    {
+      "id": "security",
+      "label": "ATO-C Security",
+      "value": "\ud83d\udfe2 ACCREDITED",
+      "subtext": "Embedded cyber assessors active across all enclaves"
+    },
+    {
+      "id": "escalations",
+      "label": "Critical Escalations",
+      "value": "\ud83d\udd34 5 ITEMS",
+      "subtext": "Contractual sign-offs under active escalation"
+    }
+  ],
+  "sources": {
+    "googleSheets": {
+      "enabled": true,
+      "sheetUrl": "https://docs.google.com/spreadsheets/d/18H_mYqN9n5Vj1qN7..."
+    },
+    "googleDrive": {
+      "enabled": true,
+      "folderId": "1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C"
+    },
+    "geminiNotebooks": {
+      "enabled": true,
+      "notebookIds": []
+    }
+  },
+  "features": {
+    "executiveBriefing": {
+      "enabled": true
+    },
+    "riskMatrix": {
+      "enabled": true
+    },
+    "secondaryRegister": {
+      "enabled": true
+    },
+    "issues": {
+      "enabled": true
+    },
+    "trends": {
+      "enabled": true
+    },
+    "knowledgeBase": {
+      "enabled": true
+    },
+    "driverTree": {
+      "enabled": true
+    },
+    "ledger": {
+      "enabled": true
+    },
+    "audioBriefing": {
+      "enabled": true
+    }
+  }
+}

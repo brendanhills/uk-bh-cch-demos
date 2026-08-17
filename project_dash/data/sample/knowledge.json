@@ -1,0 +1,89 @@
+{
+  "blueprints": [
+    {
+      "bundle": "Bundle A",
+      "annex": "Annex A (Architecture & V&V)",
+      "title": "Sovereign Enclave High-Level Architecture & V&V Matrix",
+      "version": "v2.1",
+      "driverTreeRefs": [
+        "1.2b",
+        "1.14",
+        "1.15"
+      ],
+      "summary": "End-to-end multi-tier architecture specification for sovereign compute and zero-trust perimeter control."
+    },
+    {
+      "bundle": "Bundle B",
+      "annex": "Annex B (Security & ATO-C)",
+      "title": "System Security Plan & Continuous ATO-C Accreditation",
+      "version": "v1.8",
+      "driverTreeRefs": [
+        "1.6 GFF",
+        "1.12"
+      ],
+      "summary": "OSCAL-mapped security control framework and automated eBPF compliance evidence collection probers."
+    },
+    {
+      "bundle": "Bundle C",
+      "annex": "Annex C (Data Pipeline)",
+      "title": "High-Throughput Data Diode & CDC Streaming Lakehouse",
+      "version": "v1.4",
+      "driverTreeRefs": [
+        "1.4c"
+      ],
+      "summary": "Unidirectional optical diode ingestion pipeline with schema-enforced Avro serialization."
+    },
+    {
+      "bundle": "Bundle D",
+      "annex": "Annex D (AI Platform)",
+      "title": "Vertex AI Foundation Model Enclave & Inference Serving",
+      "version": "v2.0",
+      "driverTreeRefs": [
+        "1.8b",
+        "1.18"
+      ],
+      "summary": "Air-gapped LLM fine-tuning, vLLM inference server optimization, and RAG vector search quantization."
+    },
+    {
+      "bundle": "Bundle E",
+      "annex": "Annex E (Governance & Ops)",
+      "title": "Integrated Telemetry, Observability & Incident Response",
+      "version": "v1.5",
+      "driverTreeRefs": [
+        "1.12"
+      ],
+      "summary": "Prometheus/Grafana telemetry mesh with automated anomaly detection and cold log tiering."
+    },
+    {
+      "bundle": "Bundle H",
+      "annex": "Annex H (Core Infrastructure)",
+      "title": "Managed Enclave Compute, NVMe Storage & Optical Interconnects",
+      "version": "v3.0",
+      "driverTreeRefs": [
+        "1.10b"
+      ],
+      "summary": "High-density GPU compute chassis, redundant 400Gbps network fabric, and Stratum 1 PTP clock synchronization."
+    },
+    {
+      "bundle": "Bundle J",
+      "annex": "Annex J (Identity & Access)",
+      "title": "Zero-Trust Identity Federation & mTLS Service Mesh",
+      "version": "v1.2",
+      "driverTreeRefs": [
+        "1.6 GFF"
+      ],
+      "summary": "SPIFFE/SPIRE workload identity and hardware HSM key management rotation."
+    },
+    {
+      "bundle": "Bundle K",
+      "annex": "Annex K (Network Isolation)",
+      "title": "Multi-Domain Microsegmentation & Anycast Routing",
+      "version": "v1.3",
+      "driverTreeRefs": [
+        "1.6 GFF",
+        "1.10b"
+      ],
+      "summary": "Calico network security policies and dynamic BGP route withdrawal."
+    }
+  ]
+}

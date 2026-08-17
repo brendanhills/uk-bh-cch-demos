@@ -32,28 +32,28 @@
   - [x] Ingest configured Gemini Notebooks into `data/<project>/knowledge.json`
   - [x] Trigger `gemini_generator.py` for latest snapshot AI synthesis and multi-speaker audio
   - [x] Trigger `precompute_analytics.py` to generate `data/<project>/precomputed_analytics.json`
-- [ ] Task 2.3: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task 2.3: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 3: Project Aurora Sample Dataset & Directory Isolation (`data/`)
-- [ ] Task 3.1: Write data integrity unit test for Project Aurora sample schema
+- [x] Task 3.1: Write data integrity unit test for Project Aurora sample schema
   - [x] Create `tests/test_sample_dataset.py` validating all JSON schema invariants
-- [ ] Task 3.2: Create `data/sample/config.json`
-  - [ ] Define Project Aurora branding, titles, theme colors, external URLs, and 4 KPI pillars
-  - [ ] Configure feature toggle flags for all 8 tabs
-- [ ] Task 3.3: Create `data/sample/risks.json` & `data/sample/issues.json`
-  - [ ] Author 25+ realistic 5×5 risk matrix records across Cloud, Security, Data, and Architecture
-  - [ ] Author 10+ operational blocker issues with remediation plans and target dates
-- [ ] Task 3.4: Create `data/sample/snapshots.json`, `driver_tree.json`, and `knowledge.json`
-  - [ ] Populate 6 weeks of historical longitudinal snapshots (`W22`–`W27`) with AI syntheses
-  - [ ] Define 24 contractual capability gates across CD1 and CD1.5
-  - [ ] Define 10 solution blueprints mapped to active sample risks
-- [ ] Task 3.5: Populate `data/sample/precomputed_analytics.json` & sample audio
-  - [ ] Run `ingest_data.py --project=sample` to build baseline pre-computed cache
-  - [ ] Add generic sample audio snippet `data/sample/podcast_sample.mp3`
-- [ ] Task 3.6: Migrate existing F-DSE project files into isolated `data/f-dse/`
-  - [ ] Move proprietary live registers, snapshots, and blueprints into `data/f-dse/`
+- [x] Task 3.2: Create `data/sample/config.json`
+  - [x] Define Project Aurora branding, titles, theme colors, external URLs, and 4 KPI pillars
+  - [x] Configure feature toggle flags for all 8 tabs
+- [x] Task 3.3: Create `data/sample/risks.json` & `data/sample/issues.json`
+  - [x] Author 25+ realistic 5×5 risk matrix records across Cloud, Security, Data, and Architecture
+  - [x] Author 10+ operational blocker issues with remediation plans and target dates
+- [x] Task 3.4: Create `data/sample/snapshots.json`, `driver_tree.json`, and `knowledge.json`
+  - [x] Populate 6 weeks of historical longitudinal snapshots (`W22`–`W27`) with AI syntheses
+  - [x] Define 24 contractual capability gates across CD1 and CD1.5
+  - [x] Define 10 solution blueprints mapped to active sample risks
+- [x] Task 3.5: Populate `data/sample/precomputed_analytics.json` & sample audio
+  - [x] Run `ingest_data.py --project=sample` to build baseline pre-computed cache
+  - [x] Add generic sample audio snippet `data/sample/podcast_sample.mp3`
+- [x] Task 3.6: Migrate existing F-DSE project files into isolated `data/f-dse/`
+  - [x] Move proprietary live registers, snapshots, and blueprints into `data/f-dse/`
 - [ ] Task 3.7: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
