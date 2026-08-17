@@ -27,9 +27,9 @@ Configure your authorized **Dashboard Viewers**, **Dashboard Admins/Editors**, b
 
 ```bash
 # --- Cloud Run Deployment Configuration ---
-GCP_PROJECT_ID="uk-bh-experiments-argolis"
+GCP_PROJECT_ID="monaro-risk-dev"
 GCP_REGION="us-central1"
-GCP_SERVICE_NAME="f-dse-risk-dashboard-private"
+GCP_SERVICE_NAME="monaro-risk-dash-dev"
 
 # --- Dashboard Viewer Access Control (IAM roles/run.invoker) ---
 # Viewers can access and view the live dashboard web application via Google SSO.

@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-08-17T12:32:28.878128",
+  "lastSynced": "2026-08-17T15:29:25.164609",
   "driveFolderId": "1JIsbi35mXn4W-NxjbLTWo22FQMv_zv-C",
   "snapshots": {
     "w26": {
@@ -363,6 +363,10 @@
         "ato": "\ud83d\udfe2 GREEN",
         "escalations": "\ud83d\udd34 5 ITEMS"
       },
+      "synthesis": {},
+      "top3": [],
+      "sleeperOutlier": {},
+      "podcastScript": [],
       "plans": [
         {
           "num": 1,
@@ -371,7 +375,7 @@
           "title": "Milestone 1 Deliverables Cth Acceptance",
           "plan": "GAP closure report created to work with the Cth for acceptance of milestone 1 deliverables.",
           "owner": "COL Tim Minion / Adam Flint",
-          "target": "Aug 2026",
+          "target": "Jul 2026",
           "deltaNote": "Continuing Cth review of SRP, V&V, and IMS deliverable acceptance."
         },
         {
@@ -382,17 +386,17 @@
           "plan": "Validating schedule impacts and mitigating delivery approach whilst connectivity is established.",
           "owner": "Aron Ward / Team Google",
           "target": "Aug 2026",
-          "deltaNote": "Facility connectivity lead time under active mitigation."
+          "deltaNote": "Delivery target adjusted from Jul 2026 to Aug 2026 to mitigate site connectivity lead time."
         },
         {
           "num": 3,
           "status": "BLUE",
           "ref": "1.10b (I-129)",
           "title": "I-129 Delivered \u2022 GDC EE E.01 Test/Dev Ready",
-          "plan": "Platform successfully validated and environment build commenced, with early release provided to initial systems.",
+          "plan": "Platform successfully validated and environment build commenced, with early release provided to initial systems. Impact of 5 week delay under review.",
           "owner": "Tom Trobe / Daryl James",
           "target": "Delivered / Monitoring",
-          "deltaNote": "Early release operational for test/dev systems."
+          "deltaNote": "Successfully validated platform and commenced environment build. Upgraded from RED blocker."
         },
         {
           "num": 4,
@@ -402,19 +406,20 @@
           "plan": "Iterative approach to prioritise System Requirements for CD1.5, development of glide path similar to IBR.",
           "owner": "Scott Deacon / Dan Wurzer",
           "target": "Sep 2026",
-          "deltaNote": "Prioritization glide path progressing."
+          "deltaNote": "SRR approval date moved from Jul 2026 to Sep 2026 to establish CD1.5 glide path."
         },
         {
           "num": 5,
           "status": "RED",
           "ref": "3.1",
           "title": "Application Discovery Report (ADR) Gap Closure",
-          "plan": "Address in the Apps Focus Groups, direct engagement with System Owners.",
+          "plan": "Address in the Apps Focus Groups, direct engagement with System Owners. Working on the gap closure plan.",
           "owner": "Steve Peel / Team Google",
-          "target": "Aug 2026",
-          "deltaNote": "Apps Focus Groups underway."
+          "target": "Jul/Aug 2026",
+          "deltaNote": "Escalated to direct stakeholder sessions via newly chartered Apps Focus Groups."
         }
-      ]
+      ],
+      "generatedBy": "gemini-3.5-flash"
     }
   }
 }

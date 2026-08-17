@@ -45,8 +45,8 @@ load_env() {
 load_env
 
 # Apply defaults with .env overrides
-PROJECT_ID="${ENV_PROJECT_ID:-uk-bh-experiments-argolis}"
-SERVICE_NAME="${ENV_SERVICE_NAME:-f-dse-risk-dashboard-private}"
+PROJECT_ID="${ENV_PROJECT_ID:-monaro-risk-dev}"
+SERVICE_NAME="${ENV_SERVICE_NAME:-monaro-risk-dash-dev}"
 REGION="${ENV_REGION:-us-central1}"
 
 # Blocked domains list (defaults + .env)

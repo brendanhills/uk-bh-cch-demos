@@ -1013,5 +1013,24 @@
     "phase": "Phase 7",
     "status": "Investigated",
     "context": "project_dash"
+  },
+  {
+    "id": 58,
+    "type": "Bug",
+    "title": "Gemini 3.5 Pro is not a real model - update branding to say Gemini",
+    "description": "Gemini 3.5 Pro is not a real model. Update branding, badge text, synthesis headers, and documentation to refer simply to 'Gemini'.",
+    "cause": "Historical branding referred to unreleased model version.",
+    "plan": "Update references to Gemini across UI and documentation.",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-17",
+    "date_triaged": "2026-08-17",
+    "date_resolved": "2026-08-17",
+    "priority": "P3",
+    "impact": "Low",
+    "risk": "Low",
+    "phase": "Completed/Verified",
+    "status": "Fix Verified",
+    "context": "project_dash",
+    "resolution_notes": "Resolved by user: updated branding, badge text, and documentation to refer to Gemini."
   }
 ]
