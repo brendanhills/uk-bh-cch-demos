@@ -1096,7 +1096,7 @@
                         <div class="flex items-center gap-2">
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-800">NotebookLM Grounded</span>
                             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>Project Monaro Contract &amp; Blueprint Knowledge Base</span>
+                                <span id="blueprintTabTitle">Blueprint &amp; Contract Knowledge Base</span>
                                 <span class="bg-purple-50 text-purple-700 text-xs font-bold px-2 py-0.5 rounded-full border border-purple-200" id="blueprintSourcesCount">17 Sources</span>
                             </h2>
                         </div>
@@ -1377,6 +1377,20 @@
         let TIME_MACHINE_SNAPSHOTS = {};
         let PRECOMPUTED_ANALYTICS = null;
         let DRIVER_TREE = null;
+        let DRIVER_TREE_ITEMS = [];
+        let DRIVE_REPORTS = [];
+        let currentMatrixRating = 'residual';
+        let currentMatrixStatus = 'open';
+        let trendsGranularity = 'monthly';
+        let currentDriverTreeLevel = 'all';
+        let activeTimeMachineWeek = 'w27';
+        let showAllGapPlans = false;
+        let showResolvedGapPlans = false;
+        let selectedDiffBaseline = 'w26';
+        let activeMatrixCellFilter = null;
+        let currentQuickFilter = 'all';
+        let explorerViewMode = 'cards';
+        let expandedRiskIds = new Set();
 
         async function loadDashboardData() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1414,6 +1428,25 @@
                 }
                 if (dtRes.ok) {
                     DRIVER_TREE = await dtRes.json();
+                    if (Array.isArray(DRIVER_TREE)) {
+                        DRIVER_TREE_ITEMS = DRIVER_TREE;
+                    } else if (DRIVER_TREE && DRIVER_TREE.capabilityDrops) {
+                        DRIVER_TREE_ITEMS = [];
+                        DRIVER_TREE.capabilityDrops.forEach(cd => {
+                            (cd.gates || []).forEach(g => {
+                                DRIVER_TREE_ITEMS.push({
+                                    itemNumber: g.ref || g.itemNumber,
+                                    name: g.name,
+                                    status: g.status || cd.status || 'GREEN',
+                                    level: 2,
+                                    owner: g.owner || 'Lead',
+                                    targetDate: g.dueDate || cd.targetDate || '2026-10-31',
+                                    category: cd.name,
+                                    gapCloseRef: g.gapCloseRef || null
+                                });
+                            });
+                        });
+                    }
                 }
                 if (analRes.ok) {
                     PRECOMPUTED_ANALYTICS = await analRes.json();
@@ -1480,6 +1513,26 @@
                 const count = (NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints || []).length;
                 tabBlueprintsBadge.innerText = count;
             }
+
+            // Dynamically update NotebookLM Links & Titles
+            if (NOTEBOOK_CATALOG) {
+                const nbTitle = NOTEBOOK_CATALOG.notebookTitle || `${p.name} Contract Notebook`;
+                const nbUrl = NOTEBOOK_CATALOG.notebookUrl || 'https://notebook.google.com';
+                
+                const nbHeaderTitle = document.getElementById('blueprintTabTitle');
+                if (nbHeaderTitle) nbHeaderTitle.innerText = `${nbTitle} Knowledge Base`;
+                
+                const nbExtLink = document.getElementById('notebookExternalLink');
+                if (nbExtLink) {
+                    nbExtLink.href = nbUrl;
+                    nbExtLink.title = `Open ${nbTitle} in NotebookLM`;
+                }
+
+                const nbOpt = document.querySelector('#notebookSelect option');
+                if (nbOpt) {
+                    nbOpt.innerText = `${nbTitle} (${(NOTEBOOK_CATALOG.sources || []).length} Sources)`;
+                }
+            }
         }
 
         function renderFeatureTabs() {
@@ -1504,20 +1557,6 @@
             const showLedger = f.ledger?.enabled === true || urlParams.get('view') === 'pm' || urlParams.get('ledger') === 'true';
             toggle('tab-ledger', showLedger);
         }
-
-        let currentDriverTreeLevel = 'all';
-
-        // Time Machine and Diff State
-        let activeTimeMachineWeek = 'w27';
-        let showAllGapPlans = false;
-        let showResolvedGapPlans = false; // Default Present
-        let selectedDiffBaseline = 'w26'; // Default compare against Last Week (Week 26)
-
-        // Explorer Filter States
-        let activeMatrixCellFilter = null;
-        let currentQuickFilter = 'all';
-        let explorerViewMode = 'cards';
-        let expandedRiskIds = new Set();
 
         
         // =========================================================================
@@ -3435,6 +3474,18 @@
         }
 
         function computeTimelineMetrics(granularity) {
+            if (PRECOMPUTED_ANALYTICS && PRECOMPUTED_ANALYTICS.trends && PRECOMPUTED_ANALYTICS.trends.labels) {
+                const t = PRECOMPUTED_ANALYTICS.trends;
+                return {
+                    labels: t.labels || [],
+                    activeBacklog: t.backlog?.netBacklog || [],
+                    newOpened: t.backlog?.intake || [],
+                    newClosed: t.backlog?.closed || [],
+                    inherentScores: t.burndown?.inherentAvg || [],
+                    residualScores: t.burndown?.residualAvg || []
+                };
+            }
+
             const keys = Object.keys(TIME_MACHINE_SNAPSHOTS).sort((a, b) => {
                 const na = parseInt(a.replace(/\D/g, '')) || 0;
                 const nb = parseInt(b.replace(/\D/g, '')) || 0;

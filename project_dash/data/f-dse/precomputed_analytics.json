@@ -1237,15 +1237,20 @@
               "likelihood": 1,
               "consequence": 2,
               "score": 2,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-004",
+                "TG-RSK-007"
+              ]
             },
             "1_3": {
               "likelihood": 1,
               "consequence": 3,
               "score": 3,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-010"
+              ]
             },
             "1_4": {
               "likelihood": 1,
@@ -1265,22 +1270,33 @@
               "likelihood": 2,
               "consequence": 1,
               "score": 2,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-008"
+              ]
             },
             "2_2": {
               "likelihood": 2,
               "consequence": 2,
               "score": 4,
-              "count": 0,
-              "itemIds": []
+              "count": 5,
+              "itemIds": [
+                "TG-RSK-001",
+                "TG-RSK-003",
+                "TG-RSK-009",
+                "TG-RSK-011",
+                "TG-RSK-012"
+              ]
             },
             "2_3": {
               "likelihood": 2,
               "consequence": 3,
               "score": 6,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-002",
+                "TG-RSK-005"
+              ]
             },
             "2_4": {
               "likelihood": 2,
@@ -1402,7 +1418,7 @@
               "itemIds": []
             }
           },
-          "totalCount": 0,
+          "totalCount": 11,
           "criticalCount": 0,
           "eventuatedCount": 0,
           "unactionedCount": 0
@@ -1413,22 +1429,29 @@
               "likelihood": 1,
               "consequence": 1,
               "score": 1,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-006"
+              ]
             },
             "1_2": {
               "likelihood": 1,
               "consequence": 2,
               "score": 2,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-004",
+                "TG-RSK-007"
+              ]
             },
             "1_3": {
               "likelihood": 1,
               "consequence": 3,
               "score": 3,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-010"
+              ]
             },
             "1_4": {
               "likelihood": 1,
@@ -1448,22 +1471,33 @@
               "likelihood": 2,
               "consequence": 1,
               "score": 2,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-008"
+              ]
             },
             "2_2": {
               "likelihood": 2,
               "consequence": 2,
               "score": 4,
-              "count": 0,
-              "itemIds": []
+              "count": 5,
+              "itemIds": [
+                "TG-RSK-001",
+                "TG-RSK-003",
+                "TG-RSK-009",
+                "TG-RSK-011",
+                "TG-RSK-012"
+              ]
             },
             "2_3": {
               "likelihood": 2,
               "consequence": 3,
               "score": 6,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-002",
+                "TG-RSK-005"
+              ]
             },
             "2_4": {
               "likelihood": 2,
@@ -1585,7 +1619,7 @@
               "itemIds": []
             }
           },
-          "totalCount": 0,
+          "totalCount": 12,
           "criticalCount": 0,
           "eventuatedCount": 0,
           "unactionedCount": 0
@@ -1682,15 +1716,20 @@
               "likelihood": 3,
               "consequence": 3,
               "score": 9,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-004",
+                "TG-RSK-007"
+              ]
             },
             "3_4": {
               "likelihood": 3,
               "consequence": 4,
               "score": 12,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-010"
+              ]
             },
             "3_5": {
               "likelihood": 3,
@@ -1710,22 +1749,32 @@
               "likelihood": 4,
               "consequence": 2,
               "score": 8,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-008"
+              ]
             },
             "4_3": {
               "likelihood": 4,
               "consequence": 3,
               "score": 12,
-              "count": 0,
-              "itemIds": []
+              "count": 3,
+              "itemIds": [
+                "TG-RSK-003",
+                "TG-RSK-009",
+                "TG-RSK-011"
+              ]
             },
             "4_4": {
               "likelihood": 4,
               "consequence": 4,
               "score": 16,
-              "count": 0,
-              "itemIds": []
+              "count": 3,
+              "itemIds": [
+                "TG-RSK-001",
+                "TG-RSK-005",
+                "TG-RSK-012"
+              ]
             },
             "4_5": {
               "likelihood": 4,
@@ -1759,8 +1808,10 @@
               "likelihood": 5,
               "consequence": 4,
               "score": 20,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-002"
+              ]
             },
             "5_5": {
               "likelihood": 5,
@@ -1770,8 +1821,8 @@
               "itemIds": []
             }
           },
-          "totalCount": 0,
-          "criticalCount": 0,
+          "totalCount": 11,
+          "criticalCount": 1,
           "eventuatedCount": 0,
           "unactionedCount": 0
         },
@@ -1858,22 +1909,29 @@
               "likelihood": 3,
               "consequence": 2,
               "score": 6,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-006"
+              ]
             },
             "3_3": {
               "likelihood": 3,
               "consequence": 3,
               "score": 9,
-              "count": 0,
-              "itemIds": []
+              "count": 2,
+              "itemIds": [
+                "TG-RSK-004",
+                "TG-RSK-007"
+              ]
             },
             "3_4": {
               "likelihood": 3,
               "consequence": 4,
               "score": 12,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-010"
+              ]
             },
             "3_5": {
               "likelihood": 3,
@@ -1893,22 +1951,32 @@
               "likelihood": 4,
               "consequence": 2,
               "score": 8,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-008"
+              ]
             },
             "4_3": {
               "likelihood": 4,
               "consequence": 3,
               "score": 12,
-              "count": 0,
-              "itemIds": []
+              "count": 3,
+              "itemIds": [
+                "TG-RSK-003",
+                "TG-RSK-009",
+                "TG-RSK-011"
+              ]
             },
             "4_4": {
               "likelihood": 4,
               "consequence": 4,
               "score": 16,
-              "count": 0,
-              "itemIds": []
+              "count": 3,
+              "itemIds": [
+                "TG-RSK-001",
+                "TG-RSK-005",
+                "TG-RSK-012"
+              ]
             },
             "4_5": {
               "likelihood": 4,
@@ -1942,8 +2010,10 @@
               "likelihood": 5,
               "consequence": 4,
               "score": 20,
-              "count": 0,
-              "itemIds": []
+              "count": 1,
+              "itemIds": [
+                "TG-RSK-002"
+              ]
             },
             "5_5": {
               "likelihood": 5,
@@ -1953,8 +2023,8 @@
               "itemIds": []
             }
           },
-          "totalCount": 0,
-          "criticalCount": 0,
+          "totalCount": 12,
+          "criticalCount": 1,
           "eventuatedCount": 0,
           "unactionedCount": 0
         }
@@ -1991,12 +2061,12 @@
     },
     "backlog": {
       "totalVolume": [
-        92,
-        95,
-        98,
-        101,
         104,
-        107
+        107,
+        110,
+        113,
+        116,
+        119
       ],
       "intake": [
         3,
@@ -2025,12 +2095,12 @@
         "Supply Chain/Delivery"
       ],
       "counts": [
-        0,
-        0,
+        4,
+        3,
         28,
-        0,
-        33,
-        0
+        3,
+        34,
+        1
       ]
     }
   },
@@ -2068,6 +2138,11 @@
       "A.02",
       "AIC Plan",
       "All",
+      "Bundle B (Security)",
+      "Bundle C (AI/ML)",
+      "Bundle D (Data)",
+      "Bundle E (Governance)",
+      "Bundle H (Infra)",
       "G (Environments)",
       "H",
       "H and J",
@@ -2078,8 +2153,11 @@
       "all/ programme"
     ],
     "causes": [
+      "Architecture",
       "Contract & Legal",
       "Cost",
+      "Engineering/Platform",
+      "Governance",
       "Governance Assurance",
       "Industry",
       "Interoperability",
@@ -2088,6 +2166,8 @@
       "Schedule",
       "Scope",
       "Security & Cyber",
+      "Security/Compliance",
+      "Supply Chain/Delivery",
       "Technical Maturity",
       "Technical Performance"
     ],
@@ -2108,14 +2188,20 @@
       "8                     Tom Trobe",
       "9                   John Hyland",
       "9            Michael Maconachie",
+      "Aron Ward",
+      "Brendan Hills",
       "Dan Williams",
+      "Dan Wurzer",
+      "Daryl James",
       "Doug Turk",
       "Drew Armstrong",
       "John Hyland",
       "John Hyland - (ACN Bundle A)",
       "Lisa Brown",
       "Michael Maconachie",
+      "Sarah Jenkins",
       "Scott Deacon",
+      "Steve Peel",
       "Steven Pecotic",
       "Susan Allin",
       "Team Google",
@@ -2124,7 +2210,7 @@
       "e                   John Hyland",
       "e                Steven Pecotic"
     ],
-    "totalRiskCount": 107,
+    "totalRiskCount": 119,
     "totalIssueCount": 29
   }
 }
