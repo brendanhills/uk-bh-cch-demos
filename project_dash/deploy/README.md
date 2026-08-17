@@ -93,5 +93,4 @@ This immediately halts all ingress traffic and removes the running Cloud Run ser
 
 - **`deploy_gcp.sh`**: Private Cloud Run pipeline supporting `.env` config, `--viewer-group`, `--viewer-user`, `--admin-group`, `--admin-user`, `--status`, and `--stop` flags.
 - **`shutdown.sh` / `stop.sh`**: Immediate service shutdown script to take the dashboard offline.
-- **`deploy_c4a.py` / `deploy.sh`**: C4A Starter prototype pipeline.
 - **`Dockerfile` & `nginx.conf`**: Container specifications for Cloud Run port 8080.

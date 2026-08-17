@@ -138,10 +138,10 @@ project_dash/
 ├── index.html                  # Core Single-Page Application (HTML5 / Tailwind / Chart.js)
 ├── server.py                   # Python server with Drive sync and ingestion APIs
 ├── run_server.sh               # 1-Command tmux server manager (start, attach, restart, kill)
+├── package_zip.sh              # 1-Command packager for standalone zip bundle
 ├── deploy/                     # Cloud deployment & shutdown operations
 │   ├── deploy_gcp.sh           # Private Cloud Run deployment with Viewer/Admin IAM & security
 │   ├── shutdown.sh / stop.sh   # Immediate service shutdown script
-│   ├── deploy_c4a.py           # C4A Starter prototype pipeline
 │   ├── README.md               # Detailed deployment operations guide
 │   ├── Dockerfile              # Production Nginx container image
 │   └── nginx.conf              # Cloud Run Nginx configuration (port 8080)
