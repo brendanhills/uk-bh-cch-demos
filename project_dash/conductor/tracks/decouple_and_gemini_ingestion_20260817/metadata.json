@@ -1,0 +1,9 @@
+{
+  "id": "decouple_and_gemini_ingestion_20260817",
+  "name": "Decouple Dashboard Content for GitHub & Automated Gemini Ingestion Pipeline",
+  "type": "Feature",
+  "status": "new",
+  "created": "2026-08-17T14:45:00+10:00",
+  "updated": "2026-08-17T14:45:00+10:00",
+  "description": "Decouples dashboard presentation engine from proprietary project content for open-source GitHub sharing, provides a realistic Project Aurora sample dataset, and automates Gemini 3.5 Flash executive synthesis and multi-speaker podcast generation at ingestion time via ADC with API key fallback."
+}
