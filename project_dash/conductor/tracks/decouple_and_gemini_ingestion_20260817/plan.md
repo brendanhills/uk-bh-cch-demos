@@ -17,21 +17,21 @@
 - [x] Task 1.4: Update Prompt Templates
   - [x] Refactor `prompts/exec_summary_prompt.md` for JSON schema output compatibility
   - [x] Create `prompts/podcast_prompt.md` for dual-host executive dialogue generation
-- [ ] Task 1.5: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task 1.5: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
 
 ## Phase 2: Master Ingestion Orchestrator (`scripts/ingest_data.py`)
-- [ ] Task 2.1: Write unit test for project ingestion orchestrator
+- [x] Task 2.1: Write unit test for project ingestion orchestrator
   - [x] Create `tests/test_ingest_data.py` testing project configuration parsing and multi-stream sync
-- [ ] Task 2.2: Implement Master Ingestion CLI `scripts/ingest_data.py`
-  - [ ] Support explicit `--project=<slug>` or default to comma-separated `DEFAULT_PROJECTS` list from `.env` (fallback to `sample`)
-  - [ ] Iterate through target projects and load `data/<project>/config.json`
-  - [ ] Ingest configured Google Sheets into `data/<project>/risks.json` and `data/<project>/issues.json`
-  - [ ] Ingest configured Google Drive reports into `data/<project>/snapshots.json`
-  - [ ] Ingest configured Gemini Notebooks into `data/<project>/knowledge.json`
-  - [ ] Trigger `gemini_generator.py` for latest snapshot AI synthesis and multi-speaker audio
-  - [ ] Trigger `precompute_analytics.py` to generate `data/<project>/precomputed_analytics.json`
+- [x] Task 2.2: Implement Master Ingestion CLI `scripts/ingest_data.py`
+  - [x] Support explicit `--project=<slug>` or default to comma-separated `DEFAULT_PROJECTS` list from `.env` (fallback to `sample`)
+  - [x] Iterate through target projects and load `data/<project>/config.json`
+  - [x] Ingest configured Google Sheets into `data/<project>/risks.json` and `data/<project>/issues.json`
+  - [x] Ingest configured Google Drive reports into `data/<project>/snapshots.json`
+  - [x] Ingest configured Gemini Notebooks into `data/<project>/knowledge.json`
+  - [x] Trigger `gemini_generator.py` for latest snapshot AI synthesis and multi-speaker audio
+  - [x] Trigger `precompute_analytics.py` to generate `data/<project>/precomputed_analytics.json`
 - [ ] Task 2.3: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ---
