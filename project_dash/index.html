@@ -70,25 +70,48 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
         <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             
-            <div class="flex items-center gap-3 cursor-pointer hover:opacity-85 transition-all group" onclick="switchTab('exec-briefing'); window.scrollTo({top: 0, behavior: 'smooth'});" title="Return to Executive Summary Home">
-                <div class="bg-red-50 text-red-600 p-2.5 rounded-xl border border-red-200 shadow-xs group-hover:scale-105 transition-transform">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div class="flex items-center gap-3.5 cursor-pointer hover:opacity-90 transition-all group" onclick="switchTab('exec-briefing'); window.scrollTo({top: 0, behavior: 'smooth'});" title="Return to Executive Summary Home">
+                <div id="appProjectLogoIcon" class="w-11 h-11 bg-indigo-50 text-indigo-700 rounded-xl border border-indigo-200 shadow-xs group-hover:scale-105 transition-transform flex items-center justify-center text-2xl font-bold">
+                    🪐
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
-                        <h1 id="appProjectTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
-                            Risk and Issue Interactive Dashboard
+                    <div class="flex items-center flex-wrap gap-2">
+                        <span id="appProjectBadge" class="bg-indigo-600 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-md shadow-2xs uppercase tracking-wider">
+                            PROJECT AURORA
+                        </span>
+                        <h1 id="appProjectTitle" class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+                            Delivery &amp; Risk Dashboard
                         </h1>
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200" id="liveStatusBadge">
-                            Live
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs" id="liveStatusBadge">
+                            Live (Week 27)
                         </span>
                     </div>
-                    <p id="appProjectSubtitle" class="text-xs text-slate-500 font-medium">Enterprise Delivery Governance Platform</p>
+                    <p id="appProjectSubtitle" class="text-xs text-slate-500 font-medium mt-0.5">Enterprise AI &amp; Sovereign Cloud Modernization • Global Transformation Board</p>
                 </div>
             </div>
 
-            <!-- Right Controls: Time Machine, Open Sheet, Open Report, Sync -->
+            <!-- Right Controls: Project Switcher, Time Machine, Open Sheet, Open Report, Sync -->
             <div class="flex flex-wrap items-center gap-2 self-end md:self-auto">
+
+                <!-- Project Switcher Dropdown -->
+                <div class="relative inline-block text-left">
+                    <button onclick="toggleProjectDropdown()" class="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-indigo-300 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-2xs text-xs font-bold transition-all cursor-pointer" title="Switch Project Workspace">
+                        <span class="text-slate-400 font-normal">Active:</span>
+                        <span id="headerProjectSelectorName" class="font-extrabold text-indigo-700">Project Aurora</span>
+                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="projectDropdownMenu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 z-50 py-1.5">
+                        <div class="px-3 py-1.5 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100 tracking-wider">Switch Project Workspace</div>
+                        <a href="?project=sample" class="block px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><span>🪐</span> <span>Project Aurora</span></span>
+                            <span class="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Sample</span>
+                        </a>
+                        <a href="?project=f-dse" class="block px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><span>🛡️</span> <span>Project F-DSE</span></span>
+                            <span class="text-[10px] text-blue-700 font-extrabold bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">Live Project</span>
+                        </a>
+                    </div>
+                </div>
                 
                 <!-- Time Machine Toggle Button -->
                 <button onclick="toggleTimeMachineModal()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
@@ -1466,18 +1489,27 @@
             if (!CONFIG || !CONFIG.project) return;
             const p = CONFIG.project;
 
-            document.title = `${p.name} - ${p.title}`;
+            document.title = `${p.name} - ${p.title || 'Risk & Delivery Dashboard'}`;
             
+            const badgeEl = document.getElementById('appProjectBadge');
+            if (badgeEl) badgeEl.innerText = p.name.toUpperCase();
+
             const titleEl = document.getElementById('appProjectTitle');
-            if (titleEl) titleEl.innerText = p.name;
+            if (titleEl) titleEl.innerText = p.title ? `Delivery & Risk Dashboard` : p.name;
             
             const subTitleEl = document.getElementById('appProjectSubtitle');
-            if (subTitleEl) subTitleEl.innerText = `${p.title} • ${p.organization}`;
+            if (subTitleEl) subTitleEl.innerText = `${p.title || ''} • ${p.organization || ''}`.replace(/^ • | • $/g, '');
             
+            const logoEl = document.getElementById('appProjectLogoIcon');
+            if (logoEl && p.logoIcon) logoEl.innerText = p.logoIcon;
+
+            const headerSelector = document.getElementById('headerProjectSelectorName');
+            if (headerSelector) headerSelector.innerText = p.name;
+
             const liveBadgeEl = document.getElementById('liveStatusBadge');
             const latestSnap = TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()] || {};
             const latestWeek = latestSnap.week || latestSnap.weekLabel || 'Latest';
-            if (liveBadgeEl) liveBadgeEl.innerText = `${p.name} (${latestWeek})`;
+            if (liveBadgeEl) liveBadgeEl.innerText = `Live (${latestWeek})`;
 
             const sheetLink = document.getElementById('openSheetLink');
             if (sheetLink && p.links && p.links.sheets) {
@@ -2572,15 +2604,16 @@
             const liveBadge = document.getElementById('liveStatusBadge');
             const latestKey = getLatestWeekKey();
 
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
             if (weekKey === latestKey) {
                 banner.classList.add('hidden');
-                liveBadge.innerText = `F-DSE Live (${snapWeek})`;
-                liveBadge.className = 'bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200';
+                liveBadge.innerText = `Live (${snapWeek})`;
+                liveBadge.className = 'bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs';
             } else {
                 banner.classList.remove('hidden');
                 document.getElementById('timeMachineBannerWeek').innerText = `${snapWeek} (${snap.date})`;
-                liveBadge.innerText = `⏳ TIME TRAVEL: ${snapWeek}`;
-                liveBadge.className = 'bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-300 animate-pulse';
+                liveBadge.innerText = `⏳ ${pName} TIME TRAVEL: ${snapWeek}`;
+                liveBadge.className = 'bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-amber-300 animate-pulse shadow-2xs';
             }
 
             // Update Executive KPIs
