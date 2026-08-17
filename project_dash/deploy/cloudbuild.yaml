@@ -2,8 +2,12 @@ steps:
   # 1. Run Automated Unit & Ingestion Tests
   - name: 'python:3.13-slim'
     dir: 'project_dash'
-    entrypoint: 'python3'
-    args: ['-m', 'unittest', 'discover', '-s', 'tests', '-p', 'test_*.py']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install --no-cache-dir -r requirements.txt
+        python3 -m unittest discover -s tests -p "test_*.py"
 
   # 2. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'

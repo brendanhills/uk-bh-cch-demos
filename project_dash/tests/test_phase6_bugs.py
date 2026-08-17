@@ -5,7 +5,7 @@ import os
 
 class TestPhase6Bugs(unittest.TestCase):
     def setUp(self):
-        self.index_path = "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/index.html"
+        self.index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "index.html"))
         with open(self.index_path, "r", encoding="utf-8") as f:
             self.html = f.read()
 
@@ -49,7 +49,7 @@ class TestPhase6Bugs(unittest.TestCase):
 
     def test_bug_48_podcast_audio_assets_exist(self):
         """Bug #48: podcast audio file or generator must exist in assets directory."""
-        assets_dir = "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/assets"
+        assets_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets"))
         self.assertTrue(os.path.exists(assets_dir), "assets directory must exist")
         has_audio = (
             os.path.exists(os.path.join(assets_dir, "podcast_w27.mp3")) or

@@ -5,7 +5,7 @@ import os
 
 class TestPhase3Bugs(unittest.TestCase):
     def setUp(self):
-        self.index_path = "/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/index.html"
+        self.index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "index.html"))
         with open(self.index_path, "r", encoding="utf-8") as f:
             self.html = f.read()
 
