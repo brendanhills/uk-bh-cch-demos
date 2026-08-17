@@ -13,10 +13,10 @@ OUTPUT_ZIP="dashboard_bundle.zip"
 echo "📦 Packaging Project Monaro Risk Dashboard (Minimal Bundle)..."
 rm -f "$OUTPUT_ZIP"
 
-# Include only essential standalone files: index.html, active audio, and docs
+# Include essential standalone files: index.html, all week MP3 podcasts, and docs
 zip -9 "$OUTPUT_ZIP" \
     index.html \
-    assets/podcast_w27.mp3 \
+    assets/*.mp3 \
     README.md \
     HANDOVER_GUIDE.md
 

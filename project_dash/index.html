@@ -359,7 +359,7 @@
                         <div class="space-y-0.5 min-w-0">
                             <div class="flex items-center gap-2">
                                 <span class="bg-purple-100 text-purple-900 border border-purple-200 text-[9px] font-black px-1.5 py-0.2 rounded uppercase">🎙️ NotebookLM Podcast (en-AU)</span>
-                                <h4 class="text-xs font-extrabold text-slate-900 truncate">The I-129 Breakthrough &amp; SRR Glide Path</h4>
+                                <h4 id="podcastTitleText" class="text-xs font-extrabold text-slate-900 truncate">The I-129 Breakthrough &amp; SRR Glide Path</h4>
                                 <span class="hidden md:inline text-[10px] text-slate-500 font-mono">(Alex &amp; Jordan)</span>
                             </div>
                             <div class="flex items-center gap-2 text-[11px] text-slate-500">
@@ -379,9 +379,8 @@
                                 </div>
                             </div>
                         </div>
-                        <audio id="nativePodcastAudio" preload="auto">
-                            <source src="assets/podcast_w27.mp3?v=au3" type="audio/mpeg">
-                            <source src="assets/podcast_w27.wav?v=au3" type="audio/wav">
+                        <audio id="nativePodcastAudio" preload="auto" src="assets/podcast_w27.mp3?v=au3">
+                            <source id="nativePodcastSourceMp3" src="assets/podcast_w27.mp3?v=au3" type="audio/mpeg">
                         </audio>
                     </div>
 
@@ -398,7 +397,7 @@
                         </button>
 
                         <!-- Direct Audio Download Button -->
-                        <a href="assets/podcast_w27.wav" download="F_DSE_Executive_Podcast_Week26.wav" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1 rounded-lg shadow-xs transition-all text-xs flex items-center gap-1.5" title="Download high-fidelity podcast audio file">
+                        <a id="podcastDownloadLink" href="assets/podcast_w27.mp3" download="F_DSE_Executive_Podcast_Week27.mp3" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1 rounded-lg shadow-xs transition-all text-xs flex items-center gap-1.5" title="Download executive podcast audio file">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             <span>Download Audio</span>
                         </a>
@@ -2469,6 +2468,43 @@
             renderTop5Risks();
             renderTop5Issues();
             renderTimeMachineModalList();
+            updatePodcastAudioForWeek(weekKey);
+        }
+
+        function updatePodcastAudioForWeek(weekKey) {
+            const audioEl = document.getElementById('nativePodcastAudio');
+            const titleEl = document.getElementById('podcastTitleText');
+            const downloadEl = document.getElementById('podcastDownloadLink');
+            const playBtn = document.getElementById('podcastPlayBtn');
+            const timeLabel = document.getElementById('podcastTimeLabel');
+
+            if (!audioEl) return;
+
+            // Pause playback if active during time travel
+            if (!audioEl.paused) {
+                audioEl.pause();
+                isPodcastPlaying = false;
+                if (playBtn) playBtn.innerText = '▶';
+                animateWaveform(false);
+            }
+
+            const isW26 = weekKey === 'w26';
+            const audioSrc = isW26 ? 'assets/podcast_w26.mp3' : 'assets/podcast_w27.mp3';
+            const audioTitle = isW26 ? 'Milestone 1 Delivery & GDC EE Validation' : 'The I-129 Breakthrough & SRR Glide Path';
+            const audioDuration = isW26 ? '0:00 / 0:42' : '0:00 / 1:45';
+            const downloadName = isW26 ? 'F_DSE_Executive_Podcast_Week26.mp3' : 'F_DSE_Executive_Podcast_Week27.mp3';
+
+            if (titleEl) titleEl.innerText = audioTitle;
+            if (timeLabel) timeLabel.innerText = audioDuration;
+            if (downloadEl) {
+                downloadEl.href = audioSrc;
+                downloadEl.download = downloadName;
+            }
+
+            const srcSource = document.getElementById('nativePodcastSourceMp3');
+            if (srcSource) srcSource.src = audioSrc;
+            audioEl.src = audioSrc;
+            audioEl.load();
         }
 
         function returnToPresent() {
