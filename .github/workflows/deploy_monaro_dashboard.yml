@@ -56,14 +56,14 @@ jobs:
 
       - name: 🛡️ Enforce Group IAM Allowlist
         run: |
-          # Grant Viewer access strictly to the TwoSync production group
+          # Grant Invoker access strictly to the dev team group and leads
           gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
             --project monaro-risk-dev \
             --region us-central1 \
-            --member="group:monaro-risk-prod@twosync.google.com" \
+            --member="group:monaro-risk-dev@twosync.google.com" \
             --role="roles/run.invoker"
 
-          # Grant Viewer access to designated leads
+          # Grant Invoker access to designated leads
           gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
             --project monaro-risk-dev \
             --region us-central1 \
@@ -75,10 +75,3 @@ jobs:
             --region us-central1 \
             --member="user:allins@google.com" \
             --role="roles/run.invoker"
-
-          # Grant Developer access to the Dev team group
-          gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
-            --project monaro-risk-dev \
-            --region us-central1 \
-            --member="group:monaro-risk-dev@twosync.google.com" \
-            --role="roles/run.developer"
