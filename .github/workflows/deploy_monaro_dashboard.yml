@@ -1,0 +1,84 @@
+name: Deploy Project Monaro Risk Dashboard
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+    paths:
+      - 'project_dash/**'
+  workflow_dispatch:
+
+concurrency:
+  group: monaro-dashboard-deploy
+  cancel-in-progress: true
+
+jobs:
+  test-and-deploy:
+    name: Test, Build & Deploy to Private Cloud Run
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project_dash
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: 🧪 Run Automated Unit & Ingestion Tests
+        run: |
+          python3 -m unittest discover -s tests -p "test_*.py"
+
+      - name: 🔐 Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: ☁️ Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 450.0.0'
+
+      - name: 🔨 Deploy Container to Cloud Run (Private Mode)
+        run: |
+          gcloud run deploy monaro-risk-dash-dev \
+            --source . \
+            --project monaro-risk-dev \
+            --region us-central1 \
+            --platform managed \
+            --no-allow-unauthenticated \
+            --port 8080
+
+      - name: 🛡️ Enforce Group IAM Allowlist
+        run: |
+          # Grant Viewer access strictly to the TwoSync production group
+          gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+            --project monaro-risk-dev \
+            --region us-central1 \
+            --member="group:monaro-risk-prod@twosync.google.com" \
+            --role="roles/run.invoker"
+
+          # Grant Viewer access to designated leads
+          gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+            --project monaro-risk-dev \
+            --region us-central1 \
+            --member="user:brendanhills@google.com" \
+            --role="roles/run.invoker"
+
+          gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+            --project monaro-risk-dev \
+            --region us-central1 \
+            --member="user:allins@google.com" \
+            --role="roles/run.invoker"
+
+          # Grant Developer access to the Dev team group
+          gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+            --project monaro-risk-dev \
+            --region us-central1 \
+            --member="group:monaro-risk-dev@twosync.google.com" \
+            --role="roles/run.developer"
