@@ -30,19 +30,23 @@ Your objective is to provide an authoritative, exception-first executive briefin
 
 ---
 
-## Output Structure & Formatting Directives:
+## Output Directives & Grounding Rules:
 
-### 1. The 1-Paragraph Executive Synthesis:
-- **Length:** EXACTLY ONE cohesive paragraph (3 to 4 sentences, 60–80 words).
-- **Focus:** Overall posture, critical milestone velocity, and net risk exposure trajectory.
+### Strict Anti-Hallucination Directives:
+1. **Strict Data Grounding**: ALL deliverable reference codes, milestone names, owner titles, and risk metrics in your output MUST be derived directly from the provided input context above.
+2. **No Placeholder Re-use**: Do NOT invent deliverable IDs or copy examples. Use only the factual reference numbers and titles provided in `Active Escalations & Gap Close Movements` and `Portfolio Statistics`.
+3. **Missing Data Handling**: If a sleeper outlier cannot be identified with certainty from the provided data, select the highest-scoring open risk or unverified dependency from the active input.
+
+### 1. Executive Synthesis:
+- Provide cohesive summaries covering: (1) Executive decision synthesis (overall posture and required leadership interventions), (2) Technical synthesis (engineering velocity and deliverable milestones), and (3) Governance synthesis (commercial alignment and assurance verification).
 
 ### 2. "The 3 Most Important Things" (Action / Impact / Outcome):
-Format as 3 distinct, high-impact callout items answering *What is at risk?* and *What action/help is needed?*:
-- 🚨 **1. Immediate Executive Action / Decision Needed:** (e.g. Commonwealth acceptance of Milestone 1 artefacts).
-- ⚡ **2. Critical Schedule / Scope Realignment:** (e.g. Endorse the +4-week SRR CD1.5 glide path to September 2026).
-- 🚀 **3. Primary Delivery Win / De-Risking Breakthrough:** (e.g. I-129 GDC EE E.01 validated and operational for initial systems).
+Identify and format the top 3 priority items answering *What is at risk?* and *What specific action or decision is needed?*:
+- 🚨 **1. Immediate Executive Action / Decision Needed**: Urgent decision or blocker requiring executive-level sponsorship or customer approval.
+- ⚡ **2. Critical Schedule / Scope Realignment**: Key schedule glide path or scope adjustment requiring stakeholder alignment.
+- 🚀 **3. Primary Delivery Win / De-Risking Breakthrough**: Major milestone delivery, capability release, or risk retirement achieved this reporting cycle.
 
 ### 3. "🔍 Leading Indicator Alert" (The Green-to-Red Sleeper Outlier):
-Identify the single critical path deliverable currently reported 🟢 GREEN on paper that is at highest risk of turning 🔴 RED in 4–6 weeks due to upstream compression (e.g., **Ref 1.15 Milestone 3 PDR**, where SRR shifting to September leaves a compressed 6-week window before the November PDR target).
+Identify the single critical path deliverable or workstream from the input data that is currently reported on track but is at highest risk of turning RED in the next reporting cycles due to upstream dependency compression, tight lead times, or resource constraints. Explain the concrete operational rationale.
 
 

@@ -8,39 +8,40 @@ from typing import TypedDict, Optional, List, Dict, Any
 from google import genai
 from google.genai import types
 
+from pydantic import BaseModel, Field
+
 logger = logging.getLogger('gemini_generator')
 
-class ToneSynthesis(TypedDict):
-    executive: str
-    technical: str
-    governance: str
+class ToneSynthesis(BaseModel):
+    executive: str = Field(description="60-80 word single-paragraph executive summary highlighting posture, velocity, and key decisions.")
+    technical: str = Field(description="60-80 word single-paragraph engineering summary covering platform status, security assessors, and delivery milestones.")
+    governance: str = Field(description="60-80 word single-paragraph commercial and governance summary detailing escalations and milestone verification.")
 
-class Top3Item(TypedDict):
-    num: int
-    type: str
-    tag: str
-    ref: str
-    title: str
-    impact: str
-    action: str
+class Top3Item(BaseModel):
+    num: int = Field(description="Priority order index (1, 2, or 3).")
+    type: str = Field(description="Category type: 'decision', 'schedule', or 'win'.")
+    tag: str = Field(description="Category label: '🚨 Immediate Executive Action', '⚡ Critical Schedule Alignment', or '🚀 Primary Delivery Win'.")
+    ref: str = Field(description="Exact deliverable or milestone reference code taken strictly from the input data. Do not hallucinate.")
+    title: str = Field(description="Concise factual title of the action item.")
+    impact: str = Field(description="Direct impact statement.")
+    action: str = Field(description="Specific actionable next step or decision required.")
 
-class SleeperOutlier(TypedDict):
-    ref: str
-    title: str
-    warning: str
+class SleeperOutlier(BaseModel):
+    ref: str = Field(description="Exact deliverable or milestone reference code from the input data that is at risk of turning red. Do not hallucinate.")
+    title: str = Field(description="Factual deliverable name from the input data.")
+    warning: str = Field(description="Operational rationale explaining why this item is at risk due to schedule compression, dependencies, or lead time.")
 
-class ExecutiveSynthesisResult(TypedDict):
+class ExecutiveSynthesisResult(BaseModel):
     synthesis: ToneSynthesis
     top3: List[Top3Item]
     sleeperOutlier: SleeperOutlier
-    generatedBy: str
 
-class PodcastDialogueTurn(TypedDict):
-    speaker: str
-    role: str
-    avatar: str
-    time: str
-    text: str
+class PodcastDialogueTurn(BaseModel):
+    speaker: str = Field(description="Speaker name ('Alex' or 'Jordan').")
+    role: str = Field(description="Speaker role title.")
+    avatar: str = Field(description="Emoji avatar icon.")
+    time: str = Field(description="Timestamp in format MM:SS.")
+    text: str = Field(description="Spoken dialogue text.")
 
 def get_gemini_client() -> Optional[genai.Client]:
     """Initializes genai.Client with ADC Vertex AI priority and API Key fallback."""
@@ -127,51 +128,6 @@ Provide an exception-first executive briefing based on the following weekly metr
     for key, val in replacements.items():
         prompt = prompt.replace(key, val)
 
-    prompt += """
-
-You MUST output your response strictly as valid JSON conforming to this schema:
-{
-  "synthesis": {
-    "executive": "Exact 60-80 word single-paragraph executive summary highlighting posture, velocity, and key decisions.",
-    "technical": "Exact 60-80 word single-paragraph engineering summary covering platform status, security assessors, and delivery milestones.",
-    "governance": "Exact 60-80 word single-paragraph commercial and governance summary detailing escalations and milestone verification."
-  },
-  "top3": [
-    {
-      "num": 1,
-      "type": "decision",
-      "tag": "🚨 Immediate Executive Action",
-      "ref": "Driver Ref e.g. 1.2b",
-      "title": "Action item title",
-      "impact": "Impact statement",
-      "action": "Action description"
-    },
-    {
-      "num": 2,
-      "type": "schedule",
-      "tag": "⚡ Critical Schedule Alignment",
-      "ref": "Driver Ref e.g. 1.14",
-      "title": "Schedule item title",
-      "impact": "Impact statement",
-      "action": "Action description"
-    },
-    {
-      "num": 3,
-      "type": "win",
-      "tag": "🚀 Primary Delivery Win",
-      "ref": "Driver Ref e.g. 1.10b",
-      "title": "Delivery win title",
-      "impact": "Impact statement",
-      "action": "Action description"
-    }
-  ],
-  "sleeperOutlier": {
-    "ref": "Driver Ref e.g. 1.15",
-    "title": "Deliverable name",
-    "warning": "Rationale explaining why this green item is at risk of turning red due to schedule squeeze."
-  }
-}
-"""
     return prompt
 
 def generate_executive_synthesis(
@@ -191,6 +147,7 @@ def generate_executive_synthesis(
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
+            response_schema=ExecutiveSynthesisResult,
             temperature=0.2
         )
     )
@@ -237,6 +194,7 @@ Return STRICT JSON as an array of dialogue turns:
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
+            response_schema=List[PodcastDialogueTurn],
             temperature=0.3
         )
     )
