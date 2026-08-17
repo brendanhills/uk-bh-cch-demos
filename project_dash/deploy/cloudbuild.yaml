@@ -37,7 +37,7 @@ steps:
       - 'push'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
 
-  # 5. Deploy to Cloud Run (Private Mode: --no-allow-unauthenticated)
+  # 5. Deploy to Cloud Run (Private Mode + Native IAP Enabled)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -51,15 +51,24 @@ steps:
       - '--platform'
       - 'managed'
       - '--no-allow-unauthenticated'
+      - '--iap'
       - '--port'
       - '8080'
 
-  # 6. Enforce TwoSync IAM Invoker Policy
+  # 6. Enforce TwoSync IAM and IAP Browser SSO Policies
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
+        # Grant Cloud Run Invoker to IAP Service Agent
+        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+          --project=$PROJECT_ID \
+          --region=us-central1 \
+          --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-iap.iam.gserviceaccount.com" \
+          --role="roles/run.invoker" || true
+
+        # Grant direct Cloud Run Invoker to Dev group and users
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
