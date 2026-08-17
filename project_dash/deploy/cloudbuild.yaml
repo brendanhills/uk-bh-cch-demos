@@ -1,6 +1,13 @@
 steps:
-  # 1. Build container image using custom Dockerfile
+  # 1. Run Automated Unit & Ingestion Tests
+  - name: 'python:3.13-slim'
+    dir: 'project_dash'
+    entrypoint: 'python3'
+    args: ['-m', 'unittest', 'discover', '-s', 'tests', '-p', 'test_*.py']
+
+  # 2. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'project_dash'
     args:
       - 'build'
       - '-f'
@@ -11,13 +18,13 @@ steps:
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
       - '.'
 
-  # 2. Push container image to Artifact Registry
+  # 3. Push container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
 
-  # 3. Deploy to Cloud Run (Private Mode: --no-allow-unauthenticated)
+  # 4. Deploy to Cloud Run (Private Mode: --no-allow-unauthenticated)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -34,6 +41,33 @@ steps:
       - '--port'
       - '8080'
 
+  # 5. Enforce TwoSync IAM Invoker Policy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+          --project=$PROJECT_ID \
+          --region=us-central1 \
+          --member="group:monaro-risk-dev@twosync.google.com" \
+          --role="roles/run.invoker"
+
+        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+          --project=$PROJECT_ID \
+          --region=us-central1 \
+          --member="user:brendanhills@google.com" \
+          --role="roles/run.invoker"
+
+        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+          --project=$PROJECT_ID \
+          --region=us-central1 \
+          --member="user:allins@google.com" \
+          --role="roles/run.invoker"
+
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
