@@ -9,7 +9,16 @@ steps:
         pip install --no-cache-dir -r requirements.txt
         python3 -m unittest discover -s tests -p "test_*.py"
 
-  # 2. Build container image using custom Dockerfile
+  # 2. Ensure Artifact Registry repository exists
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud artifacts repositories describe cloud-run-source-deploy --location=us-central1 --project=$PROJECT_ID || \
+        gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=us-central1 --description="Cloud Run source deployments" --project=$PROJECT_ID
+
+  # 3. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'project_dash'
     args:
@@ -22,13 +31,13 @@ steps:
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
       - '.'
 
-  # 3. Push container image to Artifact Registry
+  # 4. Push container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
 
-  # 4. Deploy to Cloud Run (Private Mode: --no-allow-unauthenticated)
+  # 5. Deploy to Cloud Run (Private Mode: --no-allow-unauthenticated)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -45,7 +54,7 @@ steps:
       - '--port'
       - '8080'
 
-  # 5. Enforce TwoSync IAM Invoker Policy
+  # 6. Enforce TwoSync IAM Invoker Policy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
