@@ -135,10 +135,10 @@ def ingest_single_project(
             try:
                 synthesis_result = generate_executive_synthesis(metric_ctx, latest_snap.get('plans', []), model=model)
                 podcast_script = generate_multispeaker_podcast(metric_ctx, synthesis_result, model=model)
-                latest_snap['synthesis'] = synthesis_result.get('synthesis', {})
-                latest_snap['top3'] = synthesis_result.get('top3', [])
-                latest_snap['sleeperOutlier'] = synthesis_result.get('sleeperOutlier', {})
-                latest_snap['podcastScript'] = podcast_script
+                latest_snap['synthesis'] = synthesis_result.get('paragraphs', synthesis_result.get('synthesis', latest_snap.get('synthesis', {})))
+                latest_snap['top3'] = synthesis_result.get('top3', latest_snap.get('top3', []))
+                latest_snap['sleeperOutlier'] = synthesis_result.get('sleeperOutlier', latest_snap.get('sleeperOutlier', {}))
+                latest_snap['podcastScript'] = podcast_script if podcast_script else latest_snap.get('podcastScript', [])
                 latest_snap['generatedBy'] = model
                 save_json_file(os.path.join(proj_dir, 'snapshots.json'), {'snapshots': snapshots})
                 logger.info("[Gemini AI] AI synthesis successfully updated.")
