@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risk and Issue Interactive Dashboard - Google F-DSE</title>
+    <title>Risk &amp; Delivery Interactive Dashboard</title>
     <!-- Fonts & Tailwind CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -270,13 +270,7 @@
                     <!-- Dynamic AI Paragraph Content on Material 3 Surface (White on Gemini Tint Canvas) -->
                     <div class="bg-white border border-[#c2e7ff]/70 rounded-xl p-5 space-y-4 shadow-xs">
                         <p class="text-sm sm:text-base text-[#1f1f1f] leading-relaxed font-normal" id="geminiSummaryText">
-                            Program F-DSE maintains a stable <strong class="text-amber-800 font-black">AMBER</strong> posture in Week 27 as critical platform enablement continues with 
-                            <button onclick="jumpToDriverRef('1.10b')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Jump to Ref 1.10b deliverable card in Driver Tree">Ref 1.10b (I-129) ↗</button> 
-                            operational for test/dev systems, while Commonwealth review of Milestone 1 artefacts continues under active gap closure with 
-                            <button onclick="jumpToDriverRef('1.2b')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Jump to Ref 1.2b deliverable card in Driver Tree">Ref 1.2b (M1 Acceptance) ↗</button>. 
-                            Net risk mitigation across the 
-                            <button onclick="jumpToRiskExplorer('')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Explore all 107 risks in Live Explorer">107 Register Risks ↗</button> 
-                            reduced average residual risk exposure from <strong class="text-[#1f1f1f] font-extrabold">15.4 to 8.4</strong> (Δ -7.0).
+                            Loading executive briefing...
                         </p>
 
                         <!-- The Top 3 Most Important Things Callout Section (Material 3 Accent Border Cards) -->
@@ -1224,7 +1218,7 @@
                 <div class="flex items-center gap-2.5">
                     <span class="text-2xl">⏱️</span>
                     <div>
-                        <h2 class="text-lg font-bold">F-DSE Governance Time Machine</h2>
+                        <h2 class="text-lg font-bold">Program Governance Time Machine</h2>
                         <p class="text-xs text-amber-100">Rewind the dashboard to view past weekly governance states</p>
                     </div>
                 </div>
@@ -2250,7 +2244,8 @@
 
             const snap = TIME_MACHINE_SNAPSHOTS[activeTimeMachineWeek] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
             const activeWeek = snap ? snap.week : 'Week 27';
-            const fullText = `*F-DSE Executive Briefing - ${activeWeek}*\n\n${summary}\n\n*Top 3 Critical Executive Attention Items:*\n${top3Items}`;
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+            const fullText = `*${pName} Executive Briefing - ${activeWeek}*\n\n${summary}\n\n*Top 3 Critical Executive Attention Items:*\n${top3Items}`;
 
             navigator.clipboard.writeText(fullText).then(() => {
                 const btn = document.getElementById('copyGeminiBtn');
@@ -4397,6 +4392,52 @@
         }
 
 
+        
+        function setAiTone(tone) {
+            currentAiTone = tone;
+            ['executive', 'technical', 'governance'].forEach(t => {
+                const btn = document.getElementById(`toneBtn_${t}`);
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', t === tone);
+                    btn.classList.toggle('text-white', t === tone);
+                    btn.classList.toggle('bg-white', t !== tone);
+                    btn.classList.toggle('text-slate-700', t !== tone);
+                }
+            });
+
+            const snapKey = (typeof activeTimeMachineWeek !== 'undefined' && activeTimeMachineWeek) ? activeTimeMachineWeek : (typeof getLatestWeekKey === 'function' ? getLatestWeekKey() : 'w27');
+            const snap = (typeof TIME_MACHINE_SNAPSHOTS !== 'undefined' && TIME_MACHINE_SNAPSHOTS[snapKey]) ? TIME_MACHINE_SNAPSHOTS[snapKey] : null;
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Program';
+            const riskCount = (typeof LIVE_RISKS !== 'undefined' && Array.isArray(LIVE_RISKS)) ? LIVE_RISKS.length : 0;
+
+            let paragraph = '';
+            if (snap) {
+                if (snap.synthesis && typeof snap.synthesis === 'object' && snap.synthesis[tone]) {
+                    paragraph = snap.synthesis[tone];
+                } else if (snap.paragraphs && typeof snap.paragraphs === 'object' && snap.paragraphs[tone]) {
+                    paragraph = snap.paragraphs[tone];
+                } else if (typeof snap.synthesis === 'string') {
+                    paragraph = snap.synthesis;
+                } else if (snap.synthesis && snap.synthesis.executive) {
+                    paragraph = snap.synthesis.executive;
+                } else if (snap.summaryParagraph) {
+                    paragraph = snap.summaryParagraph;
+                }
+            }
+
+            if (!paragraph) {
+                const status = snap?.overallStatus || '🟡 AMBER (Stable)';
+                paragraph = `${pName} maintains a stable <strong class="text-amber-800 font-black">${status}</strong> posture in ${snap?.week || 'Current Period'} as delivery governance continues across key workstreams. Net risk mitigation across the <button onclick="jumpToRiskExplorer('')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Explore risks in Live Explorer">${riskCount} Register Risks ↗</button> actively compresses overall program residual exposure.`;
+            }
+
+            const pEl = document.getElementById('geminiSummaryText');
+            if (pEl) {
+                // Ensure clickable citations for driver refs
+                let formatted = paragraph.replace(/Ref\s+([0-9]+\.[0-9]+[a-zA-Z]*)/g, `<button onclick="jumpToDriverRef('$1')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Jump to Ref $1 in Driver Tree">Ref $1 ↗</button>`);
+                pEl.innerHTML = formatted;
+            }
+        }
+
         function renderExecBriefing() {
             const snapKey = (typeof activeTimeMachineWeek !== 'undefined' && activeTimeMachineWeek) ? activeTimeMachineWeek : (typeof getLatestWeekKey === 'function' ? getLatestWeekKey() : 'w27');
             const snap = (typeof TIME_MACHINE_SNAPSHOTS !== 'undefined' && TIME_MACHINE_SNAPSHOTS[snapKey]) ? TIME_MACHINE_SNAPSHOTS[snapKey] : (TIME_MACHINE_SNAPSHOTS ? Object.values(TIME_MACHINE_SNAPSHOTS)[0] : null);
@@ -4499,7 +4540,8 @@
             const snap = TIME_MACHINE_SNAPSHOTS[activeTimeMachineWeek] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
             const weekLabel = snap ? snap.week : 'Week 27';
             const weekDate = snap ? snap.date : '07 Aug 2026';
-            const note = `*F-DSE Executive Briefing - ${weekLabel} (${weekDate})*\n\n` +
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+            const note = `*${pName} Executive Briefing - ${weekLabel} (${weekDate})*\n\n` +
                 `• *Program Health & Milestones:* Overall status is ${snap?.overallStatus || 'AMBER (Stable)'}. Milestone 2 (IBR) is tracking at ${snap?.kpis?.ibr || '90% completion'} for August 2026 delivery. Systems Requirements Review (SRR) scheduled for September 2026.\n` +
                 `• *Critical Risks & Control Deltas:* Inherent average risk score has reduced from 15.4 to 8.4 (Δ -7.0) through active mitigation controls across ${LIVE_RISKS.length} Register Risks. Top critical risks are being managed in Key Personnel retention and GDC multi-site landing.\n` +
                 `• *Operational Issues:* ${LIVE_ISSUES.length} total registered issues; ${snap?.kpis?.escalations || '5 critical escalations'} active with immediate next actions assigned.`;
