@@ -55,7 +55,7 @@ steps:
       - '--port'
       - '8080'
 
-  # 6. Enforce TwoSync IAM and IAP Browser SSO Policies
+  # 6. Enforce IAM & IAP Browser SSO Policies
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -68,12 +68,18 @@ steps:
           --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-iap.iam.gserviceaccount.com" \
           --role="roles/run.invoker" || true
 
-        # Grant direct Cloud Run Invoker to Dev group and users
+        # Grant direct Cloud Run Invoker to Google Group and TwoSync group
+        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+          --project=$PROJECT_ID \
+          --region=us-central1 \
+          --member="group:monaro-risk-dev@google.com" \
+          --role="roles/run.invoker" || true
+
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
           --member="group:monaro-risk-dev@twosync.google.com" \
-          --role="roles/run.invoker"
+          --role="roles/run.invoker" || true
 
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
