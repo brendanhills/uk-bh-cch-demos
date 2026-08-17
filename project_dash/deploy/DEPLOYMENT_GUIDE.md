@@ -56,6 +56,7 @@ gcloud services enable \
     run.googleapis.com \
     cloudbuild.googleapis.com \
     artifactregistry.googleapis.com \
+    containeranalysis.googleapis.com \
     logging.googleapis.com \
     iam.googleapis.com \
     iamcredentials.googleapis.com \
