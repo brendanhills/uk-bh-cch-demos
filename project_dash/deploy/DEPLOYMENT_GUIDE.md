@@ -18,7 +18,7 @@ flowchart LR
         Step2["2. Check/Create Artifact Registry"]
         Step3["3. Docker Build & Push"]
         Step4["4. Deploy to Cloud Run (--iap)"]
-        Step5["5. Apply IAM & Invoker Bindings"]
+        Step5["5. Apply IAM & IAP Group Bindings"]
     end
 
     subgraph GCP["Google Cloud Platform"]
@@ -138,18 +138,6 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role="roles/iap.admin"
 ```
 
-### Role Reference Table
-
-| Role Display Name | Role ID | Purpose |
-| :--- | :--- | :--- |
-| **Cloud Run Admin** | `roles/run.admin` | Full control over deploying and configuring Cloud Run services. |
-| **Artifact Registry Administrator** | `roles/artifactregistry.admin` | Create Docker repositories and push/pull container images. |
-| **Cloud Build Editor** | `roles/cloudbuild.builds.editor` | Execute builds and manage Cloud Build operations. |
-| **Service Account User** | `roles/iam.serviceAccountUser` | Authorize Cloud Build to run as the runtime service identity. |
-| **Logs Writer** | `roles/logging.logWriter` | Stream build step output to Cloud Logging. |
-| **Storage Admin** | `roles/storage.admin` | Read/write source tarballs and build caches in GCS staging buckets. |
-| **IAP Policy Admin** | `roles/iap.admin` | Configure Identity-Aware Proxy settings and access rules. |
-
 ---
 
 ## 🔗 Step 3: Connect GitHub to Google Cloud Build
@@ -195,7 +183,7 @@ Create a trigger that runs automated tests and deploys whenever files inside `pr
 
 ## 📦 Step 5: The Automated CI/CD Pipeline (`cloudbuild.yaml`)
 
-The pipeline definition is stored in [`project_dash/deploy/cloudbuild.yaml`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/deploy/cloudbuild.yaml). It executes 6 sequential stages:
+The pipeline definition is stored in [`project_dash/deploy/cloudbuild.yaml`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/deploy/cloudbuild.yaml). It executes 6 automated stages:
 
 ```yaml
 steps:
@@ -255,20 +243,20 @@ steps:
       - '--port'
       - '8080'
 
-  # 6. Enforce IAM Invoker Policies (IAP + Allowlisted Groups)
+  # 6. Enforce IAM Invoker and IAP SSO Access Policies via CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        # Grant Cloud Run Invoker to IAP Service Agent
+        # 1. Grant Cloud Run Invoker to IAP Service Agent
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
           --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-iap.iam.gserviceaccount.com" \
           --role="roles/run.invoker" || true
 
-        # Grant direct Cloud Run Invoker to Google Group and TwoSync group
+        # 2. Grant Cloud Run Invoker to allowlisted groups and leads
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
@@ -285,13 +273,46 @@ steps:
           --project=$PROJECT_ID \
           --region=us-central1 \
           --member="user:brendanhills@google.com" \
-          --role="roles/run.invoker"
+          --role="roles/run.invoker" || true
 
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
           --member="user:allins@google.com" \
-          --role="roles/run.invoker"
+          --role="roles/run.invoker" || true
+
+        # 3. Grant IAP-secured Web App User role to allowlisted groups and leads
+        gcloud iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="group:monaro-risk-dev@google.com" \
+          --role="roles/iap.httpsResourceAccessor" || true
+
+        gcloud iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="group:monaro-risk-dev@twosync.google.com" \
+          --role="roles/iap.httpsResourceAccessor" || true
+
+        gcloud iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="user:brendanhills@google.com" \
+          --role="roles/iap.httpsResourceAccessor" || true
+
+        gcloud iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="user:allins@google.com" \
+          --role="roles/iap.httpsResourceAccessor" || true
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
@@ -303,26 +324,9 @@ options:
 
 ---
 
-## 🛡️ Step 6: Granting Browser SSO Access (IAP)
+## 🚀 Step 6: Everyday Developer Workflow
 
-Cloud Run uses **Identity-Aware Proxy (IAP)** to allow corporate users to log in with their Google accounts directly in the browser:
-
-1. Open **[Pantheon > Security > Identity-Aware Proxy](https://pantheon.corp.google.com/security/iap?project=monaro-risk-dev)**.
-2. Select the resource: **`monaro-risk-dash-dev`** (under Cloud Run services).
-3. On the right-side info panel, click **"ADD PRINCIPAL"**.
-4. Configure access:
-   * **New principals**:
-     * `monaro-risk-dev@google.com` *(Google Group)*
-     * `brendanhills@google.com` *(Individual fallback)*
-     * `allins@google.com` *(Individual fallback)*
-   * **Role**: **`IAP-secured Web App User`** (`roles/iap.httpsResourceAccessor`)
-5. Click **"Save"**.
-
----
-
-## 🚀 Step 7: Everyday Developer Workflow
-
-Once configured, deployment is completely hands-free:
+Deployment and access policy binding are completely hands-free:
 
 ```bash
 # 1. Edit code or data files under project_dash/
@@ -335,7 +339,7 @@ git commit -m "feat: update risk dashboard calculations and UI layout"
 git push origin dev
 ```
 
-Cloud Build automatically triggers, executes the test suite, builds the container image, deploys to Cloud Run, and updates IAM permissions.
+Cloud Build automatically triggers, runs tests, creates the container, deploys with `--iap`, and programmatically enforces `roles/iap.httpsResourceAccessor` for `group:monaro-risk-dev@google.com` and designated technical leads.
 
 * 👉 **Track Build Status**: [Cloud Build History](https://pantheon.corp.google.com/cloud-build/builds?project=monaro-risk-dev)
 * 👉 **Access Dashboard**: [Live Service URL](https://monaro-risk-dash-dev-525025654699.us-central1.run.app/)
@@ -362,4 +366,4 @@ To onboard the production environment, follow the exact same steps substituting:
 | **`Repository "cloud-run-source-deploy" not found`** | Artifact Registry repository must be initialized before `docker push`. | Added Step 2 in `cloudbuild.yaml` to auto-check/create repo idempotently. |
 | **Missing `roles/logging.logWriter`** | Custom Service Account lacked permission to write build logs. | Granted `roles/logging.logWriter` to `github-deployer@...`. |
 | **`403 Forbidden` on `.run.app` in browser** | `--no-allow-unauthenticated` rejects browser requests lacking OIDC token. | Enabled `--iap` on Cloud Run and granted `roles/iap.httpsResourceAccessor`. |
-| **IAP Principal Red Warning on New Group** | Newly created Google Groups take 5–10 mins to replicate into Cloud Identity directory. | Allow 5–10 mins for group propagation or use direct `@google.com` LDAP accounts as immediate fallback. |
+| **Pantheon UI Validation Warning on Group** | Pantheon client-side form validator fails to resolve internal groups in the UI. | Bound directly via Cloud Build using `gcloud iap web add-iam-policy-binding --member="group:monaro-risk-dev@google.com"`. |
