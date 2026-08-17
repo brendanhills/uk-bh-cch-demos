@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import logging
+from datetime import datetime
 from typing import TypedDict, Optional, List, Dict, Any
 
 from google import genai
@@ -96,23 +97,30 @@ Provide an exception-first executive briefing based on the following weekly metr
         for idx, p in enumerate(gap_close_plans)
     ])
 
+    project_name = metrics.get('project_name') or 'Program Portfolio'
+    project_title = metrics.get('project_title') or 'Delivery Governance'
+    organization = metrics.get('organization') or 'Executive Board'
+
     replacements = {
-        "{{REPORT_WEEK}}": str(metrics.get('report_week', 'Week 28')),
-        "{{REPORT_DATE}}": str(metrics.get('report_date', '14 Aug 2026')),
-        "{{BASELINE_WEEK}}": str(metrics.get('baseline_week', 'Week 27')),
-        "{{BASELINE_DATE}}": str(metrics.get('baseline_date', '07 Aug 2026')),
-        "{{OVERALL_STATUS}}": str(metrics.get('overall_status', '🟡 AMBER (Stable)')),
-        "{{COMMERCIAL_STATUS}}": str(metrics.get('commercial_status', '🟢 ON TRACK')),
-        "{{IBR_STATUS}}": str(metrics.get('ibr_status', '🟡 DUE AUG 2026 (90%)')),
-        "{{ATO_STATUS}}": str(metrics.get('ato_status', '🟢 GREEN')),
-        "{{ESCALATIONS_COUNT}}": str(metrics.get('escalations_count', '5')),
-        "{{GAP_CLOSE_MOVEMENTS}}": plans_str,
-        "{{TOTAL_RISKS}}": str(metrics.get('total_risks', '107')),
-        "{{INHERENT_AVG_SCORE}}": str(metrics.get('inherent_avg_score', '15.4')),
-        "{{RESIDUAL_AVG_SCORE}}": str(metrics.get('residual_avg_score', '8.4')),
-        "{{DELTA_COMPRESSION}}": str(metrics.get('delta_compression', '-7.0')),
-        "{{EVENTUATED_ISSUES_COUNT}}": str(metrics.get('eventuated_issues_count', '21')),
-        "{{TOTAL_ISSUES}}": str(metrics.get('total_issues', '29'))
+        "{{PROJECT_NAME}}": str(project_name),
+        "{{PROJECT_TITLE}}": str(project_title),
+        "{{ORGANIZATION}}": str(organization),
+        "{{REPORT_WEEK}}": str(metrics.get('report_week', 'Current Reporting Cycle')),
+        "{{REPORT_DATE}}": str(metrics.get('report_date', datetime.now().strftime('%d %b %Y'))),
+        "{{BASELINE_WEEK}}": str(metrics.get('baseline_week', 'Previous Reporting Cycle')),
+        "{{BASELINE_DATE}}": str(metrics.get('baseline_date', 'Previous Cycle')),
+        "{{OVERALL_STATUS}}": str(metrics.get('overall_status', 'AMBER (Stable)')),
+        "{{COMMERCIAL_STATUS}}": str(metrics.get('commercial_status', 'ON TRACK')),
+        "{{IBR_STATUS}}": str(metrics.get('ibr_status', 'IN PROGRESS')),
+        "{{ATO_STATUS}}": str(metrics.get('ato_status', 'IN PROGRESS')),
+        "{{ESCALATIONS_COUNT}}": str(metrics.get('escalations_count', '0')),
+        "{{GAP_CLOSE_MOVEMENTS}}": plans_str if plans_str else 'No active plan movements reported.',
+        "{{TOTAL_RISKS}}": str(metrics.get('total_risks', '0')),
+        "{{INHERENT_AVG_SCORE}}": str(metrics.get('inherent_avg_score', '0.0')),
+        "{{RESIDUAL_AVG_SCORE}}": str(metrics.get('residual_avg_score', '0.0')),
+        "{{DELTA_COMPRESSION}}": str(metrics.get('delta_compression', '0.0')),
+        "{{EVENTUATED_ISSUES_COUNT}}": str(metrics.get('eventuated_issues_count', '0')),
+        "{{TOTAL_ISSUES}}": str(metrics.get('total_issues', '0'))
     }
 
     prompt = template
@@ -205,18 +213,21 @@ def generate_multispeaker_podcast(
     if not client:
         raise RuntimeError("Gemini Client could not be initialized. Please configure Google Cloud ADC or GEMINI_API_KEY in .env.")
 
+    week_label = metrics.get('report_week', 'Current Reporting Cycle')
+    report_date = metrics.get('report_date', datetime.now().strftime('%d %b %Y'))
+
     prompt = f"""Generate a professional, high-impact 90-second conversational executive podcast briefing between two hosts:
 - Alex (Host / Program Delivery Analyst, voice: Puck): Neutral, crisp, direct.
 - Jordan (Co-Host / Technical Director, voice: Aoede): Authoritative, technical, solutions-focused.
 
-Reporting Week: {metrics.get('report_week', 'Week 28')} ({metrics.get('report_date', '14 Aug 2026')})
+Reporting Week: {week_label} ({report_date})
 Executive Summary: {synthesis_result.get('synthesis', {}).get('executive', '')}
 Top 3 Attention Items: {json.dumps(synthesis_result.get('top3', []))}
 Sleeper Outlier: {json.dumps(synthesis_result.get('sleeperOutlier', {}))}
 
 Return STRICT JSON as an array of dialogue turns:
 [
-  {{"speaker": "Alex", "role": "Program Analyst", "avatar": "🎙️", "time": "0:00", "text": "Welcome to the Executive Briefing for {metrics.get('report_week', 'Week 28')}..."}},
+  {{"speaker": "Alex", "role": "Program Analyst", "avatar": "🎙️", "time": "0:00", "text": "Welcome to the Executive Briefing for {week_label}..."}},
   {{"speaker": "Jordan", "role": "Technical Director", "avatar": "🤖", "time": "0:18", "text": "Thank you Alex..."}}
 ]
 """
