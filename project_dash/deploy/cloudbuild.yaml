@@ -55,7 +55,7 @@ steps:
       - '--port'
       - '8080'
 
-  # 6. Enforce IAM Invoker and IAP SSO Access Policies via CLI
+  # 6. Enforce IAM Invoker and IAP Group Policies via CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -68,17 +68,11 @@ steps:
           --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-iap.iam.gserviceaccount.com" \
           --role="roles/run.invoker" || true
 
-        # 2. Grant Cloud Run Invoker to allowlisted groups and leads
+        # 2. Grant Cloud Run Invoker to Google Group and Designated Leads
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
           --project=$PROJECT_ID \
           --region=us-central1 \
           --member="group:monaro-risk-dev@google.com" \
-          --role="roles/run.invoker" || true
-
-        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
-          --project=$PROJECT_ID \
-          --region=us-central1 \
-          --member="group:monaro-risk-dev@twosync.google.com" \
           --role="roles/run.invoker" || true
 
         gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
@@ -93,30 +87,14 @@ steps:
           --member="user:allins@google.com" \
           --role="roles/run.invoker" || true
 
-        # 3. Grant IAP-secured Web App User role using gcloud beta iap web
+        # 3. Grant IAP-secured Web App User role to Google Group and Designated Leads
         gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
           --service="monaro-risk-dash-dev" \
           --region="us-central1" \
           --member="group:monaro-risk-dev@google.com" \
-          --role="roles/iap.httpsResourceAccessor"
-
-        gcloud beta iap web add-iam-policy-binding \
-          --project=$PROJECT_ID \
-          --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
-          --member="group:monaro-risk-dev@twosync.google.com" \
-          --role="roles/iap.httpsResourceAccessor"
-
-        gcloud beta iap web add-iam-policy-binding \
-          --project=$PROJECT_ID \
-          --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
-          --member="user:allins@google.com" \
-          --role="roles/iap.httpsResourceAccessor"
+          --role="roles/iap.httpsResourceAccessor" || true
 
         gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
@@ -124,7 +102,15 @@ steps:
           --service="monaro-risk-dash-dev" \
           --region="us-central1" \
           --member="user:brendanhills@google.com" \
-          --role="roles/iap.httpsResourceAccessor"
+          --role="roles/iap.httpsResourceAccessor" || true
+
+        gcloud beta iap web add-iam-policy-binding \
+          --project=$PROJECT_ID \
+          --resource-type="cloud-run" \
+          --service="monaro-risk-dash-dev" \
+          --region="us-central1" \
+          --member="user:allins@google.com" \
+          --role="roles/iap.httpsResourceAccessor" || true
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'

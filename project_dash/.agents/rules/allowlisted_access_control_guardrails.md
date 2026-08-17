@@ -11,13 +11,13 @@
        - **Git Branch**: `dev`
        - **Cloud Run Service**: `monaro-risk-dash-dev`
        - **Cloud Build Trigger**: `deploy-monaro-risk-dash-dev` (Filter: `project_dash/**`)
-       - **Access Group**: `monaro-risk-dev@twosync.google.com` (Developer & internal testing access)
+       - **Access Group**: `monaro-risk-dev@google.com` (Google Group) / `monaro-risk-dev@twosync.google.com`
     2. **Production Environment**:
        - **GCP Project**: `monaro-risk-prod`
        - **Git Branch**: `main`
        - **Cloud Run Service**: `monaro-risk-dash`
        - **Cloud Build Trigger**: `deploy-monaro-risk-dash-prod` (Filter: `project_dash/**`)
-       - **Access Group**: `monaro-risk-prod@twosync.google.com` (Stakeholders, executives, prod users)
+       - **Access Group**: `monaro-risk-prod@google.com` (Google Group) / `monaro-risk-prod@twosync.google.com`
   - All deployments must be automated through branch-targeted Cloud Build triggers with path filters (`project_dash/**`).
 
 - **Prohibited Hosting & Sharing Recommendations (STRICT NEGATIVE CONSTRAINT)**:
