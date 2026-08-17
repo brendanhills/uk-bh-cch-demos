@@ -1032,5 +1032,41 @@
     "status": "Fix Verified",
     "context": "project_dash",
     "resolution_notes": "Resolved by user: updated branding, badge text, and documentation to refer to Gemini."
+  },
+  {
+    "id": 59,
+    "type": "Bug",
+    "title": "Driver Tree gate deliverable cards related risks links/badges are not clickable",
+    "description": "On the Driver Tree tab, users are unable to click into the related risks from deliverable cards to filter or view linked risks in the Risk Explorer.",
+    "cause": "",
+    "plan": "",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-17",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
+  },
+  {
+    "id": 60,
+    "type": "FR",
+    "title": "In-Dashboard Triggering for Data Ingestion, Google Sync, and Gemini Generation",
+    "description": "Allow authenticated Dashboard Admins to trigger data ingestion pipelines (Google Sheets sync, Google Drive weekly PDF report ingestion, Gemini executive brief generation, and NotebookLM sync) directly from the dashboard UI via backend endpoints or Cloud Run Jobs.",
+    "cause": "",
+    "plan": "",
+    "reporter": "Brendan Hills",
+    "date_reported": "2026-08-17",
+    "date_triaged": "",
+    "date_resolved": "",
+    "priority": "",
+    "impact": "",
+    "risk": "",
+    "phase": "",
+    "status": "Reported",
+    "context": "project_dash"
   }
 ]
