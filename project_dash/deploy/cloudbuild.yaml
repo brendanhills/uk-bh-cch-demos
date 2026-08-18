@@ -18,7 +18,7 @@ steps:
         gcloud artifacts repositories describe cloud-run-source-deploy --location=us-central1 --project=$PROJECT_ID || \
         gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=us-central1 --description="Cloud Run source deployments" --project=$PROJECT_ID
 
-  # 3. Build container image using custom Dockerfile (Images uploaded via images field with SLSA provenance)
+  # 3. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'project_dash'
     args:
@@ -30,6 +30,17 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
       - '.'
+
+  # 4. Push container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
 
   # 5. Deploy to Cloud Run (Private Mode + Native IAP Enabled)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
