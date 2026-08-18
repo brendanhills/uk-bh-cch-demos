@@ -57,7 +57,7 @@ ROUTER_INSTRUCTION = f"""
 # Master Concierge Router Agent configured for Live API BIDI WebSocket Session
 agent = Agent(
     name="cch_concierge_router",
-    model=os.getenv("LIVE_MODEL_ID", "gemini-live-2.5-flash-native-audio"),
+    model=os.getenv("LIVE_MODEL_ID") or os.getenv("DEMO_AGENT_MODEL") or "gemini-live-2.5-flash-native-audio",
     tools=[
         validate_phone_number,    # Direct Fast-Path Tool (<10ms execution)
         record_patient_identity,  # Direct Fast-Path Tool (<10ms execution)
