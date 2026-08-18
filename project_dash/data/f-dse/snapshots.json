@@ -106,9 +106,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
-      }
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 26, ending 31 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ]
     },
     "w25": {
       "weekNumber": 25,
@@ -214,9 +252,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
-      }
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 25, ending 24 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ]
     },
     "w24": {
       "weekNumber": 24,
@@ -322,9 +398,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
-      }
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 24, ending 17 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ]
     },
     "w23": {
       "weekNumber": 23,
@@ -430,9 +544,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
-      }
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 23, ending 10 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ]
     },
     "w22": {
       "weekNumber": 22,
@@ -538,9 +690,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
-      }
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 22, ending 03 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ]
     },
     "w27": {
       "weekNumber": 27,
@@ -594,10 +784,47 @@
       ],
       "sleeperOutlier": {
         "ref": "1.15",
-        "title": "CD1.5 Architecture Baseline Integration",
-        "description": "Downstream requirements baselining dependencies require active synchronization across multi-site landing zones."
+        "title": "CD1.5 Multi-Enclave Architecture Synchronization",
+        "risk": "Downstream multi-site enclave accreditation dependencies create latent schedule compression if identity federation lags.",
+        "trigger": "GFF site handover variance exceeding 3 weeks or ATO-C audit findings in tertiary enclaves."
       },
-      "podcastScript": [],
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the F-DSE Executive Briefing for Week 27, ending 07 Aug 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ],
       "plans": [
         {
           "num": 1,

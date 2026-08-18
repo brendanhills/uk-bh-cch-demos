@@ -19,6 +19,7 @@
        - **Cloud Build Trigger**: `deploy-monaro-risk-dash-prod` (Filter: `project_dash/**`)
        - **Access Group**: `monaro-risk-prod@google.com` (Google Group) / `monaro-risk-prod@twosync.google.com`
   - All deployments must be automated through branch-targeted Cloud Build triggers with path filters (`project_dash/**`).
+  - Cloud Build deployments run asynchronously in the background. Do not block or poll after pushes. Use `scripts/check_build_status.py` for on-demand diagnostics.
 
 - **Prohibited Hosting & Sharing Recommendations (STRICT NEGATIVE CONSTRAINT)**:
   - **NEVER** recommend, suggest, or deploy to **C4A Starter (Porcupette)**, public App Engine, or any shared hosting platform that defaults to granting access to all `@google.com` corporate accounts without granular group ACL enforcement.

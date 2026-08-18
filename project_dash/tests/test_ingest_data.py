@@ -83,13 +83,8 @@ class TestIngestData(unittest.TestCase):
         with patch('scripts.ingest_data.DATA_BASE_DIR', os.path.join(self.test_dir, 'data')):
             result = ingest_single_project('sample', generate_ai=False)
             self.assertTrue(result['success'])
-            # Verify precomputed_analytics.json was created
-            analytics_path = os.path.join(self.sample_proj_dir, 'precomputed_analytics.json')
-            self.assertTrue(os.path.exists(analytics_path))
-            with open(analytics_path) as f:
-                analytics = json.load(f)
-            self.assertIn('matrices', analytics)
-            self.assertIn('trends', analytics)
+            self.assertEqual(result['totalRisks'], 1)
+            self.assertEqual(result['totalIssues'], 0)
 
 if __name__ == '__main__':
     unittest.main()

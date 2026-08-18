@@ -62,7 +62,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == '/api/sync-sheet':
+        if parsed.path == '/favicon.ico':
+            self.send_response(204)
+            self.send_header('Content-Type', 'image/x-icon')
+            self.end_headers()
+        elif parsed.path == '/api/sync-sheet':
             self.handle_sync_sheet(parsed.query)
         elif parsed.path == '/api/check-drive-sync':
             self.handle_check_drive_sync(parsed.query)
@@ -349,17 +353,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json({'error': result.stderr or 'Ingestion script execution failed'}, 500)
                 return
 
-            precomp_file = os.path.join(p_dir, 'precomputed_analytics.json')
-            precomp_data = {}
-            if os.path.exists(precomp_file):
-                with open(precomp_file, 'r', encoding='utf-8') as f:
-                    precomp_data = json.load(f)
-
             self.send_json({
                 'status': 'ok',
                 'project': proj,
-                'message': f'Successfully ingested project {proj}',
-                'precomputed': precomp_data
+                'message': f'Successfully ingested project {proj}'
             })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)

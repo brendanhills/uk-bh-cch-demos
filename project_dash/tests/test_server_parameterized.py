@@ -92,7 +92,7 @@ class TestServerParameterized(unittest.TestCase):
         self.assertEqual(dummy.sent_code, 200)
         self.assertEqual(dummy.sent_data.get("status"), "ok")
         self.assertEqual(dummy.sent_data.get("project"), "sample")
-        self.assertIn("precomputed", dummy.sent_data)
+        self.assertIn("message", dummy.sent_data)
 
     def test_handle_regenerate_briefing_endpoint(self):
         """Verify POST /api/regenerate-briefing regenerates briefing synthesis."""

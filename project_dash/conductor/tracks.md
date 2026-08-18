@@ -33,3 +33,6 @@
 ---
 - [x] **Track: Decouple Dashboard Content for GitHub & Automated Gemini Ingestion Pipeline**
   *Link: [./tracks/decouple_and_gemini_ingestion_20260817/index.md](./tracks/decouple_and_gemini_ingestion_20260817/index.md)*
+---
+- [ ] **Track: Modularize `index.html` Frontend Architecture with ES Modules**
+  *Link: [./tracks/modularize_frontend_architecture_20260818/index.md](./tracks/modularize_frontend_architecture_20260818/index.md)*

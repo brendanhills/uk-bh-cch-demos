@@ -10,7 +10,8 @@
     "secondaryRegisterName": "Team Google Register",
     "links": {
       "charter": "https://example.com/fdse/charter",
-      "sheets": "https://docs.google.com/spreadsheets/d/1X-fdse-sheet-id"
+      "sheets": "https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit",
+      "teamGoogleSheet": "https://docs.google.com/spreadsheets/d/1lNRf5NEBd6ygc91nNwFA4HWGFfbDK02QkbkVfr4OUoA/edit"
     }
   },
   "kpiPillars": [

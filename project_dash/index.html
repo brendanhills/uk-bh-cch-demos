@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Risk &amp; Delivery Interactive Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
     <!-- Fonts & Tailwind CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,47 +91,36 @@
                 </div>
             </div>
 
-            <!-- Right Controls: Project Switcher, Time Machine, Open Sheet, Open Report, Sync -->
-            <div class="flex flex-wrap items-center gap-2 self-end md:self-auto">
-
-                <!-- Project Switcher Dropdown -->
-                <div class="relative inline-block text-left">
-                    <button onclick="toggleProjectDropdown()" class="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 hover:border-indigo-300 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-2xs text-xs font-bold transition-all cursor-pointer" title="Switch Project Workspace">
-                        <span class="text-slate-400 font-normal">Active:</span>
-                        <span id="headerProjectSelectorName" class="font-extrabold text-indigo-700">Project Aurora</span>
-                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                    <div id="projectDropdownMenu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 z-50 py-1.5">
-                        <div class="px-3 py-1.5 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100 tracking-wider">Switch Project Workspace</div>
-                        <a href="?project=sample" class="block px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5"><span>🪐</span> <span>Project Aurora</span></span>
-                            <span class="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Sample</span>
-                        </a>
-                        <a href="?project=f-dse" class="block px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5"><span>🛡️</span> <span>Project F-DSE</span></span>
-                            <span class="text-[10px] text-blue-700 font-extrabold bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">Live Project</span>
-                        </a>
-                    </div>
-                </div>
+            <!-- Right Controls: Time Machine, Open Sheet, Open Report, Sync -->
+            <div class="flex items-center gap-2 flex-nowrap shrink-0 self-end md:self-auto">
                 
                 <!-- Time Machine Toggle Button -->
-                <button onclick="toggleTimeMachineModal()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
+                <button onclick="toggleTimeMachineModal()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer whitespace-nowrap">
                     <span>⏱️ Time Machine</span>
                 </button>
 
-                <!-- Open Live Google Sheet Button -->
-                <a 
-                    id="openSheetLink"
-                    href="https://docs.google.com/spreadsheets/" 
-                    target="_blank" 
-                    rel="noreferrer"
-                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all"
-                    title="Open Live Risk & Issue Register (Google Sheet)"
-                >
-                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    <span>Open Sheet</span>
-                    <svg class="w-3 h-3 text-emerald-600 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                </a>
+                <!-- Open Live Google Sheet Dropdown Button -->
+                <div class="relative inline-block text-left" id="sheetDropdownWrapper">
+                    <button 
+                        id="openSheetLink"
+                        onclick="toggleSheetDropdown(event)"
+                        class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all whitespace-nowrap cursor-pointer"
+                        title="Open Live Risk & Issue Registers (Google Sheets)"
+                    >
+                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Open Sheet ▾</span>
+                    </button>
+                    <div id="sheetDropdownMenu" class="hidden absolute right-0 mt-1.5 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 divide-y divide-slate-100 text-xs">
+                        <a id="headerJointSheetLink" href="https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit" target="_blank" rel="noreferrer" class="flex items-center gap-2 px-3 py-2 text-slate-800 hover:bg-emerald-50 font-bold transition-all">
+                            <span>📊 Joint Program Register</span>
+                            <span class="ml-auto text-[10px] text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-mono">107 Risks</span>
+                        </a>
+                        <a id="headerTeamGoogleSheetLink" href="https://docs.google.com/spreadsheets/d/1lNRf5NEBd6ygc91nNwFA4HWGFfbDK02QkbkVfr4OUoA/edit" target="_blank" rel="noreferrer" class="flex items-center gap-2 px-3 py-2 text-slate-800 hover:bg-blue-50 font-bold transition-all">
+                            <span>🛡️ Team Google Register</span>
+                            <span class="ml-auto text-[10px] text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded font-mono">12 Tasks</span>
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Open Latest Weekly Report PDF Button -->
                 <a 
@@ -138,7 +128,7 @@
                     href="https://drive.google.com/file/d/1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu/view" 
                     target="_blank" 
                     rel="noreferrer"
-                    class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all"
+                    class="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all whitespace-nowrap"
                     title="Open Latest Weekly Report PDF (Week 27 - 07 Aug 2026)"
                 >
                     <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
@@ -147,7 +137,7 @@
                 </a>
 
                 <!-- Workspace Sync Button with Notification Badge -->
-                <button onclick="openSheetsModal()" class="relative bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer">
+                <button onclick="openSheetsModal()" class="relative bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 rounded-xl px-3.5 py-1.5 flex items-center gap-1.5 shadow-2xs text-xs font-bold transition-all cursor-pointer whitespace-nowrap">
                     <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     <span>Sync</span>
                     <span id="syncHeaderBadge" class="hidden absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white animate-bounce">!</span>
@@ -1392,7 +1382,6 @@
         let LIVE_RISKS = [];
         let LIVE_ISSUES = [];
         let TIME_MACHINE_SNAPSHOTS = {};
-        let PRECOMPUTED_ANALYTICS = null;
         let DRIVER_TREE = null;
         let DRIVER_TREE_ITEMS = [];
         let DRIVE_REPORTS = [];
@@ -1415,14 +1404,13 @@
             console.log(`[Dashboard] Initializing data for project: ${CURRENT_PROJECT}`);
 
             try {
-                const [cfgRes, snapRes, riskRes, issRes, kbRes, dtRes, analRes] = await Promise.all([
+                const [cfgRes, snapRes, riskRes, issRes, kbRes, dtRes] = await Promise.all([
                     fetch(`data/${CURRENT_PROJECT}/config.json`),
                     fetch(`data/${CURRENT_PROJECT}/snapshots.json`),
                     fetch(`data/${CURRENT_PROJECT}/risks.json`),
                     fetch(`data/${CURRENT_PROJECT}/issues.json`),
                     fetch(`data/${CURRENT_PROJECT}/knowledge.json`).catch(() => ({ ok: false })),
-                    fetch(`data/${CURRENT_PROJECT}/driver_tree.json`).catch(() => ({ ok: false })),
-                    fetch(`data/${CURRENT_PROJECT}/precomputed_analytics.json`).catch(() => ({ ok: false }))
+                    fetch(`data/${CURRENT_PROJECT}/driver_tree.json`).catch(() => ({ ok: false }))
                 ]);
 
                 if (cfgRes.ok) CONFIG = await cfgRes.json();
@@ -1446,29 +1434,43 @@
                 if (dtRes.ok) {
                     DRIVER_TREE = await dtRes.json();
                     if (Array.isArray(DRIVER_TREE)) {
-                        DRIVER_TREE_ITEMS = DRIVER_TREE;
+                        DRIVER_TREE_ITEMS = DRIVER_TREE.map(g => ({
+                            itemNumber: g.itemNumber || g.ref || '',
+                            description: g.description || g.name || g.title || 'Deliverable Gate',
+                            status: String(g.status || 'GREEN').toUpperCase(),
+                            level: g.level || 2,
+                            owner: g.owner || 'Workstream Lead',
+                            completeBy: g.completeBy || g.dueDate || g.targetDate || 'TBD',
+                            progress: g.progress !== undefined ? g.progress : 50,
+                            shift: g.shift || null,
+                            category: g.category || '',
+                            gapCloseRef: g.gapCloseRef || null,
+                            gapCloseTitle: g.gapCloseTitle || ''
+                        }));
                     } else if (DRIVER_TREE && DRIVER_TREE.capabilityDrops) {
                         DRIVER_TREE_ITEMS = [];
                         DRIVER_TREE.capabilityDrops.forEach(cd => {
                             (cd.gates || []).forEach(g => {
+                                const rawStatus = String(g.status || cd.status || 'GREEN').toUpperCase();
+                                let defaultProgress = 35;
+                                if (rawStatus === 'GREEN' || rawStatus === 'BLUE') defaultProgress = 100;
+                                else if (rawStatus === 'AMBER') defaultProgress = 60;
+
                                 DRIVER_TREE_ITEMS.push({
-                                    itemNumber: g.ref || g.itemNumber,
-                                    name: g.name,
-                                    status: g.status || cd.status || 'GREEN',
-                                    level: 2,
-                                    owner: g.owner || 'Lead',
-                                    targetDate: g.dueDate || cd.targetDate || '2026-10-31',
-                                    category: cd.name,
-                                    gapCloseRef: g.gapCloseRef || null
+                                    itemNumber: g.ref || g.itemNumber || '',
+                                    description: g.description || g.name || g.title || 'Deliverable Gate',
+                                    status: rawStatus,
+                                    level: g.level || 2,
+                                    owner: g.owner || cd.lead || 'Workstream Lead',
+                                    completeBy: g.completeBy || g.dueDate || g.targetDate || cd.targetDate || 'TBD',
+                                    progress: g.progress !== undefined ? g.progress : defaultProgress,
+                                    shift: g.shift || null,
+                                    category: cd.name || '',
+                                    gapCloseRef: g.gapCloseRef || null,
+                                    gapCloseTitle: g.gapCloseTitle || ''
                                 });
                             });
                         });
-                    }
-                }
-                if (analRes.ok) {
-                    PRECOMPUTED_ANALYTICS = await analRes.json();
-                    if (PRECOMPUTED_ANALYTICS && PRECOMPUTED_ANALYTICS.blueprintMappings) {
-                        BUNDLE_ANNEX_MAPPING = PRECOMPUTED_ANALYTICS.blueprintMappings;
                     }
                 }
             } catch (err) {
@@ -1505,12 +1507,16 @@
             const latestWeek = latestSnap.week || latestSnap.weekLabel || 'Latest';
             if (liveBadgeEl) liveBadgeEl.innerText = `Live (${latestWeek})`;
 
-            const sheetLink = document.getElementById('openSheetLink');
-            if (sheetLink && p.links && p.links.sheets) {
-                sheetLink.href = p.links.sheets;
-                sheetLink.classList.remove('hidden');
-            } else if (sheetLink && (!p.links || !p.links.sheets)) {
-                sheetLink.classList.add('hidden');
+            const sheetWrapper = document.getElementById('sheetDropdownWrapper');
+            const jointSheetLink = document.getElementById('headerJointSheetLink');
+            const teamGoogleSheetLink = document.getElementById('headerTeamGoogleSheetLink');
+            
+            if (p.links && p.links.sheets) {
+                if (jointSheetLink) jointSheetLink.href = p.links.sheets;
+                if (teamGoogleSheetLink) teamGoogleSheetLink.href = p.links.teamGoogleSheet || p.links.sheets;
+                if (sheetWrapper) sheetWrapper.classList.remove('hidden');
+            } else if (sheetWrapper) {
+                sheetWrapper.classList.add('hidden');
             }
             
             const driveLink = document.getElementById('driveReportLink');
@@ -1615,6 +1621,11 @@
             const activeBtn = document.getElementById(activeId);
             if (activeBtn) activeBtn.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs cursor-pointer font-bold';
             
+            // Clear active cell filter so entire register subset is visible
+            teamGoogleActiveMatrixCellFilter = null;
+            const notice = document.getElementById('teamGoogleMatrixFilterNotice');
+            if (notice) { notice.classList.add('hidden'); notice.classList.remove('flex'); }
+
             renderTeamGoogleHeatmap();
             renderBlueprintKnowledge();
             renderTeamGoogleRiskExplorer();
@@ -1656,11 +1667,38 @@
 
         function renderBlueprintBundleCards() {
             const container = document.getElementById('bundleAnnexCardsContainer');
-            if (!container || !BUNDLE_ANNEX_MAPPING) return;
+            if (!container) return;
+
+            let mappings = BUNDLE_ANNEX_MAPPING || {};
+            if (Object.keys(mappings).length === 0 && NOTEBOOK_CATALOG) {
+                mappings = {};
+                const sources = NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints || [];
+                sources.forEach(s => {
+                    if (s.bundle) {
+                        const bKey = s.bundle;
+                        const annex = s.annex || (s.title && s.title.includes(' - ') ? s.title.split(' - ')[0] : bKey);
+                        const title = s.title && s.title.includes(' - ') ? s.title.split(' - ')[1] : (s.title || bKey);
+                        mappings[bKey] = {
+                            annex: annex,
+                            title: title,
+                            version: s.version || 'v1.0',
+                            driverTreeRefs: s.driverTreeRefs || [],
+                            activeJointRiskCount: LIVE_RISKS.filter(r => String(r.bundle || '').toLowerCase().includes(bKey.toLowerCase()) && r.status !== 'Closed').length,
+                            activeTeamRiskCount: LIVE_TEAM_GOOGLE_RISKS.filter(r => String(r.bundle || '').toLowerCase().includes(bKey.toLowerCase()) && r.status !== 'Closed').length
+                        };
+                    }
+                });
+            }
+
+            if (Object.keys(mappings).length === 0) {
+                container.innerHTML = '<div class="col-span-2 p-6 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No blueprint bundles mapped for this project.</div>';
+                return;
+            }
 
             let html = '';
-            Object.entries(BUNDLE_ANNEX_MAPPING).forEach(([bKey, bInfo]) => {
+            Object.entries(mappings).forEach(([bKey, bInfo]) => {
                 const totalActive = (bInfo.activeJointRiskCount || 0) + (bInfo.activeTeamRiskCount || 0);
+                const nbUrl = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.notebookUrl) || 'https://notebook.google.com';
                 
                 html += '<div class="border border-slate-200/90 rounded-xl p-4 bg-slate-50/60 hover:bg-white transition-all space-y-3 shadow-2xs">';
                 html += '  <div class="flex items-start justify-between gap-3">';
@@ -1672,7 +1710,7 @@
                 html += '      </div>';
                 html += '      <h4 class="text-sm font-bold text-slate-900 mt-1">' + bInfo.title + '</h4>';
                 html += '    </div>';
-                html += '    <a href="https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-800 text-xs font-bold shrink-0">Open ↗</a>';
+                html += '    <a href="' + nbUrl + '" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-800 text-xs font-bold shrink-0">Open ↗</a>';
                 html += '  </div>';
 
                 html += '  <div class="flex flex-wrap items-center gap-2 text-xs pt-1 border-t border-slate-200/60">';
@@ -1683,7 +1721,7 @@
                 html += '  </div>';
 
                 html += '  <div class="flex items-center justify-between text-xs text-slate-500 pt-1">';
-                html += '    <span>Driver Refs: <b class="font-mono text-slate-700">' + (bInfo.driverTreeRefs || []).join(', ') + '</b></span>';
+                html += '    <span>Driver Refs: <b class="font-mono text-slate-700">' + (bInfo.driverTreeRefs && bInfo.driverTreeRefs.length > 0 ? bInfo.driverTreeRefs.join(', ') : 'Standard Gate') + '</b></span>';
                 html += '    <button onclick="filterRiskExplorerByBundle(\'' + bKey + '\')" class="text-purple-700 font-bold hover:underline cursor-pointer">Filter Risk Matrix ↗</button>';
                 html += '  </div>';
 
@@ -1695,21 +1733,33 @@
 
         function renderResearchDocsCards() {
             const container = document.getElementById('researchDocsContainer');
-            if (!container || !NOTEBOOK_CATALOG || !NOTEBOOK_CATALOG.sources) return;
+            if (!container) return;
 
-            const research = NOTEBOOK_CATALOG.sources.filter(s => s.category === 'Research & Governance' || s.category === 'Head Agreement');
+            const allSources = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.sources) || [];
+            let research = allSources.filter(s => s.category === 'Research & Governance' || s.category === 'Head Agreement');
+            if (research.length === 0 && allSources.length > 0) {
+                research = allSources.slice(0, 6);
+            }
+
+            if (research.length === 0) {
+                container.innerHTML = '<div class="col-span-3 p-6 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No external research documents attached.</div>';
+                return;
+            }
+
+            const nbUrl = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.notebookUrl) || 'https://notebook.google.com';
             let html = '';
             research.forEach(doc => {
+                const tokensText = doc.tokens ? Math.round(doc.tokens / 1000) + 'k tokens' : 'Verified Spec';
                 html += '<div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40 hover:bg-white transition-all space-y-2">';
                 html += '  <div class="flex items-center justify-between">';
-                html += '    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase">' + doc.type + ' • ' + (doc.version || 'v1.0') + '</span>';
-                html += '    <span class="text-[10px] text-purple-700 font-mono font-bold">' + Math.round(doc.tokens / 1000) + 'k tokens</span>';
+                html += '    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase">' + (doc.type || 'PDF') + ' • ' + (doc.version || 'v1.0') + '</span>';
+                html += '    <span class="text-[10px] text-purple-700 font-mono font-bold">' + tokensText + '</span>';
                 html += '  </div>';
                 html += '  <h5 class="text-xs font-bold text-slate-900 leading-snug">' + doc.title + '</h5>';
-                html += '  <p class="text-[11px] text-slate-600 line-clamp-2">' + doc.summary + '</p>';
+                html += '  <p class="text-[11px] text-slate-600 line-clamp-2">' + (doc.summary || 'Solution architecture specification and contractual delivery compliance framework.') + '</p>';
                 html += '  <div class="pt-2 border-t border-slate-200/60 flex justify-between items-center text-[11px]">';
-                html += '    <span class="text-slate-400 font-mono">' + doc.category + '</span>';
-                html += '    <a href="https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141" target="_blank" rel="noopener noreferrer" class="text-purple-600 font-bold hover:underline">View in NotebookLM ↗</a>';
+                html += '    <span class="text-slate-400 font-mono">' + (doc.category || 'Specification') + '</span>';
+                html += '    <a href="' + nbUrl + '" target="_blank" rel="noopener noreferrer" class="text-purple-600 font-bold hover:underline">View in NotebookLM ↗</a>';
                 html += '  </div>';
                 html += '</div>';
             });
@@ -2204,15 +2254,20 @@
         });
 
         
-        // --- GEMINI AI SYNTHESIS & NOTEBOOKLM PODCAST LOGIC ---
-                        function getPodcastScriptForWeek(weekKey) {
+        function getPodcastScriptForWeek(weekKey) {
             const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
             if (snap && snap.podcastScript && snap.podcastScript.length > 0) {
                 return snap.podcastScript;
             }
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Program';
+            const wLabel = (snap && snap.week) || 'Week 27';
+            const dLabel = (snap && snap.date) || '07 Aug 2026';
             return [
-                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", voice: "en-AU", time: "0:00", text: `Welcome to the ${CONFIG?.project?.name || 'Program'} Executive Briefing for ${snap?.week || 'this reporting cycle'}.` },
-                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", voice: "en-AU", time: "0:18", text: `Core delivery milestones remain on track with active risk burndown across the portfolio.` }
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "0:00", text: `Welcome to the ${pName} Executive Briefing for ${wLabel}, ending ${dLabel}. I'm Alex here with Jordan to analyze our delivery progress and key milestones.` },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", time: "0:18", text: `Thanks Alex. Core capability delivery milestones remain on track with active risk burndown across the portfolio workstreams.` },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "0:42", text: `Commonwealth acceptance for key deliverables and system requirement reviews remain the primary executive focus.` },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", time: "1:05", text: `Security assessors remain embedded across active enclaves with zero blocker vulnerabilities, and defined gap close plans are under execution.` },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "1:28", text: `Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards our baseline objectives.` }
             ];
         }
 
@@ -2270,10 +2325,15 @@
             const container = document.getElementById('podcastTranscriptContainer');
             if (!container) return;
 
-            const script = (typeof PODCAST_SCRIPTS !== 'undefined' && (PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w27 || PODCAST_SCRIPTS.w26)) || [];
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            if (!script || script.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs italic">No transcript available for this reporting cycle.</div>';
+                return;
+            }
+
             container.innerHTML = script.map((line, idx) => `
                 <div class="p-3 rounded-xl border ${line.speaker === 'Alex' ? 'bg-indigo-50/70 border-indigo-200' : 'bg-purple-50/70 border-purple-200'} flex items-start gap-3">
-                    <span class="text-xl p-1.5 bg-white rounded-lg shadow-2xs">${line.avatar || '🎙️'}</span>
+                    <span class="text-xl p-1.5 bg-white rounded-lg shadow-2xs">${line.avatar || (line.speaker === 'Alex' ? '🎙️' : '🤖')}</span>
                     <div class="space-y-1 flex-1 min-w-0">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
@@ -2289,8 +2349,8 @@
         }
 
         function copyPodcastScript() {
-            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
-            const fullText = script.map(s => `${s.speaker} (${s.role}): ${s.text}`).join('\n\n');
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            const fullText = script.map(s => `${s.speaker} (${s.role || 'Speaker'}): ${s.text}`).join('\n\n');
             navigator.clipboard.writeText(fullText).then(() => {
                 const btn = document.getElementById('copyScriptBtn');
                 if (btn) {
@@ -2319,38 +2379,53 @@
             const playBtn = document.getElementById('podcastPlayBtn');
             const timeLabel = document.getElementById('podcastTimeLabel');
 
-            if (!audioEl) return;
-
-            if (audioEl.paused) {
-                audioEl.playbackRate = podcastPlaybackSpeed;
-                audioEl.play().then(() => {
-                    isPodcastPlaying = true;
-                    if (playBtn) playBtn.innerText = '⏸';
-                    animateWaveform(true);
-                }).catch(err => {
-                    console.warn("Audio autoplay fallback:", err);
-                });
-            } else {
-                audioEl.pause();
+            if (isPodcastPlaying) {
                 isPodcastPlaying = false;
+                if (audioEl && !audioEl.paused) audioEl.pause();
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
                 if (playBtn) playBtn.innerText = '▶';
+                if (timeLabel) timeLabel.innerText = 'Paused';
                 animateWaveform(false);
+                return;
             }
 
-            audioEl.ontimeupdate = () => {
-                if (timeLabel) {
-                    const cur = formatAudioTime(audioEl.currentTime);
-                    const dur = formatAudioTime(audioEl.duration || 105);
-                    timeLabel.innerText = `${cur} / ${dur}`;
-                }
-            };
+            isPodcastPlaying = true;
+            if (playBtn) playBtn.innerText = '⏸';
+            animateWaveform(true);
 
-            audioEl.onended = () => {
-                isPodcastPlaying = false;
-                if (playBtn) playBtn.innerText = '▶';
-                if (timeLabel) timeLabel.innerText = 'Finished (1:45)';
-                animateWaveform(false);
-            };
+            // Prioritize high-fidelity studio audio file (Alex & Jordan natural voices)
+            if (audioEl) {
+                audioEl.playbackRate = podcastPlaybackSpeed;
+                const playPromise = audioEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        audioEl.ontimeupdate = () => {
+                            if (timeLabel && isPodcastPlaying) {
+                                const cur = formatAudioTime(audioEl.currentTime);
+                                const dur = formatAudioTime(audioEl.duration || 105);
+                                timeLabel.innerText = `${cur} / ${dur}`;
+                            }
+                        };
+                        audioEl.onended = () => {
+                            isPodcastPlaying = false;
+                            if (playBtn) playBtn.innerText = '▶';
+                            if (timeLabel) timeLabel.innerText = 'Finished (1:45)';
+                            animateWaveform(false);
+                        };
+                    }).catch(err => {
+                        console.warn("Studio audio file autoplay fallback to SpeechSynthesis:", err);
+                        if ('speechSynthesis' in window) {
+                            playPodcastFromIndex(0);
+                        }
+                    });
+                    return;
+                }
+            }
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                playPodcastFromIndex(0);
+            }
         }
 
         function formatAudioTime(secs) {
@@ -2361,11 +2436,13 @@
         }
 
         function playPodcastFromIndex(index) {
-            const script = PODCAST_SCRIPTS[activeTimeMachineWeek] || PODCAST_SCRIPTS.w26;
-            if (index >= script.length) {
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            if (!script || index >= script.length) {
                 isPodcastPlaying = false;
-                document.getElementById('podcastPlayBtn').innerText = '▶';
-                document.getElementById('podcastTimeLabel').innerText = 'Finished';
+                const playBtn = document.getElementById('podcastPlayBtn');
+                const timeLabel = document.getElementById('podcastTimeLabel');
+                if (playBtn) playBtn.innerText = '▶';
+                if (timeLabel) timeLabel.innerText = 'Finished (1:45)';
                 animateWaveform(false);
                 return;
             }
@@ -2376,16 +2453,19 @@
             utterance.rate = podcastPlaybackSpeed;
             
             // Pick dual alternating voices if available
-            const voices = window.speechSynthesis.getVoices();
-            if (voices.length > 0) {
-                if (line.speaker === 'Alex') {
-                    utterance.voice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Guy'))) || voices[0];
-                } else {
-                    utterance.voice = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Jenny') || v.name.includes('Samantha'))) || voices[1] || voices[0];
+            if (window.speechSynthesis) {
+                const voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                    if (line.speaker === 'Alex') {
+                        utterance.voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Guy') || v.name.includes('Natural') || v.name.includes('George'))) || voices[0];
+                    } else {
+                        utterance.voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Jenny') || v.name.includes('Samantha') || v.name.includes('Natural') || v.name.includes('Susan'))) || voices[1] || voices[0];
+                    }
                 }
             }
 
-            document.getElementById('podcastTimeLabel').innerText = `Speaking: ${line.speaker} (${index + 1}/${script.length})`;
+            const timeLabel = document.getElementById('podcastTimeLabel');
+            if (timeLabel) timeLabel.innerText = `Speaking: ${line.speaker} (${index + 1}/${script.length})`;
 
             utterance.onend = () => {
                 if (isPodcastPlaying) {
@@ -2393,7 +2473,8 @@
                 }
             };
 
-            utterance.onerror = () => {
+            utterance.onerror = (e) => {
+                console.warn("SpeechSynthesis error:", e);
                 if (isPodcastPlaying) {
                     playPodcastFromIndex(index + 1);
                 }
@@ -2511,17 +2592,25 @@
         }
 
         function jumpToGapClose(gapNum) {
+            const cleanNum = String(gapNum).replace(/\D/g, '');
+            const targetCard = document.getElementById(`gapPlan_${cleanNum}`) || document.getElementById(`gapPlan_${gapNum}`);
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.classList.add('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]');
+                setTimeout(() => targetCard.classList.remove('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]'), 3000);
+                return;
+            }
             const gapSection = document.getElementById('execGapClosePlansList');
             if (gapSection) {
                 const cards = gapSection.querySelectorAll('div');
-                let targetCard = null;
+                let found = null;
                 cards.forEach(c => {
-                    if (c.innerText.includes(`#${gapNum}`)) targetCard = c;
+                    if (c.innerText.includes(`#${gapNum}`)) found = c;
                 });
-                if (targetCard) {
-                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    targetCard.classList.add('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.03]');
-                    setTimeout(() => targetCard.classList.remove('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.03]'), 3000);
+                if (found) {
+                    found.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    found.classList.add('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]');
+                    setTimeout(() => found.classList.remove('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]'), 3000);
                 }
             }
         }
@@ -2571,6 +2660,21 @@
                 }, 100);
             }
         }
+
+        function toggleSheetDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('sheetDropdownMenu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        // Close sheet dropdown when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('sheetDropdownWrapper');
+            const menu = document.getElementById('sheetDropdownMenu');
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
 
         // --- TIME MACHINE FUNCTIONS ---
         function toggleTimeMachineModal() {
@@ -2929,7 +3033,7 @@
                 const isOverdue = g.target && g.target.toLowerCase().includes("jul 2026") && activeWeekName.includes("27");
 
                 return `
-                    <div class="p-4 rounded-xl border ${borderClass} flex flex-col justify-between space-y-3 hover:shadow-xs hover:border-indigo-300 transition-all bg-white text-xs sm:text-sm">
+                    <div id="gapPlan_${g.num}" class="p-4 rounded-xl border ${borderClass} flex flex-col justify-between space-y-3 hover:shadow-xs hover:border-indigo-300 transition-all bg-white text-xs sm:text-sm scroll-mt-24">
                         <div class="space-y-2">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2">
@@ -2938,7 +3042,10 @@
                                     </span>
                                     <button onclick="jumpToDriverRef('${g.ref.split(' ')[0]}')" class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 cursor-pointer">Ref ${g.ref} ↗</button>
                                 </div>
-                                ${deltaBadge}
+                                <div class="flex items-center gap-1.5">
+                                    ${deltaBadge}
+                                    <button onclick="document.getElementById('execBriefingSummaryCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="text-[10px] text-slate-400 hover:text-indigo-600 font-medium px-1.5 py-0.5 rounded hover:bg-slate-100 cursor-pointer" title="Back to Executive Briefing top">↑ Briefing</button>
+                                </div>
                             </div>
                             <h4 class="font-bold text-slate-900 text-sm leading-snug">${g.title}</h4>
                             <p class="text-slate-700 text-xs leading-relaxed font-normal">${g.plan}</p>
@@ -3542,18 +3649,6 @@
         }
 
         function computeTimelineMetrics(granularity) {
-            if (PRECOMPUTED_ANALYTICS && PRECOMPUTED_ANALYTICS.trends && PRECOMPUTED_ANALYTICS.trends.labels) {
-                const t = PRECOMPUTED_ANALYTICS.trends;
-                return {
-                    labels: t.labels || [],
-                    activeBacklog: t.backlog?.netBacklog || [],
-                    newOpened: t.backlog?.intake || [],
-                    newClosed: t.backlog?.closed || [],
-                    inherentScores: t.burndown?.inherentAvg || [],
-                    residualScores: t.burndown?.residualAvg || []
-                };
-            }
-
             const keys = Object.keys(TIME_MACHINE_SNAPSHOTS).sort((a, b) => {
                 const na = parseInt(a.replace(/\D/g, '')) || 0;
                 const nb = parseInt(b.replace(/\D/g, '')) || 0;
@@ -4200,18 +4295,26 @@
         function renderTop5Risks() {
             const container = document.getElementById('execTopRisksFullList');
             if (!container) return;
-            const sorted = [...LIVE_RISKS]
-                .filter(r => r.status !== 'Closed')
-                .sort((a, b) => (b.residualRiskScore || 0) - (a.residualRiskScore || 0))
+            const sorted = [...(LIVE_RISKS || [])]
+                .filter(r => r && r.status !== 'Closed')
+                .sort((a, b) => ((b.residualRiskScore || (b.residualLikelihood * b.residualConsequence) || 0) - (a.residualRiskScore || (a.residualLikelihood * a.residualConsequence) || 0)))
                 .slice(0, 5);
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No active risks recorded in current reporting cycle.</div>';
+                return;
+            }
 
             let html = '';
             sorted.forEach((r, idx) => {
-                const score = r.residualRiskScore || (r.residualLikelihood * r.residualConsequence);
+                const score = r.residualRiskScore || (r.residualLikelihood * r.residualConsequence) || 0;
                 let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
                 if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
                 else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
                 else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
+
+                const title = r.riskName || r.riskTitle || r.riskDescription || r.title || 'Risk Exposure';
+                const owner = r.riskOwner || r.owner || 'Joint Team';
 
                 html += `
                     <div onclick="openItemDetailModal('risk', '${r.id}')" class="p-3 bg-slate-50 hover:bg-indigo-50/60 border border-slate-200 hover:border-indigo-300 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all group">
@@ -4221,12 +4324,12 @@
                                 <span class="text-xs font-medium text-slate-500 truncate">${r.causeCategory || 'Platform'}</span>
                                 ${r.driverTreeRef ? `<button onclick="event.stopPropagation(); jumpToDriverRef('${r.driverTreeRef}')" class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${r.driverTreeRef} ↗</button>` : ''}
                             </div>
-                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">${r.riskName || r.riskDescription}</h4>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">${title}</h4>
                         </div>
                         <div class="text-right shrink-0 flex items-center gap-3">
                             <div>
                                 <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Score: ${score}</span>
-                                <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${r.riskOwner || 'Joint Team'}</span>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${owner}</span>
                             </div>
                             <span class="text-indigo-600 font-bold text-xs group-hover:underline">Inspect ↗</span>
                         </div>
@@ -4311,12 +4414,20 @@
         function renderTop5Issues() {
             const container = document.getElementById('execTopIssuesFullList');
             if (!container) return;
-            const sorted = [...LIVE_ISSUES]
-                .filter(i => i.status !== 'Closed')
+            const sorted = [...(LIVE_ISSUES || [])]
+                .filter(i => i && i.status !== 'Closed')
                 .slice(0, 5);
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No active escalated issues recorded.</div>';
+                return;
+            }
 
             let html = '';
             sorted.forEach((i, idx) => {
+                const title = i.issueName || i.issueTitle || i.issueDescription || i.issueStatement || i.title || 'Escalated Issue';
+                const owner = i.issueOwner || i.owner || 'Workstream Lead';
+
                 html += `
                     <div onclick="openItemDetailModal('issue', '${i.id}')" class="p-3 bg-slate-50 hover:bg-amber-50/60 border border-slate-200 hover:border-amber-300 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all group">
                         <div class="space-y-0.5 flex-1 min-w-0">
@@ -4325,11 +4436,11 @@
                                 <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${i.status || 'Active'}</span>
                                 ${i.driverTreeRef ? `<span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${i.driverTreeRef}</span>` : ''}
                             </div>
-                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-amber-800 transition-colors truncate">${i.issueName || i.issueDescription}</h4>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-amber-800 transition-colors truncate">${title}</h4>
                         </div>
                         <div class="text-right shrink-0">
                             <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">${i.severity || 'Medium'}</span>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${i.owner || 'Tom Trobe'}</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${owner}</span>
                         </div>
                     </div>
                 `;
@@ -4525,14 +4636,22 @@
                     const borderBg = isRed ? 'border-red-200 bg-red-50/40 hover:border-red-300' : (isBlue ? 'border-blue-200 bg-blue-50/40 hover:border-blue-300' : 'border-amber-200 bg-amber-50/40 hover:border-amber-300');
                     const badgeColor = isRed ? 'bg-red-100 text-red-800 border-red-200' : (isBlue ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-amber-100 text-amber-800 border-amber-200');
                     
+                    // Match corresponding Gap Close Plan if available
+                    const itemRef = item.ref || '';
+                    const linkedPlan = (snap.plans || []).find(p => p.ref && itemRef && (p.ref.includes(itemRef) || itemRef.includes(p.ref.split(' ')[0])));
+                    const gapNum = item.gapCloseRef || (linkedPlan ? linkedPlan.num : null);
+
                     return `
                         <div class="border ${borderBg} rounded-xl p-4 space-y-2.5 flex flex-col justify-between transition-all">
                             <div class="space-y-1.5">
-                                <div class="flex items-center justify-between">
+                                <div class="flex items-center justify-between gap-1 flex-wrap">
                                     <div class="flex items-center gap-1.5">
                                         <span class="text-xs font-bold text-slate-900">${idx + 1}. ${cleanField(item.title || '')}</span>
                                     </div>
-                                    ${item.ref ? `<button onclick="jumpToDriverRef('${item.ref}')" class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded hover:bg-indigo-100 cursor-pointer">Ref ${item.ref} ↗</button>` : ''}
+                                    <div class="flex items-center gap-1">
+                                        ${item.ref ? `<button onclick="jumpToDriverRef('${item.ref}')" class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded hover:bg-indigo-100 cursor-pointer">Ref ${item.ref} ↗</button>` : ''}
+                                        ${gapNum ? `<button onclick="jumpToGapClose('${gapNum}')" class="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-100 cursor-pointer" title="Jump to Gap Close Plan #${gapNum}">🚨 Gap #${gapNum} ↗</button>` : ''}
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded border">${item.tag || 'Decision Item'}</span>
@@ -4548,19 +4667,24 @@
                 }).join('');
             }
 
-            // Update Sleeper Outlier
-            if (snap && snap.sleeperOutlier) {
-                const sl = snap.sleeperOutlier;
-                const slContainer = document.getElementById('sleeperOutlierContainer');
+            // Update Sleeper Outlier (Bug #71)
+            const slContainer = document.getElementById('sleeperOutlierContainer');
+            const sl = snap ? snap.sleeperOutlier : null;
+            const hasOutlierData = sl && (sl.risk || sl.description || sl.title) && (sl.trigger || sl.triggerCondition || sl.action || sl.ref);
+            if (hasOutlierData && slContainer) {
                 const slRefBtn = document.getElementById('sleeperOutlierRefBtn');
                 const slText = document.getElementById('sleeperOutlierText');
-                if (slContainer) slContainer.classList.remove('hidden');
+                slContainer.classList.remove('hidden');
                 if (slRefBtn) {
                     slRefBtn.innerHTML = sl.ref ? `<button onclick="jumpToDriverRef('${sl.ref}')" class="bg-[#f0f4f9] hover:bg-purple-100 text-purple-900 text-xs font-bold px-2 py-0.5 rounded border border-purple-200 font-mono transition-all cursor-pointer">Ref ${sl.ref} (${sl.title || ''}) ↗</button>` : '';
                 }
                 if (slText) {
-                    slText.innerHTML = `<strong>The Risk:</strong> ${cleanField(sl.risk || '')} <strong>Trigger:</strong> ${cleanField(sl.trigger || '')}`;
+                    const riskContent = cleanField(sl.risk || sl.description || sl.title || '');
+                    const triggerContent = cleanField(sl.trigger || sl.triggerCondition || sl.action || 'Schedule variance across multi-site landing zones');
+                    slText.innerHTML = `<strong>The Risk:</strong> ${riskContent} &nbsp;&bull;&nbsp; <strong>Trigger:</strong> ${triggerContent}`;
                 }
+            } else if (slContainer) {
+                slContainer.classList.add('hidden');
             }
 
             // Update Synthesis Counts

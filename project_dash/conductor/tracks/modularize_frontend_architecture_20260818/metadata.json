@@ -1,0 +1,8 @@
+{
+  "track_id": "modularize_frontend_architecture_20260818",
+  "type": "Refactor",
+  "status": "new",
+  "created_at": "2026-08-18T18:18:00+10:00",
+  "updated_at": "2026-08-18T18:18:00+10:00",
+  "description": "Modularize index.html Frontend Architecture with Domain-Driven ES Modules and Python AI Ingestion Pipeline"
+}

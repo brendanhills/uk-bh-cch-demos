@@ -11,7 +11,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
 from scripts.gemini_generator import generate_executive_synthesis, generate_multispeaker_podcast, get_gemini_client
-from scripts.precompute_analytics import build_precomputed_analytics
 
 logger = logging.getLogger('ingest_weekly_report')
 
@@ -131,12 +130,16 @@ def ingest_file(
     baseline_date = prior_snap.get('date', 'Previous Cycle')
 
     # Default plans
-    plans = prior_snap.get('plans', [
-        {'num': 1, 'status': 'RED', 'ref': '1.2b', 'title': 'Milestone 1 Deliverables Acceptance', 'plan': 'Work with customer for sign-off.', 'owner': 'Delivery Lead', 'target': 'Aug 2026'},
-        {'num': 2, 'status': 'RED', 'ref': '1.6 GFF', 'title': 'Facilities & Connectivity', 'plan': 'Mitigate lead time.', 'owner': 'Infrastructure Lead', 'target': 'Aug 2026'},
-        {'num': 3, 'status': 'BLUE', 'ref': '1.10b', 'title': 'Platform E.01 Ready', 'plan': 'Operational for test/dev.', 'owner': 'Engineering Lead', 'target': 'Delivered'},
-        {'num': 4, 'status': 'RED', 'ref': '1.14', 'title': 'Systems Requirements Review (SRR)', 'plan': 'Iterative requirements alignment.', 'owner': 'Technical Lead', 'target': 'Sep 2026'}
-    ])
+    raw_plans = prior_snap.get('plans', [])
+    if raw_plans and len(raw_plans) >= 4:
+        plans = raw_plans
+    else:
+        plans = [
+            {'num': 1, 'status': 'RED', 'ref': '1.2b', 'title': 'Milestone 1 Deliverables Acceptance', 'plan': 'Work with customer for sign-off.', 'owner': 'Delivery Lead', 'target': 'Aug 2026'},
+            {'num': 2, 'status': 'RED', 'ref': '1.6 GFF', 'title': 'Facilities & Connectivity', 'plan': 'Mitigate lead time.', 'owner': 'Infrastructure Lead', 'target': 'Aug 2026'},
+            {'num': 3, 'status': 'BLUE', 'ref': '1.10b', 'title': 'Platform E.01 Ready', 'plan': 'Operational for test/dev.', 'owner': 'Engineering Lead', 'target': 'Delivered'},
+            {'num': 4, 'status': 'RED', 'ref': '1.14', 'title': 'Systems Requirements Review (SRR)', 'plan': 'Iterative requirements alignment.', 'owner': 'Technical Lead', 'target': 'Sep 2026'}
+        ]
 
     risk_metrics = compute_risk_metrics(risks, issues)
     metric_ctx = {
@@ -219,15 +222,6 @@ def ingest_file(
     snapshots_data['lastSynced'] = datetime.now().isoformat()
     save_json_file(snapshots_file, snapshots_data)
     print(f"Saved snapshot to {snapshots_file}")
-
-    # Update precomputed analytics
-    try:
-        analytics = build_precomputed_analytics(risks, issues, snapshots_data['snapshots'], knowledge)
-        analytics_file = os.path.join(proj_dir, 'precomputed_analytics.json')
-        save_json_file(analytics_file, analytics)
-        print(f"Saved precomputed analytics cache to {analytics_file}")
-    except Exception as e:
-        logger.warning(f"Error updating precomputed analytics: {e}")
 
     return new_snapshot
 

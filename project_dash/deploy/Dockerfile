@@ -2,6 +2,7 @@ FROM nginx:alpine
 
 # Copy static frontend assets and data files
 COPY index.html /usr/share/nginx/html/index.html
+COPY favicon.svg /usr/share/nginx/html/favicon.svg
 COPY assets/ /usr/share/nginx/html/assets/
 COPY data/ /usr/share/nginx/html/data/
 

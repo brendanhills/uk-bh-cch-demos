@@ -1,78 +1,154 @@
 {
   "capabilityDrops": [
     {
-      "id": "CD1.0",
       "name": "Capability Drop 1.0 (Core Sovereign Enclave MVP)",
-      "status": "IN_PROGRESS",
-      "targetDate": "Oct 2026",
+      "lead": "Ed Louis (HJCC / FAS GCD)",
+      "targetDate": "2027-02-01",
+      "status": "AMBER",
       "gates": [
         {
           "ref": "1.2b",
           "name": "Milestone 1 Architecture & V&V Acceptance",
+          "description": "Customer sign-off on System Requirements, V&V plan, and baseline architecture.",
           "status": "AMBER",
-          "owner": "David Vance"
+          "level": 2,
+          "owner": "Michael Maconachie",
+          "targetDate": "2026-08-31",
+          "progress": 60,
+          "gapCloseRef": "1",
+          "shift": "Forecast completion moved to 31 Aug 2026"
+        },
+        {
+          "ref": "1.3 GFF",
+          "name": "Facilities & Optical Connectivity W.10",
+          "description": "Primary optical fibre connectivity, rack readiness, and power validation.",
+          "status": "GREEN",
+          "level": 3,
+          "owner": "Susan Allin",
+          "targetDate": "2026-09-01",
+          "progress": 100,
+          "shift": null
         },
         {
           "ref": "1.4c",
           "name": "High-Throughput Data Diode Pipeline",
+          "description": "Unidirectional optical data transfer bridge with protocol sanitization.",
           "status": "GREEN",
-          "owner": "Liam Patel"
+          "level": 2,
+          "owner": "Steve Peel",
+          "targetDate": "2026-10-15",
+          "progress": 100,
+          "shift": null
         },
         {
           "ref": "1.6 GFF",
           "name": "Facilities & Sovereign Optical Connectivity",
+          "description": "Delivery of physical landing zones and high-assurance communications links.",
           "status": "AMBER",
-          "owner": "Aron Ward"
+          "level": 2,
+          "owner": "Susan Allin",
+          "targetDate": "2026-09-15",
+          "progress": 60,
+          "gapCloseRef": "2",
+          "shift": "Power distribution board variance"
+        },
+        {
+          "ref": "1.7a",
+          "name": "DevSecOps Core Infrastructure",
+          "description": "Automated build pipeline with policy-as-code verification and container scanning.",
+          "status": "GREEN",
+          "level": 3,
+          "owner": "Tom Trobe",
+          "targetDate": "2026-08-15",
+          "progress": 100,
+          "shift": null
         },
         {
           "ref": "1.8b",
-          "name": "Vertex AI Foundation Model Fine-Tuning Enclave",
+          "name": "Vertex AI Foundation Model Enclave",
+          "description": "Fine-tuning environment with dedicated GPU clusters and isolated endpoints.",
           "status": "GREEN",
-          "owner": "Elena Rostova"
+          "level": 3,
+          "owner": "AI Platform Lead",
+          "targetDate": "2026-11-01",
+          "progress": 80,
+          "shift": null
         },
         {
           "ref": "1.10b",
           "name": "Core Sovereign Compute & Storage Hardware",
+          "description": "Bare-metal compute nodes and NVMe storage clusters commissioned in secure DC.",
           "status": "BLUE",
-          "owner": "Marcus Chen"
+          "level": 2,
+          "owner": "Tom Trobe",
+          "targetDate": "2026-08-07",
+          "progress": 100,
+          "gapCloseRef": "3",
+          "shift": "Delivered in Week 27"
         },
         {
           "ref": "1.12",
           "name": "Integrated Telemetry & Observability Mesh",
+          "description": "End-to-end distributed tracing, metrics aggregation, and SIEM forwarding.",
           "status": "GREEN",
-          "owner": "Tom Trobe"
+          "level": 3,
+          "owner": "Tom Trobe",
+          "targetDate": "2026-12-01",
+          "progress": 75,
+          "shift": null
         }
       ]
     },
     {
-      "id": "CD1.5",
       "name": "Capability Drop 1.5 (Multi-Enclave Federation & Advanced AI)",
-      "status": "PLANNED",
-      "targetDate": "Feb 2027",
+      "lead": "Ed Louis (HJCC / FAS GCD)",
+      "targetDate": "2027-08-01",
+      "status": "GREEN",
       "gates": [
         {
           "ref": "1.14",
           "name": "Systems Requirements Review (SRR) CD1.5 Baseline",
-          "status": "RED",
-          "owner": "David Vance"
+          "description": "Formal review of requirements allocation for multi-enclave operational model.",
+          "status": "AMBER",
+          "level": 2,
+          "owner": "Scott Deacon",
+          "targetDate": "2026-09-30",
+          "progress": 60,
+          "gapCloseRef": "4",
+          "shift": "Realigned to Sep 2026"
         },
         {
           "ref": "1.15",
           "name": "Milestone 3 Preliminary Design Review (PDR)",
+          "description": "Multi-site architecture design specifications and security enclave topology.",
           "status": "GREEN",
-          "owner": "David Vance"
+          "level": 2,
+          "owner": "Michael Maconachie",
+          "targetDate": "2026-11-15",
+          "progress": 100,
+          "shift": null
         },
         {
           "ref": "1.18",
           "name": "Cross-Domain Autonomous Agent Guardrails",
-          "status": "PLANNED",
-          "owner": "Elena Rostova"
+          "description": "Deterministic boundary enforcement and human-in-the-loop review.",
+          "status": "GREEN",
+          "level": 3,
+          "owner": "AI Platform Lead",
+          "targetDate": "2027-03-01",
+          "progress": 30,
+          "shift": null
         },
         {
           "ref": "1.22",
           "name": "Disaster Recovery Automated Site Failover",
-          "status": "PLANNED",
-          "owner": "Marcus Chen"
+          "description": "Automated cross-region DNS redirection and database state synchronization.",
+          "status": "GREEN",
+          "level": 3,
+          "owner": "Tom Trobe",
+          "targetDate": "2027-06-01",
+          "progress": 20,
+          "shift": null
         }
       ]
     }

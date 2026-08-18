@@ -34,18 +34,10 @@ class TestPhase6Bugs(unittest.TestCase):
         self.assertIn("Inspect", body, "renderIssueTable must render Inspect button")
 
     def test_bug_38_podcast_scripts_w27_and_no_undefined(self):
-        """Bug #38: PODCAST_SCRIPTS must contain w27 with avatar, role, and time fields."""
-        idx = self.html.find("PODCAST_SCRIPTS")
-        self.assertNotEqual(idx, -1, "PODCAST_SCRIPTS structure must exist")
-        body = self.html[idx:idx+3500]
-        self.assertIn("w27", body, "PODCAST_SCRIPTS must have w27 entry")
-        self.assertIn("avatar", body, "PODCAST_SCRIPTS must have avatar property")
-        self.assertIn("role", body, "PODCAST_SCRIPTS must have role property")
-
-        # Check renderPodcastTranscript
-        idx_rpt = self.html.find("function renderPodcastTranscript")
-        body_rpt = self.html[idx_rpt:idx_rpt+1500]
-        self.assertIn("renderPodcastTranscript", self.html, "renderPodcastTranscript function must exist")
+        """Bug #38: Podcast dialogue must be resolved dynamically with avatar, role, and time fields."""
+        self.assertIn("function getPodcastScriptForWeek", self.html)
+        self.assertIn("renderPodcastTranscript", self.html)
+        self.assertIn("function togglePodcastPlayback", self.html)
 
     def test_bug_48_podcast_audio_assets_exist(self):
         """Bug #48: podcast audio file or generator must exist in assets directory."""

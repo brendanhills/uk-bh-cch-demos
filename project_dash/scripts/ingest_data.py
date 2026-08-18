@@ -10,7 +10,6 @@ sys.path.insert(0, BASE_DIR)
 
 DATA_BASE_DIR = os.path.join(BASE_DIR, 'data')
 
-from scripts.precompute_analytics import build_precomputed_analytics
 from scripts.gemini_generator import generate_executive_synthesis, generate_multispeaker_podcast, get_gemini_client
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
@@ -145,24 +144,16 @@ def ingest_single_project(
             except Exception as e:
                 logger.warning(f"[Gemini AI] Skipped AI synthesis due to error: {e}")
 
-    # 4. Run Pre-Computation Analytics Engine
-    logger.info("[Pre-Computation] Building analytical caches (5x5 matrices, burndown, blueprint mappings)...")
-    analytics = build_precomputed_analytics(risks, issues, snapshots, knowledge, driver_tree)
-    analytics_file = os.path.join(proj_dir, 'precomputed_analytics.json')
-    save_json_file(analytics_file, analytics)
-    logger.info(f"[Pre-Computation] Saved precomputed cache to {analytics_file}")
-
     return {
         "success": True,
         "project": project_name,
         "totalRisks": len(risks),
         "totalIssues": len(issues),
-        "totalSnapshots": len(snapshots),
-        "precomputedAnalyticsFile": analytics_file
+        "totalSnapshots": len(snapshots)
     }
 
 def main():
-    parser = argparse.ArgumentParser(description="Master Data Ingestion & Pre-Computation Orchestrator")
+    parser = argparse.ArgumentParser(description="Master Data Ingestion Orchestrator")
     parser.add_argument('--project', help="Target project slug (e.g. 'sample', 'f-dse'). Defaults to DEFAULT_PROJECTS from .env")
     parser.add_argument('--model', default=os.getenv('GEMINI_MODEL', 'gemini-3.5-flash'), help="Gemini model version")
     parser.add_argument('--ai', dest='generate_ai', action='store_true', help="Enable Gemini 3.5 AI briefing generation")

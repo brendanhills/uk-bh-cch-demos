@@ -1,59 +1,227 @@
 {
-  "lastSynced": "2026-08-17T21:27:10.639157",
+  "lastSynced": "2026-08-18T18:20:55.810024",
   "driveFolderId": "sample-drive-folder-aurora",
   "snapshots": {
     "w22": {
       "weekNumber": 22,
       "weekLabel": "Week 22",
+      "week": "Week 22",
       "date": "03 Jul 2026",
       "isLatest": false,
       "isCurrent": false,
-      "overallStatus": "\ud83d\udfe1 AMBER (Initial Setup)",
+      "driveFileId": "1kQiDQPF9DCUZ0vvbivToMoJWeZJoB0eREFnywRxpCHA",
+      "driveFileName": "Weekly Reporting - Week 22 - 03 Jul 2026 (Google Doc)",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
       "kpis": {
         "commercial": "\ud83d\udfe2 ON TRACK",
-        "ibr": "\ud83d\udfe1 IN PROGRESS (50%)",
-        "ato": "\ud83d\udfe1 UNDER REVIEW",
-        "escalations": "\ud83d\udd34 6 ITEMS"
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
       },
       "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
+        "executive": "Program posture for Week 22 maintains a stable AMBER status with active mitigation across 28 registered risks. Net risk compression reduced exposure from 14.6 to 4.8.",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation.",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
       },
       "top3": [
         {
           "num": 1,
           "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
+          "tag": "\ud83d\udea8 Immediate Action",
           "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
+          "title": "Milestone Sign-Off",
+          "action": "Expedite acceptance review."
         },
         {
           "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
+          "type": "schedule",
+          "tag": "\u26a1 Schedule Alignment",
+          "ref": "1.14",
+          "title": "SRR Glide Path",
+          "action": "Align September requirements baseline."
         },
         {
           "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
+          "type": "win",
+          "tag": "\ud83d\ude80 Delivery Win",
           "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
+          "title": "Platform Ready",
+          "action": "Early test/dev onboarding operational."
         }
       ],
       "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "risk": "Inference latency spikes under peak token load in air-gapped sovereign environments.",
+        "trigger": "TPU/GPU cluster provisioning delays or kernel compilation timeout under strict audit mode."
       },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the Project Aurora Executive Briefing for Week 22, ending 03 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ],
+      "plans": [
+        {
+          "num": 1,
+          "status": "RED",
+          "ref": "1.2b",
+          "title": "Milestone 1 Deliverables Acceptance",
+          "plan": "Work with customer for sign-off.",
+          "owner": "Delivery Lead",
+          "target": "Aug 2026"
+        },
+        {
+          "num": 2,
+          "status": "RED",
+          "ref": "1.6 GFF",
+          "title": "Facilities & Connectivity",
+          "plan": "Mitigate lead time.",
+          "owner": "Infrastructure Lead",
+          "target": "Aug 2026"
+        },
+        {
+          "num": 3,
+          "status": "BLUE",
+          "ref": "1.10b",
+          "title": "Platform E.01 Ready",
+          "plan": "Operational for test/dev.",
+          "owner": "Engineering Lead",
+          "target": "Delivered"
+        },
+        {
+          "num": 4,
+          "status": "RED",
+          "ref": "1.14",
+          "title": "Systems Requirements Review (SRR)",
+          "plan": "Iterative requirements alignment.",
+          "owner": "Technical Lead",
+          "target": "Sep 2026"
+        }
+      ],
+      "generatedBy": "rule-based-baseline"
+    },
+    "w23": {
+      "weekNumber": 23,
+      "weekLabel": "Week 23",
+      "week": "Week 23",
+      "date": "10 Jul 2026",
+      "isLatest": false,
+      "isCurrent": false,
+      "driveFileId": "1YRJuXlIIkYRYEsU41K_nuO9iIwrS9k0e",
+      "driveFileName": "Weekly Reporting - Week 23 - 10 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "synthesis": {
+        "executive": "Program posture for Week 23 maintains a stable AMBER status with active mitigation across 28 registered risks. Net risk compression reduced exposure from 14.6 to 4.8.",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation.",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
+      },
+      "top3": [
+        {
+          "num": 1,
+          "type": "decision",
+          "tag": "\ud83d\udea8 Immediate Action",
+          "ref": "1.2b",
+          "title": "Milestone Sign-Off",
+          "action": "Expedite acceptance review."
+        },
+        {
+          "num": 2,
+          "type": "schedule",
+          "tag": "\u26a1 Schedule Alignment",
+          "ref": "1.14",
+          "title": "SRR Glide Path",
+          "action": "Align September requirements baseline."
+        },
+        {
+          "num": 3,
+          "type": "win",
+          "tag": "\ud83d\ude80 Delivery Win",
+          "ref": "1.10b",
+          "title": "Platform Ready",
+          "action": "Early test/dev onboarding operational."
+        }
+      ],
+      "sleeperOutlier": {
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "risk": "Inference latency spikes under peak token load in air-gapped sovereign environments.",
+        "trigger": "TPU/GPU cluster provisioning delays or kernel compilation timeout under strict audit mode."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:00",
+          "text": "Welcome to the Project Aurora Executive Briefing for Week 23, ending 10 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
+        }
+      ],
       "plans": [
         {
           "num": 1,
@@ -65,68 +233,98 @@
           "target": "Jul 2026"
         }
       ],
+      "generatedBy": "rule-based-baseline"
+    },
+    "w24": {
+      "weekNumber": 24,
+      "weekLabel": "Week 24",
+      "week": "Week 24",
+      "date": "17 Jul 2026",
+      "isLatest": false,
+      "isCurrent": false,
+      "driveFileId": "100xnsVUDdlKVzxTgK26_lmjSYYUWnUhK",
+      "driveFileName": "Weekly Reporting - Week 24 - 17 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "synthesis": {
+        "executive": "Program posture for Week 24 maintains a stable AMBER status with active mitigation across 28 registered risks. Net risk compression reduced exposure from 14.6 to 4.8.",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation.",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
+      },
+      "top3": [
+        {
+          "num": 1,
+          "type": "decision",
+          "tag": "\ud83d\udea8 Immediate Action",
+          "ref": "1.2b",
+          "title": "Milestone Sign-Off",
+          "action": "Expedite acceptance review."
+        },
+        {
+          "num": 2,
+          "type": "schedule",
+          "tag": "\u26a1 Schedule Alignment",
+          "ref": "1.14",
+          "title": "SRR Glide Path",
+          "action": "Align September requirements baseline."
+        },
+        {
+          "num": 3,
+          "type": "win",
+          "tag": "\ud83d\ude80 Delivery Win",
+          "ref": "1.10b",
+          "title": "Platform Ready",
+          "action": "Early test/dev onboarding operational."
+        }
+      ],
+      "sleeperOutlier": {
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "risk": "Inference latency spikes under peak token load in air-gapped sovereign environments.",
+        "trigger": "TPU/GPU cluster provisioning delays or kernel compilation timeout under strict audit mode."
+      },
       "podcastScript": [
         {
           "speaker": "Alex",
           "role": "Program Analyst",
           "avatar": "\ud83c\udf99\ufe0f",
           "time": "0:00",
-          "text": "Welcome to the Project Aurora Briefing for Week 22."
-        }
-      ]
-    },
-    "w23": {
-      "weekNumber": 23,
-      "weekLabel": "Week 23",
-      "date": "10 Jul 2026",
-      "isLatest": false,
-      "isCurrent": false,
-      "overallStatus": "\ud83d\udfe1 AMBER (Progressing)",
-      "kpis": {
-        "commercial": "\ud83d\udfe2 ON TRACK",
-        "ibr": "\ud83d\udfe1 IN PROGRESS (60%)",
-        "ato": "\ud83d\udfe1 UNDER REVIEW",
-        "escalations": "\ud83d\udd34 5 ITEMS"
-      },
-      "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
-      },
-      "top3": [
-        {
-          "num": 1,
-          "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
-          "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
+          "text": "Welcome to the Project Aurora Executive Briefing for Week 24, ending 17 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
         },
         {
-          "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
         },
         {
-          "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
-          "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
         }
       ],
-      "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
-      },
       "plans": [
         {
           "num": 1,
@@ -138,68 +336,98 @@
           "target": "Jul 2026"
         }
       ],
+      "generatedBy": "rule-based-baseline"
+    },
+    "w25": {
+      "weekNumber": 25,
+      "weekLabel": "Week 25",
+      "week": "Week 25",
+      "date": "24 Jul 2026",
+      "isLatest": false,
+      "isCurrent": false,
+      "driveFileId": "13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz",
+      "driveFileName": "Weekly Reporting - Week 25 - 24 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "synthesis": {
+        "executive": "Program posture for Week 25 maintains a stable AMBER status with active mitigation across 28 registered risks. Net risk compression reduced exposure from 14.6 to 4.8.",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation.",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
+      },
+      "top3": [
+        {
+          "num": 1,
+          "type": "decision",
+          "tag": "\ud83d\udea8 Immediate Action",
+          "ref": "1.2b",
+          "title": "Milestone Sign-Off",
+          "action": "Expedite acceptance review."
+        },
+        {
+          "num": 2,
+          "type": "schedule",
+          "tag": "\u26a1 Schedule Alignment",
+          "ref": "1.14",
+          "title": "SRR Glide Path",
+          "action": "Align September requirements baseline."
+        },
+        {
+          "num": 3,
+          "type": "win",
+          "tag": "\ud83d\ude80 Delivery Win",
+          "ref": "1.10b",
+          "title": "Platform Ready",
+          "action": "Early test/dev onboarding operational."
+        }
+      ],
+      "sleeperOutlier": {
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "risk": "Inference latency spikes under peak token load in air-gapped sovereign environments.",
+        "trigger": "TPU/GPU cluster provisioning delays or kernel compilation timeout under strict audit mode."
+      },
       "podcastScript": [
         {
           "speaker": "Alex",
           "role": "Program Analyst",
           "avatar": "\ud83c\udf99\ufe0f",
           "time": "0:00",
-          "text": "Welcome to the Project Aurora Briefing for Week 23."
-        }
-      ]
-    },
-    "w24": {
-      "weekNumber": 24,
-      "weekLabel": "Week 24",
-      "date": "17 Jul 2026",
-      "isLatest": false,
-      "isCurrent": false,
-      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
-      "kpis": {
-        "commercial": "\ud83d\udfe2 ON TRACK",
-        "ibr": "\ud83d\udfe1 IN PROGRESS (72%)",
-        "ato": "\ud83d\udfe2 ON TRACK",
-        "escalations": "\ud83d\udd34 5 ITEMS"
-      },
-      "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
-      },
-      "top3": [
-        {
-          "num": 1,
-          "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
-          "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
+          "text": "Welcome to the Project Aurora Executive Briefing for Week 25, ending 24 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
         },
         {
-          "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
         },
         {
-          "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
-          "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
         }
       ],
-      "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
-      },
       "plans": [
         {
           "num": 1,
@@ -211,68 +439,98 @@
           "target": "Aug 2026"
         }
       ],
+      "generatedBy": "rule-based-baseline"
+    },
+    "w26": {
+      "weekNumber": 26,
+      "weekLabel": "Week 26",
+      "week": "Week 26",
+      "date": "31 Jul 2026",
+      "isLatest": false,
+      "isCurrent": false,
+      "driveFileId": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC",
+      "driveFileName": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf",
+      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
+      "kpis": {
+        "commercial": "\ud83d\udfe2 ON TRACK",
+        "ibr": "\ud83d\udfe1 DUE AUG 2026 (90%)",
+        "ato": "\ud83d\udfe2 GREEN",
+        "escalations": "\ud83d\udd34 5 ITEMS"
+      },
+      "synthesis": {
+        "executive": "Program posture for Week 26 maintains a stable AMBER status with active mitigation across 28 registered risks. Net risk compression reduced exposure from 14.6 to 4.8.",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation.",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
+      },
+      "top3": [
+        {
+          "num": 1,
+          "type": "decision",
+          "tag": "\ud83d\udea8 Immediate Action",
+          "ref": "1.2b",
+          "title": "Milestone Sign-Off",
+          "action": "Expedite acceptance review."
+        },
+        {
+          "num": 2,
+          "type": "schedule",
+          "tag": "\u26a1 Schedule Alignment",
+          "ref": "1.14",
+          "title": "SRR Glide Path",
+          "action": "Align September requirements baseline."
+        },
+        {
+          "num": 3,
+          "type": "win",
+          "tag": "\ud83d\ude80 Delivery Win",
+          "ref": "1.10b",
+          "title": "Platform Ready",
+          "action": "Early test/dev onboarding operational."
+        }
+      ],
+      "sleeperOutlier": {
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "risk": "Inference latency spikes under peak token load in air-gapped sovereign environments.",
+        "trigger": "TPU/GPU cluster provisioning delays or kernel compilation timeout under strict audit mode."
+      },
       "podcastScript": [
         {
           "speaker": "Alex",
           "role": "Program Analyst",
           "avatar": "\ud83c\udf99\ufe0f",
           "time": "0:00",
-          "text": "Welcome to the Project Aurora Briefing for Week 24."
-        }
-      ]
-    },
-    "w25": {
-      "weekNumber": 25,
-      "weekLabel": "Week 25",
-      "date": "24 Jul 2026",
-      "isLatest": false,
-      "isCurrent": false,
-      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
-      "kpis": {
-        "commercial": "\ud83d\udfe2 ON TRACK",
-        "ibr": "\ud83d\udfe1 IN PROGRESS (80%)",
-        "ato": "\ud83d\udfe2 GREEN",
-        "escalations": "\ud83d\udd34 4 ITEMS"
-      },
-      "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
-      },
-      "top3": [
-        {
-          "num": 1,
-          "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
-          "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
+          "text": "Welcome to the Project Aurora Executive Briefing for Week 26, ending 31 Jul 2026. I am Alex here with Jordan to review delivery progress and critical risks."
         },
         {
-          "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "0:18",
+          "text": "Thanks Alex. Key milestones remain actively tracked this cycle with deliverable validations progressing across the capability drop workstreams."
         },
         {
-          "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
-          "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "0:42",
+          "text": "Looking at our executive attention items, Commonwealth artefact acceptance and system requirement reviews remain on critical path."
+        },
+        {
+          "speaker": "Jordan",
+          "role": "Technical Director",
+          "avatar": "\ud83e\udd16",
+          "time": "1:05",
+          "text": "Security accreditation assessors remain embedded across active enclaves, with defined gap close plans actively compressing residual risk."
+        },
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "\ud83c\udf99\ufe0f",
+          "time": "1:28",
+          "text": "Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards baseline objectives."
         }
       ],
-      "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
-      },
       "plans": [
         {
           "num": 1,
@@ -284,122 +542,7 @@
           "target": "Aug 2026"
         }
       ],
-      "podcastScript": [
-        {
-          "speaker": "Alex",
-          "role": "Program Analyst",
-          "avatar": "\ud83c\udf99\ufe0f",
-          "time": "0:00",
-          "text": "Welcome to the Project Aurora Briefing for Week 25."
-        }
-      ]
-    },
-    "w26": {
-      "weekNumber": 26,
-      "weekLabel": "Week 26",
-      "date": "31 Jul 2026",
-      "isLatest": false,
-      "isCurrent": false,
-      "overallStatus": "\ud83d\udfe1 AMBER (Stable)",
-      "kpis": {
-        "commercial": "\ud83d\udfe2 ON TRACK",
-        "ibr": "\ud83d\udfe1 DUE AUG 2026 (85%)",
-        "ato": "\ud83d\udfe2 ACCREDITED",
-        "escalations": "\ud83d\udd34 4 ITEMS"
-      },
-      "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
-      },
-      "top3": [
-        {
-          "num": 1,
-          "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
-          "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
-        },
-        {
-          "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
-        },
-        {
-          "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
-          "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
-        }
-      ],
-      "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
-      },
-      "plans": [
-        {
-          "num": 1,
-          "status": "RED",
-          "ref": "1.2b",
-          "title": "Milestone 1 Deliverables Acceptance",
-          "plan": "Close final review items with executive sponsors.",
-          "owner": "David Vance",
-          "target": "Aug 2026"
-        },
-        {
-          "num": 2,
-          "status": "RED",
-          "ref": "1.6 GFF",
-          "title": "Facility Connectivity Lead Times",
-          "plan": "Deploy redundant fiber routes.",
-          "owner": "Aron Ward",
-          "target": "Aug 2026"
-        },
-        {
-          "num": 3,
-          "status": "BLUE",
-          "ref": "1.10b",
-          "title": "Enclave Hardware Delivered & Operational",
-          "plan": "Monitoring active test/dev systems.",
-          "owner": "Marcus Chen",
-          "target": "Delivered"
-        },
-        {
-          "num": 4,
-          "status": "RED",
-          "ref": "1.14",
-          "title": "Systems Requirements Review Glide Path",
-          "plan": "Iterative prioritization for CD1.5.",
-          "owner": "David Vance",
-          "target": "Sep 2026"
-        }
-      ],
-      "podcastScript": [
-        {
-          "speaker": "Alex",
-          "role": "Program Analyst",
-          "avatar": "\ud83c\udf99\ufe0f",
-          "time": "0:00",
-          "text": "Welcome to the Project Aurora Executive Briefing for Week 26."
-        },
-        {
-          "speaker": "Jordan",
-          "role": "Technical Director",
-          "avatar": "\ud83e\udd16",
-          "time": "0:18",
-          "text": "Thanks Alex. Core enclave hardware in Facility E.01 is now operational."
-        }
-      ]
+      "generatedBy": "rule-based-baseline"
     },
     "w27": {
       "weekNumber": 27,
@@ -417,45 +560,9 @@
         "ato": "\ud83d\udfe2 GREEN",
         "escalations": "\ud83d\udd34 5 ITEMS"
       },
-      "synthesis": {
-        "executive": "Project Aurora maintains a stable **AMBER** posture in Week 27 as sovereign AI platform enablement reaches key operational milestones with Ref 1.10b (Sovereign Compute & Storage Hardware) validated for test/dev systems, while Joint Transformation Board reviews continue under active mitigation with Ref 1.2b (Milestone 1 Architecture & V&V Acceptance). Net risk mitigation across the 28 Register Risks reduced average residual risk exposure from 15.4 to 8.4 (\u0394 -7.0), keeping the primary cutover on schedule for October 2026.",
-        "technical": "Technical assessment for Project Aurora confirms critical de-risking of sovereign AI infrastructure. Ref 1.10b (Core Sovereign Hardware) is validated across Sovereign Zone A. Dedicated dark fiber interconnects under Ref 1.6 GFF are pre-provisioned to mitigate cross-connect latency. Foundation model fine-tuning pipelines under Ref 1.8b are performing within SLA with dynamic GPU elasticity. ATO & Cyber Security accreditation remains green with zero high-severity vulnerabilities.",
-        "governance": "From a governance perspective, Project Aurora is tracking within budget baselines with Milestone Gate 2 (IBR) tracking at 88% completion for late August 2026 delivery. Executive escalation remains active across 4 items with active treatment plans, notably Sovereign Enclave Interconnect validation and multi-tenant quota allocation. Steering committee action is requested to endorse the revised CD1.5 requirements allocation."
-      },
-      "top3": [
-        {
-          "num": 1,
-          "type": "decision",
-          "tag": "\ud83d\udea8 Immediate Executive Action",
-          "ref": "1.2b",
-          "title": "Architecture & V&V Acceptance",
-          "impact": "Executive engagement with Transformation Board delegates to finalize acceptance of Sovereign Architecture and V&V deliverable packs to unblock subsequent payments.",
-          "action": "Board delegation to endorse revised verification framework by 28 Aug 2026."
-        },
-        {
-          "num": 2,
-          "type": "mitigation",
-          "tag": "\u26a1 Active Mitigation",
-          "ref": "1.6 GFF",
-          "title": "Sovereign Optical Cross-Connect Validation",
-          "impact": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
-          "action": "Complete dark fiber redundancy validation and staged optical interconnects by 15 Sep 2026."
-        },
-        {
-          "num": 3,
-          "type": "milestone",
-          "tag": "\u2705 Delivered Outcome",
-          "ref": "1.10b",
-          "title": "Sovereign Compute Hardware Enclave MVP",
-          "impact": "Core hardware platform successfully validated and sovereign Kubernetes cluster provisioned for early AI workload onboarding.",
-          "action": "Transition environment to developer onboarding and begin milestone acceptance signoff."
-        }
-      ],
-      "sleeperOutlier": {
-        "ref": "1.8b",
-        "title": "Vertex AI Foundation Model Fine-Tuning Enclave Quotas",
-        "description": "On-premise GPU cluster memory allocation and token throughput demand requires proactive capacity buffer expansion before CD1.5 scaling."
-      },
+      "synthesis": {},
+      "top3": [],
+      "sleeperOutlier": {},
       "podcastScript": [],
       "plans": [
         {
@@ -463,35 +570,35 @@
           "status": "RED",
           "ref": "1.2b",
           "title": "Milestone 1 Deliverables Acceptance",
-          "plan": "Close final review items with executive sponsors.",
-          "owner": "David Vance",
+          "plan": "Work with customer for sign-off.",
+          "owner": "Delivery Lead",
           "target": "Aug 2026"
         },
         {
           "num": 2,
           "status": "RED",
           "ref": "1.6 GFF",
-          "title": "Facility Connectivity Lead Times",
-          "plan": "Deploy redundant fiber routes.",
-          "owner": "Aron Ward",
+          "title": "Facilities & Connectivity",
+          "plan": "Mitigate lead time.",
+          "owner": "Infrastructure Lead",
           "target": "Aug 2026"
         },
         {
           "num": 3,
           "status": "BLUE",
           "ref": "1.10b",
-          "title": "Enclave Hardware Delivered & Operational",
-          "plan": "Monitoring active test/dev systems.",
-          "owner": "Marcus Chen",
+          "title": "Platform E.01 Ready",
+          "plan": "Operational for test/dev.",
+          "owner": "Engineering Lead",
           "target": "Delivered"
         },
         {
           "num": 4,
           "status": "RED",
           "ref": "1.14",
-          "title": "Systems Requirements Review Glide Path",
-          "plan": "Iterative prioritization for CD1.5.",
-          "owner": "David Vance",
+          "title": "Systems Requirements Review (SRR)",
+          "plan": "Iterative requirements alignment.",
+          "owner": "Technical Lead",
           "target": "Sep 2026"
         }
       ],

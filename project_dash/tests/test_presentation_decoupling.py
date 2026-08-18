@@ -59,8 +59,7 @@ class TestPresentationDecoupling(unittest.TestCase):
             'risks.json',
             'issues.json',
             'knowledge.json',
-            'driver_tree.json',
-            'precomputed_analytics.json'
+            'driver_tree.json'
         ]
         
         for project in ['sample', 'f-dse']:

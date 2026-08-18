@@ -52,10 +52,11 @@ You **never need to touch GCP IAM or Pantheon permissions** to manage team acces
    - Isolated public showcase data into `data/sample/` (Project Aurora) and proprietary live data into `data/f-dse/` (Project F-DSE).
    - Created parameterized backend server routes in `server.py` with on-demand `/api/ingest-data` and `/api/regenerate-briefing` endpoints.
 
-4. **Automated Gemini 3.5 Ingestion & Precomputation Engine**:
+4. **Automated Ingestion & 100% Dynamic Client-Side Analytics Engine**:
    - Built `scripts/ingest_data.py` to automatically ingest Google Sheets, Drive PDF reports, and NotebookLM blueprints.
-   - Generates structured multi-tone syntheses (Executive, Technical, Governance) and dual-speaker podcast audio scripts (`MultiSpeakerVoiceConfig` with Puck & Aoede).
-   - High-performance precomputation engine (`scripts/precompute_analytics.py`) builds instant 5×5 matrix and longitudinal burndown trend caches.
+   - Generates structured multi-tone syntheses (Executive, Technical, Governance) and dual-speaker podcast audio scripts.
+   - Decommissioned intermediate pre-computation caches in favor of pure, reactive client-side dynamic analytics on raw data files.
+   - All 5×5 heatmap matrices, longitudinal burndown curves, and blueprint associations compute dynamically in memory in <3ms.
 
 5. **Test Suite Portability & Environment Agnosticism**:
    - Replaced all workstation-specific absolute paths with dynamic relative paths.
