@@ -41,7 +41,7 @@ PATIENT_VERIFIER_INSTRUCTION = f"""
 
 patient_verifier = Agent(
     name="patient_verifier",
-    model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
+    model=os.getenv("SUB_AGENT_MODEL", "gemini-3.5-flash"),
     tools=[validate_phone_number, record_patient_identity],
     instruction=PATIENT_VERIFIER_INSTRUCTION,
 )

@@ -182,6 +182,16 @@ async def root():
     return FileResponse(Path(__file__).parent / "static" / "index.html")
 
 
+@app.get("/health")
+async def health_endpoint():
+    """Health check endpoint for local monitoring (#BUG-55)."""
+    try:
+        from health import health_check_endpoint
+        return await health_check_endpoint()
+    except Exception as e:
+        return {"status": "ok", "message": "Server running"}
+
+
 @app.post("/api/session/soap_note")
 async def generate_soap_note_endpoint(request: SOAPNoteRequest):
     """Generates a structured clinical SOAP note for medical record exports (#BUG-23)."""
@@ -390,6 +400,11 @@ async def websocket_endpoint(
 
     live_request_queue = LiveRequestQueue()
 
+    # Proactive Opening Call Greeting Trigger (#BUG-51)
+    # Automatically send session connect event so Jennie delivers her hospital greeting immediately
+    initial_content = types.Content(parts=[types.Part(text="[SESSION_INITIATION_CALL_CONNECTED]")])
+    live_request_queue.send_content(initial_content)
+
     # ========================================
     # Phase 3: Active Session (concurrent bidirectional communication)
     # ========================================
@@ -474,7 +489,7 @@ async def websocket_endpoint(
                             # Send as persistent conversational turn part
                             content = types.Content(
                                 parts=[
-                                    types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED]"),
+                                    types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED] I have attached a photo of the discharge document. Please inspect it for me."),
                                     types.Part(inline_data=image_blob)
                                 ]
                             )

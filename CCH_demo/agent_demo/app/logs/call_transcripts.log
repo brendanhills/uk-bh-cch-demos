@@ -127,3 +127,44 @@
 2026-08-13 13:50:03,141 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
 2026-08-13 13:50:03,192 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.67ms (0.051s) status=SUCCESS
 2026-08-13 13:50:03,196 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 11:37:31,185 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 11:37:31,246 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=60.90ms (0.061s) status=SUCCESS
+2026-08-19 11:37:31,272 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 12:50:07,983 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-13488dq: hi
+2026-08-19 12:50:21,171 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-13488dq: I have a form from the hospital
+2026-08-19 12:50:39,119 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-13488dq: What does it mean?
+2026-08-19 12:50:39,681 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=document_scanner args={'request': 'parent is asking for explanation of a hospital form'}
+2026-08-19 12:50:46,338 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=document_scanner duration_ms=6657.33ms (6.657s) status=SUCCESS
+2026-08-19 12:50:46,339 - [INFO] - [AGENT_OUTPUT] user_id=demo-user session_id=demo-session-13488dq: Great, the camera should be opening up on your screen now. Please align the form within the frame and snap a picture of it for me. Once I can see it, I'll help you make sense of everything.
+2026-08-19 12:52:15,815 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-13488dq: what camera
+2026-08-19 12:53:01,435 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-13488dq: Attached and saved document image (49673 bytes) to /home/brendanhills/dev/uk-bh-experiments/CCH_demo/agent_demo/app/logs/attachments/demo-session-13488dq_1787107981431.jpg
+2026-08-19 13:00:48,168 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:00:48,218 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.58ms (0.051s) status=SUCCESS
+2026-08-19 13:00:48,222 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:10:31,012 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:10:31,063 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.72ms (0.051s) status=SUCCESS
+2026-08-19 13:10:31,068 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:15:41,607 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:15:41,657 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.65ms (0.051s) status=SUCCESS
+2026-08-19 13:15:41,663 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:21:53,905 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:21:53,956 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.66ms (0.051s) status=SUCCESS
+2026-08-19 13:21:53,961 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:22:14,362 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:22:14,412 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.58ms (0.051s) status=SUCCESS
+2026-08-19 13:22:14,419 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:24:46,280 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:24:46,331 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.73ms (0.051s) status=SUCCESS
+2026-08-19 13:24:46,335 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:27:21,993 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:27:22,044 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.51ms (0.051s) status=SUCCESS
+2026-08-19 13:27:22,047 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:29:01,798 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:29:01,849 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=50.51ms (0.051s) status=SUCCESS
+2026-08-19 13:29:01,852 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:35:31,071 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:35:31,124 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=52.87ms (0.053s) status=SUCCESS
+2026-08-19 13:35:31,140 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-08-19 13:39:53,185 - [INFO] - [SUB_AGENT_DISPATCH_START] sub_agent=dummy_sub_agent args={'request': 'test'}
+2026-08-19 13:39:53,236 - [INFO] - [SUB_AGENT_DISPATCH_END] sub_agent=dummy_sub_agent duration_ms=51.49ms (0.051s) status=SUCCESS
+2026-08-19 13:39:53,251 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital

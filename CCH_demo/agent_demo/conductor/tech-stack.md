@@ -12,7 +12,7 @@
 ## AI & Agent Engine
 - **Framework**: Google Agent Development Kit (`google-adk>=1.32.0`)
 - **Live Streaming API**: Gemini Live API (`run_live` concurrent BIDI upstream/downstream queue processing)
-- **Model Endpoints**: `gemini-2.0-flash-exp` (Native audio BIDI streaming)
+- **Model Endpoints**: `gemini-3.1-flash-live-preview` (Gemini 3.1 Flash Live native audio BIDI streaming)
 
 ## Frontend & Client Interface
 - **Architecture**: Single Page Application (FastAPI Static Files)
