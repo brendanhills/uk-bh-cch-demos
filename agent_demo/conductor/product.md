@@ -22,7 +22,7 @@ A real-time, bidirectional streaming AI assistant for Cymbal Children's Hospital
 4. **Financial Subsidy Assistance**:
    - Automated calculation and application of Medicare (15% rebate) and NDIS home care subsidies.
 5. **Multilingual Accessibility**:
-   - Real-time speech recognition and bilingual support for Australian English (`en-AU`), Arabic (`ar`), and Hindi (`hi`), including RTL text layout rendering.
+   - Real-time speech recognition and multilingual support for Australian English (`en-AU`) and Arabic (`ar`), including RTL text layout rendering.
 
 ## Success Criteria
 - **Demonstration Excellence**: Sub-second audio streaming responsiveness via WebSockets, showcasing cutting-edge Google Cloud AI & ADK streaming capabilities to Public Sector IT decision makers.

@@ -2,13 +2,15 @@
 
 ## Definition
 
+- [Master Specification](./spec.md)
 - [Product Definition](./product.md)
 - [Product Guidelines](./product-guidelines.md)
 - [Tech Stack](./tech-stack.md)
 
 ## Workflow
 
-- [Workflow](./workflow.md)
+- [Workflow & SDD Methodology](./workflow.md)
+- [Workspace Rules](../.agents/rules/)
 - [Code Style Guides](./code_styleguides/)
 
 ## Tracks

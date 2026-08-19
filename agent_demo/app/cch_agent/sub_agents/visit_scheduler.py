@@ -43,7 +43,7 @@ VISIT_SCHEDULER_INSTRUCTION = f"""
 
 visit_scheduler = Agent(
     name="visit_scheduler",
-    model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
+    model=os.getenv("SUB_AGENT_MODEL", "gemini-3.5-flash"),
     tools=[
         calculate_home_care_financials,
         get_home_care_cost_estimate,

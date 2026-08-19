@@ -470,6 +470,12 @@ function connectWebsocket() {
         : transcriptionText;
       eventSummary = `Output Transcription: "${truncated}"`;
       eventEmoji = '📝';
+    if (adkEvent.calls || adkEvent.functionCalls) {
+      const calls = adkEvent.calls || adkEvent.functionCalls || [];
+      if (calls.length > 0) {
+        eventSummary = `Tool Execution: ${calls.map(c => c.name).join(", ")}`;
+        eventEmoji = '🛠️';
+      }
     } else if (adkEvent.usageMetadata) {
       // Show token usage information
       const usage = adkEvent.usageMetadata;
@@ -1067,7 +1073,7 @@ function updateDocumentBadgeTitle(text) {
   }
 }
 
-// Automatically trigger document camera viewfinder when Jennie asks for a document (#BUG-48)
+// Automatically trigger document camera viewfinder when Jennie asks for a document (#BUG-48, #BUG-58)
 function checkDocumentRequestPhrases(text) {
   if (!text) return;
   const lower = text.toLowerCase();
@@ -1087,7 +1093,14 @@ function checkDocumentRequestPhrases(text) {
     "to the camera",
     "read them for you",
     "snap a photo",
+    "snap a picture",
     "camera box",
+    "camera should be opening",
+    "opening up on your screen",
+    "align the form",
+    "click the camera button",
+    "opening the document scanner",
+    "open the camera",
     "place your document",
     "align your document",
     "show your document"
@@ -1096,7 +1109,7 @@ function checkDocumentRequestPhrases(text) {
   for (const phrase of triggerKeywords) {
     if (lower.includes(phrase)) {
       if (viewfinderContainer && viewfinderContainer.style.display === "none") {
-        console.log(`[AUTO-CAMERA #BUG-48] Auto-triggering document camera on agent prompt phrase: "${phrase}"`);
+        console.log(`[AUTO-CAMERA #BUG-48/#BUG-58] Auto-triggering document camera on agent prompt phrase: "${phrase}"`);
         openViewfinder();
       }
       break;
