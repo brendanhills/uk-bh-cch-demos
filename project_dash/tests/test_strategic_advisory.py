@@ -11,10 +11,9 @@ class TestStrategicAdvisory(unittest.TestCase):
             cls.html = f.read()
 
     def test_google_need_to_know_global_banner(self):
-        """Verify Google Need-to-Know container is placed globally and persistently."""
-        self.assertIn('id="googleNeedToKnowContainer"', self.html)
-        self.assertIn('Google Need-to-Know', self.html)
-        self.assertIn('toggleNeedToKnow', self.html)
+        """Verify Google Need to Know (NTK) classification badge is in the title banner."""
+        self.assertIn('id="ntkClassificationBadge"', self.html)
+        self.assertIn('Google Need to Know (NTK)', self.html)
 
     def test_looking_around_corner_module(self):
         """Verify Looking Around the Corner module is present in Executive Summary."""
