@@ -1375,9 +1375,23 @@
                     </table>
                 </div>
             </div>
-        </section>
-
     </div>
+
+    <!-- SUBTLE FOOTER: BUILD TAG & DATETIME STAMP -->
+    <footer class="mt-auto py-3 border-t border-slate-200 bg-white/70 text-center text-[10px] sm:text-[11px] text-slate-400 font-mono">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span>🛡️ Project Monaro Risk Governance Platform</span>
+                <span>&bull;</span>
+                <span id="footerRegionBadge">Region: <strong class="text-slate-600 font-bold">australia-southeast1</strong></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="footerBuildTag">Release: <strong id="footerBuildTagVal" class="text-indigo-600 font-bold">dev-live</strong></span>
+                <span>&bull;</span>
+                <span id="footerBuildTimestamp">Build: <span id="footerBuildDateVal" class="text-slate-500 font-medium">2026-08-20 15:45 UTC</span></span>
+            </div>
+        </div>
+    </footer>
 
     <!-- TIME MACHINE MODAL DIALOG -->
     <div id="timeMachineModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
@@ -1684,6 +1698,20 @@
             const latestSnap = TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()] || {};
             const latestWeek = latestSnap.week || latestSnap.weekLabel || 'Latest';
             if (liveBadgeEl) liveBadgeEl.innerText = `Live (${latestWeek})`;
+
+            // Update subtle footer build info & timestamp
+            try {
+                fetch('data/build_info.json').then(r => r.ok ? r.json() : null).then(bInfo => {
+                    if (bInfo) {
+                        const tagEl = document.getElementById('footerBuildTagVal');
+                        const dateEl = document.getElementById('footerBuildDateVal');
+                        const regEl = document.getElementById('footerRegionBadge');
+                        if (tagEl && (bInfo.tag || bInfo.version || bInfo.commit)) tagEl.innerText = bInfo.tag || bInfo.version || (bInfo.commit ? bInfo.commit.substring(0, 7) : 'dev-live');
+                        if (dateEl && bInfo.timestamp) dateEl.innerText = bInfo.timestamp;
+                        if (regEl && bInfo.region) regEl.innerHTML = `Region: <strong class="text-slate-600 font-bold">${bInfo.region}</strong>`;
+                    }
+                }).catch(() => {});
+            } catch(e) {}
 
             const sheetWrapper = document.getElementById('sheetDropdownWrapper');
             const jointSheetLink = document.getElementById('headerJointSheetLink');

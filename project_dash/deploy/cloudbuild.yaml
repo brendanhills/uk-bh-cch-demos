@@ -18,7 +18,26 @@ steps:
         gcloud artifacts repositories describe cloud-run-source-deploy --location=${_REGION} --project=$PROJECT_ID || \
         gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=${_REGION} --description="Cloud Run source deployments" --project=$PROJECT_ID
 
-  # 3. Build container image using custom Dockerfile
+  # 3. Inject dynamic build metadata into data/build_info.json for dashboard footer
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    dir: 'project_dash'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        BUILD_TAG="${TAG_NAME:-$BRANCH_NAME}"
+        BUILD_TIME=$(date -u +'%Y-%m-%d %H:%M UTC')
+        cat << BUILD_JSON > data/build_info.json
+        {
+          "tag": "$$BUILD_TAG",
+          "commit": "$COMMIT_SHA",
+          "region": "${_REGION}",
+          "timestamp": "$$BUILD_TIME",
+          "service": "${_SERVICE_NAME}"
+        }
+        BUILD_JSON
+
+  # 4. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'project_dash'
     args:
@@ -31,7 +50,7 @@ steps:
       - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:latest'
       - '.'
 
-  # 4. Push container image to Artifact Registry
+  # 5. Push container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
@@ -42,7 +61,7 @@ steps:
       - 'push'
       - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:latest'
 
-  # 5. Deploy to Cloud Run (Private Mode + Native IAP Enabled in Australia)
+  # 6. Deploy to Cloud Run (Private Mode + Native IAP Enabled in Australia)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -60,7 +79,7 @@ steps:
       - '--port'
       - '8080'
 
-  # 6. Enforce IAM Invoker and IAP Group Policies via CLI
+  # 7. Enforce IAM Invoker and IAP Group Policies via CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
