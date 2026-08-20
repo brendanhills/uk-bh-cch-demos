@@ -15,11 +15,5 @@ class TestStrategicAdvisory(unittest.TestCase):
         self.assertIn('id="ntkClassificationBadge"', self.html)
         self.assertIn('Google Need to Know (NTK)', self.html)
 
-    def test_looking_around_corner_module(self):
-        """Verify Looking Around the Corner module is present in Executive Summary."""
-        self.assertIn('id="lookingAroundCornerSection"', self.html)
-        self.assertIn('Looking Around the Corner', self.html)
-        self.assertIn('renderLookingAroundCorner', self.html)
-
 if __name__ == '__main__':
     unittest.main()

@@ -36,14 +36,14 @@
   - [x] Add collapse/expand toggle and state persistence
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
-## Phase 5: "Looking Around the Corner" Predictive Insights Module
-- [x] Task: Write Tests for Executive Summary Horizon Advisory
-  - [x] Test computation of forward-looking signals (lead times, unassigned critical risks, upcoming contractual milestones)
-  - [x] Test rendering of the "Looking Around the Corner" advisory card in `#view-exec-briefing`
-- [x] Task: Implement "Looking Around the Corner" UI & Dynamic Synthesis
-  - [x] Add "Looking Around the Corner: 30-60 Day Horizon & Preemptive Actions" component to Executive Summary tab
-  - [x] Wire dynamic signal generators highlighting impending roadblocks, gate risks, and strategic advice
-- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+## Phase 5: "Looking Around the Corner" Predictive Insights Module (Deferred to Later Phase)
+- [ ] Task: Write Tests for Executive Summary Horizon Advisory (Deferred)
+  - [ ] Test computation of forward-looking signals (lead times, unassigned critical risks, upcoming contractual milestones)
+  - [ ] Test rendering of the "Looking Around the Corner" advisory card in `#view-exec-briefing`
+- [ ] Task: Implement "Looking Around the Corner" UI & Dynamic Synthesis (Deferred)
+  - [ ] Add "Looking Around the Corner: 30-60 Day Horizon & Preemptive Actions" component to Executive Summary tab
+  - [ ] Wire dynamic signal generators highlighting impending roadblocks, gate risks, and strategic advice
+- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 6: End-to-End Verification & Documentation
 - [x] Task: Full System Audit & Regression Testing
