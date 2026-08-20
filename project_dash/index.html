@@ -253,17 +253,17 @@
                     <span id="tabPrimaryRegisterBadge" class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">107</span>
                 </button>
 
-                <!-- TAB 3: TEAM GOOGLE RISKS -->
+                <!-- TAB 3: ISSUE REGISTER -->
+                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Issue Register">
+                    <span id="tabIssuesLabel">⚠️ Issue Register</span>
+                    <span id="tabIssuesBadge" class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">25</span>
+                </button>
+
+                <!-- TAB 4: TEAM GOOGLE RISKS -->
                 <button onclick="switchTab('team-google')" id="tab-team-google" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Team Google Risk Register">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <span id="tabSecondaryRegisterLabel">🛡️ Team Google Risks</span>
                     <span id="tabTeamGoogleBadge" class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">12</span>
-                </button>
-
-                <!-- TAB 4: ISSUE REGISTER -->
-                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Issue Register">
-                    <span id="tabIssuesLabel">⚠️ Issue Register</span>
-                    <span id="tabIssuesBadge" class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">25</span>
                 </button>
 
                 <!-- TAB 5: PERFORMANCE TRENDS -->
@@ -2349,7 +2349,7 @@
 
             // Load initial tab based on URL hash if present, or default to Executive Summary
             const initialHash = window.location.hash.replace('#', '');
-            const validTabs = ['exec-briefing', 'overview', 'team-google', 'issues', 'trends', 'driver-tree', 'blueprints', 'ledger'];
+            const validTabs = ['exec-briefing', 'overview', 'issues', 'team-google', 'trends', 'driver-tree', 'blueprints', 'ledger'];
             const startTab = validTabs.includes(initialHash) ? initialHash : 'exec-briefing';
             
             switchTab(startTab, false);
@@ -2395,7 +2395,7 @@
         }
 
         function switchTab(tabKey, pushHistory = true) {
-            ['exec-briefing', 'overview', 'team-google', 'issues', 'trends', 'driver-tree', 'blueprints', 'ledger'].forEach(k => {
+            ['exec-briefing', 'overview', 'issues', 'team-google', 'trends', 'driver-tree', 'blueprints', 'ledger'].forEach(k => {
                 const el = document.getElementById('view-' + k);
                 const tab = document.getElementById('tab-' + k);
                 if (el) el.classList.add('hidden');
