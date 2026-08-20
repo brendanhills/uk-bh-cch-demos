@@ -246,44 +246,48 @@
                     <span class="bg-amber-100 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold">v2</span>
                 </button>
 
-                <!-- TAB 2: INTERNAL RISKS (107) -->
-                <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Joint Program / Internal Risk Register (107 items)">
+                <!-- TAB 2: INTERNAL RISKS -->
+                <button onclick="switchTab('overview')" id="tab-overview" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Joint Program / Internal Risk Register">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                    <span id="tabPrimaryRegisterLabel">Internal Risks (107)</span>
+                    <span id="tabPrimaryRegisterLabel">Internal Risks</span>
+                    <span id="tabPrimaryRegisterBadge" class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">107</span>
                 </button>
 
                 <!-- TAB 3: TEAM GOOGLE RISKS -->
-                <button onclick="switchTab('team-google')" id="tab-team-google" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Team Google Risk Register (12 items)">
+                <button onclick="switchTab('team-google')" id="tab-team-google" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Team Google Risk Register">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     <span id="tabSecondaryRegisterLabel">🛡️ Team Google Risks</span>
                     <span id="tabTeamGoogleBadge" class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">12</span>
                 </button>
 
-                <!-- TAB 3: ISSUE REGISTER -->
-                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
+                <!-- TAB 4: ISSUE REGISTER -->
+                <button onclick="switchTab('issues')" id="tab-issues" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Issue Register">
                     <span id="tabIssuesLabel">⚠️ Issue Register</span>
+                    <span id="tabIssuesBadge" class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">25</span>
                 </button>
 
-                <!-- TAB 4: PERFORMANCE TRENDS -->
+                <!-- TAB 5: PERFORMANCE TRENDS -->
                 <button onclick="switchTab('trends')" id="tab-trends" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 transition-all cursor-pointer">
                     <span>📈 Performance Trends</span>
                 </button>
 
-                <!-- TAB: BLUEPRINT KNOWLEDGE (GEMINI NOTEBOOK) -->
+                <!-- TAB 6: BLUEPRINT KNOWLEDGE (GEMINI NOTEBOOK) -->
                 <button onclick="switchTab('blueprints')" id="tab-blueprints" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
                     <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     <span>📚 Blueprint Knowledge</span>
                     <span id="tabBlueprintsBadge" class="bg-purple-100 text-purple-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">17</span>
                 </button>
 
-                <!-- TAB 5: CD1 DRIVER TREE & CONTRACTUAL GATES (PAGES 3-5) -->
-                <button onclick="switchTab('driver-tree')" id="tab-driver-tree" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
-                    <span>🌳 CD1 Driver Tree &amp; Gap Close Horizon</span>
+                <!-- TAB 7: CD1 DRIVER TREE & CONTRACTUAL GATES -->
+                <button onclick="switchTab('driver-tree')" id="tab-driver-tree" class="nav-tab flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="CD1 Driver Tree &amp; Deliverables Horizon">
+                    <span>🌳 CD1 Driver Tree</span>
+                    <span id="tabDriverTreeBadge" class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">34</span>
                 </button>
 
-                <!-- TAB 5: WHOLE LEDGER (Revealed only in PM view ?view=pm or ?ledger=true) -->
-                <button onclick="switchTab('ledger')" id="tab-ledger" class="nav-tab hidden items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer">
+                <!-- TAB 8: WHOLE LEDGER (Revealed only in PM view ?view=pm or ?ledger=true) -->
+                <button onclick="switchTab('ledger')" id="tab-ledger" class="nav-tab hidden items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-white text-slate-700 hover:bg-indigo-50 cursor-pointer" title="Complete Register Master Ledger">
                     <span>📋 Whole Register Ledger</span>
+                    <span id="tabLedgerBadge" class="bg-slate-100 text-slate-800 text-[10px] px-1.5 py-0.5 rounded font-extrabold">119</span>
                 </button>
             </nav>
         </div>
@@ -1703,16 +1707,25 @@
             }
 
             const tabPrimary = document.getElementById('tabPrimaryRegisterLabel');
-            if (tabPrimary) tabPrimary.innerText = `${p.primaryRegisterName || 'Internal Risks'} (${LIVE_RISKS.length})`;
+            if (tabPrimary) tabPrimary.innerText = p.primaryRegisterName || 'Internal Risks';
+            const tabPrimaryBadge = document.getElementById('tabPrimaryRegisterBadge');
+            if (tabPrimaryBadge) tabPrimaryBadge.innerText = LIVE_RISKS.length;
             
             const tabSecondary = document.getElementById('tabSecondaryRegisterLabel');
             if (tabSecondary) tabSecondary.innerText = `🛡️ ${p.secondaryRegisterName || 'Team Google Risks'}`;
-            
             const tabSecondaryBadge = document.getElementById('tabTeamGoogleBadge');
             if (tabSecondaryBadge) tabSecondaryBadge.innerText = LIVE_TEAM_GOOGLE_RISKS.length;
 
             const tabIssuesLabel = document.getElementById('tabIssuesLabel');
-            if (tabIssuesLabel) tabIssuesLabel.innerText = `⚠️ Issue Register (${LIVE_ISSUES.length})`;
+            if (tabIssuesLabel) tabIssuesLabel.innerText = '⚠️ Issue Register';
+            const tabIssuesBadge = document.getElementById('tabIssuesBadge');
+            if (tabIssuesBadge) tabIssuesBadge.innerText = LIVE_ISSUES.length;
+
+            const tabDriverTreeBadge = document.getElementById('tabDriverTreeBadge');
+            if (tabDriverTreeBadge) tabDriverTreeBadge.innerText = (typeof DRIVER_TREE_ITEMS !== 'undefined' ? DRIVER_TREE_ITEMS.length : 34);
+
+            const tabLedgerBadge = document.getElementById('tabLedgerBadge');
+            if (tabLedgerBadge) tabLedgerBadge.innerText = (LIVE_RISKS.length + LIVE_TEAM_GOOGLE_RISKS.length);
 
             const tabBlueprintsBadge = document.getElementById('tabBlueprintsBadge');
             if (tabBlueprintsBadge && NOTEBOOK_CATALOG) {
@@ -3519,6 +3532,11 @@
 
         function updateAllDynamicCounters() {
             if (document.getElementById('tabRiskCount')) document.getElementById('tabRiskCount').innerText = LIVE_RISKS.length;
+            if (document.getElementById('tabPrimaryRegisterBadge')) document.getElementById('tabPrimaryRegisterBadge').innerText = LIVE_RISKS.length;
+            if (document.getElementById('tabTeamGoogleBadge')) document.getElementById('tabTeamGoogleBadge').innerText = LIVE_TEAM_GOOGLE_RISKS.length;
+            if (document.getElementById('tabIssuesBadge')) document.getElementById('tabIssuesBadge').innerText = LIVE_ISSUES.length;
+            if (document.getElementById('tabDriverTreeBadge')) document.getElementById('tabDriverTreeBadge').innerText = (typeof DRIVER_TREE_ITEMS !== 'undefined' ? DRIVER_TREE_ITEMS.length : 34);
+            if (document.getElementById('tabLedgerBadge')) document.getElementById('tabLedgerBadge').innerText = (LIVE_RISKS.length + LIVE_TEAM_GOOGLE_RISKS.length);
             if (document.getElementById('tabIssueCount')) document.getElementById('tabIssueCount').innerText = LIVE_ISSUES.length;
             if (document.getElementById('synthRiskCount')) document.getElementById('synthRiskCount').innerText = `${LIVE_RISKS.length} Risks`;
             if (document.getElementById('synthIssueCount')) document.getElementById('synthIssueCount').innerText = `${LIVE_ISSUES.length} Issues`;
