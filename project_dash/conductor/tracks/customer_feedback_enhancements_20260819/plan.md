@@ -7,14 +7,14 @@
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Risk Register Separation & Tab Architecture Clarification
-- [ ] Task: Create Unit Tests for Multi-Register Tab Isolation
-  - [ ] Add unit test verifying Internal Risks tab displays strictly the 107 primary risks
-  - [ ] Add unit test verifying Team Google Risks tab displays strictly the 12 TG risks with distinct badges and provenance
-- [ ] Task: Implement Clear Separate Tabs UI & Badging
-  - [ ] Update Tab 2 label to "Internal Risks" with count badge (107) and descriptive subtitle/tooltip
-  - [ ] Update Tab 3 label to "Team Google Risks" with count badge (12) and Google security shield icon
-  - [ ] Update Risk Explorer and Matrix headers in each tab to avoid cross-register confusion
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Create Unit Tests for Multi-Register Tab Isolation
+  - [x] Add unit test verifying Internal Risks tab displays strictly the 107 primary risks
+  - [x] Add unit test verifying Team Google Risks tab displays strictly the 12 TG risks with distinct badges and provenance
+- [x] Task: Implement Clear Separate Tabs UI & Badging
+  - [x] Update Tab 2 label to "Internal Risks" with count badge (107) and descriptive subtitle/tooltip
+  - [x] Update Tab 3 label to "Team Google Risks" with count badge (12) and Google security shield icon
+  - [x] Update Risk Explorer and Matrix headers in each tab to avoid cross-register confusion
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: CD1 Driver Tree Direct Risk Modal Deep-Linking
 - [ ] Task: Write Tests for Driver Tree Risk Link Actions
@@ -27,27 +27,27 @@
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 4: Persistent Global "Google Need-to-Know" Header Module
-- [ ] Task: Write Tests for Persistent "Google Need-to-Know" Rendering
-  - [ ] Verify presence of global `#googleNeedToKnowContainer` across all tab states
-  - [ ] Test dynamic population of high-priority Google briefing items and dismiss/collapse behavior
-- [ ] Task: Implement Global "Google Need-to-Know" UI & Logic
-  - [ ] Add persistent top-level notification bar / accordion card above main navigation
-  - [ ] Populate with dynamic Google-specific escalations, upcoming milestone alerts, and key decision deadlines
-  - [ ] Add collapse/expand toggle and state persistence
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write Tests for Persistent "Google Need-to-Know" Rendering
+  - [x] Verify presence of global `#googleNeedToKnowContainer` across all tab states
+  - [x] Test dynamic population of high-priority Google briefing items and dismiss/collapse behavior
+- [x] Task: Implement Global "Google Need-to-Know" UI & Logic
+  - [x] Add persistent top-level notification bar / accordion card above main navigation
+  - [x] Populate with dynamic Google-specific escalations, upcoming milestone alerts, and key decision deadlines
+  - [x] Add collapse/expand toggle and state persistence
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 5: "Looking Around the Corner" Predictive Insights Module
-- [ ] Task: Write Tests for Executive Summary Horizon Advisory
-  - [ ] Test computation of forward-looking signals (lead times, unassigned critical risks, upcoming contractual milestones)
-  - [ ] Test rendering of the "Looking Around the Corner" advisory card in `#view-exec-briefing`
-- [ ] Task: Implement "Looking Around the Corner" UI & Dynamic Synthesis
-  - [ ] Add "Looking Around the Corner: 30-60 Day Horizon & Preemptive Actions" component to Executive Summary tab
-  - [ ] Wire dynamic signal generators highlighting impending roadblocks, gate risks, and strategic advice
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write Tests for Executive Summary Horizon Advisory
+  - [x] Test computation of forward-looking signals (lead times, unassigned critical risks, upcoming contractual milestones)
+  - [x] Test rendering of the "Looking Around the Corner" advisory card in `#view-exec-briefing`
+- [x] Task: Implement "Looking Around the Corner" UI & Dynamic Synthesis
+  - [x] Add "Looking Around the Corner: 30-60 Day Horizon & Preemptive Actions" component to Executive Summary tab
+  - [x] Wire dynamic signal generators highlighting impending roadblocks, gate risks, and strategic advice
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 6: End-to-End Verification & Documentation
-- [ ] Task: Full System Audit & Regression Testing
-  - [ ] Run Pytest test suite and ensure all tests pass
-  - [ ] Manually verify UI across desktop and mobile views
-- [ ] Task: Update README.md and Documentation
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Full System Audit & Regression Testing
+  - [x] Run Pytest test suite and ensure all tests pass
+  - [x] Manually verify UI across desktop and mobile views
+- [x] Task: Update README.md and Documentation
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)

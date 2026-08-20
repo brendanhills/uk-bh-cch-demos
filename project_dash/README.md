@@ -23,12 +23,15 @@ An ultra-responsive, decoupled executive governance and operational risk intelli
    - Synthesizes dual-host executive discussion podcasts using Gemini TTS (`MultiSpeakerVoiceConfig` with `Puck` and `Aoede`).
    - Built-in neural waveform player with variable playback speed, auto-scrolling synced transcript, and direct MP3 export.
 
-4. **Multi-Register 5×5 Risk & Issue Matrix**:
+4. **Multi-Register 5×5 Risk & Issue Matrix & Clean Register Isolation**:
+   - Explicitly separated tabs for **Internal Risks** (107 primary items) and **Team Google Risks** (12 technical items) with dedicated matrices, provenance tooltips, and ownership filters.
    - Dynamic Inherent vs. Residual risk matrix toggling with active cell focus rings and 1-click filtering (`↗`).
    - Longitudinal risk burndown and net backlog velocity tracking across Weekly, Bi-Weekly, and Monthly granularities.
 
-5. **Contractual Driver Tree & Capability Horizon**:
-   - Visual capability drop trees linking milestone gates directly to high-priority remediation plans and active risks.
+5. **Global "Google Need-to-Know" & "Looking Around the Corner" Strategic Advisory**:
+   - Persistent top-level **Google Need-to-Know** notification banner visible across all tabs with collapsible state persistence.
+   - **Looking Around the Corner (30-60 Day Horizon)** predictive advisory in the Executive Summary synthesizing supply chain lead times, cross-register gaps, and PDR concurrency traps.
+   - Smart CD1 Driver Tree deep-linking that opens full interactive Risk Detail Modals directly from deliverable cards.
 
 6. **Knowledge Base & Solution Blueprints**:
    - Deep contract traceability and technical blueprint catalog mapping deliverable bundles to active risks.

@@ -2,12 +2,12 @@
   "project": {
     "slug": "f-dse",
     "name": "Australian Defence F-DSE",
-    "title": "Federated Defence Secret Environment",
+    "title": "Future Defence Secret Environment",
     "organization": "Joint Executive Board",
     "logoIcon": "\ud83d\udee1\ufe0f",
     "heroTag": "F-DSE Delivery Governance \u2022 Joint & Team Google Risk Portfolio",
-    "primaryRegisterName": "Joint Program Register",
-    "secondaryRegisterName": "Team Google Register",
+    "primaryRegisterName": "Internal Risks",
+    "secondaryRegisterName": "Team Google Risks",
     "links": {
       "charter": "https://example.com/fdse/charter",
       "sheets": "https://docs.google.com/spreadsheets/d/1qR1tEHFs0QC6CGSUpzHgVgolcF0zQNcg99yZgJwoMVY/edit",

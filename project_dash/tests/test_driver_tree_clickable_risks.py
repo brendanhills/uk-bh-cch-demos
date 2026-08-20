@@ -10,10 +10,12 @@ class TestDriverTreeClickableRisks(unittest.TestCase):
         with open(INDEX_PATH, 'r', encoding='utf-8') as f:
             cls.html = f.read()
 
-    def test_render_driver_tree_has_clickable_risk_buttons(self):
-        """Verify Driver Tree renders interactive clickable buttons for linked risks and issues."""
-        self.assertIn('filterByDriverTreeDeliverable', self.html, 'index.html must define filterByDriverTreeDeliverable')
-        self.assertIn('onclick="filterByDriverTreeDeliverable', self.html)
+    def test_render_driver_tree_has_direct_risk_modal_calls(self):
+        """Verify Driver Tree delivers direct risk and issue modal opening."""
+        self.assertIn('openRiskModal', self.html, 'index.html must define and call openRiskModal')
+        self.assertIn('openItemDetailModal', self.html, 'index.html must define openItemDetailModal')
+        self.assertIn('openRiskModal(', self.html)
+        self.assertIn('filterByDriverTreeDeliverable', self.html)
 
     def test_filter_by_driver_tree_deliverable_function(self):
         """Verify filterByDriverTreeDeliverable handles both risks and issues tab transitions."""
