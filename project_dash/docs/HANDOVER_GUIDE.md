@@ -114,9 +114,10 @@ If you ever need to immediately take any running service offline:
 | **`index.html`** | Core single-file web application (UI, Tailwind CSS, Chart.js, and audio briefing player). |
 | **`server.py`** | Optional local Python server with Drive sync and ingestion APIs. |
 | **`run_server.sh`** | 1-command tmux lifecycle script (start, attach, restart, kill). |
-| **`HANDOVER_GUIDE.md`** | This operator manual and team handover guide. |
+| **`docs/HANDOVER_GUIDE.md`** | This operator manual and team handover guide. |
 | **`README.md`** | Comprehensive project overview and architecture documentation. |
-| **`TEAM_PRESENTATION_GUIDE.md`** | Presentation guide and demo narrative for stakeholder meetings. |
+| **`docs/TEAM_PRESENTATION_GUIDE.md`** | Presentation guide and demo narrative for stakeholder meetings. |
+| **`docs/DEPLOYMENT_GUIDE.md`** | Automated CI/CD deployment guide and Cloud Run / IAP configuration. |
 | **`src/data/weekly_snapshots.json`** | Weekly historical risk register snapshots (Week 22 through Week 27+). |
 | **`src/data/live_synced_data.json`** | Live synchronized dataset from Google Sheets. |
 | **`deploy/`** | Deployment scripts, container definitions, and 1-click shutdown tooling. |

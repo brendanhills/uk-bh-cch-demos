@@ -1,18 +1,18 @@
 # 🚀 Project Dash — Decoupled Risk Intelligence & Governance Platform
 
-An ultra-responsive, zero-build executive governance and risk intelligence platform powered by **Google Gemini AI**. Project Dash provides real-time 5×5 risk heatmaps, interactive burndown velocity curves, contractual driver trees, and Gemini-generated multi-tone executive briefings with neural multi-speaker podcast audio.
+An ultra-responsive, decoupled executive governance and operational risk intelligence platform. Project Dash provides real-time 5×5 risk heatmaps, interactive burndown velocity curves, contractual driver trees, and integrated **Google Gemini AI** executive briefings with dual-speaker audio podcasts.
 
 ---
 
 ## 🌟 Key Architecture & Capabilities
 
-1. **Decoupled Zero-Build Architecture**:
+1. **Decoupled Architecture & Multi-Project Routing**:
    - Pure client-side SPA (`index.html`) using Tailwind CSS and Chart.js.
    - 100% decoupled from project-specific content — dynamic project routing via query parameters: `?project=sample` (Project Aurora public showcase) or `?project=<your-project>`.
    - Can be served via Python server, Nginx, GitHub Pages, or serverless containers (Cloud Run).
 
 2. **Gemini Ingestion & Decision Synthesis Engine**:
-   - Ingestion CLI (`scripts/ingest_data.py`) automatically ingests Google Sheets, Google Drive PDF report packs, and knowledge documents into high-performance precomputed caches (`precomputed_analytics.json`).
+   - Ingestion CLI (`scripts/ingest_data.py`) automatically ingests Google Sheets, Google Drive PDF report packs, and knowledge documents into standardized project datasets (`snapshots.json`, `risks.json`, `issues.json`).
    - Uses **Gemini 3.5 Flash** to generate structured executive syntheses tailored for 3 executive stakeholder perspectives:
      - 👔 **Executive**: Focus on milestones, strategic delivery blockers, and board actions.
      - ⚙️ **Technical**: Focus on infrastructure, security enclaves, API SLAs, and telemetry.
@@ -38,8 +38,8 @@ An ultra-responsive, zero-build executive governance and risk intelligence platf
 ## 🚀 Quickstart
 
 ### 1. Prerequisites
-- Python 3.10+
-- (Optional for AI generation) Google Cloud ADC or `GEMINI_API_KEY`
+- **Python 3.12+**
+- **Google Cloud ADC** (`gcloud auth application-default login`) or **`GEMINI_API_KEY`** (Required for Gemini AI decision synthesis and neural podcast audio generation)
 
 ### 2. Setup
 ```bash
@@ -50,17 +50,11 @@ cd project_dash
 # Copy environment template
 cp .env.example .env
 
-# (Optional) Authenticate with Google Cloud ADC for Vertex AI:
+# Authenticate with Google Cloud ADC for Vertex AI Gemini:
 gcloud auth application-default login
 ```
 
-### 3. Ingest Data & Precompute Analytics
-```bash
-# Ingest and precompute the sample showcase dataset (Project Aurora)
-python3 scripts/ingest_data.py --project=sample
-```
-
-### 4. Run the Development Server
+### 3. Run the Development Server
 ```bash
 # Start the local development server on port 9000
 python3 server.py
@@ -69,8 +63,13 @@ python3 server.py
 ./run_server.sh
 ```
 
-Open your browser at:
-👉 **Sample Showcase**: `http://localhost:9000/?project=sample`
+### 4. Open in Browser & Trigger Ingestion from UI
+1. Open your browser at:
+   👉 **Sample Showcase**: `http://localhost:9000/?project=sample`
+2. Click the **"Sync with Google Drive"** / **"Workspace Sync"** button in the top navigation header.
+3. The dashboard will trigger the automated ingestion pipeline, run Gemini decision synthesis, generate the neural podcast audio, and update all 5×5 matrices and trend curves in real time!
+
+*(Optional Headless Automation CLI: `python3 scripts/ingest_data.py --project=sample`)*
 
 ---
 
@@ -84,13 +83,18 @@ project_dash/
 ├── server.py                    # Parameterized HTTP server & On-demand sync APIs
 ├── .env.example                 # Environment configuration template
 ├── .gitignore                   # Strict sanitization rules
+├── docs/                        # Project operator manuals & guides
+│   ├── HANDOVER_GUIDE.md        # Turnkey operator & handover manual
+│   ├── TEAM_PRESENTATION_GUIDE.md # 5-minute showcase narrative
+│   └── DEPLOYMENT_GUIDE.md      # Automated CI/CD & IAP security setup
 ├── prompts/
 │   ├── exec_summary_prompt.md   # Gemini structured JSON executive summary prompt
 │   └── podcast_prompt.md        # Gemini dual-speaker podcast script prompt
 ├── scripts/
 │   ├── ingest_data.py           # Master Ingestion Orchestrator CLI
 │   ├── gemini_generator.py      # Gemini 3.5 synthesis & TTS audio generator
-│   └── precompute_analytics.py  # High-performance analytics precomputation engine
+│   ├── ingest_weekly_report.py  # Weekly PDF extraction script
+│   └── check_build_status.py    # Cloud Build CI/CD status query tool
 ├── data/
 │   └── sample/                  # Public showcase dataset (Project Aurora)
 │       ├── config.json          # Project branding, theme colors, feature flags
@@ -98,8 +102,7 @@ project_dash/
 │       ├── issues.json          # Operational issue register
 │       ├── snapshots.json       # Longitudinal weekly snapshots (W22-W27)
 │       ├── knowledge.json       # Blueprint & contract knowledge sources
-│       ├── driver_tree.json     # Contractual milestones & capability drops
-│       └── precomputed_analytics.json # Precalculated matrix & trend caches
+│       └── driver_tree.json     # Contractual milestones & capability drops
 └── tests/                       # Complete automated unit test suite
 ```
 
@@ -134,7 +137,7 @@ To add a new project (e.g. `my-project`):
 
 ## 🧪 Testing & Quality Assurance
 
-Project Dash includes a comprehensive unit test suite covering data integrity, precomputed caches, Gemini generation, server endpoints, and frontend decoupling:
+Project Dash includes a comprehensive unit test suite covering data integrity, live client calculations, Gemini generation, server endpoints, and frontend decoupling:
 
 ```bash
 # Run all automated unit tests

@@ -6,5 +6,5 @@ authors = [
     { name = "Brendan Hills", email = "brendanhills@google.com" }
 ]
 dependencies = []
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 

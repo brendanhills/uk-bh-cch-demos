@@ -18,7 +18,7 @@ zip -9 "$OUTPUT_ZIP" \
     index.html \
     assets/*.mp3 \
     README.md \
-    HANDOVER_GUIDE.md
+    docs/HANDOVER_GUIDE.md
 
 ZIP_SIZE=$(du -h "$OUTPUT_ZIP" | cut -f1)
 

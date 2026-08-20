@@ -939,8 +939,10 @@
     "impact": "Medium",
     "risk": "Low",
     "phase": "Phase 2",
-    "status": "Reported",
-    "context": "project_dash"
+    "status": "Investigated",
+    "context": "project_dash",
+    "root_cause": "When navigating to driver references or gap plans across tabs, tab state is not preserved and the return button does not switch back to exec-briefing before attempting to scroll to the briefing container.",
+    "proposed_plan": "1. Track previousNavigationSourceTab when clicking cross-tab jump links. 2. Update jumpToGapClose to switch to exec-briefing tab if called from another tab before scrolling to the card. 3. Make \u2191 Briefing return button explicitly switch tab to exec-briefing and scroll smoothly to the executive briefing summary card. 4. Add return-to-briefing link on Driver Tree deliverable cards when navigated from briefing."
   },
   {
     "id": 54,
@@ -1296,27 +1298,42 @@
     "id": 73,
     "title": "Podcast audio is for week 26, but transcript is for week 27",
     "description": "The audio asset being played by the podcast player is the Week 26 recording, while the transcript and dashboard display Week 27 content.",
-    "status": "Reported",
-    "priority": "",
-    "impact": "",
+    "status": "Investigated",
+    "priority": "P1",
+    "impact": "Medium",
     "date_reported": "2026-08-18",
     "date_resolved": "",
     "workspace_context": "project_dash",
-    "root_cause": "",
-    "proposed_plan": ""
+    "root_cause": "The audio asset assets/podcast_w27.mp3 was copied from assets/podcast_w26.mp3 and contains spoken audio for Week 26 rather than Week 27 content, while the dashboard transcript displays Week 27 dialogue.",
+    "proposed_plan": "1. Provide authentic Week 27 audio asset assets/podcast_w27.mp3 matching the Week 27 transcript dialogue. 2. Dynamically bind <audio id=\"nativePodcastAudio\"> src to assets/podcast_.mp3 with fallback. 3. Update download link to match the active snapshot week."
   },
   {
     "id": 74,
     "title": "Gap pill back button navigates to top of Driver Tree tab instead of returning to Executive Summary",
     "description": "When in the Executive Summary tab, after clicking Gap pills / jump links to inspect gap close plans, the back button takes the user to the top of the Driver Tree tab rather than returning to the Executive Summary.",
     "status": "Duplicate",
-    "priority": "",
-    "impact": "",
+    "priority": "P1",
+    "impact": "Medium",
     "date_reported": "2026-08-18",
     "date_resolved": "2026-08-18",
     "workspace_context": "project_dash",
     "root_cause": "Duplicate of Bug #53 (Gap navigation and return to Executive Summary).",
     "proposed_plan": "",
     "duplicate_of": 53
+  },
+  {
+    "id": 75,
+    "title": "FR: Display human-readable names for Sheets, Drive Folders, and NotebookLM in Live Sync modal popup",
+    "description": "In the Google Workspace & NotebookLM Live Sync modal popup, display the explicit human-readable resource names PULLED DIRECTLY FROM THE LIVE SOURCE (e.g. the actual Google Sheet document title from Google Drive/Sheets metadata, the actual Drive Folder name, and the actual NotebookLM Notebook title from the source, rather than static hardcoded or generated strings) alongside/above the URL inputs so users can see the exact live source titles.",
+    "status": "Investigated",
+    "priority": "P2",
+    "impact": "Medium",
+    "type": "Feature Request",
+    "date_reported": "2026-08-19",
+    "date_resolved": "",
+    "workspace_context": "project_dash",
+    "root_cause": "The Live Sync modal popup currently renders generic hardcoded category headers and raw URLs without displaying the actual document/folder/notebook titles retrieved from the live Google Drive/Sheets and Notebook sources.",
+    "proposed_plan": "1. In server.py, update the /api/check-drive-sync and /api/source-metadata endpoints to query and return real source metadata (Google Sheets spreadsheet title via Sheets API/drive files.get, Drive folder name via Drive API, and Notebook title from knowledge.json/NotebookLM metadata).\n2. Store source metadata in data/<project>/config.json or dynamic cache during ingestion/sync.\n3. In index.html openSheetsModal() / checkDriveSyncStatus(), render the live-retrieved source names prominently (e.g. '\ud83d\udcc4 Live Document: F-DSE Joint Risk & Issue Register Master') above each URL input box.",
+    "requirement_notes": "Names must be fetched/pulled directly from the live source APIs or ingested source metadata (Google Sheets API metadata, Google Drive Folder metadata, NotebookLM title), not hardcoded or statically generated."
   }
 ]
