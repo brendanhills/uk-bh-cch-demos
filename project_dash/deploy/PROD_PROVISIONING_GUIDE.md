@@ -32,6 +32,7 @@ This guide provides both **Click-Ops (Google Cloud Console)** and **CLI (Scripte
 
 | Resource / Console | Development (`monaro-risk-dev`) | Production (`monaro-risk-prod`) | Global & Corp Links |
 | :--- | :--- | :--- | :--- |
+| **Live Deployed Dashboard** | [👉 Open Dev Dashboard](https://monaro-risk-dash-dev-525025654699.us-central1.run.app/) | [👉 Open Prod Dashboard](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/) | [Local Dev Server (Port 9000)](http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample) |
 | **Cloud Run Services** | [👉 Cloud Run (Dev)](https://pantheon.corp.google.com/run?project=monaro-risk-dev) | [👉 Cloud Run (Prod)](https://pantheon.corp.google.com/run?project=monaro-risk-prod) | — |
 | **Cloud Build Triggers** | [👉 Build Triggers (Dev)](https://pantheon.corp.google.com/cloud-build/triggers?project=monaro-risk-dev) | [👉 Build Triggers (Prod)](https://pantheon.corp.google.com/cloud-build/triggers?project=monaro-risk-prod) | [Connected Repositories](https://pantheon.corp.google.com/cloud-build/repositories) |
 | **Cloud Build History** | [👉 Build History (Dev)](https://pantheon.corp.google.com/cloud-build/builds?project=monaro-risk-dev) | [👉 Build History (Prod)](https://pantheon.corp.google.com/cloud-build/builds?project=monaro-risk-prod) | — |
