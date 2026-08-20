@@ -1,10 +1,10 @@
 # Implementation Plan: Customer Feedback & Strategic Advisory Enhancements
 
 ## Phase 1: Terminology & Core Configuration Updates
-- [ ] Task: Update Heading & Program Branding
-  - [ ] Update `data/f-dse/config.json` title to "Future Defence Secret Environment"
-  - [ ] Verify header rendering, tab titles, and export configurations reflect "Future Defence Secret Environment"
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Update Heading & Program Branding
+  - [x] Update `data/f-dse/config.json` title to "Monaro" / "Project Monaro"
+  - [x] Verify header rendering, tab titles, and export configurations reflect branding
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Risk Register Separation & Tab Architecture Clarification
 - [x] Task: Create Unit Tests for Multi-Register Tab Isolation
@@ -12,28 +12,27 @@
   - [x] Add unit test verifying Team Google Risks tab displays strictly the 12 TG risks with distinct badges and provenance
 - [x] Task: Implement Clear Separate Tabs UI & Badging
   - [x] Update Tab 2 label to "Internal Risks" with count badge (107) and descriptive subtitle/tooltip
-  - [x] Update Tab 3 label to "Team Google Risks" with count badge (12) and Google security shield icon
-  - [x] Update Risk Explorer and Matrix headers in each tab to avoid cross-register confusion
+  - [x] Update Tab 3 label to "Issue Register" with count badge (25) positioned next to Internal Risks
+  - [x] Update Tab 4 label to "Team Google Risks" with count badge (12) and Google security shield icon
+  - [x] Standardize pill count badges across all tabs
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: CD1 Driver Tree Direct Risk Modal Deep-Linking
-- [ ] Task: Write Tests for Driver Tree Risk Link Actions
-  - [ ] Add test for single linked risk click triggering `openRiskModal(riskId)`
-  - [ ] Add test for multi-risk deliverable rendering individual clickable chips
-- [ ] Task: Implement Enhanced Driver Tree Risk Interactions
-  - [ ] Update `renderDriverTree()` to evaluate `linkedRisks`
-  - [ ] If 1 risk linked: attach direct `openRiskModal(linkedRisks[0].id)` handler
-  - [ ] If multiple risks linked: render discrete risk pill chips (`#ID`) with `openRiskModal(id)` plus an "Explore All" button
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Write Tests for Driver Tree Risk Link Actions
+  - [x] Add test for single linked risk click triggering `openRiskModal(riskId)`
+  - [x] Add test for multi-risk deliverable rendering individual clickable chips
+- [x] Task: Implement Enhanced Driver Tree Risk Interactions
+  - [x] Update `renderDriverTree()` to evaluate `linkedRisks`
+  - [x] If 1 risk linked: attach direct `openRiskModal(linkedRisks[0].id)` handler
+  - [x] If multiple risks linked: render discrete risk pill chips (`#ID`) with `openRiskModal(id)` plus an "Explore All" button
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
-## Phase 4: Persistent Global "Google Need-to-Know" Header Module
-- [x] Task: Write Tests for Persistent "Google Need-to-Know" Rendering
-  - [x] Verify presence of global `#googleNeedToKnowContainer` across all tab states
-  - [x] Test dynamic population of high-priority Google briefing items and dismiss/collapse behavior
-- [x] Task: Implement Global "Google Need-to-Know" UI & Logic
-  - [x] Add persistent top-level notification bar / accordion card above main navigation
-  - [x] Populate with dynamic Google-specific escalations, upcoming milestone alerts, and key decision deadlines
-  - [x] Add collapse/expand toggle and state persistence
+## Phase 4: Google Need to Know (NTK) Security Classification Banner
+- [x] Task: Write Tests for Title Banner NTK Classification Badge
+  - [x] Verify presence of header `#ntkClassificationBadge` with "Google Need to Know (NTK)"
+- [x] Task: Implement Title Banner NTK Badge & Clean Up Blue Box
+  - [x] Add `Google Need to Know (NTK)` classification badge to top title banner
+  - [x] Remove bulky blue notification container
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 5: "Looking Around the Corner" Predictive Insights Module (Deferred to Later Phase)
@@ -47,7 +46,7 @@
 
 ## Phase 6: End-to-End Verification & Documentation
 - [x] Task: Full System Audit & Regression Testing
-  - [x] Run Pytest test suite and ensure all tests pass
-  - [x] Manually verify UI across desktop and mobile views
+  - [x] Run Pytest test suite and ensure all 102 tests pass
+  - [x] Verify zero uncommitted data leaks to GitHub
 - [x] Task: Update README.md and Documentation
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
