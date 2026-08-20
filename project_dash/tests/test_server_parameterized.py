@@ -94,6 +94,24 @@ class TestServerParameterized(unittest.TestCase):
         self.assertEqual(dummy.sent_data.get("project"), "sample")
         self.assertIn("message", dummy.sent_data)
 
+    def test_handle_sync_all_endpoint(self):
+        """Verify /api/sync-all runs full multi-source sync and returns summary counts."""
+        class DummyHandler:
+            def __init__(self):
+                self.sent_data = None
+                self.sent_code = None
+            def send_json(self, data, status_code=200):
+                self.sent_data = data
+                self.sent_code = status_code
+
+        dummy = DummyHandler()
+        server.DashboardHandler.handle_sync_all(dummy, query_or_params={"project": "sample"})
+        self.assertEqual(dummy.sent_code, 200)
+        self.assertEqual(dummy.sent_data.get("status"), "ok")
+        self.assertEqual(dummy.sent_data.get("project"), "sample")
+        self.assertIn("summary", dummy.sent_data)
+        self.assertIn("snapshots", dummy.sent_data["summary"])
+
     def test_handle_regenerate_briefing_endpoint(self):
         """Verify POST /api/regenerate-briefing regenerates briefing synthesis."""
         class DummyHandler:

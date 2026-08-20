@@ -68,6 +68,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
         elif parsed.path == '/api/sync-sheet':
             self.handle_sync_sheet(parsed.query)
+        elif parsed.path == '/api/sync-all':
+            self.handle_sync_all(parsed.query)
         elif parsed.path == '/api/check-drive-sync':
             self.handle_check_drive_sync(parsed.query)
         elif parsed.path == '/api/notebooks':
@@ -93,7 +95,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if k not in params:
                     params[k] = v[0] if len(v) == 1 else v
 
-        if parsed.path == '/api/ingest-data':
+        if parsed.path == '/api/sync-all':
+            self.handle_sync_all(params)
+        elif parsed.path == '/api/ingest-data':
             self.handle_ingest_data(params)
         elif parsed.path == '/api/regenerate-briefing':
             self.handle_regenerate_briefing(params)
@@ -110,6 +114,57 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
+
+    def handle_sync_all(self, query_or_params=''):
+        try:
+            if isinstance(query_or_params, dict):
+                params = query_or_params
+            else:
+                q = urllib.parse.parse_qs(query_or_params) if query_or_params else {}
+                params = {k: v[0] for k, v in q.items()}
+
+            proj = params.get('project', get_default_project())
+            p_dir = get_project_dir(proj)
+
+            ingest_script = os.path.join(DIRECTORY, 'scripts', 'ingest_data.py')
+            cmd = [sys.executable, ingest_script, f'--project={proj}']
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
+
+            # Load updated state
+            snaps_file = os.path.join(p_dir, 'snapshots.json')
+            snaps_count = 0
+            if os.path.exists(snaps_file):
+                with open(snaps_file, 'r', encoding='utf-8') as f:
+                    sd = json.load(f)
+                    snaps_count = len(sd.get('snapshots', sd) if isinstance(sd, dict) else {})
+
+            risks_file = os.path.join(p_dir, 'risks.json')
+            risks_count = 0
+            if os.path.exists(risks_file):
+                with open(risks_file, 'r', encoding='utf-8') as f:
+                    rd = json.load(f)
+                    risks_count = len(rd if isinstance(rd, list) else rd.get('risks', []))
+
+            issues_file = os.path.join(p_dir, 'issues.json')
+            issues_count = 0
+            if os.path.exists(issues_file):
+                with open(issues_file, 'r', encoding='utf-8') as f:
+                    id_data = json.load(f)
+                    issues_count = len(id_data if isinstance(id_data, list) else id_data.get('issues', []))
+
+            self.send_json({
+                'status': 'ok',
+                'project': proj,
+                'message': f'Full live data synchronization completed successfully for project "{proj}"',
+                'timestamp': datetime.now().isoformat(),
+                'summary': {
+                    'snapshots': snaps_count,
+                    'risks': risks_count,
+                    'issues': issues_count
+                }
+            })
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
 
     def handle_sync_sheet(self, query_str=''):
         try:
@@ -474,7 +529,7 @@ def get_startup_banner(port=PORT):
         f'  👉 Dashboard (Local):        {urls[0]}/?project=sample',
         f'  👉 Dashboard (Loopback):     {urls[1]}/?project=sample',
         f'  👉 Dashboard (Proprietary):  {urls[0]}/?project=f-dse',
-        f'  📡 API Sync Endpoint:        http://localhost:{port}/api/sync-sheet?project={default_proj}',
+        f'  📡 API Sync Endpoint:        http://localhost:{port}/api/sync-all?project={default_proj}',
         '=' * 64,
         'Serving Project Dash with Decoupled Datasets & On-Demand APIs.',
     ]

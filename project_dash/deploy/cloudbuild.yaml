@@ -9,14 +9,14 @@ steps:
         pip install --no-cache-dir -r requirements.txt
         python3 -m unittest discover -s tests -p "test_*.py"
 
-  # 2. Ensure Artifact Registry repository exists
+  # 2. Ensure Artifact Registry repository exists in Australia region
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud artifacts repositories describe cloud-run-source-deploy --location=us-central1 --project=$PROJECT_ID || \
-        gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=us-central1 --description="Cloud Run source deployments" --project=$PROJECT_ID
+        gcloud artifacts repositories describe cloud-run-source-deploy --location=${_REGION} --project=$PROJECT_ID || \
+        gcloud artifacts repositories create cloud-run-source-deploy --repository-format=docker --location=${_REGION} --description="Cloud Run source deployments" --project=$PROJECT_ID
 
   # 3. Build container image using custom Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
@@ -26,33 +26,33 @@ steps:
       - '-f'
       - 'deploy/Dockerfile'
       - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:$COMMIT_SHA'
       - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:latest'
       - '.'
 
   # 4. Push container image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:$COMMIT_SHA'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:latest'
 
-  # 5. Deploy to Cloud Run (Private Mode + Native IAP Enabled)
+  # 5. Deploy to Cloud Run (Private Mode + Native IAP Enabled in Australia)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
       - 'run'
       - 'deploy'
-      - 'monaro-risk-dash-dev'
+      - '${_SERVICE_NAME}'
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:$COMMIT_SHA'
       - '--region'
-      - 'us-central1'
+      - '${_REGION}'
       - '--platform'
       - 'managed'
       - '--no-allow-unauthenticated'
@@ -67,28 +67,28 @@ steps:
       - '-c'
       - |
         # 1. Grant Cloud Run Invoker to IAP Service Agent
-        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+        gcloud run services add-iam-policy-binding ${_SERVICE_NAME} \
           --project=$PROJECT_ID \
-          --region=us-central1 \
+          --region=${_REGION} \
           --member="serviceAccount:service-$PROJECT_NUMBER@gcp-sa-iap.iam.gserviceaccount.com" \
           --role="roles/run.invoker" || true
 
-        # 2. Grant Cloud Run Invoker to Google Group and Designated Leads
-        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+        # 2. Grant Cloud Run Invoker to Environment Google Group and Designated Leads
+        gcloud run services add-iam-policy-binding ${_SERVICE_NAME} \
           --project=$PROJECT_ID \
-          --region=us-central1 \
-          --member="group:monaro-risk-dev@google.com" \
+          --region=${_REGION} \
+          --member="group:${_ACCESS_GROUP}" \
           --role="roles/run.invoker" || true
 
-        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+        gcloud run services add-iam-policy-binding ${_SERVICE_NAME} \
           --project=$PROJECT_ID \
-          --region=us-central1 \
+          --region=${_REGION} \
           --member="user:brendanhills@google.com" \
           --role="roles/run.invoker" || true
 
-        gcloud run services add-iam-policy-binding monaro-risk-dash-dev \
+        gcloud run services add-iam-policy-binding ${_SERVICE_NAME} \
           --project=$PROJECT_ID \
-          --region=us-central1 \
+          --region=${_REGION} \
           --member="user:allins@google.com" \
           --role="roles/run.invoker" || true
 
@@ -96,30 +96,36 @@ steps:
         gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
-          --member="group:monaro-risk-dev@google.com" \
+          --service="${_SERVICE_NAME}" \
+          --region="${_REGION}" \
+          --member="group:${_ACCESS_GROUP}" \
           --role="roles/iap.httpsResourceAccessor" || true
 
         gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
+          --service="${_SERVICE_NAME}" \
+          --region="${_REGION}" \
           --member="user:brendanhills@google.com" \
           --role="roles/iap.httpsResourceAccessor" || true
 
         gcloud beta iap web add-iam-policy-binding \
           --project=$PROJECT_ID \
           --resource-type="cloud-run" \
-          --service="monaro-risk-dash-dev" \
-          --region="us-central1" \
+          --service="${_SERVICE_NAME}" \
+          --region="${_REGION}" \
           --member="user:allins@google.com" \
           --role="roles/iap.httpsResourceAccessor" || true
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:$COMMIT_SHA'
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/monaro-risk-dash-dev:latest'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:$COMMIT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/${_IMAGE_NAME}:latest'
+
+substitutions:
+  _SERVICE_NAME: 'monaro-risk-dash-dev'
+  _IMAGE_NAME: 'monaro-risk-dash-dev'
+  _ACCESS_GROUP: 'monaro-risk-dev@google.com'
+  _REGION: 'australia-southeast1'
 
 options:
   logging: CLOUD_LOGGING_ONLY

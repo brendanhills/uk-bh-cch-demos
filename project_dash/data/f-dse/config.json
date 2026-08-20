@@ -1,11 +1,11 @@
 {
   "project": {
     "slug": "f-dse",
-    "name": "Australian Defence F-DSE",
-    "title": "Future Defence Secret Environment",
+    "name": "Project Monaro",
+    "title": "Monaro",
     "organization": "Joint Executive Board",
     "logoIcon": "\ud83d\udee1\ufe0f",
-    "heroTag": "F-DSE Delivery Governance \u2022 Joint & Team Google Risk Portfolio",
+    "heroTag": "Monaro Delivery Governance \u2022 Joint & Team Google Risk Portfolio",
     "primaryRegisterName": "Internal Risks",
     "secondaryRegisterName": "Team Google Risks",
     "links": {

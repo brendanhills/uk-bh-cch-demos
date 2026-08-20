@@ -3,11 +3,11 @@
 check_build_status.py — Query Google Cloud Build status and extract failure diagnostics.
 
 Usage:
-  python3 scripts/check_build_status.py
-  python3 scripts/check_build_status.py --project monaro-risk-dev --region us-central1
-  python3 scripts/check_build_status.py --build-id <BUILD_ID>
+  python3 scripts/check_build_status.py                 # Checks monaro-risk-dev in australia-southeast1
+  python3 scripts/check_build_status.py --env prod      # Checks monaro-risk-prod in australia-southeast1
+  python3 scripts/check_build_status.py --env dev       # Checks monaro-risk-dev in australia-southeast1
+  python3 scripts/check_build_status.py --build-id <ID>
   python3 scripts/check_build_status.py --limit 5
-  python3 scripts/check_build_status.py --json
 """
 
 import argparse
@@ -42,7 +42,7 @@ def run_gcloud_cmd(cmd_list):
         sys.exit(1)
 
 
-def get_recent_builds(project="monaro-risk-dev", region="us-central1", limit=1):
+def get_recent_builds(project="monaro-risk-dev", region="australia-southeast1", limit=1):
     """Fetch the most recent Cloud Build metadata."""
     cmd = [
         "gcloud", "builds", "list",
@@ -64,7 +64,7 @@ def get_recent_builds(project="monaro-risk-dev", region="us-central1", limit=1):
         sys.exit(1)
 
 
-def get_build_details(build_id, project="monaro-risk-dev", region="us-central1"):
+def get_build_details(build_id, project="monaro-risk-dev", region="australia-southeast1"):
     """Fetch full details of a specific build."""
     cmd = [
         "gcloud", "builds", "describe", build_id,
@@ -82,7 +82,7 @@ def get_build_details(build_id, project="monaro-risk-dev", region="us-central1")
         return None
 
 
-def get_build_logs(build_id, project="monaro-risk-dev", region="us-central1", tail_lines=40):
+def get_build_logs(build_id, project="monaro-risk-dev", region="australia-southeast1", tail_lines=40):
     """Fetch build logs for a build."""
     cmd = [
         "gcloud", "builds", "log", build_id,
@@ -119,7 +119,9 @@ def inspect_build(build, project, region):
     subs = build.get("substitutions", {})
     commit_sha = subs.get("COMMIT_SHA", build.get("sourceProvenance", {}).get("resolvedGitSource", {}).get("revision", "N/A"))
     short_sha = commit_sha[:7] if commit_sha and commit_sha != "N/A" else "N/A"
+    tag_name = subs.get("TAG_NAME", "")
     branch = subs.get("BRANCH_NAME", subs.get("REF_NAME", "dev"))
+    ref_desc = f"tag '{tag_name}'" if tag_name else f"branch '{branch}'"
     trigger_name = subs.get("TRIGGER_NAME", "N/A")
     log_url = build.get("logUrl", "")
 
@@ -131,7 +133,7 @@ def inspect_build(build, project, region):
     print(f"{BOLD}══════════════════════════════════════════════════════════════════════{RESET}")
     print(f"  {BOLD}Build ID:{RESET}       {build_id}")
     print(f"  {BOLD}Status:{RESET}         {status_icon} {status_color}{BOLD}{status}{RESET}")
-    print(f"  {BOLD}Trigger:{RESET}        {trigger_name} ({branch} branch)")
+    print(f"  {BOLD}Trigger:{RESET}        {trigger_name} ({ref_desc})")
     print(f"  {BOLD}Commit:{RESET}         {short_sha} ({commit_sha})")
     print(f"  {BOLD}Created:{RESET}        {create_time}")
     print(f"  {BOLD}Finished:{RESET}       {finish_time}")
@@ -189,33 +191,48 @@ def inspect_build(build, project, region):
 
 def main():
     parser = argparse.ArgumentParser(description="Check Google Cloud Build status and extract diagnostics.")
-    parser.add_argument("--project", default="monaro-risk-dev", help="GCP project ID (default: monaro-risk-dev)")
-    parser.add_argument("--region", default="us-central1", help="GCP region (default: us-central1)")
+    parser.add_argument("--env", choices=["dev", "prod"], default="dev", help="Target environment ('dev' or 'prod')")
+    parser.add_argument("--project", default=None, help="GCP project ID (overrides --env)")
+    parser.add_argument("--region", default="australia-southeast1", help="GCP region (default: australia-southeast1)")
     parser.add_argument("--build-id", default=None, help="Specific build ID to inspect")
     parser.add_argument("--limit", type=int, default=1, help="Number of recent builds to list/inspect (default: 1)")
     parser.add_argument("--json", action="store_true", help="Output raw JSON data")
 
     args = parser.parse_args()
 
+    # Determine project ID
+    project = args.project
+    if not project:
+        project = "monaro-risk-prod" if args.env == "prod" else "monaro-risk-dev"
+
     if args.build_id:
-        build = get_build_details(args.build_id, args.project, args.region)
+        build = get_build_details(args.build_id, project, args.region)
         if not build:
-            print(f"{RED}Build {args.build_id} not found in project {args.project}.{RESET}")
-            sys.exit(1)
+            # Fallback to us-central1 if looking up older builds
+            build = get_build_details(args.build_id, project, "us-central1")
+            if not build:
+                print(f"{RED}Build {args.build_id} not found in project {project}.{RESET}")
+                sys.exit(1)
         builds = [build]
     else:
-        builds = get_recent_builds(args.project, args.region, args.limit)
+        builds = get_recent_builds(project, args.region, args.limit)
+        if not builds and args.region == "australia-southeast1":
+            # Check us-central1 as fallback for legacy builds
+            legacy_builds = get_recent_builds(project, "us-central1", args.limit)
+            if legacy_builds:
+                builds = legacy_builds
+                args.region = "us-central1"
 
     if args.json:
         print(json.dumps(builds, indent=2))
         return
 
     if not builds:
-        print(f"{YELLOW}No builds found for project {args.project} in region {args.region}.{RESET}")
+        print(f"{YELLOW}No builds found for project {project} in region {args.region}.{RESET}")
         return
 
     for build in builds:
-        inspect_build(build, args.project, args.region)
+        inspect_build(build, project, args.region)
 
 
 if __name__ == "__main__":

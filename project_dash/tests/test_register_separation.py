@@ -13,7 +13,7 @@ class TestRegisterSeparation(unittest.TestCase):
         project = config.get('project', {})
         self.assertEqual(project.get('primaryRegisterName'), 'Internal Risks')
         self.assertEqual(project.get('secondaryRegisterName'), 'Team Google Risks')
-        self.assertEqual(project.get('title'), 'Future Defence Secret Environment')
+        self.assertEqual(project.get('title'), 'Monaro')
 
     def test_data_counts(self):
         risks_path = os.path.join(self.base_dir, 'data', 'f-dse', 'risks.json')
