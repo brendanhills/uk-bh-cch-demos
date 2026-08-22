@@ -8,10 +8,20 @@ The **F-DSE Program Governance & Risk Intelligence Platform** (Monaro Risk Dashb
 - **Technical & Program Leads:** Steve Deacon (`sdeacon@google.com`), Wayne Davis (`waynedavis@google.com`), and Brendan Hills (`brendanhills@google.com`).
 - **Delivery & Governance Teams:** Program managers, risk owners, and engineering leads monitoring Level 2 Contractual Milestones.
 
-## Mandatory Architectural & Security Invariants
-1. **Zero-Trust Cloud Run Deployment & Google SSO**: Deployed on Google Cloud Run secured by Identity-Aware Proxy (IAP) for automated corporate Google SSO authentication (`monaro-risk-dev@google.com` and `monaro-risk-prod@google.com`).
-2. **Drive-Native Data-Layer Access Restriction**: User access restriction is enforced at the Google Workspace / Google Drive shared folder and Google Groups level via Ganpati permissions (`monaro-risk-prod` and `monaro-risk-dev`).
-3. **Turnkey Low-Maintenance Handover**: Automated CI/CD deployment via Google Cloud Build with group-based access management requiring zero manual container or IAM configuration for ongoing access administration.
+## Mandatory Architectural & Operational Principles
+1. **Turnkey Handover & Low-Friction Ownership**:
+   - The platform is designed for long-term ownership by a non-specialist governance team.
+   - Routine operations (weekly PDF report ingestion, Google Sheets synchronization, historical time-travel analysis) are 1-click actions performed entirely in the browser UI without needing terminal access, code changes, or manual configuration edits.
+   - User onboarding and access management are performed directly in standard Google Groups (`monaro-risk-dev@google.com` / `monaro-risk-prod@google.com`).
+2. **Defensive, Resilient Processing**:
+   - Ingestion and data synchronization adapt gracefully to common variations in filenames, dates, and data formats.
+   - Core dashboard capabilities remain fully operational with deterministic baseline summaries even if external AI APIs or network connections experience temporary disruptions.
+3. **Cohesive, Unified Architecture**:
+   - The codebase maintains a small, unified footprint with clear component responsibilities.
+   - Backend operations are centralized into a single ingestion pipeline and a concise REST interface to keep the system simple to understand, audit, and maintain.
+4. **Zero-Trust Security & Data Isolation**:
+   - Access is secured by Google SSO via Identity-Aware Proxy (IAP).
+   - Sensitive project datasets are decoupled from public showcase datasets (`?project=sample`), keeping confidential data protected while enabling safe demos.
 
 ## Key Features & Capabilities
 1. **Executive Decision Briefing (Gemini 3.5 Pro)**: Exception-first synthesis, Top 3 Action items, Early Warning Sleeper Outliers, and Neural Australian Audio Briefing.

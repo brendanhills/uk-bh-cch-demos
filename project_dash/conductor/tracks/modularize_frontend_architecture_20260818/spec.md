@@ -1,9 +1,9 @@
 # Specification: Modularize and Simplify `index.html` Frontend Architecture
 
 ## 1. Overview
-The monolithic `index.html` file currently spans over 5,000 lines (>320 KB), containing ~1,370 lines of HTML markup and ~3,700 lines of inline JavaScript within a single `<script>` block. This structure creates high cognitive load, increases risk during iterative feature development, complicates code reviews, and hinders automated testing.
+The monolithic `index.html` file currently spans over 4,800 lines (>310 KB), containing ~1,300 lines of HTML markup and ~3,500 lines of inline JavaScript within a single `<script>` block. This structure creates high cognitive load, increases risk during iterative feature development, complicates code reviews, and hinders automated testing.
 
-This track modularizes `index.html` into a maintainable, domain-driven frontend architecture using Google-standard ES Modules (`import`/`export`) and optional Vite/Rollup production bundling, while strictly preserving 100% feature parity, zero-maintenance runtime portability, Python backend ingestion APIs, and all 85+ passing automated unit tests.
+This track modularizes `index.html` into a maintainable, domain-driven frontend architecture using Google-standard ES Modules (`import`/`export`) and optional Vite/Rollup production bundling, while strictly preserving 100% feature parity, zero-maintenance runtime portability, Python backend ingestion APIs, and all 102+ passing automated unit tests.
 
 ---
 
@@ -13,6 +13,7 @@ This track modularizes `index.html` into a maintainable, domain-driven frontend 
 The Python server components (`server.py`, `scripts/ingest_data.py`, and CLI tooling) remain the authoritative backend engine for:
 - Google Drive & Sheets data sync (`/api/sync-sheet`)
 - On-demand automated data ingestion (`/api/ingest-data`)
+- Dynamic report discovery across `drive_reports/`, `drive_cache/`, `reports/`, and `docs/`
 - Gemini 3.5 Pro executive summary synthesis & podcast dialogue generation (`/api/regenerate-briefing`)
 - Serving static/modular frontend assets and project JSON data across multiple workspaces (`sample`, `f-dse`).
 
@@ -31,9 +32,9 @@ Separate the embedded JavaScript into focused, single-responsibility ES modules 
 3. **`src/js/analytics.js`**: Pure, testable calculation functions (matrix scoring, burndown velocity, filter predicates) with zero DOM dependencies.
 4. **`src/js/charts.js`**: Chart.js lifecycle management, canvas rendering wrappers, and SVG mappings.
 5. **`src/js/modules/`**: Feature-specific UI renderers & event controllers:
-   - `exec_briefing.js`: Executive cockpit banner, 4 KPI cards, Gemini 3.5 Pro decision briefing, and audio podcast player.
+   - `exec_briefing.js`: Executive cockpit banner, Google Need-to-Know (NTK) badge, 4 KPI cards, Gemini 3.5 Pro decision briefing, and audio podcast player.
    - `risk_heatmap.js`: 5×5 Risk Heatmap (Inherent vs. Residual toggles, status pills, cell selection, focus rings).
-   - `risk_explorer.js`: Live Risk Explorer cards, expandable mitigation accordions, search/filter inputs, and bulk controls.
+   - `risk_explorer.js`: Live Risk Explorer cards, expandable mitigation accordions, search/filter inputs, inspect button triggers, and bulk controls.
    - `issue_register.js`: Issue Register table, status pills, column sorting, and issue detail modals.
    - `performance_trends.js`: Performance Trends graphs, multi-granularity views (Weekly/Bi-Weekly/Monthly), and timeline drilldown modal.
    - `blueprint_knowledge.js`: Solution Blueprint knowledge cards, Annex mappings, and NotebookLM deep links.
@@ -46,21 +47,27 @@ Separate the embedded JavaScript into focused, single-responsibility ES modules 
    - Global keyboard shortcuts and navigation controllers.
 
 ### 2.3 Clean HTML Markup Shell (`index.html`)
-- Reduce `index.html` from >5,000 lines down to a clean, semantic ~600–800 line HTML shell.
+- Reduce `index.html` from >4,800 lines down to a clean, semantic ~600–800 line HTML shell.
 - Keep structural semantic containers (`<header>`, `<nav>`, `<main>`, tab containers `#tab-exec-briefing`, `#tab-risks`, `#tab-team-google`, `#tab-issues`, `#tab-trends`, `#tab-blueprints`, `#tab-driver-tree`, `#tab-ledger`, and modal backdrops).
 - Replace the giant inline `<script>` block with the modular script entry point (`<script type="module" src="src/js/app.js"></script>`).
 
-### 2.4 Build & Development Tooling (Dual-Mode)
+### 2.4 Build & Development Tooling (Dual-Mode) & Cloud Run Deployment
 - **Local Dev (Zero-Build)**: Direct native browser ES module serving via `python3 server.py` on port 9000.
-- **Production (Optimized Bundle via Vite/Rollup)**: Lightweight build configuration compiling source files to `dist/index.html` and assets for containerized Cloud Run deployments.
-- Update `deploy/cloudbuild.yaml` and `Dockerfile` to support the production build step.
+- **Production Container Build & Asset Inclusion (MANDATORY)**:
+  - Update `deploy/Dockerfile` to include `COPY src/ /usr/share/nginx/html/src/` so all ES modules are packaged into the Nginx runtime.
+  - Configure `deploy/nginx.conf` with MIME types and caching headers for `application/javascript`.
+  - Update `deploy/cloudbuild.yaml` and verify automated unit testing and container image generation.
+- **Production Release Tagging Protocol**:
+  - Release triggers adhere strictly to the tag pattern: `^project_dash/prod-.*$` (e.g. `git tag project_dash/prod-v1.0.0 && git push origin project_dash/prod-v1.0.0`).
+- **Operational & Billing Guardrail**:
+  - Track 90-day sandbox expiration window to ensure permanent Commonwealth billing accounts are attached in Pantheon Billing for `monaro-risk-prod` and `monaro-risk-dev`.
 
 ---
 
 ## 3. Non-Functional Requirements & Invariants
 
 1. **Strict 100% Feature Parity**: Every UI interaction, animation, filter, modal, audio player, sync trigger, and time travel capability must function identically to baseline.
-2. **Zero Regression on Backend & Tests**: All 85 existing Python unit tests (`python3 -m unittest discover tests`) must pass cleanly.
+2. **Zero Regression on Backend & Tests**: All 102+ existing Python unit tests (`python3 -m unittest discover tests`) must pass cleanly.
 3. **Multi-Project Agnosticism**: Dynamic multi-project routing (`?project=sample` vs `?project=f-dse`) must work seamlessly in both dev and production builds.
 4. **Clean Code Standards**:
    - Proper ES6+ syntax with explicit imports and exports adhering to Google JavaScript Style Guide (`go/tsstyle`, `go/js-practices`).
@@ -70,13 +77,13 @@ Separate the embedded JavaScript into focused, single-responsibility ES modules 
 ---
 
 ## 4. Acceptance Criteria
-- [ ] `index.html` reduced from >5,000 lines to <900 lines of clean semantic HTML markup.
+- [ ] `index.html` reduced from >4,800 lines to <900 lines of clean semantic HTML markup.
 - [ ] JavaScript modularized into ~10 structured ES modules under `src/js/` with clear separation of concerns.
 - [ ] Pure analytics and score calculations extracted to `src/js/analytics.js` with comprehensive unit tests.
-- [ ] Bundler configuration (`vite.config.js` / build scripts) successfully compiles source code into `dist/`.
-- [ ] Local development workflow verified with both native ES modules (`python3 server.py`) and bundler dev server.
-- [ ] Docker container and Cloud Build CI/CD verified with automated build stage.
-- [ ] All 85 existing Python unit tests pass with zero regressions.
+- [ ] `deploy/Dockerfile` updated with `COPY src/ /usr/share/nginx/html/src/` ensuring ES modules are deployed to Cloud Run.
+- [ ] Local development workflow verified with both native ES modules (`python3 server.py`) and dev server.
+- [ ] Docker container and Cloud Build CI/CD verified with automated build stage across dev and prod release tagging.
+- [ ] All 102+ existing Python unit tests pass with zero regressions.
 - [ ] Complete manual and automated verification across all 7 dashboard tabs, modals, and Python ingestion APIs.
 
 ---

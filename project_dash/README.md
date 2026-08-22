@@ -154,6 +154,21 @@ python3 -m unittest tests/test_server_parameterized.py
 
 ---
 
+## 🚢 CI/CD & Deployment Architecture
+
+Project Dash is deployed automatically to Google Cloud Run in Sydney, Australia (**`australia-southeast1`**) via Cloud Build:
+
+- **Development (`monaro-risk-dash-dev`)**: Triggered automatically on pushes to the `dev` branch.
+- **Production (`monaro-risk-dash-prod`)**: Triggered automatically when release tags matching `^project_dash/prod-.*$` (e.g. `project_dash/prod-v1.0.0`) are pushed on `dev`.
+- **Documentation / No-Build Pushes**: To push documentation or workflow updates without triggering a Cloud Run build, include `[skip ci]` or `[ci skip]` in your commit message:
+  ```bash
+  git commit -m "docs: update runbooks [skip ci]"
+  git push origin dev
+  ```
+- **Provisioning & Operations**: See [`deploy/PROD_PROVISIONING_GUIDE.md`](./deploy/PROD_PROVISIONING_GUIDE.md) for full Pantheon Click-Ops instructions, CLI scripts, operator IAM roles, and rollback runbooks.
+
+---
+
 ## 🔒 Security & Privacy
 
 - **Strict Isolation**: Proprietary datasets (such as `data/f-dse/` or `data/local/`) and secret keys (`.env`) are excluded in `.gitignore`.

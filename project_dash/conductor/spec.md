@@ -1,9 +1,9 @@
 # System Specification & Architecture Design Document (SDD)
 # Project Dash — Decoupled Risk Intelligence & Governance Platform
 
-> **Document Status:** Draft for Manual Review  
+> **Document Status:** Active Master Specification  
 > **Target Version:** 2.0 (Post-Baseline Multi-Project Release)  
-> **Last Updated:** 2026-08-19  
+> **Last Updated:** 2026-08-22  
 > **Primary Stakeholders:** Allison Innes (`allins@google.com`), Steve Deacon (`sdeacon@google.com`), Wayne Davis (`waynedavis@google.com`), Brendan Hills (`brendanhills@google.com`)
 
 ---
@@ -13,17 +13,21 @@
 ### 1.1 Purpose & Data Confidentiality Invariant
 **Project Dash** is an ultra-responsive, decoupled executive governance and operational risk intelligence platform. It unifies fragmented weekly PDF reports, Google Sheets risk registers, contractual milestones, and NotebookLM knowledge documents into an interactive, real-time decision cockpit — providing comprehensive 5×5 risk matrices, longitudinal burndown analytics, contractual delivery driver trees, and integrated **Google Gemini AI** executive decision briefings.
 
-### 1.2 Mandatory Architectural & Operational Invariants
-1. **Turnkey Self-Service Handover (Zero Author On-Call)**:
-   - The platform MUST be fully operable and maintainable by the Monaro / F-DSE team (`allins@`, `sdeacon@`, `waynedavis@`) after handover without requiring ongoing support, on-call maintenance, or code changes from the author (`brendanhills@`).
-   - **Self-Service User Management**: Adding or removing stakeholders is performed directly in the [Google Groups UI](https://groups.google.com/a/google.com/g/monaro-risk-dev), instantly updating IAP authentication without touching GCP IAM.
-   - **Self-Service Ingestion**: Weekly reports and Google Sheets updates are ingested directly through the web UI with zero CLI requirements.
-   - **Operator Documentation**: Supported by a complete operator manual ([`docs/HANDOVER_GUIDE.md`](./docs/HANDOVER_GUIDE.md)) and stakeholder presentation guide ([`docs/TEAM_PRESENTATION_GUIDE.md`](./docs/TEAM_PRESENTATION_GUIDE.md)).
-   - **Automated CI/CD**: Cloud Build automatically builds, tests, and deploys updates on git push, eliminating manual container or server management.
-2. **Mandatory Data Confidentiality & Access Restriction**:
-   - The Monaro / F-DSE dataset contains sensitive and proprietary governance, contractual, and risk data. It **MUST ONLY** be accessible to individuals explicitly allowlisted in the authorized Google Groups (`monaro-risk-prod@google.com` / `monaro-risk-dev@google.com`) and authenticated via corporate Google SSO through Identity-Aware Proxy (IAP). Proprietary project directories (`data/f-dse/`) and environment keys are strictly excluded from version control (`.gitignore`).
-3. **Safe Public Showcases (Decoupled Multi-Project Routing)**:
-   - The codebase must support parameter-based project isolation (`?project=sample` vs `?project=f-dse`) so the team can demo, test, and showcase the platform publicly using sanitized sample data (Project Aurora) without exposing confidential Monaro project content.
+### 1.2 Core Architectural & Operational Principles
+1. **Turnkey Handover & Low-Friction Ownership**:
+   - The platform is designed to be fully operable and maintainable by governance leads and program managers (`allins@`, `sdeacon@`, `waynedavis@`) without requiring ongoing software engineering support or on-call maintenance.
+   - **1-Click Web Management**: Adding reports, syncing live Sheets, and browsing historical time-travel snapshots are executed directly via the browser UI with clear, human-readable feedback toasts.
+   - **Self-Service Access**: User provisioning is handled through Google Groups (`monaro-risk-dev@google.com` / `monaro-risk-prod@google.com`), automatically synchronizing IAP permissions without touching GCP IAM.
+   - **Automated CI/CD**: Cloud Build automatically builds, tests, and deploys verified changes upon git push, eliminating manual container or server management.
+2. **Defensive Processing & Resilient Ingestion**:
+   - Ingestion pipelines dynamically adapt to variations in weekly report filenames, dates, and text formatting.
+   - The platform includes self-healing deterministic fallbacks to guarantee that dashboards remain responsive and functional even during temporary API quota limits or network interruptions.
+3. **Unified, Minimal Architecture**:
+   - Backend functionality is consolidated into a cohesive ingestion pipeline (`scripts/pipeline.py`) and a clean REST resource interface (`server.py`).
+   - Business logic favors refactoring and unifying shared workflows over accumulating single-purpose scripts or endpoints.
+4. **Data Confidentiality & Decoupled Multi-Project Support**:
+   - Proprietary Monaro / F-DSE project content is strictly protected behind Google SSO and IAP.
+   - The system natively supports parameter-driven project isolation (`?project=sample` vs `?project=f-dse`), enabling safe demonstrations and public testing using sanitized sample datasets (Project Aurora).
 
 ### 1.3 Core Functional Capabilities
 1. **Executive Decision Synthesis (Gemini AI)**: Exception-first synthesis with 3 stakeholder perspective toggles (Executive, Technical, Governance), Top 3 Critical Action cards, Early Warning Sleeper Outliers, and a Schedule Squeeze Barometer.
@@ -52,29 +56,66 @@
 * **Python Runtime**: Requires **Python 3.12+** with **Google Cloud ADC** (`gcloud auth application-default login`) or **`GEMINI_API_KEY`** (mandatory for Vertex AI / Gemini decision synthesis and Cloud TTS audio).
 * **Server Runtime (`server.py`)**: Lightweight Python HTTP server serving static frontend assets, raw JSON data files, and REST API endpoints:
   - `GET /`: Serves `index.html` with query parameters.
-  - `POST /api/sync-sheet`: Fetches live Google Sheets data and updates project data files.
+  - `GET /api/sync-sheet` & `POST /api/sync-sheet`: Fetches live Google Sheets data and updates project data files.
+  - `GET /api/sync-all` & `POST /api/sync-all`: Triggers multi-source synchronization across Sheets, Drive, and Notebooks.
+  - `GET /api/check-drive-sync`: Scans configured Google Drive folder for newly uploaded weekly PDF reports.
+  - `GET /api/notebooks`: Lists configured NotebookLM notebooks and sync status.
+  - `GET /api/check-notebook-sync`: Probes NotebookLM connectivity and update status.
+  - `GET /api/sync-notebook` & `POST /api/sync-notebook`: Synchronizes knowledge sources with NotebookLM.
+  - `GET /api/ingest-report` & `POST /api/ingest-report`: Ingests and processes uploaded PDF weekly reports.
   - `POST /api/ingest-data`: Triggers master ingestion pipeline (`scripts/ingest_data.py`).
   - `POST /api/regenerate-briefing`: Triggers Gemini API synthesis regeneration and audio podcast creation (`scripts/gemini_generator.py`).
+  *(Note: Endpoint consolidation and rationalization is tracked in Bug #79).*
 * **Local Development Runner (`run_server.sh`)**: 1-command tmux lifecycle script managing background server execution on port 9000 (`http://localhost:9000` or `http://uk-bh-cloudtop.c.googlers.com:9000`).
 
-### 2.3 Cloud Run & Security Architecture (Google SSO via IAP)
-* **Cloud Run Deployment**: Containerized deployment on Google Cloud Run (`monaro-risk-dash-dev`) configured with `--no-allow-unauthenticated`.
-* **Identity-Aware Proxy (IAP)**: All incoming traffic is intercepted by Google Cloud IAP, enforcing corporate Google SSO login.
-* **Access Governance**:
+### 2.3 Dual-Environment Matrix & Cloud Run Security Architecture (Google SSO via IAP)
+
+| Dimension / Parameter | Development (`dev`) | Production (`prod`) |
+| :--- | :--- | :--- |
+| **GCP Project ID** | `monaro-risk-dev` | **`monaro-risk-prod`** |
+| **Deployment Region** | **`australia-southeast1`** (Sydney) | **`australia-southeast1`** (Sydney) |
+| **Cloud Run Service Name** | `monaro-risk-dash-dev` | **`monaro-risk-dash-prod`** |
+| **Active Git Branch** | `dev` | **`dev`** *(Single-branch trunk architecture)* |
+| **Deployment Trigger Event** | Auto on `git push origin dev` | **Auto on `git tag` matching `^project_dash/prod-.*$`** |
+| **Artifact Registry Repo** | `cloud-run-source-deploy` (Sydney) | `cloud-run-source-deploy` (Sydney) |
+| **IAP Google SSO Group** | `monaro-risk-dev@google.com` | **`monaro-risk-prod@google.com`** |
+| **Live Deployed Dashboard** | • [Monaro Live (Dev)](https://monaro-risk-dash-dev-525025654699.australia-southeast1.run.app/?project=f-dse)<br>• [Aurora Showcase (Dev)](https://monaro-risk-dash-dev-525025654699.australia-southeast1.run.app/?project=sample) | • [Monaro Live (Prod)](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/?project=f-dse)<br>• [Aurora Showcase (Prod)](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/?project=sample) |
+
+* **Identity-Aware Proxy (IAP) & Access Governance**:
+  - All incoming traffic is intercepted by Google Cloud IAP, enforcing corporate Google SSO login.
   - `monaro-risk-dev@google.com`: Development and operator group.
   - `monaro-risk-prod@google.com`: Executive stakeholder and viewer group (e.g. `allins@google.com`).
-  - Access is granted via the `roles/iap.httpsResourceAccessor` IAM role bound directly to these Google Groups. Adding/removing members in the Google Groups web UI instantly provisions or revokes dashboard access without touching GCP IAM.
+  - Access is granted via the `roles/iap.httpsResourceAccessor` IAM role bound directly to these Google Groups. Adding or removing members in the Google Groups web UI instantly provisions or revokes dashboard access without touching GCP IAM.
 * **Corporate MDB & TwoSync**: Ganpati (MDB) Prod groups (`%monaro-risk-admin.prod`, `%monaro-risk-dev.prod`) govern Nexus GCP project ownership, and TwoSync bridges MDB rosters to the Google Groups.
 
-### 2.4 CI/CD Deployment Pipeline
-* **Automated Cloud Build Trigger**: Cloud Build trigger (`deploy-monaro-risk-dash-dev`) executes automatically on every `git push` to branch `dev` for paths matching `project_dash/**`.
-* **Pipeline Stages (`deploy/cloudbuild.yaml`)**:
-  1. Unit test execution (`python3 -m unittest discover -s tests -p "test_*.py"`).
-  2. Artifact Registry repository verification/creation (`cloud-run-source-deploy`).
-  3. Docker container image build.
-  4. Docker container image push.
-  5. Cloud Run service deployment with `--iap` enabled.
-  6. Automated IAM policy binding for IAP access.
+### 2.4 CI/CD Deployment Pipeline & Production Release Promotion
+
+The platform follows a deterministic, tag-driven release promotion model from a single branch (`dev`):
+
+1. **Continuous Deployment to Dev (`monaro-risk-dev`)**:
+   - Cloud Build trigger (`deploy-monaro-risk-dash-dev`) executes automatically on every `git push origin dev` for paths matching `project_dash/**`.
+   - Runs automated unit tests, builds the Docker container image, pushes to Artifact Registry in `australia-southeast1`, and updates `monaro-risk-dash-dev` on Cloud Run.
+
+2. **Production Release Promotion via Git Tags (`monaro-risk-prod`)**:
+   - Promotion to production does NOT require branch merges or manual container rebuilds.
+   - When a release candidate is verified on `dev`, the operator promotes the exact verified commit to production by creating and pushing a release tag:
+     ```bash
+     # 1. Tag the verified commit on dev
+     git tag project_dash/prod-v2.0.0
+     
+     # 2. Push tag to trigger production Cloud Build
+     git push origin project_dash/prod-v2.0.0
+     ```
+   - Cloud Build trigger (`deploy-monaro-risk-dash-prod`) detects tags matching `^project_dash/prod-.*$`, executes the test suite, builds the production container image, deploys to `monaro-risk-dash-prod`, and updates IAP bindings.
+   - **Rollback / Fast Roll-forward**: Any historical release can be instantly restored by selecting a prior tag in Pantheon Cloud Build triggers or redeploying the specific commit digest from Artifact Registry (refer to [`deploy/PROD_PROVISIONING_GUIDE.md`](./deploy/PROD_PROVISIONING_GUIDE.md)).
+
+3. **Pipeline Stages (`deploy/cloudbuild.yaml`)**:
+   - Step 1: Unit test execution (`python3 -m unittest discover -s tests -p "test_*.py"`).
+   - Step 2: Artifact Registry repository verification/creation (`cloud-run-source-deploy`).
+   - Step 3: Docker container image build.
+   - Step 4: Docker container image push.
+   - Step 5: Cloud Run service deployment with `--iap` enabled.
+   - Step 6: Automated IAM policy binding for IAP access.
 * **Build Diagnostics CLI (`scripts/check_build_status.py`)**: Terminal tool to query Cloud Build API and inspect build status, step durations, and failure logs.
 * **Asynchronous Push Protocol**: Pushes to `dev` trigger non-blocking background builds without hanging terminal sessions.
 
@@ -116,132 +157,242 @@ project_dash/
 ### 3.1 Data Contracts & File Schemas
 
 #### 1. `config.json`
-Defines branding, color themes, and data source links:
+Defines branding, color themes, KPI pillars, and feature toggles:
 ```json
 {
   "project": {
     "slug": "sample",
     "name": "Project Aurora",
-    "title": "Program Governance & Risk Intelligence Platform",
-    "subtitle": "Executive Cockpit & Risk Intelligence",
-    "logoIcon": "🛡️"
-  },
-  "theme": {
-    "primaryColor": "indigo",
-    "primaryHex": "#4f46e5"
-  },
-  "sources": {
-    "googleSheets": {
-      "riskRegisterUrl": "https://docs.google.com/spreadsheets/d/...",
-      "sheetName": "Risks"
-    },
-    "googleDrive": {
-      "reportsFolderUrl": "https://drive.google.com/drive/folders/..."
+    "title": "Enterprise AI & Sovereign Cloud Modernization",
+    "organization": "Global Enterprise Transformation Board",
+    "logoIcon": "🪐",
+    "heroTag": "Enterprise Sovereign Enclave • AI Platform Modernization",
+    "primaryRegisterName": "Joint Program Register",
+    "secondaryRegisterName": "Team Cloud Register",
+    "links": {
+      "charter": "https://example.com/aurora/charter",
+      "architecture": "https://example.com/aurora/architecture",
+      "tracker": "https://example.com/aurora/jira"
     }
+  },
+  "kpiPillars": [
+    {
+      "id": "commercial",
+      "label": "Commercial & Budget",
+      "value": "🟢 ON TRACK",
+      "subtext": "Milestone payments aligned to baseline schedule"
+    },
+    {
+      "id": "milestone",
+      "label": "Milestone Gate 2 (IBR)",
+      "value": "🟡 IN PROGRESS (88%)",
+      "subtext": "System requirements review on critical path"
+    },
+    {
+      "id": "security",
+      "label": "ATO & Cyber Security",
+      "value": "🟢 ACCREDITED",
+      "subtext": "Sovereign enclave security controls validated"
+    },
+    {
+      "id": "escalations",
+      "label": "Critical Escalations",
+      "value": "🔴 4 ITEMS",
+      "subtext": "3 technical blockers under active mitigation"
+    }
+  ],
+  "sources": {
+    "googleSheets": { "enabled": false },
+    "googleDrive": { "enabled": false },
+    "geminiNotebooks": { "enabled": false }
+  },
+  "features": {
+    "executiveBriefing": { "enabled": true },
+    "riskMatrix": { "enabled": true },
+    "secondaryRegister": { "enabled": true },
+    "issues": { "enabled": true },
+    "trends": { "enabled": true },
+    "knowledgeBase": { "enabled": true },
+    "driverTree": { "enabled": true },
+    "audioBriefing": { "enabled": true }
   }
 }
 ```
 
 #### 2. `risks.json`
-List of registered risks with scoring and mitigations:
+List of registered risks aligned with Commonwealth & Defence risk standards:
 ```json
 [
   {
-    "id": "RSK-001",
-    "title": "Vendor Identity Provider Integration Delay",
-    "category": "Technical",
-    "workstream": "Security & Identity",
-    "inherent_likelihood": 4,
-    "inherent_impact": 4,
-    "inherent_score": 16,
-    "residual_likelihood": 2,
-    "residual_impact": 3,
-    "residual_score": 6,
-    "status": "In Progress",
-    "owner": "Sarah Jenkins",
-    "mitigation": "Deploy fallback OIDC connector and prioritize staging verification.",
-    "target_date": "2026-09-15",
-    "is_team_google": false
+    "id": "AUR-RSK-001",
+    "displayId": "01",
+    "status": "Active",
+    "riskOwner": "Marcus Chen",
+    "bundle": "Bundle H (Core Infra)",
+    "driverTreeRef": "1.10b",
+    "riskName": "Sovereign Enclave Hardware Interconnect Latency",
+    "title": "Sovereign Enclave Hardware Interconnect Latency",
+    "description": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
+    "causeCategory": "Engineering/Platform",
+    "causeDescription": "Root cause related to Engineering/Platform dependency integration and timeline constraints.",
+    "consequenceDescription": "Potential schedule delay of 2-4 weeks and increased verification overhead.",
+    "trend": "↓",
+    "priority": "High",
+    "governanceLevel": "Joint Steering Committee",
+    "inherentLikelihood": 5,
+    "inherentConsequence": 4,
+    "inherentRiskScore": 20,
+    "inherentRiskLevel": "Critical",
+    "treatmentOwner": "Marcus Chen",
+    "treatmentPlan": "Staged redundant optical interconnects and pre-provisioned dark fiber lines.",
+    "targetDate": "30-Sep-2026",
+    "residualLikelihood": 2,
+    "residualConsequence": 3,
+    "residualRiskScore": 6,
+    "residualRiskLevel": "Medium",
+    "dateRaised": "15-May-2026",
+    "strategy": "Mitigate",
+    "sourceRegister": "joint",
+    "sourceLabel": "Joint Program Register"
   }
 ]
 ```
 
 #### 3. `issues.json`
-List of active operational issues:
+List of active operational issues aligned with program governance registers:
 ```json
 [
   {
-    "id": "ISS-001",
-    "title": "DevSecOps Pipeline Stage 2 Flakiness",
-    "priority": "P1",
-    "impact": "High",
-    "status": "Open",
-    "owner": "Tom Reynolds",
-    "resolution_plan": "Pin runner image and add retry on transient network timeouts.",
-    "target_date": "2026-08-25"
+    "id": "I-0001",
+    "displayId": "1",
+    "status": "Active",
+    "issueOwner": "Tom Trobe",
+    "bundle": "Bundle H (Core Infra)",
+    "driverTreeRef": "1.10b",
+    "issueName": "Platform Ready Test/Dev Environment Delivery Lead-Time",
+    "title": "Platform Ready Test/Dev Environment Delivery Lead-Time",
+    "description": "Dedicated fiber cross-connect lead times may compress network validation window prior to Phase 1 cutover.",
+    "causeDescription": "Long-lead hardware supply chain dependency for physical enclave optical termination.",
+    "impactCategory": "Schedule",
+    "severity": "Medium",
+    "priority": "Urgent",
+    "trend": "↔",
+    "escalateTo": "Google Internal",
+    "actionPlan": "Validating schedule impacts, with CD1 Gap Closure Plan and mitigating delivery approach whilst connectivity is established.",
+    "nextActionOwner": "Tom Trobe",
+    "dateRaised": "23-Jul-2026",
+    "raisedBy": "Susan Allin",
+    "dateClosed": "",
+    "lastUpdated": "23-Jul-2026",
+    "sourceRegister": "joint",
+    "sourceLabel": "Joint Program Register"
   }
 ]
 ```
 
 #### 4. `driver_tree.json`
-Hierarchical contractual delivery horizon:
+Hierarchical contractual delivery horizon mapping capability drops to milestone gates:
 ```json
 {
-  "milestones": [
+  "version": "03",
+  "program": "Delivery Governance & Sovereign Enclave Modernization",
+  "lastUpdated": "2026-08-07",
+  "capabilityDrops": [
     {
-      "id": "M-1.10b",
-      "code": "1.10b",
-      "name": "Platform Ready (E.01 Test/Dev Enclave)",
-      "target_date": "30 Sep 2026",
-      "status": "In Progress",
-      "owner": "Steve Deacon",
-      "deliverables": [
+      "id": "cd1",
+      "name": "Capability Drop 1.0 (Core Sovereign Enclave)",
+      "lead": "Ed Louis (HJCC / FAS GCD / CJC)",
+      "targetDate": "2027-02-01",
+      "status": "AMBER",
+      "gates": [
         {
-          "id": "DEL-101",
-          "name": "E.01 VPC Peering & Security Enclave",
-          "status": "Amber",
-          "related_risks": ["RSK-001", "RSK-012"],
-          "related_issues": ["ISS-001"]
+          "ref": "1.2b",
+          "name": "Milestone 1 Deliverables Acceptance",
+          "description": "Finalization and sign-off on SRP, V&V Strategy, and IMS deliverable baseline packages.",
+          "status": "AMBER",
+          "level": 2,
+          "owner": "Michael Maconachie",
+          "targetDate": "2026-08-31",
+          "progress": 60,
+          "gapCloseRef": "1",
+          "gapCloseTitle": "Commonwealth Milestone 1 Acceptance Matrix",
+          "shift": "Forecast completion moved to 31 Aug 2026"
+        },
+        {
+          "ref": "1.10b",
+          "name": "Platform Ready (E.01 Test/Dev Enclave)",
+          "description": "Core sovereign hardware infrastructure initialized and verified for early test/dev workloads.",
+          "status": "AMBER",
+          "level": 2,
+          "owner": "Steve Deacon",
+          "targetDate": "2026-09-30",
+          "progress": 85,
+          "gapCloseRef": "3",
+          "shift": "Environment build commenced with staged optical interconnect verification"
         }
       ]
     }
   ]
 }
 ```
+*(Note: Gates in `driver_tree.json` do not hardcode risk/issue arrays. Risks and issues dynamically bind to gates via `driverTreeRef` at runtime, enabling automated badge rollups and cross-filtering).*
 
 #### 5. `snapshots.json`
-Longitudinal weekly reporting history (W22 through W27+):
+Longitudinal weekly reporting history (keyed by week slug):
 ```json
-[
-  {
-    "week": "W27",
-    "date": "2026-08-07",
-    "reporting_period": "Week ending 07 Aug 2026",
-    "metrics": {
-      "total_risks": 107,
-      "critical_risks": 8,
-      "high_risks": 24,
-      "open_issues": 29,
-      "schedule_squeeze_index": 7.4
-    },
-    "synthesis": {
-      "executive": {
-        "headline": "DevSecOps & Platform Ready E.01 Convergence",
-        "narrative": "...",
-        "top_actions": [
-          { "rank": 1, "title": "Finalize Identity Provider Bridge", "owner": "Sarah Jenkins", "deadline": "15 Aug 2026" }
-        ],
-        "sleeper_outlier": { "ref": "Ref 1.15", "title": "Telemetry Quota Exhaustion", "summary": "..." }
+{
+  "lastSynced": "2026-08-19T08:04:46.636518",
+  "driveFolderId": "sample-drive-folder-aurora",
+  "snapshots": {
+    "w27": {
+      "weekNumber": 27,
+      "weekLabel": "Week 27",
+      "week": "Week 27",
+      "date": "07 Aug 2026",
+      "isLatest": true,
+      "isCurrent": true,
+      "driveFileId": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu",
+      "driveFileName": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf",
+      "overallStatus": "🟡 AMBER (Stable)",
+      "kpis": {
+        "commercial": "🟢 ON TRACK",
+        "ibr": "🟡 DUE AUG 2026 (85%)",
+        "ato": "🟢 GREEN",
+        "escalations": "🔴 5 ITEMS"
       },
-      "technical": { "headline": "...", "narrative": "..." },
-      "governance": { "headline": "...", "narrative": "..." }
-    },
-    "audio_briefing": {
-      "audio_file": "assets/podcast_w27.mp3",
-      "transcript": "..."
+      "synthesis": {
+        "executive": "Program posture for Week 27 maintains a stable AMBER status with active mitigation across 28 registered risks...",
+        "technical": "Technical velocity confirms key milestones on track with ongoing security accreditation and environment validation...",
+        "governance": "Governance alignment continues across key deliverable gates with 11 active blockers under remediation."
+      },
+      "top3": [
+        {
+          "num": 1,
+          "type": "decision",
+          "tag": "🚨 Immediate Action",
+          "ref": "1.2b",
+          "title": "Commonwealth Acceptance",
+          "action": "Executive engagement needed with Cth delegates to finalize acceptance of SRP, V&V, and IMS deliverable packs."
+        }
+      ],
+      "sleeperOutlier": {
+        "ref": "1.14",
+        "title": "Cross-Domain Enclave Model Quantization",
+        "warning": "Inference latency spikes under peak token load in air-gapped sovereign environments."
+      },
+      "podcastScript": [
+        {
+          "speaker": "Alex",
+          "role": "Program Analyst",
+          "avatar": "🎙️",
+          "time": "0:00",
+          "text": "Welcome to the Executive Briefing for Week 27..."
+        }
+      ],
+      "generatedBy": "gemini-3.5-flash"
     }
   }
-]
+}
 ```
 
 ---
@@ -258,11 +409,12 @@ Longitudinal weekly reporting history (W22 through W27+):
 - **FR-1.4 Universal Item Detail Modal**: Deep inspection modal providing comprehensive details, history, owners, and citations for any clicked risk, issue, or milestone.
 
 ### FR-2: Executive Decision Briefing (Tab 1)
-- **FR-2.1 Top 4 KPI Banner**: Real-time summary cards displaying:
-  1. Critical / Extreme Risks (count and weekly change $\Delta$).
-  2. Active Operational Issues (count and P0/P1 breakdown).
-  3. Schedule Squeeze Barometer (composite 1–10 dependency index).
-  4. Security ATO / Governance Gate status badge (e.g. `ATO-C: AMBER`).
+- **FR-2.1 Top 4 Program KPI Banner**: Executive header strip rendering 4 core program pillars defined in `config.json`:
+  1. **Commercial & Budget**: Financial/commercial standing (e.g. `🟢 ON TRACK`).
+  2. **Milestone Gate 2 (IBR)**: Critical path schedule milestone status and completion percentage (e.g. `🟡 IN PROGRESS (88%)`).
+  3. **ATO & Cyber Security**: Security accreditation and ATO gate posture (e.g. `🟢 ACCREDITED`).
+  4. **Critical Escalations**: Count of active executive escalations and blocker items (e.g. `🔴 4 ITEMS`).
+  *(Note: Inherent/Residual risk totals, active issue counts, and the Schedule Squeeze Barometer index are displayed in dedicated sub-panels directly below the executive briefing card).*
 - **FR-2.2 Multi-Tone Perspective Switcher**: Interactive pills toggling between **Executive** (board actions & milestones), **Technical** (enclaves & telemetry), and **Governance** (commercial gates & accreditation).
 - **FR-2.3 Top 3 Critical Action Cards**: Formatted priority cards showing action title, description, assigned workstream owner, target date, and related risk citation links.
 - **FR-2.4 Early Warning Sleeper Outlier**: Special highlighted alert card for emerging latent risks (e.g. `Ref 1.15`) that possess low residual ratings but high dependency friction.

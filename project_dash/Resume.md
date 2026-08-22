@@ -6,13 +6,17 @@
 **Deployment Region:** **`australia-southeast1`** (Sydney, Australia)  
 **Live Cloud Run Dev Service:** `monaro-risk-dash-dev`  
 **Live Cloud Run Prod Service:** `monaro-risk-dash-prod`  
-**Local Cloudtop Dev Server:** [http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample](http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample)  
+**Local Cloudtop Dev Server:** [Monaro Project](http://uk-bh-cloudtop.c.googlers.com:9000/?project=f-dse) | [Aurora Sample](http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample)  
 **Test Suite Health:** **103/103 passing cleanly** (`python3 -m unittest discover -s tests -p "test_*.py"`).  
 **Active Conductor Track:** `modularize_frontend_architecture_20260818` (Status: `[ ] Planned`)
 
 ---
 
 ## 🌅 Quick-Start Verification Checklist
+
+### 0. Ensure `monaro-risk-prod` GCP Project is Created
+* If not yet provisioned, create `monaro-risk-prod` via **[go/nexus](http://go/nexus)** or **[Pantheon > New Project](https://pantheon.corp.google.com/projectcreate)** with an attached billing account.
+* Run `./deploy/provision_environment.sh --env prod` to provision all APIs, service accounts, Artifact Registry, triggers, and alerting policies in Sydney (`australia-southeast1`).
 
 ### 1. Verify Cloud Build Status & Health via CLI Tool
 ```bash
@@ -24,8 +28,10 @@ python3 scripts/check_build_status.py --env prod
 ```
 
 ### 2. Verify Access Groups in Google Groups
-* **Dev Group**: **[Google Groups > monaro-risk-dev](https://groups.google.com/a/google.com/g/monaro-risk-dev/members)**
-* **Prod Group**: **[Google Groups > monaro-risk-prod](https://groups.google.com/a/google.com/g/monaro-risk-prod/members)**
+* **Dev Viewer Group**: **[Google Groups > monaro-risk-dev](https://groups.google.com/a/google.com/g/monaro-risk-dev/members)**
+* **Dev Admin / Alerts Group**: **[Google Groups > monaro-risk-dev-admin](https://groups.google.com/a/google.com/g/monaro-risk-dev-admin/members)**
+* **Prod Viewer Group**: **[Google Groups > monaro-risk-prod](https://groups.google.com/a/google.com/g/monaro-risk-prod/members)**
+* **Prod Admin / Alerts Group**: **[Google Groups > monaro-risk-prod-admin](https://groups.google.com/a/google.com/g/monaro-risk-prod-admin/members)**
 
 ### 3. How to Deploy to Production (Release Tag on `dev`)
 ```bash
@@ -102,6 +108,11 @@ git commit -m "feat: description of changes"
 # 3. Push to origin/dev to trigger automated Dev deployment (Sydney)
 git push origin dev
 
+# NOTE: For documentation-only changes that should NOT trigger a new Cloud Run build,
+# include [skip ci] or [ci skip] in your commit message:
+git commit -m "docs: update provisioning runbook [skip ci]"
+git push origin dev
+
 # 4. When ready for a production release, tag on dev
 git tag project_dash/prod-v1.0.0
 git push origin project_dash/prod-v1.0.0
@@ -115,6 +126,7 @@ git push origin project_dash/prod-v1.0.0
 - **IAP Console (Prod):** [https://pantheon.corp.google.com/security/iap?project=monaro-risk-prod](https://pantheon.corp.google.com/security/iap?project=monaro-risk-prod)
 - **Google Group (Dev):** [https://groups.google.com/a/google.com/g/monaro-risk-dev](https://groups.google.com/a/google.com/g/monaro-risk-dev)
 - **Google Group (Prod):** [https://groups.google.com/a/google.com/g/monaro-risk-prod](https://groups.google.com/a/google.com/g/monaro-risk-prod)
+- **Turnkey Provisioning Script:** [`deploy/provision_environment.sh`](./deploy/provision_environment.sh)
 - **Production Provisioning Guide:** [`deploy/PROD_PROVISIONING_GUIDE.md`](./deploy/PROD_PROVISIONING_GUIDE.md)
 - **CI/CD Pipeline Definition:** [`deploy/cloudbuild.yaml`](./deploy/cloudbuild.yaml)
 - **Build Status Tool:** [`scripts/check_build_status.py`](./scripts/check_build_status.py)
