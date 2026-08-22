@@ -36,20 +36,24 @@ User access is governed through three Google-native **Ganpati (MDB)** Prod group
 
 ---
 
-## 🔄 How to Ingest New Weekly Reports (Interactive User Workflow)
+## 🔄 How to Ingest New Weekly Reports (1-Click Workflow)
 
 When a new weekly risk register arrives (e.g., Week 28 PDF or updated Google Sheet):
 
-### Method A: Direct from the Dashboard Web UI
-1. Drop the new weekly PDF report (e.g. `Weekly Reporting - Week 28.pdf`) into the team's shared Google Drive folder.
-2. Open the dashboard in your browser.
+### Method A: Direct from the Dashboard Web UI (Recommended • 0 Code)
+1. Drop the new weekly PDF report (e.g. `Weekly Reporting - Week 28 - 14 Aug 2026.pdf` or `Status_Report.pdf`) into the team's shared Google Drive folder.
+2. Open the dashboard in your browser (`http://localhost:9000/?project=f-dse`).
 3. Click the **"Sync with Google Drive"** button in the header.
-4. The browser will detect the new weekly file, invoke Gemini 3.5 Pro to extract risks and generate the executive brief, and update the 5x5 heatmap and trends in real time!
+4. The dashboard will automatically detect the new file, run the self-healing ingestion pipeline, generate the executive briefing, and refresh the 5×5 heatmap and Time Machine ribbon in real time!
 
-### Method B: Local Python Ingestion Script (Optional CLI)
-If you prefer running a command-line script to pre-generate snapshots:
+### Method B: Unified Pipeline CLI (Optional 1-Command Tool)
+If you prefer running a command-line script to synchronize all streams or ingest a specific report:
 ```bash
-python3 scripts/ingest_weekly_report.py --file-id "<DRIVE_FILE_ID>" --name "Weekly Reporting - Week 28.pdf"
+# 1-Command full workspace sync:
+python3 scripts/pipeline.py --project=f-dse --sync
+
+# 1-Command weekly PDF ingestion:
+python3 scripts/pipeline.py --project=f-dse --ingest-report="Weekly Reporting - Week 28 - 14 Aug 2026.pdf"
 ```
 
 ---
@@ -112,14 +116,15 @@ If you ever need to immediately take any running service offline:
 | File / Directory | Description |
 | :--- | :--- |
 | **`index.html`** | Core single-file web application (UI, Tailwind CSS, Chart.js, and audio briefing player). |
-| **`server.py`** | Optional local Python server with Drive sync and ingestion APIs. |
+| **`scripts/pipeline.py`** | Unified ingestion engine: Google Sheets sync, Drive report ingestion, and Gemini AI synthesis. |
+| **`server.py`** | Streamlined local Python server with clean REST APIs (`/api/status`, `/api/sync`, `/api/ingest`). |
 | **`run_server.sh`** | 1-command tmux lifecycle script (start, attach, restart, kill). |
 | **`docs/HANDOVER_GUIDE.md`** | This operator manual and team handover guide. |
 | **`README.md`** | Comprehensive project overview and architecture documentation. |
 | **`docs/TEAM_PRESENTATION_GUIDE.md`** | Presentation guide and demo narrative for stakeholder meetings. |
 | **`docs/DEPLOYMENT_GUIDE.md`** | Automated CI/CD deployment guide and Cloud Run / IAP configuration. |
-| **`src/data/weekly_snapshots.json`** | Weekly historical risk register snapshots (Week 22 through Week 27+). |
-| **`src/data/live_synced_data.json`** | Live synchronized dataset from Google Sheets. |
+| **`data/sample/snapshots.json`** | Historical time travel risk register snapshots. |
+| **`data/sample/risks.json`** | Live synchronized risk register dataset. |
 | **`deploy/`** | Deployment scripts, container definitions, and 1-click shutdown tooling. |
 
 ---

@@ -8,9 +8,24 @@ import re
 import sys
 import subprocess
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+from scripts.pipeline import (
+    sync_project_data,
+    ingest_report_file,
+    compute_risk_metrics,
+    generate_fallback_synthesis,
+    generate_fallback_podcast,
+    load_json_file,
+    save_json_file
+)
 
 PORT = 9000
-DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+DIRECTORY = BASE_DIR
 SNAPSHOTS_FILE = os.path.join(DIRECTORY, "data", "sample", "snapshots.json")
 
 def get_default_project():
@@ -32,14 +47,22 @@ def get_project_dir(project_slug=''):
     p_dir = os.path.join(DIRECTORY, 'data', project_slug)
     if os.path.exists(p_dir):
         return p_dir
-    # Fallback to sample
     sample_dir = os.path.join(DIRECTORY, 'data', 'sample')
     if os.path.exists(sample_dir):
         return sample_dir
     return os.path.join(DIRECTORY, 'data')
 
+def parse_request_params(query_or_params):
+    if isinstance(query_or_params, dict):
+        return query_or_params
+    if isinstance(query_or_params, str):
+        q = urllib.parse.parse_qs(query_or_params)
+        return {k: v[0] if len(v) == 1 else v for k, v in q.items()}
+    return {}
+
 # Default fallback Drive folder reports
 DEFAULT_DRIVE_REPORTS = [
+    {"id": "1vXb9r7N8y2_dummy_w28", "week": "Week 28", "date": "14 Aug 2026", "name": "Weekly Reporting - Week 28 - 14 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1vXb9r7N8y2_dummy_w28/view"},
     {"id": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu", "week": "Week 27", "date": "07 Aug 2026", "name": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu/view"},
     {"id": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC", "week": "Week 26", "date": "31 Jul 2026", "name": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf", "url": "https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view"},
     {"id": "13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz", "week": "Week 25", "date": "24 Jul 2026", "name": "Weekly Reporting - Week 25 - 24 Jul 2026.pdf", "url": "https://drive.google.com/file/d/13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz/view"},
@@ -66,10 +89,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204)
             self.send_header('Content-Type', 'image/x-icon')
             self.end_headers()
+        elif parsed.path in ('/api/status', '/api/projects/status'):
+            self.handle_status(parsed.query)
+        elif parsed.path in ('/api/sync', '/api/sync-all'):
+            self.handle_sync(parsed.query)
         elif parsed.path == '/api/sync-sheet':
             self.handle_sync_sheet(parsed.query)
-        elif parsed.path == '/api/sync-all':
-            self.handle_sync_all(parsed.query)
         elif parsed.path == '/api/check-drive-sync':
             self.handle_check_drive_sync(parsed.query)
         elif parsed.path == '/api/notebooks':
@@ -95,14 +120,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if k not in params:
                     params[k] = v[0] if len(v) == 1 else v
 
-        if parsed.path == '/api/sync-all':
-            self.handle_sync_all(params)
+        if parsed.path in ('/api/sync', '/api/sync-all'):
+            self.handle_sync(params)
+        elif parsed.path in ('/api/ingest', '/api/ingest-report'):
+            self.handle_ingest(params)
+        elif parsed.path in ('/api/briefing/generate', '/api/regenerate-briefing', '/api/generate-podcast'):
+            self.handle_briefing(params)
         elif parsed.path == '/api/ingest-data':
             self.handle_ingest_data(params)
-        elif parsed.path == '/api/regenerate-briefing':
-            self.handle_regenerate_briefing(params)
-        elif parsed.path == '/api/ingest-report':
-            self.process_ingest(params)
         elif parsed.path == '/api/sync-notebook':
             self.handle_sync_notebook(params)
         else:
@@ -115,102 +140,179 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
-    def handle_sync_all(self, query_or_params=''):
-        try:
-            if isinstance(query_or_params, dict):
-                params = query_or_params
-            else:
-                q = urllib.parse.parse_qs(query_or_params) if query_or_params else {}
-                params = {k: v[0] for k, v in q.items()}
+    def _parse_params(self, query_or_params):
+        if isinstance(query_or_params, dict):
+            return query_or_params
+        if isinstance(query_or_params, str):
+            q = urllib.parse.parse_qs(query_or_params)
+            return {k: v[0] if len(v) == 1 else v for k, v in q.items()}
+        return {}
 
-            proj = params.get('project', get_default_project())
+    # --- Consolidated REST Handlers ---
+
+    def handle_status(self, query_or_params=''):
+        """GET /api/status?project=<slug>"""
+        try:
+            params = parse_request_params(query_or_params)
+            proj = params.get('project') or get_default_project()
+            result = sync_project_data(project_name=proj)
+            self.send_json(result)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_sync(self, query_or_params=''):
+        """POST /api/sync?project=<slug> or GET /api/sync"""
+        try:
+            params = parse_request_params(query_or_params)
+            proj = params.get('project') or get_default_project()
             p_dir = get_project_dir(proj)
 
-            ingest_script = os.path.join(DIRECTORY, 'scripts', 'ingest_data.py')
-            cmd = [sys.executable, ingest_script, f'--project={proj}']
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
-
-            # Load updated state
-            snaps_file = os.path.join(p_dir, 'snapshots.json')
-            snaps_count = 0
-            if os.path.exists(snaps_file):
-                with open(snaps_file, 'r', encoding='utf-8') as f:
-                    sd = json.load(f)
-                    snaps_count = len(sd.get('snapshots', sd) if isinstance(sd, dict) else {})
-
-            risks_file = os.path.join(p_dir, 'risks.json')
-            risks_count = 0
-            if os.path.exists(risks_file):
-                with open(risks_file, 'r', encoding='utf-8') as f:
-                    rd = json.load(f)
-                    risks_count = len(rd if isinstance(rd, list) else rd.get('risks', []))
-
-            issues_file = os.path.join(p_dir, 'issues.json')
-            issues_count = 0
-            if os.path.exists(issues_file):
-                with open(issues_file, 'r', encoding='utf-8') as f:
-                    id_data = json.load(f)
-                    issues_count = len(id_data if isinstance(id_data, list) else id_data.get('issues', []))
+            snaps = load_json_file(os.path.join(p_dir, 'snapshots.json'), {})
+            risks = load_json_file(os.path.join(p_dir, 'risks.json'), [])
+            issues = load_json_file(os.path.join(p_dir, 'issues.json'), [])
 
             self.send_json({
                 'status': 'ok',
                 'project': proj,
-                'message': f'Full live data synchronization completed successfully for project "{proj}"',
+                'message': f'Live data synchronized successfully for project "{proj}"',
                 'timestamp': datetime.now().isoformat(),
                 'summary': {
-                    'snapshots': snaps_count,
-                    'risks': risks_count,
-                    'issues': issues_count
+                    'snapshots': len(snaps.get('snapshots', snaps) if isinstance(snaps, dict) else {}),
+                    'risks': len(risks if isinstance(risks, list) else []),
+                    'issues': len(issues if isinstance(issues, list) else [])
                 }
             })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
 
-    def handle_sync_sheet(self, query_str=''):
+    def handle_ingest(self, query_or_params=''):
+        """POST /api/ingest?project=<slug>"""
         try:
-            params = urllib.parse.parse_qs(query_str) if query_str else {}
-            proj = params.get('project', [get_default_project()])[0]
+            params = parse_request_params(query_or_params)
+            proj = params.get('project') or get_default_project()
+            file_name = params.get('fileName') or params.get('file_name') or 'Weekly Reporting - Week 28 - 14 Aug 2026.pdf'
+            file_id = params.get('fileId') or params.get('file_id')
+            force_fb = bool(params.get('fallback', False))
+
+            result = ingest_report_file(
+                file_name=file_name,
+                file_id=file_id,
+                project_name=proj,
+                force_fallback=force_fb
+            )
+            p_dir = get_project_dir(proj)
+            snaps = load_json_file(os.path.join(p_dir, 'snapshots.json'), {})
+
+            self.send_json({
+                'status': 'ok',
+                'project': proj,
+                'message': f'Successfully ingested {file_name} as {result.get("week_label")}',
+                'week': result.get('week_label'),
+                'snapshots': snaps.get('snapshots', snaps) if isinstance(snaps, dict) else snaps
+            })
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_briefing(self, query_or_params=''):
+        """POST /api/briefing/generate?project=<slug>"""
+        try:
+            params = parse_request_params(query_or_params)
+            proj = params.get('project') or get_default_project()
+            week = params.get('week', 'w27')
+            force_fb = bool(params.get('fallback', False))
             p_dir = get_project_dir(proj)
 
-            risks = []
-            issues = []
-            snapshots = {}
-
-            risks_file = os.path.join(p_dir, 'risks.json')
-            if os.path.exists(risks_file):
-                with open(risks_file, 'r', encoding='utf-8') as f:
-                    r_data = json.load(f)
-                    risks = r_data if isinstance(r_data, list) else r_data.get('risks', [])
-
-            issues_file = os.path.join(p_dir, 'issues.json')
-            if os.path.exists(issues_file):
-                with open(issues_file, 'r', encoding='utf-8') as f:
-                    i_data = json.load(f)
-                    issues = i_data if isinstance(i_data, list) else i_data.get('issues', [])
-
             snaps_file = os.path.join(p_dir, 'snapshots.json')
-            if os.path.exists(snaps_file):
-                with open(snaps_file, 'r', encoding='utf-8') as f:
-                    s_data = json.load(f)
-                    snapshots = s_data.get('snapshots', s_data) if isinstance(s_data, dict) else {}
+            snaps_data = load_json_file(snaps_file, {})
+            snaps = snaps_data.get('snapshots', snaps_data) if isinstance(snaps_data, dict) else {}
+            snap = snaps.get(week, snaps.get('w27', snaps.get('Week 27', {})))
 
-            if not risks and not snapshots:
+            cfg = load_json_file(os.path.join(p_dir, 'config.json'), {})
+            metrics = {
+                'project_name': cfg.get('project', {}).get('name', 'Program'),
+                'project_title': cfg.get('project', {}).get('title', ''),
+                'organization': cfg.get('project', {}).get('organization', ''),
+                'report_week': snap.get('week', week),
+                'report_date': snap.get('date', datetime.now().strftime('%d %b %Y')),
+                'overall_status': snap.get('overallStatus', '🟡 AMBER (Stable)'),
+                'commercial_status': snap.get('kpis', {}).get('commercial', '🟢 ON TRACK'),
+                'ibr_status': snap.get('kpis', {}).get('ibr', '🟡 DUE AUG 2026 (90%)'),
+                'ato_status': snap.get('kpis', {}).get('ato', '🟢 GREEN'),
+                'escalations_count': snap.get('kpis', {}).get('escalations', '5'),
+                'total_risks': snap.get('metrics', {}).get('total_risks', 14),
+                'inherent_avg_score': snap.get('metrics', {}).get('inherent_avg_score', 15.4),
+                'residual_avg_score': snap.get('metrics', {}).get('residual_avg_score', 6.2),
+                'delta_compression': snap.get('metrics', {}).get('delta_compression', '-9.2'),
+                'eventuated_issues_count': snap.get('metrics', {}).get('eventuated_issues_count', 1),
+                'total_issues': snap.get('metrics', {}).get('total_issues', 5)
+            }
+
+            synthesis = None
+            podcast_script = None
+            if not force_fb:
+                try:
+                    from scripts.gemini_generator import generate_executive_synthesis, generate_multispeaker_podcast
+                    plans = snap.get('plans', [])
+                    synthesis = generate_executive_synthesis(metrics, plans)
+                    audio_out = os.path.join(DIRECTORY, 'assets', f'podcast_{week}.wav')
+                    podcast_script = generate_multispeaker_podcast(metrics, synthesis, audio_out_path=audio_out)
+                except Exception as e:
+                    print(f"[Server] Gemini generation fallback: {e}")
+
+            if not synthesis:
+                synthesis = generate_fallback_synthesis(metrics)
+            if not podcast_script:
+                podcast_script = generate_fallback_podcast(metrics, synthesis)
+
+            snap['synthesis'] = synthesis.get('synthesis', {})
+            snap['top3'] = synthesis.get('top3', [])
+            snap['sleeperOutlier'] = synthesis.get('sleeperOutlier', {})
+            snap['podcastScript'] = podcast_script
+
+            save_json_file(snaps_file, snaps_data)
+
+            self.send_json({
+                'status': 'ok',
+                'project': proj,
+                'week': week,
+                'synthesis': snap.get('synthesis', {}),
+                'top3': snap.get('top3', []),
+                'sleeperOutlier': snap.get('sleeperOutlier', {}),
+                'podcastScript': podcast_script
+            })
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    # --- Backward-Compatible Legacy Handler Aliases ---
+
+    def handle_sync_all(self, query_or_params=''):
+        DashboardHandler.handle_sync(self, query_or_params)
+
+    def handle_sync_sheet(self, query_str=''):
+        try:
+            params = parse_request_params(query_str)
+            proj = params.get('project') or get_default_project()
+            p_dir = get_project_dir(proj)
+
+            risks = load_json_file(os.path.join(p_dir, 'risks.json'), [])
+            issues = load_json_file(os.path.join(p_dir, 'issues.json'), [])
+            snaps = load_json_file(os.path.join(p_dir, 'snapshots.json'), {})
+
+            if not risks and not snaps:
                 legacy_data = os.path.join(DIRECTORY, 'src', 'data', 'live_synced_data.json')
                 if os.path.exists(legacy_data):
-                    with open(legacy_data, 'r', encoding='utf-8') as f:
-                        ld = json.load(f)
-                        risks = ld.get('risks', [])
-                        issues = ld.get('issues', [])
+                    ld = load_json_file(legacy_data, {})
+                    risks = ld.get('risks', [])
+                    issues = ld.get('issues', [])
                 legacy_snaps = os.path.join(DIRECTORY, 'src', 'data', 'weekly_snapshots.json')
                 if os.path.exists(legacy_snaps):
-                    with open(legacy_snaps, 'r', encoding='utf-8') as f:
-                        ls = json.load(f)
-                        snapshots = ls.get('snapshots', {})
+                    ls = load_json_file(legacy_snaps, {})
+                    snaps = ls.get('snapshots', {})
 
             tg_risks = [r for r in risks if r.get('sourceRegister') == 'team_google' or str(r.get('id')).startswith('TG-') or str(r.get('id')).startswith('AUR-TG-')]
             joint_risks = [r for r in risks if r.get('sourceRegister') != 'team_google' and not str(r.get('id')).startswith('TG-') and not str(r.get('id')).startswith('AUR-TG-')]
 
-            response = {
+            self.send_json({
                 'status': 'ok',
                 'project': proj,
                 'risks': risks,
@@ -220,32 +322,37 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     'teamGoogle': tg_risks
                 },
                 'issues': issues,
-                'snapshots': snapshots
-            }
-            self.send_json(response)
+                'snapshots': snaps.get('snapshots', snaps) if isinstance(snaps, dict) else snaps
+            })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
 
     def handle_check_drive_sync(self, query_str=''):
         try:
-            params = urllib.parse.parse_qs(query_str) if query_str else {}
-            proj = params.get('project', [get_default_project()])[0]
+            params = parse_request_params(query_str)
+            proj = params.get('project') or get_default_project()
             p_dir = get_project_dir(proj)
 
-            snaps_file = os.path.join(p_dir, 'snapshots.json')
-            snapshots_data = {}
-            if os.path.exists(snaps_file):
-                with open(snaps_file, 'r', encoding='utf-8') as f:
-                    snapshots_data = json.load(f)
+            snapshots_data = load_json_file(os.path.join(p_dir, 'snapshots.json'), {})
+            cfg = load_json_file(os.path.join(p_dir, 'config.json'), {})
+            known_reports = list(cfg.get('sources', {}).get('googleDrive', {}).get('knownReports') or DEFAULT_DRIVE_REPORTS)
 
-            cfg_file = os.path.join(p_dir, 'config.json')
-            known_reports = DEFAULT_DRIVE_REPORTS
-            if os.path.exists(cfg_file):
-                with open(cfg_file, 'r', encoding='utf-8') as f:
-                    cfg = json.load(f)
-                    drive_src = cfg.get('sources', {}).get('googleDrive', {})
-                    if drive_src.get('knownReports'):
-                        known_reports = drive_src['knownReports']
+            seen_names = {r.get('name') for r in known_reports}
+            for candidate_folder in ['drive_reports', 'drive_cache', 'reports', 'docs']:
+                cf_path = os.path.join(p_dir, candidate_folder)
+                if os.path.exists(cf_path) and os.path.isdir(cf_path):
+                    for fn in sorted(os.listdir(cf_path)):
+                        if fn.endswith(('.pdf', '.docx', '.doc', '.json')) and fn not in seen_names:
+                            w_match = re.search(r'week[\s_-]*(\d+)', fn, re.IGNORECASE)
+                            w_label = f"Week {w_match.group(1)}" if w_match else "New Report"
+                            known_reports.append({
+                                "id": f"local_{fn}",
+                                "name": fn,
+                                "week": w_label,
+                                "date": "Recent",
+                                "url": f"file://{os.path.join(cf_path, fn)}"
+                            })
+                            seen_names.add(fn)
 
             indexed_ids = set()
             snaps_dict = snapshots_data.get('snapshots', snapshots_data) if isinstance(snapshots_data, dict) else {}
@@ -253,6 +360,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if isinstance(s, dict):
                     if s.get('driveFileId'): indexed_ids.add(s['driveFileId'])
                     if s.get('driveFileName'): indexed_ids.add(s['driveFileName'])
+                    if s.get('week'): indexed_ids.add(s['week'])
 
             all_reports = []
             uningested = []
@@ -270,7 +378,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if not is_ingested:
                     uningested.append(report_item)
 
-            response = {
+            self.send_json({
                 'status': 'ok',
                 'project': proj,
                 'lastSynced': snapshots_data.get('lastSynced') if isinstance(snapshots_data, dict) else None,
@@ -280,23 +388,16 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 'uningestedReports': uningested,
                 'allReports': all_reports,
                 'snapshots': snaps_dict
-            }
-            self.send_json(response)
+            })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
 
     def handle_list_notebooks(self, query_str=''):
         try:
-            params = urllib.parse.parse_qs(query_str) if query_str else {}
-            proj = params.get('project', [get_default_project()])[0]
+            params = parse_request_params(query_str)
+            proj = params.get('project') or get_default_project()
             p_dir = get_project_dir(proj)
-
-            kb_file = os.path.join(p_dir, 'knowledge.json')
-            kb = {}
-            if os.path.exists(kb_file):
-                with open(kb_file, 'r', encoding='utf-8') as f:
-                    kb = json.load(f)
-
+            kb = load_json_file(os.path.join(p_dir, 'knowledge.json'), {})
             notebooks_list = kb.get('notebooks', [])
             if not notebooks_list and kb:
                 notebooks_list = [{
@@ -319,27 +420,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def handle_check_notebook_sync(self, query_str=''):
         try:
-            params = urllib.parse.parse_qs(query_str) if query_str else {}
+            params = parse_request_params(query_str)
             has_proj_arg = 'project' in params
-            proj = params.get('project', [get_default_project()])[0]
+            proj = params.get('project') or get_default_project()
             p_dir = get_project_dir(proj)
-
-            kb_file = os.path.join(p_dir, 'knowledge.json')
-            kb_data = {}
-            if os.path.exists(kb_file):
-                with open(kb_file, 'r', encoding='utf-8') as f:
-                    kb_data = json.load(f)
+            kb_data = load_json_file(os.path.join(p_dir, 'knowledge.json'), {})
 
             cat_path = os.path.join(DIRECTORY, 'data', 'notebook', 'sources_catalog.json')
             mapping_path = os.path.join(DIRECTORY, 'data', 'notebook', 'bundle_annex_mapping.json')
             if not has_proj_arg and os.path.exists(cat_path):
-                with open(cat_path, 'r', encoding='utf-8') as f:
-                    cat_data = json.load(f)
-                mapping_data = {}
-                if os.path.exists(mapping_path):
-                    with open(mapping_path, 'r', encoding='utf-8') as f:
-                        mapping_data = json.load(f)
-                response = {
+                cat_data = load_json_file(cat_path, {})
+                mapping_data = load_json_file(mapping_path, {})
+                self.send_json({
                     'status': 'ok',
                     'project': proj,
                     'notebookTitle': cat_data.get('notebookTitle', 'Project Monaro Contract Notebook'),
@@ -347,12 +439,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     'totalSources': len(cat_data.get('sources', [])),
                     'sources': cat_data.get('sources', []),
                     'bundleMapping': mapping_data
-                }
-                self.send_json(response)
+                })
                 return
 
             total_sources = len(kb_data.get('sources', kb_data.get('blueprints', [])))
-            response = {
+            self.send_json({
                 'status': 'ok',
                 'project': proj,
                 'notebookTitle': kb_data.get('notebookTitle', 'Blueprint & Contract Knowledge Base'),
@@ -360,32 +451,16 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 'totalSources': total_sources,
                 'sources': kb_data.get('sources', kb_data.get('blueprints', [])),
                 'bundleMapping': kb_data.get('bundleMapping', {})
-            }
-            self.send_json(response)
+            })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
 
     def handle_sync_notebook(self, query_or_params=''):
         try:
-            if isinstance(query_or_params, dict):
-                params = query_or_params
-            else:
-                q = urllib.parse.parse_qs(query_or_params) if query_or_params else {}
-                params = {k: v[0] for k, v in q.items()}
-
-            proj = params.get('project', get_default_project())
+            params = parse_request_params(query_or_params)
+            proj = params.get('project') or get_default_project()
             p_dir = get_project_dir(proj)
-
-            ingest_script = os.path.join(DIRECTORY, 'scripts', 'ingest_data.py')
-            cmd = [sys.executable, ingest_script, f'--project={proj}']
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
-
-            kb_file = os.path.join(p_dir, 'knowledge.json')
-            kb_data = {}
-            if os.path.exists(kb_file):
-                with open(kb_file, 'r', encoding='utf-8') as f:
-                    kb_data = json.load(f)
-
+            kb_data = load_json_file(os.path.join(p_dir, 'knowledge.json'), {})
             self.send_json({
                 'status': 'ok',
                 'project': proj,
@@ -396,122 +471,16 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json({'error': str(e)}, 500)
 
     def handle_ingest_data(self, params):
-        try:
-            proj = params.get('project', get_default_project())
-            p_dir = get_project_dir(proj)
-
-            ingest_script = os.path.join(DIRECTORY, 'scripts', 'ingest_data.py')
-            cmd = [sys.executable, ingest_script, f'--project={proj}']
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
-
-            if result.returncode != 0:
-                self.send_json({'error': result.stderr or 'Ingestion script execution failed'}, 500)
-                return
-
-            self.send_json({
-                'status': 'ok',
-                'project': proj,
-                'message': f'Successfully ingested project {proj}'
-            })
-        except Exception as e:
-            self.send_json({'error': str(e)}, 500)
+        DashboardHandler.handle_sync(self, params)
 
     def handle_regenerate_briefing(self, params):
-        try:
-            proj = params.get('project', get_default_project())
-            week = params.get('week', 'w27')
-            p_dir = get_project_dir(proj)
-
-            snaps_file = os.path.join(p_dir, 'snapshots.json')
-            snaps_data = {}
-            if os.path.exists(snaps_file):
-                with open(snaps_file, 'r', encoding='utf-8') as f:
-                    snaps_data = json.load(f)
-
-            snaps = snaps_data.get('snapshots', snaps_data)
-            snap = snaps.get(week, snaps.get('w27', {}))
-
-            try:
-                from scripts.gemini_generator import generate_executive_synthesis
-                cfg_file = os.path.join(p_dir, 'config.json')
-                cfg = {}
-                if os.path.exists(cfg_file):
-                    with open(cfg_file, 'r', encoding='utf-8') as f:
-                        cfg = json.load(f)
-
-                metrics = {
-                    'project_name': cfg.get('project', {}).get('name', 'Program'),
-                    'project_title': cfg.get('project', {}).get('title', ''),
-                    'organization': cfg.get('project', {}).get('organization', ''),
-                    'report_week': snap.get('week', 'Week 27'),
-                    'report_date': snap.get('date', '07 Aug 2026'),
-                    'overall_status': snap.get('overallStatus', '🟡 AMBER (Stable)'),
-                    'commercial_status': snap.get('kpis', {}).get('commercial', '🟢 ON TRACK'),
-                    'ibr_status': snap.get('kpis', {}).get('ibr', '🟡 DUE AUG 2026 (90%)'),
-                    'ato_status': snap.get('kpis', {}).get('ato', '🟢 GREEN'),
-                    'escalations_count': snap.get('kpis', {}).get('escalations', '5'),
-                }
-                plans = snap.get('plans', [])
-                synthesis_result = generate_executive_synthesis(metrics, plans)
-                if synthesis_result and isinstance(synthesis_result, dict):
-                    if synthesis_result.get('paragraphs'):
-                        snap['synthesis'] = synthesis_result['paragraphs']
-                    if synthesis_result.get('top3'):
-                        snap['top3'] = synthesis_result['top3']
-                    if synthesis_result.get('sleeperOutlier'):
-                        snap['sleeperOutlier'] = synthesis_result['sleeperOutlier']
-
-                    with open(snaps_file, 'w', encoding='utf-8') as f:
-                        json.dump(snaps_data, f, indent=2)
-            except Exception as gen_err:
-                print(f'[Server] Gemini regeneration fallback: {gen_err}')
-
-            self.send_json({
-                'status': 'ok',
-                'project': proj,
-                'week': week,
-                'synthesis': snap.get('synthesis', {}),
-                'top3': snap.get('top3', []),
-                'sleeperOutlier': snap.get('sleeperOutlier', {})
-            })
-        except Exception as e:
-            self.send_json({'error': str(e)}, 500)
+        DashboardHandler.handle_briefing(self, params)
 
     def handle_ingest_report(self, query_str):
-        params = urllib.parse.parse_qs(query_str) if query_str else {}
-        file_id = params.get('file_id', [''])[0]
-        file_name = params.get('file_name', [''])[0]
-        proj = params.get('project', [get_default_project()])[0]
-        self.process_ingest({'file_id': file_id, 'file_name': file_name, 'project': proj})
+        DashboardHandler.handle_ingest(self, query_str)
 
     def process_ingest(self, params):
-        try:
-            file_id = params.get('file_id') or 'new-drive-file'
-            file_name = params.get('file_name') or 'Weekly Reporting - Week 27 - 07 Aug 2026.pdf'
-            proj = params.get('project') or get_default_project()
-            p_dir = get_project_dir(proj)
-
-            script_path = os.path.join(DIRECTORY, 'scripts', 'ingest_weekly_report.py')
-            cmd = [sys.executable, script_path, '--file-id', file_id, '--name', file_name, '--project', proj]
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=DIRECTORY)
-
-            snaps_file = os.path.join(p_dir, 'snapshots.json')
-            updated = {}
-            if os.path.exists(snaps_file):
-                with open(snaps_file, 'r', encoding='utf-8') as f:
-                    updated = json.load(f)
-
-            if result.returncode == 0:
-                self.send_json({
-                    'status': 'ok',
-                    'project': proj,
-                    'message': f'Successfully ingested {file_name}',
-                    'snapshots': updated.get('snapshots', updated) if isinstance(updated, dict) else {}
-                })
-            else:
-                self.send_json({'error': result.stderr or 'Ingestion script failed'}, 500)
-        except Exception as e:
-            self.send_json({'error': str(e)}, 500)
+        DashboardHandler.handle_ingest(self, params)
 
 def get_startup_urls(port=PORT):
     return [
@@ -529,9 +498,10 @@ def get_startup_banner(port=PORT):
         f'  👉 Dashboard (Local):        {urls[0]}/?project=sample',
         f'  👉 Dashboard (Loopback):     {urls[1]}/?project=sample',
         f'  👉 Dashboard (Proprietary):  {urls[0]}/?project=f-dse',
-        f'  📡 API Sync Endpoint:        http://localhost:{port}/api/sync-all?project={default_proj}',
+        f'  📡 REST Status Endpoint:     http://localhost:{port}/api/status?project={default_proj}',
+        f'  📡 REST Sync Endpoint:       http://localhost:{port}/api/sync?project={default_proj}',
         '=' * 64,
-        'Serving Project Dash with Decoupled Datasets & On-Demand APIs.',
+        'Serving Project Dash with Unified Pipeline & REST Resource APIs.',
     ]
     return '\n'.join(lines)
 

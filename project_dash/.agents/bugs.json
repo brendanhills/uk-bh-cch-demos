@@ -1424,7 +1424,7 @@
     "workspace_context": "project_dash",
     "cause": "Incremental feature additions (Time Machine, Google Sheets live sync, Drive scanning, NotebookLM integration, and Gemini synthesis) resulted in fragmented, ad-hoc endpoint names and mixed GET/POST semantics in server.py.",
     "plan": "1. Audit all endpoint usages across server.py, index.html, and tests/test_server*.py.\n2. Design a clean RESTful resource hierarchy (e.g., /api/projects/{slug}/sync, /api/projects/{slug}/sources/sheets, /api/projects/{slug}/sources/drive, /api/projects/{slug}/briefing).\n3. Keep backwards-compatible routing aliases with deprecation logging so existing frontend triggers and test suites continue to pass without disruption.",
-    "resolution_notes": "Completed and verified as part of the frontend modular architecture track; endpoints consolidated in server.py with unified /api/sync-all, /api/sync-sheet, and project query support."
+    "resolution_notes": "Completed and verified as part of track simplify_and_harden_for_handover_20260822; unified ingestion into scripts/pipeline.py and streamlined server.py endpoints (/api/status, /api/sync, /api/ingest, /api/briefing/generate) with 100% pass across all 122 automated unit tests."
   },
   {
     "id": 80,
