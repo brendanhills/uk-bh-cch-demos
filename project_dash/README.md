@@ -94,10 +94,11 @@ project_dash/
 │   ├── exec_summary_prompt.md   # Gemini structured JSON executive summary prompt
 │   └── podcast_prompt.md        # Gemini dual-speaker podcast script prompt
 ├── scripts/
-│   ├── ingest_data.py           # Master Ingestion Orchestrator CLI
+│   ├── pipeline.py              # Unified ingestion, Drive report parsing & Gemini synthesis engine
 │   ├── gemini_generator.py      # Gemini 3.5 synthesis & TTS audio generator
-│   ├── ingest_weekly_report.py  # Weekly PDF extraction script
 │   └── check_build_status.py    # Cloud Build CI/CD status query tool
+├── src/
+│   └── js/                      # Modular ES6 frontend architecture (api.js, state.js, analytics.js, app.js)
 ├── data/
 │   └── sample/                  # Public showcase dataset (Project Aurora)
 │       ├── config.json          # Project branding, theme colors, feature flags
@@ -106,7 +107,7 @@ project_dash/
 │       ├── snapshots.json       # Longitudinal weekly snapshots (W22-W27)
 │       ├── knowledge.json       # Blueprint & contract knowledge sources
 │       └── driver_tree.json     # Contractual milestones & capability drops
-└── tests/                       # Complete automated unit test suite
+└── tests/                       # Complete automated unit test suite (122 tests)
 ```
 
 ---
