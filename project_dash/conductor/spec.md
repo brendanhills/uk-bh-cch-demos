@@ -461,19 +461,32 @@ Longitudinal weekly reporting history (keyed by week slug):
 
 ---
 
-## 5. AI Ingestion & Synthesis Engine
+## 5. Clean RESTful API & Ingestion Architecture
 
-### 5.1 Ingestion Pipeline & Synchronization
-* **UI-Triggered Ingestion (Primary)**: Users trigger data synchronization directly from the web dashboard via the **"Sync with Google Drive"** / **"Workspace Sync"** modal. The frontend invokes `/api/sync-sheet` or `/api/ingest-data` to ingest new Google Sheets data or uploaded PDF report packs in real time.
-* **Master Ingestion CLI (`scripts/ingest_data.py`)**: Headless automation orchestrator accepting `--project=<slug>` (e.g. `python3 scripts/ingest_data.py --project=sample`).
-  - Ingests Google Sheets registers, Drive PDF packs, and `knowledge.json` catalogs.
-  - Normalizes and writes data directly into `snapshots.json`, `risks.json`, `issues.json`, and `driver_tree.json`.
-  - Invokes `scripts/gemini_generator.py` to synthesize multi-tone executive briefs and neural podcast audio.
+### 5.1 Clean RESTful Resource Contracts (`server.py`)
+The backend provides a clean, cohesive REST interface designed for in-dashboard client interactions and headless automated execution:
 
-### 5.2 Gemini Decision Synthesis (`scripts/gemini_generator.py`)
-* **Model**: Uses Gemini 3.0+ models (defaulting to `gemini-3.5-flash` / Vertex AI) for structured JSON synthesis.
-* **Structured Output Schema**: Validates structured JSON matching `prompts/exec_summary_prompt.md` containing `executive`, `technical`, and `governance` synthesis blocks, Top 3 Action cards, and Sleeper Outliers.
-* **Podcast Audio Scripting & Speech Synthesis**: Generates dual-host conversational dialogue scripts (`prompts/podcast_prompt.md`) and synthesizes life-like multi-speaker audio via **Gemini Multi-Speaker Speech Generation** using `Puck` and `Aoede` personas for natural executive discussions.
+| HTTP Method & Path | Purpose | Request Payload / Params | Response Summary |
+| :--- | :--- | :--- | :--- |
+| `GET  /api/status` | Probes multi-source connection health across Sheets, Drive, NotebookLM, and latest snapshot. | `?project=<slug>` | JSON `{ success: true, project, total_snapshots, total_risks, total_issues }` |
+| `POST /api/sync` | Executes unified synchronization across all active project streams (Sheets, Drive, Notebooks). | `{ project: "<slug>" }` | JSON `{ status: "ok", project, summary: { snapshots, risks, issues } }` |
+| `POST /api/ingest` | Parses an uploaded weekly report PDF, computes risk metrics, generates Gemini briefing, and persists new snapshot. | `{ project: "<slug>", fileName: "...", fileId: "...", fallback: false }` | JSON `{ status: "ok", project, week, snapshots }` |
+| `POST /api/briefing/generate` | Generates or regenerates Gemini executive decision synthesis and multi-speaker podcast audio. | `{ project: "<slug>", week: "Week 28", fallback: false }` | JSON `{ status: "ok", project, week, synthesis, top3, sleeperOutlier, podcastScript }` |
+
+*(Note: Transparent backward-compatible routing aliases are maintained in `server.py` for legacy `/api/sync-sheet`, `/api/sync-all`, `/api/check-drive-sync`, and `/api/sync-notebook` paths).*
+
+### 5.2 Unified Ingestion & Processing Pipeline (`scripts/pipeline.py`)
+All ingestion, parsing, metric calculation, and AI generation logic is consolidated into a single, anti-fragile module:
+- **Resilient Report Parsing**: Automatically extracts week numbers and dates from diverse naming patterns (e.g. `Weekly Reporting - Week 28 - 14 Aug 2026.pdf`, `W29_Summary.pdf`, `Status_Report.pdf`) with sequential fallback.
+- **Defensive Fallback Generation**: If Gemini API quota, credentials, or network connectivity fail, the pipeline automatically provides deterministic, structured executive briefings and podcast dialogues to guarantee zero UI downtime.
+- **Headless CLI Interface**:
+  ```bash
+  # 1-Command Workspace Sync
+  python3 scripts/pipeline.py --project=f-dse --sync
+
+  # 1-Command Weekly Report Ingestion
+  python3 scripts/pipeline.py --project=f-dse --ingest-report="Weekly Reporting - Week 28 - 14 Aug 2026.pdf"
+  ```
 
 ---
 
@@ -491,7 +504,7 @@ To prevent future specification drift and maintain high code velocity:
 3. **Spec Synchronization Barrier**:
    - Whenever a Conductor track completes or a significant feature/architectural change lands, the Master Spec (`conductor/spec.md`) must be reviewed and updated to reflect the new state.
 4. **Automated Quality Assurance**:
-   - The test suite (`tests/`) maintains 100% passing automated test coverage (currently 97 tests) validating data schemas, live calculations, server APIs, and driver tree interactions before code is pushed to `dev`.
+   - The test suite (`tests/`) maintains 100% passing automated test coverage (currently 122 tests) validating data schemas, live calculations, server APIs, and driver tree interactions before code is pushed to `dev`.
 
 ---
 
@@ -502,6 +515,6 @@ To prevent future specification drift and maintain high code velocity:
 - [ ] 5×5 Risk Heatmap toggles seamlessly between Inherent and Residual distributions, and cell clicks filter the Live Risk Explorer with active focus rings.
 - [ ] Neural podcast audio player supports waveform scrubbing, variable speeds (0.75x–2x), synced transcript, and MP3 download.
 - [ ] Driver tree deliverable cards display clickable related risk and issue badges that cross-filter ledgers.
-- [ ] Master ingestion pipeline (`python3 scripts/ingest_data.py --project=<slug>`) cleanly generates valid snapshot and data files without precomputed caches.
+- [ ] Unified pipeline engine (`python3 scripts/pipeline.py --project=<slug> --sync`) cleanly generates valid snapshot and data files without precomputed caches.
 - [ ] Cloud Run deployment is secured by Identity-Aware Proxy (IAP) requiring corporate Google SSO.
-- [ ] All 97 automated unit tests pass cleanly (`python3 -m unittest discover -s tests -p "test_*.py"`).
+- [ ] All 122 automated unit tests pass cleanly (`python3 -m pytest tests/`).
