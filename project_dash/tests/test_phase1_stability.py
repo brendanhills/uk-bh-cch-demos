@@ -2,13 +2,27 @@ import unittest
 import json
 import os
 
+def load_full_html():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        html = f.read()
+    js_dir = os.path.join(base_dir, 'src', 'js')
+    if os.path.exists(js_dir):
+        for root, _, files in os.walk(js_dir):
+            for fn in sorted(files):
+                if fn.endswith('.js'):
+                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
+                        html += chr(10) + f.read()
+    return html
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class TestPhase1Stability(unittest.TestCase):
     def setUp(self):
         self.fdse_dir = os.path.join(BASE_DIR, 'data', 'f-dse')
         with open(os.path.join(BASE_DIR, 'index.html'), 'r', encoding='utf-8') as f:
-            self.html = f.read()
+            self.html = load_full_html()
 
     def test_fdse_data_files_exist_and_valid(self):
         """Verify all F-DSE project raw data files exist and parse as valid JSON."""

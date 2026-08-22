@@ -160,9 +160,9 @@ def ingest_file(
 
     if generate_ai:
         try:
-            print(f"Calling Gemini API ({model}) for structured executive briefing synthesis...")
+            audio_out = os.path.join(BASE_DIR, 'assets', f'podcast_{week_key}.wav')
             synthesis_result = generate_executive_synthesis(metric_ctx, plans, model=model)
-            podcast_script = generate_multispeaker_podcast(metric_ctx, synthesis_result, model=model)
+            podcast_script = generate_multispeaker_podcast(metric_ctx, synthesis_result, model=model, audio_out_path=audio_out)
             print("Gemini synthesis & podcast script successfully generated.")
         except Exception as e:
             print(f"Warning: AI Generation encountered an error: {e}")

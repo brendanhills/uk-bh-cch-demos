@@ -32,7 +32,7 @@ This guide provides both **Click-Ops (Google Cloud Console)** and **CLI (Scripte
 
 | Resource / Console | Development (`monaro-risk-dev`) | Production (`monaro-risk-prod`) | Global & Corp Links |
 | :--- | :--- | :--- | :--- |
-| **Live Deployed Dashboard** | [👉 Open Dev Dashboard](https://monaro-risk-dash-dev-525025654699.us-central1.run.app/) | [👉 Open Prod Dashboard](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/) | [Local Dev Server (Port 9000)](http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample) |
+| **Live Deployed Dashboard** | • [👉 Monaro Live (Dev)](https://monaro-risk-dash-dev-525025654699.us-central1.run.app/?project=f-dse)<br>• [👉 Aurora Showcase (Dev)](https://monaro-risk-dash-dev-525025654699.us-central1.run.app/?project=sample) | • [👉 Monaro Live (Prod)](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/?project=f-dse)<br>• [👉 Aurora Showcase (Prod)](https://monaro-risk-dash-prod-525025654699.australia-southeast1.run.app/?project=sample) | • [Local Monaro (Port 9000)](http://uk-bh-cloudtop.c.googlers.com:9000/?project=f-dse)<br>• [Local Aurora (Port 9000)](http://uk-bh-cloudtop.c.googlers.com:9000/?project=sample) |
 | **Cloud Run Services** | [👉 Cloud Run (Dev)](https://pantheon.corp.google.com/run?project=monaro-risk-dev) | [👉 Cloud Run (Prod)](https://pantheon.corp.google.com/run?project=monaro-risk-prod) | — |
 | **Cloud Build Triggers** | [👉 Build Triggers (Dev)](https://pantheon.corp.google.com/cloud-build/triggers?project=monaro-risk-dev) | [👉 Build Triggers (Prod)](https://pantheon.corp.google.com/cloud-build/triggers?project=monaro-risk-prod) | [Connected Repositories](https://pantheon.corp.google.com/cloud-build/repositories) |
 | **Cloud Build History** | [👉 Build History (Dev)](https://pantheon.corp.google.com/cloud-build/builds?project=monaro-risk-dev) | [👉 Build History (Prod)](https://pantheon.corp.google.com/cloud-build/builds?project=monaro-risk-prod) | — |
@@ -66,9 +66,19 @@ To perform the provisioning and administrative operations described in this guid
 
 If you prefer using the web browser UI (Pantheon), follow these sequential steps:
 
+### Step 0: Create the Google Cloud Project (If Not Yet Created)
+If the project `monaro-risk-prod` does not yet exist in your GCP Organization / Folder:
+1. Open **[go/nexus](http://go/nexus)** (Google Internal) or **[Pantheon > New Project](https://pantheon.corp.google.com/projectcreate)**.
+2. Set **Project Name**: `monaro-risk-prod`.
+3. Set **Project ID**: `monaro-risk-prod`.
+4. Select the appropriate Parent Organization / Folder and Billing Account.
+5. Click **"Create"**.
+
 ### Step 1: Enable APIs
-1. Open **[APIs & Services > Library in `monaro-risk-prod`](https://pantheon.corp.google.com/apis/library?project=monaro-risk-prod)**.
-2. Search and click **"Enable"** for each of the following 11 APIs:
+1. Open **[APIs & Services > Library in `monaro-risk-prod`](https://pantheon.corp.google.com/apis/library?project=monaro-risk-prod)** (or `monaro-risk-dev`).
+2. Search and click **"Enable"** for each of the following 13 APIs:
+   * `Cloud Error Reporting API` (`clouderrorreporting.googleapis.com`)
+   * `Cloud Logging API` (`logging.googleapis.com`)
    * `Cloud Build API` (`cloudbuild.googleapis.com`)
    * `Cloud Run Admin API` (`run.googleapis.com`)
    * `Artifact Registry API` (`artifactregistry.googleapis.com`)
@@ -128,11 +138,42 @@ If you prefer using the web browser UI (Pantheon), follow these sequential steps
      * `_IMAGE_NAME` = `monaro-risk-dash-prod`
 4. Click **"CREATE"**.
 
+### Step 6: Configure Error Reporting & Alerting Channel
+1. Open **[Monitoring > Alerting > Notification Channels](https://pantheon.corp.google.com/monitoring/alerting/notifications?project=monaro-risk-prod)**.
+2. Under **Email**, click **"Add New"** and enter:
+   * **Email Address**: `monaro-risk-prod-admin@google.com` (or `monaro-risk-dev-admin@google.com` for Dev)
+   * **Display Name**: `Monaro Risk Admin Team`
+3. Click **"Save"**.
+4. Open **[Error Reporting](https://pantheon.corp.google.com/errors?project=monaro-risk-prod)**.
+5. Click **"🔔 Configure notifications"** in the top right, and check **"Notify on new error events"**.
+
+### Step 7: Configure OAuth Consent Screen & IAP Access
+1. Open **[APIs & Services > OAuth Consent Screen in `monaro-risk-prod`](https://pantheon.corp.google.com/apis/credentials/consent?project=monaro-risk-prod)**.
+2. Select User Type: **Internal** $\rightarrow$ Click **"Create"**.
+3. Fill in:
+   * **App Name**: `Project Monaro Risk Governance Platform (Prod)`
+   * **User Support Email**: your email or `monaro-risk-prod-admin@google.com`
+   * **Developer Contact Info**: your email address
+4. Click **"Save and Continue"** through Scopes.
+5. Open **[Security > Identity-Aware Proxy in `monaro-risk-prod`](https://pantheon.corp.google.com/security/iap?project=monaro-risk-prod)**.
+6. Locate `monaro-risk-dash-prod` under HTTPS Resources.
+7. In the right panel, confirm `group:monaro-risk-prod@google.com` has role **`IAP-secured Web App User`** (`roles/iap.httpsResourceAccessor`). *(Our Cloud Build deployment pipeline applies this automatically upon initial deployment).*
+
 ---
 
 ## ⚡ Method B: Automated CLI Provisioning Script
 
-Alternatively, execute this turnkey bash script in Cloud Shell or your workstation:
+You can execute our turnkey script [`deploy/provision_environment.sh`](./provision_environment.sh) directly:
+
+```bash
+# Provision Production (monaro-risk-prod in Sydney)
+./deploy/provision_environment.sh --env prod
+
+# Or provision Development (monaro-risk-dev in Sydney)
+./deploy/provision_environment.sh --env dev
+```
+
+Or execute the complete raw bash script below in Cloud Shell or your workstation:
 
 ```bash
 #!/bin/bash
@@ -145,6 +186,8 @@ SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 echo "=== 1. Enabling GCP APIs for ${PROJECT_ID} ==="
 gcloud services enable \
+  clouderrorreporting.googleapis.com \
+  logging.googleapis.com \
   cloudbuild.googleapis.com \
   run.googleapis.com \
   artifactregistry.googleapis.com \
@@ -205,6 +248,61 @@ gcloud builds triggers create github \
   --substitutions="_SERVICE_NAME=monaro-risk-dash-prod,_ACCESS_GROUP=monaro-risk-prod@google.com,_REGION=${REGION},_IMAGE_NAME=monaro-risk-dash-prod" \
   --description="Automated Production Deployment on prod tags in Sydney" || true
 
+echo "=== 6. Configuring Error Reporting Notification Channel ==="
+ADMIN_GROUP="${PROJECT_ID}-admin@google.com"
+echo "Setting up notification channel for ${ADMIN_GROUP}..."
+CHANNEL_JSON=$(gcloud alpha monitoring channels create \
+  --project="${PROJECT_ID}" \
+  --type="email" \
+  --display-name="Monaro Risk Admin Team" \
+  --channel-labels="email_address=${ADMIN_GROUP}" \
+  --format="json" 2>/dev/null || true)
+
+CHANNEL_ID=$(echo "${CHANNEL_JSON}" | grep -o '"name": "[^"]*' | cut -d'"' -f4 || true)
+
+if [ -n "${CHANNEL_ID}" ]; then
+  echo "Created notification channel: ${CHANNEL_ID}"
+  echo "Creating Log-Based Metric & Alert Policy for Container Exceptions..."
+  cat <<EOF > /tmp/error_alert_policy_${PROJECT_ID}.json
+{
+  "displayName": "Error Reporting Exception Alert (${PROJECT_ID})",
+  "documentation": {
+    "content": "A runtime exception or 5xx crash was logged by Cloud Run in ${PROJECT_ID}.",
+    "mimeType": "text/markdown"
+  },
+  "conditions": [
+    {
+      "displayName": "Error logs condition",
+      "conditionThreshold": {
+        "filter": "resource.type = \"cloud_run_revision\" AND severity >= ERROR",
+        "aggregations": [
+          {
+            "alignmentPeriod": "60s",
+            "perSeriesAligner": "ALIGN_RATE"
+          }
+        ],
+        "comparison": "COMPARISON_GT",
+        "thresholdValue": 0,
+        "duration": "0s",
+        "trigger": {
+          "count": 1
+        }
+      }
+    }
+  ],
+  "notificationChannels": [
+    "${CHANNEL_ID}"
+  ],
+  "combiner": "OR",
+  "enabled": true
+}
+EOF
+  gcloud alpha monitoring policies create \
+    --policy-from-file="/tmp/error_alert_policy_${PROJECT_ID}.json" \
+    --project="${PROJECT_ID}" || true
+  rm -f "/tmp/error_alert_policy_${PROJECT_ID}.json"
+fi
+
 echo "=== Setup complete for ${PROJECT_ID} in ${REGION}! ==="
 ```
 
@@ -230,6 +328,38 @@ Cloud Build will automatically:
 3. Build the container image and push to Artifact Registry in Sydney.
 4. Deploy to Cloud Run: **`monaro-risk-dash-prod`** in **`australia-southeast1`**.
 5. Bind Identity-Aware Proxy (IAP) to **`monaro-risk-prod@google.com`**.
+
+---
+
+## 🏷️ Skipping Builds for Documentation-Only Updates (`[skip ci]` & Path Filters)
+
+To prevent minor documentation edits, specs, and session resumes from triggering redundant Cloud Build runs, use either of the following methods:
+
+### Method 1: Use `[skip ci]` in Commit Messages (Recommended)
+Add `[skip ci]` or `[ci skip]` to your commit message whenever making documentation-only edits:
+```bash
+git commit -m "docs(ops): update handover guide [skip ci]"
+git push origin dev
+```
+Cloud Build natively detects this directive and **completely skips triggering a build**.
+
+### Method 2: Configure Trigger Path Filtering (`includedFiles` & `ignoredFiles`)
+Configure Cloud Build triggers so documentation paths are automatically ignored:
+* **Included Files (`--included-files`)**: `project_dash/**`
+* **Ignored Files (`--ignored-files`)**:
+  * `project_dash/**/*.md` *(all markdown documentation & guides)*
+  * `project_dash/docs/**` *(documentation folder)*
+  * `project_dash/.agents/**` *(AI rules, bugs registry, plans)*
+  * `project_dash/conductor/**` *(Conductor track specs/plans)*
+
+To update the trigger via `gcloud` CLI:
+```bash
+gcloud builds triggers update deploy-monaro-risk-dash-dev \
+  --project="monaro-risk-dev" \
+  --region="australia-southeast1" \
+  --included-files="project_dash/**" \
+  --ignored-files="project_dash/**/*.md,project_dash/docs/**,project_dash/.agents/**,project_dash/conductor/**"
+```
 
 ---
 

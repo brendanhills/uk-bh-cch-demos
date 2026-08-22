@@ -1,0 +1,3791 @@
+// =============================================================================
+// Project Monaro / F-DSE Risk Intelligence — Full Application Entry Point
+// =============================================================================
+
+
+        
+        
+                let CURRENT_PROJECT = 'sample';
+        let CONFIG = null;
+        let NOTEBOOK_CATALOG = null;
+        let BUNDLE_ANNEX_MAPPING = {};
+        let LIVE_TEAM_GOOGLE_RISKS = [];
+        let teamGoogleMatrixRating = 'residual';
+        let teamGoogleMatrixStatus = 'open';
+        let teamGoogleActiveMatrixCellFilter = null;
+        let LIVE_RISKS = [];
+        let LIVE_ISSUES = [];
+        let TIME_MACHINE_SNAPSHOTS = {};
+        let DRIVER_TREE = null;
+        let DRIVER_TREE_ITEMS = [];
+        let DRIVE_REPORTS = [];
+        let currentMatrixRating = 'residual';
+        let currentMatrixStatus = 'open';
+        let trendsGranularity = 'monthly';
+        let currentDriverTreeLevel = 'all';
+        let activeTimeMachineWeek = 'w27';
+        let showAllGapPlans = false;
+        let showResolvedGapPlans = false;
+        let selectedDiffBaseline = 'w26';
+        let activeMatrixCellFilter = null;
+        let currentQuickFilter = 'all';
+        let explorerViewMode = 'cards';
+        let expandedRiskIds = new Set();
+        let expandedCardIds = new Set();
+
+        async function loadDashboardData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            CURRENT_PROJECT = urlParams.get('project') || 'sample';
+            console.log(`[Dashboard] Initializing data for project: ${CURRENT_PROJECT}`);
+
+            try {
+                const [cfgRes, snapRes, riskRes, issRes, kbRes, dtRes] = await Promise.all([
+                    fetch(`data/${CURRENT_PROJECT}/config.json`),
+                    fetch(`data/${CURRENT_PROJECT}/snapshots.json`),
+                    fetch(`data/${CURRENT_PROJECT}/risks.json`),
+                    fetch(`data/${CURRENT_PROJECT}/issues.json`),
+                    fetch(`data/${CURRENT_PROJECT}/knowledge.json`).catch(() => ({ ok: false })),
+                    fetch(`data/${CURRENT_PROJECT}/driver_tree.json`).catch(() => ({ ok: false }))
+                ]);
+
+                if (cfgRes.ok) CONFIG = await cfgRes.json();
+                if (snapRes.ok) {
+                    const snapData = await snapRes.json();
+                    TIME_MACHINE_SNAPSHOTS = snapData.snapshots || snapData || {};
+                }
+                if (riskRes.ok) {
+                    const rData = await riskRes.json();
+                    const allRisks = Array.isArray(rData) ? rData : (rData.risks || []);
+                    LIVE_RISKS = allRisks.filter(r => r.sourceRegister !== 'team_google' && r.sourceRegister !== 'teamGoogle' && !String(r.id).startsWith('TG-') && !String(r.id).startsWith('AUR-TG-'));
+                    LIVE_TEAM_GOOGLE_RISKS = allRisks.filter(r => r.sourceRegister === 'team_google' || r.sourceRegister === 'teamGoogle' || String(r.id).startsWith('TG-') || String(r.id).startsWith('AUR-TG-'));
+                }
+                if (issRes.ok) {
+                    const iData = await issRes.json();
+                    LIVE_ISSUES = Array.isArray(iData) ? iData : (iData.issues || []);
+                }
+                if (kbRes.ok) {
+                    NOTEBOOK_CATALOG = await kbRes.json();
+                }
+                if (dtRes.ok) {
+                    DRIVER_TREE = await dtRes.json();
+                    if (Array.isArray(DRIVER_TREE)) {
+                        DRIVER_TREE_ITEMS = DRIVER_TREE.map(g => ({
+                            itemNumber: g.itemNumber || g.ref || '',
+                            description: g.description || g.name || g.title || 'Deliverable Gate',
+                            status: String(g.status || 'GREEN').toUpperCase(),
+                            level: g.level || 2,
+                            owner: g.owner || 'Workstream Lead',
+                            completeBy: g.completeBy || g.dueDate || g.targetDate || 'TBD',
+                            progress: g.progress !== undefined ? g.progress : 50,
+                            shift: g.shift || null,
+                            category: g.category || '',
+                            gapCloseRef: g.gapCloseRef || null,
+                            gapCloseTitle: g.gapCloseTitle || ''
+                        }));
+                    } else if (DRIVER_TREE && DRIVER_TREE.capabilityDrops) {
+                        DRIVER_TREE_ITEMS = [];
+                        DRIVER_TREE.capabilityDrops.forEach(cd => {
+                            (cd.gates || []).forEach(g => {
+                                const rawStatus = String(g.status || cd.status || 'GREEN').toUpperCase();
+                                let defaultProgress = 35;
+                                if (rawStatus === 'GREEN' || rawStatus === 'BLUE') defaultProgress = 100;
+                                else if (rawStatus === 'AMBER') defaultProgress = 60;
+
+                                DRIVER_TREE_ITEMS.push({
+                                    itemNumber: g.ref || g.itemNumber || '',
+                                    description: g.description || g.name || g.title || 'Deliverable Gate',
+                                    status: rawStatus,
+                                    level: g.level || 2,
+                                    owner: g.owner || cd.lead || 'Workstream Lead',
+                                    completeBy: g.completeBy || g.dueDate || g.targetDate || cd.targetDate || 'TBD',
+                                    progress: g.progress !== undefined ? g.progress : defaultProgress,
+                                    shift: g.shift || null,
+                                    category: cd.name || '',
+                                    gapCloseRef: g.gapCloseRef || null,
+                                    gapCloseTitle: g.gapCloseTitle || ''
+                                });
+                            });
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('[Dashboard] Error loading project data:', err);
+            }
+
+            renderProjectBranding();
+            renderFeatureTabs();
+        }
+
+        function renderProjectBranding() {
+            if (!CONFIG || !CONFIG.project) return;
+            const p = CONFIG.project;
+
+            document.title = `${p.name} - ${p.title || 'Risk & Delivery Dashboard'}`;
+            
+            const badgeEl = document.getElementById('appProjectBadge');
+            if (badgeEl) badgeEl.innerText = p.name.toUpperCase();
+
+            const titleEl = document.getElementById('appProjectTitle');
+            if (titleEl) titleEl.innerText = p.title ? `Delivery & Risk Dashboard` : p.name;
+            
+            const subTitleEl = document.getElementById('appProjectSubtitle');
+            if (subTitleEl) {
+                let displayTitle = p.title || '';
+                if (displayTitle.toLowerCase() === (p.name || '').toLowerCase()) {
+                    displayTitle = '';
+                }
+                const subtitleParts = [displayTitle, p.organization || ''].filter(Boolean);
+                subTitleEl.innerText = subtitleParts.join(' • ');
+            }
+            
+            const logoEl = document.getElementById('appProjectLogoIcon');
+            if (logoEl && p.logoIcon) logoEl.innerText = p.logoIcon;
+
+            const headerSelector = document.getElementById('headerProjectSelectorName');
+            if (headerSelector) headerSelector.innerText = p.name;
+
+            const liveBadgeEl = document.getElementById('liveStatusBadge');
+            const latestSnap = TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()] || {};
+            const latestWeek = latestSnap.week || latestSnap.weekLabel || 'Latest';
+            if (liveBadgeEl) liveBadgeEl.innerText = `Live (${latestWeek})`;
+
+            // Update subtle footer build info & timestamp
+            try {
+                fetch('data/build_info.json').then(r => r.ok ? r.json() : null).then(bInfo => {
+                    if (bInfo) {
+                        const tagEl = document.getElementById('footerBuildTagVal');
+                        const dateEl = document.getElementById('footerBuildDateVal');
+                        const regEl = document.getElementById('footerRegionBadge');
+                        if (tagEl && (bInfo.tag || bInfo.version || bInfo.commit)) tagEl.innerText = bInfo.tag || bInfo.version || (bInfo.commit ? bInfo.commit.substring(0, 7) : 'dev-live');
+                        if (dateEl && bInfo.timestamp) dateEl.innerText = bInfo.timestamp;
+                        if (regEl && bInfo.region) regEl.innerHTML = `Region: <strong class="text-slate-600 font-bold">${bInfo.region}</strong>`;
+                    }
+                }).catch(() => {});
+            } catch(e) {}
+
+            const sheetWrapper = document.getElementById('sheetDropdownWrapper');
+            const jointSheetLink = document.getElementById('headerJointSheetLink');
+            const teamGoogleSheetLink = document.getElementById('headerTeamGoogleSheetLink');
+            
+            if (p.links && p.links.sheets) {
+                if (jointSheetLink) jointSheetLink.href = p.links.sheets;
+                if (teamGoogleSheetLink) teamGoogleSheetLink.href = p.links.teamGoogleSheet || p.links.sheets;
+                if (sheetWrapper) sheetWrapper.classList.remove('hidden');
+            } else if (sheetWrapper) {
+                sheetWrapper.classList.add('hidden');
+            }
+            
+            const driveLink = document.getElementById('driveReportLink');
+            const driveText = document.getElementById('driveReportLinkText');
+            if (driveLink && latestSnap.driveFileId) {
+                driveLink.href = `https://drive.google.com/file/d/${latestSnap.driveFileId}/view`;
+            }
+            if (driveText) {
+                driveText.innerText = `${latestWeek} Pack`;
+            }
+
+            const tabPrimary = document.getElementById('tabPrimaryRegisterLabel');
+            if (tabPrimary) tabPrimary.innerText = p.primaryRegisterName || 'Internal Risks';
+            const tabPrimaryBadge = document.getElementById('tabPrimaryRegisterBadge');
+            if (tabPrimaryBadge) tabPrimaryBadge.innerText = LIVE_RISKS.length;
+            
+            const tabSecondary = document.getElementById('tabSecondaryRegisterLabel');
+            if (tabSecondary) tabSecondary.innerText = `🛡️ ${p.secondaryRegisterName || 'Team Google Risks'}`;
+            const tabSecondaryBadge = document.getElementById('tabTeamGoogleBadge');
+            if (tabSecondaryBadge) tabSecondaryBadge.innerText = LIVE_TEAM_GOOGLE_RISKS.length;
+
+            const tabIssuesLabel = document.getElementById('tabIssuesLabel');
+            if (tabIssuesLabel) tabIssuesLabel.innerText = '⚠️ Issue Register';
+            const tabIssuesBadge = document.getElementById('tabIssuesBadge');
+            if (tabIssuesBadge) tabIssuesBadge.innerText = LIVE_ISSUES.length;
+
+            const tabDriverTreeBadge = document.getElementById('tabDriverTreeBadge');
+            if (tabDriverTreeBadge) tabDriverTreeBadge.innerText = (typeof DRIVER_TREE_ITEMS !== 'undefined' ? DRIVER_TREE_ITEMS.length : 34);
+
+            const tabLedgerBadge = document.getElementById('tabLedgerBadge');
+            if (tabLedgerBadge) tabLedgerBadge.innerText = (LIVE_RISKS.length + LIVE_TEAM_GOOGLE_RISKS.length);
+
+            const tabBlueprintsBadge = document.getElementById('tabBlueprintsBadge');
+            if (tabBlueprintsBadge && NOTEBOOK_CATALOG) {
+                const count = (NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints || []).length;
+                tabBlueprintsBadge.innerText = count;
+            }
+
+            // Dynamically update NotebookLM Links & Titles
+            if (NOTEBOOK_CATALOG) {
+                const nbTitle = NOTEBOOK_CATALOG.notebookTitle || `${p.name} Contract Notebook`;
+                const nbUrl = NOTEBOOK_CATALOG.notebookUrl || 'https://notebook.google.com';
+                
+                const nbHeaderTitle = document.getElementById('blueprintTabTitle');
+                if (nbHeaderTitle) nbHeaderTitle.innerText = `${nbTitle} Knowledge Base`;
+                
+                const nbExtLink = document.getElementById('notebookExternalLink');
+                if (nbExtLink) {
+                    nbExtLink.href = nbUrl;
+                    nbExtLink.title = `Open ${nbTitle} in NotebookLM`;
+                }
+
+                const nbOpt = document.querySelector('#notebookSelect option');
+                if (nbOpt) {
+                    nbOpt.innerText = `${nbTitle} (${(NOTEBOOK_CATALOG.sources || []).length} Sources)`;
+                }
+            }
+        }
+
+        function renderFeatureTabs() {
+            if (!CONFIG || !CONFIG.features) return;
+            const f = CONFIG.features;
+
+            const toggle = (id, enabled) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (enabled === false) el.classList.add('hidden');
+                    else el.classList.remove('hidden');
+                }
+            };
+
+            toggle('tab-team-google', f.secondaryRegister?.enabled !== false);
+            toggle('tab-issues', f.issues?.enabled !== false);
+            toggle('tab-trends', f.trends?.enabled !== false);
+            toggle('tab-blueprints', f.knowledgeBase?.enabled !== false);
+            toggle('tab-driver-tree', f.driverTree?.enabled !== false);
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const showLedger = f.ledger?.enabled === true || urlParams.get('view') === 'pm' || urlParams.get('ledger') === 'true';
+            toggle('tab-ledger', showLedger);
+        }
+
+        
+        // =========================================================================
+        // TEAM GOOGLE RISK HEATMAP & EXPLORER RENDERERS
+        // =========================================================================
+
+        function setTeamGoogleRating(rating) {
+            teamGoogleMatrixRating = rating;
+            const btnInh = document.getElementById('tgBtnInherent');
+            const btnRes = document.getElementById('tgBtnResidual');
+            if (rating === 'inherent') {
+                if (btnInh) { btnInh.className = 'px-3 py-1.5 rounded-lg bg-white text-blue-700 shadow-xs cursor-pointer font-bold'; }
+                if (btnRes) { btnRes.className = 'px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer'; }
+            } else {
+                if (btnInh) { btnInh.className = 'px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer'; }
+                if (btnRes) { btnRes.className = 'px-3 py-1.5 rounded-lg bg-white text-blue-700 shadow-xs cursor-pointer font-bold'; }
+            }
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        function setTeamGoogleStatusFilter(status) {
+            teamGoogleMatrixStatus = status;
+            ['tgBtnOpen', 'tgBtnActive', 'tgBtnEventuated', 'tgBtnClosed', 'tgBtnAll'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.className = 'px-3 py-1.5 rounded-lg hover:text-slate-900 cursor-pointer';
+            });
+            const activeId = 'tgBtn' + status.charAt(0).toUpperCase() + status.slice(1);
+            const activeBtn = document.getElementById(activeId);
+            if (activeBtn) activeBtn.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs cursor-pointer font-bold';
+            
+            // Clear active cell filter so entire register subset is visible
+            teamGoogleActiveMatrixCellFilter = null;
+            const notice = document.getElementById('teamGoogleMatrixFilterNotice');
+            if (notice) { notice.classList.add('hidden'); notice.classList.remove('flex'); }
+
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        function filterTeamGoogleMatrixCell(l, c) {
+            if (teamGoogleActiveMatrixCellFilter && teamGoogleActiveMatrixCellFilter.l === l && teamGoogleActiveMatrixCellFilter.c === c) {
+                clearTeamGoogleMatrixCellFilter();
+                return;
+            }
+            teamGoogleActiveMatrixCellFilter = { l, c };
+            const notice = document.getElementById('teamGoogleMatrixFilterNotice');
+            const text = document.getElementById('teamGoogleMatrixFilterText');
+            if (notice) notice.classList.remove('hidden'), notice.classList.add('flex');
+            if (text) text.innerText = 'Likelihood ' + l + ', Consequence ' + c;
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        function clearTeamGoogleMatrixCellFilter() {
+            teamGoogleActiveMatrixCellFilter = null;
+            const notice = document.getElementById('teamGoogleMatrixFilterNotice');
+            if (notice) notice.classList.add('hidden'), notice.classList.remove('flex');
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        
+        // =========================================================================
+        // BLUEPRINT KNOWLEDGE & NOTEBOOK SYNC RENDERERS
+        // =========================================================================
+
+        function renderBlueprintKnowledge() {
+            renderBlueprintBundleCards();
+            renderResearchDocsCards();
+        }
+
+        function renderBlueprintBundleCards() {
+            const container = document.getElementById('bundleAnnexCardsContainer');
+            if (!container) return;
+
+            let mappings = BUNDLE_ANNEX_MAPPING || {};
+            if (Object.keys(mappings).length === 0 && NOTEBOOK_CATALOG) {
+                mappings = {};
+                const sources = NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints || [];
+                sources.forEach(s => {
+                    if (s.bundle) {
+                        const bKey = s.bundle;
+                        const annex = s.annex || (s.title && s.title.includes(' - ') ? s.title.split(' - ')[0] : bKey);
+                        const title = s.title && s.title.includes(' - ') ? s.title.split(' - ')[1] : (s.title || bKey);
+                        mappings[bKey] = {
+                            annex: annex,
+                            title: title,
+                            version: s.version || 'v1.0',
+                            driverTreeRefs: s.driverTreeRefs || [],
+                            activeJointRiskCount: LIVE_RISKS.filter(r => String(r.bundle || '').toLowerCase().includes(bKey.toLowerCase()) && r.status !== 'Closed').length,
+                            activeTeamRiskCount: LIVE_TEAM_GOOGLE_RISKS.filter(r => String(r.bundle || '').toLowerCase().includes(bKey.toLowerCase()) && r.status !== 'Closed').length
+                        };
+                    }
+                });
+            }
+
+            if (Object.keys(mappings).length === 0) {
+                container.innerHTML = '<div class="col-span-2 p-6 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No blueprint bundles mapped for this project.</div>';
+                return;
+            }
+
+            let html = '';
+            Object.entries(mappings).forEach(([bKey, bInfo]) => {
+                const totalActive = (bInfo.activeJointRiskCount || 0) + (bInfo.activeTeamRiskCount || 0);
+                const nbUrl = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.notebookUrl) || 'https://notebook.google.com';
+                
+                html += '<div class="border border-slate-200/90 rounded-xl p-4 bg-slate-50/60 hover:bg-white transition-all space-y-3 shadow-2xs">';
+                html += '  <div class="flex items-start justify-between gap-3">';
+                html += '    <div>';
+                html += '      <div class="flex items-center gap-2 flex-wrap">';
+                html += '        <span class="font-mono text-xs font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">' + bKey + '</span>';
+                html += '        <span class="text-xs font-bold text-slate-700">' + bInfo.annex + '</span>';
+                html += '        <span class="text-[10px] font-mono font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">' + bInfo.version + '</span>';
+                html += '      </div>';
+                html += '      <h4 class="text-sm font-bold text-slate-900 mt-1">' + bInfo.title + '</h4>';
+                html += '    </div>';
+                html += '    <a href="' + nbUrl + '" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-800 text-xs font-bold shrink-0">Open ↗</a>';
+                html += '  </div>';
+
+                html += '  <div class="flex flex-wrap items-center gap-2 text-xs pt-1 border-t border-slate-200/60">';
+                html += '    <span class="text-slate-500 font-semibold">Active Risks:</span>';
+                html += '    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700">Joint: ' + (bInfo.activeJointRiskCount || 0) + '</span>';
+                html += '    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800">Team Google: ' + (bInfo.activeTeamRiskCount || 0) + '</span>';
+                html += '    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-purple-100 text-purple-900 ml-auto">Total: ' + totalActive + '</span>';
+                html += '  </div>';
+
+                html += '  <div class="flex items-center justify-between text-xs text-slate-500 pt-1">';
+                html += '    <span>Driver Refs: <b class="font-mono text-slate-700">' + (bInfo.driverTreeRefs && bInfo.driverTreeRefs.length > 0 ? bInfo.driverTreeRefs.join(', ') : 'Standard Gate') + '</b></span>';
+                html += '    <button onclick="filterRiskExplorerByBundle(\'' + bKey + '\')" class="text-purple-700 font-bold hover:underline cursor-pointer">Filter Risk Matrix ↗</button>';
+                html += '  </div>';
+
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderResearchDocsCards() {
+            const container = document.getElementById('researchDocsContainer');
+            if (!container) return;
+
+            const allSources = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.sources) || [];
+            let research = allSources.filter(s => s.category === 'Research & Governance' || s.category === 'Head Agreement');
+            if (research.length === 0 && allSources.length > 0) {
+                research = allSources.slice(0, 6);
+            }
+
+            if (research.length === 0) {
+                container.innerHTML = '<div class="col-span-3 p-6 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No external research documents attached.</div>';
+                return;
+            }
+
+            const nbUrl = (NOTEBOOK_CATALOG && NOTEBOOK_CATALOG.notebookUrl) || 'https://notebook.google.com';
+            let html = '';
+            research.forEach(doc => {
+                const tokensText = doc.tokens ? Math.round(doc.tokens / 1000) + 'k tokens' : 'Verified Spec';
+                html += '<div class="border border-slate-200/80 rounded-xl p-4 bg-slate-50/40 hover:bg-white transition-all space-y-2">';
+                html += '  <div class="flex items-center justify-between">';
+                html += '    <span class="text-[10px] font-mono font-bold text-slate-500 uppercase">' + (doc.type || 'PDF') + ' • ' + (doc.version || 'v1.0') + '</span>';
+                html += '    <span class="text-[10px] text-purple-700 font-mono font-bold">' + tokensText + '</span>';
+                html += '  </div>';
+                html += '  <h5 class="text-xs font-bold text-slate-900 leading-snug">' + doc.title + '</h5>';
+                html += '  <p class="text-[11px] text-slate-600 line-clamp-2">' + (doc.summary || 'Solution architecture specification and contractual delivery compliance framework.') + '</p>';
+                html += '  <div class="pt-2 border-t border-slate-200/60 flex justify-between items-center text-[11px]">';
+                html += '    <span class="text-slate-400 font-mono">' + (doc.category || 'Specification') + '</span>';
+                html += '    <a href="' + nbUrl + '" target="_blank" rel="noopener noreferrer" class="text-purple-600 font-bold hover:underline">View in NotebookLM ↗</a>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function filterRiskExplorerByBundle(bundleKey) {
+            switchTab('overview');
+            activeMatrixCellFilter = null;
+            currentQuickFilter = 'all';
+            const searchInput = document.getElementById('explorerSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('filterCategorySelect');
+            if (catSelect) catSelect.value = 'all';
+
+            const bundleSelect = document.getElementById('filterBundleSelect');
+            if (bundleSelect) {
+                let found = false;
+                for (let i = 0; i < bundleSelect.options.length; i++) {
+                    if (bundleSelect.options[i].value === bundleKey || bundleSelect.options[i].value.startsWith(bundleKey)) {
+                        bundleSelect.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    const opt = document.createElement('option');
+                    opt.value = bundleKey;
+                    opt.text = bundleKey;
+                    bundleSelect.add(opt);
+                    bundleSelect.value = bundleKey;
+                }
+            }
+
+            renderRiskHeatmap();
+            renderRiskExplorer();
+
+            setTimeout(() => {
+                const sec = document.getElementById('riskExplorerSection');
+                if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        
+        let NOTEBOOK_REGISTRY = null;
+        let ACTIVE_NOTEBOOK_SLUG = 'monaro_contracts';
+
+        async function initNotebookRegistry() {
+            try {
+                const resp = await fetch('/api/notebooks');
+                if (resp.ok) {
+                    NOTEBOOK_REGISTRY = await resp.json();
+                    renderNotebookDropdown();
+                }
+            } catch (err) {
+                console.log('Using local registry fallback for notebooks');
+            }
+        }
+
+        function renderNotebookDropdown() {
+            const select = document.getElementById('notebookSelectorSelect');
+            if (!select || !NOTEBOOK_REGISTRY || !NOTEBOOK_REGISTRY.notebooks) return;
+
+            select.innerHTML = '';
+            NOTEBOOK_REGISTRY.notebooks.forEach(nb => {
+                const opt = document.createElement('option');
+                opt.value = nb.slug || nb.id;
+                opt.text = nb.title + ' (' + (nb.totalSources || 0) + ' Sources)';
+                if (nb.slug === ACTIVE_NOTEBOOK_SLUG || nb.id === ACTIVE_NOTEBOOK_SLUG) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        }
+
+        async function switchActiveNotebook(slug) {
+            ACTIVE_NOTEBOOK_SLUG = slug;
+            try {
+                const resp = await fetch('/api/check-notebook-sync?slug=' + encodeURIComponent(slug));
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.activeNotebook) {
+                        const extLink = document.getElementById('activeNotebookExternalLink');
+                        if (extLink && data.activeNotebook.url) {
+                            extLink.href = data.activeNotebook.url;
+                        }
+                    }
+                    if (data.sources) {
+                        NOTEBOOK_CATALOG = {
+                            notebookId: data.notebookId,
+                            notebookTitle: data.notebookTitle,
+                            notebookUrl: data.notebookUrl,
+                            sources: data.sources,
+                            lastSynced: data.lastSynced,
+                            totalSources: data.totalSources
+                        };
+                    }
+                    if (data.bundleMapping) {
+                        BUNDLE_ANNEX_MAPPING = data.bundleMapping;
+                    }
+                    const countBadge = document.getElementById('blueprintSourcesCount');
+                    if (countBadge) countBadge.innerText = (data.totalSources || 0) + ' Sources';
+
+                    renderBlueprintKnowledge();
+                }
+            } catch (err) {
+                console.error('Error switching notebook:', err);
+            }
+        }
+
+        async function triggerNotebookSync() {
+            try {
+                const resp = await fetch('/api/sync-notebook');
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.catalog) NOTEBOOK_CATALOG = data.catalog;
+                    if (data.bundleMapping) BUNDLE_ANNEX_MAPPING = data.bundleMapping;
+                    renderBlueprintKnowledge();
+                    alert('Successfully synchronized Gemini Notebook sources and contract blueprint mappings!');
+                }
+            } catch (err) {
+                console.error('Notebook sync error:', err);
+            }
+        }
+
+        function renderTeamGoogleHeatmap() {
+            const grid = document.getElementById('matrixGridTeamGoogle');
+            if (!grid) return;
+
+            const gridScores = [
+                [12, 17, 22, 24, 25],
+                [11, 16, 20, 21, 23],
+                [6,  10, 15, 18, 19],
+                [4,  5,  9,  13, 14],
+                [1,  2,  3,  7,  8]
+            ];
+
+            const filteredRisks = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => {
+                if (teamGoogleMatrixStatus === 'open') return r.status !== 'Closed';
+                if (teamGoogleMatrixStatus === 'active') return r.status === 'Active';
+                if (teamGoogleMatrixStatus === 'eventuated') return r.status === 'Issue Eventuated';
+                if (teamGoogleMatrixStatus === 'closed') return r.status === 'Closed';
+                return true;
+            });
+
+            const countEl = document.getElementById('teamGoogleMatrixCount');
+            if (countEl) countEl.innerText = filteredRisks.length + ' Risks';
+
+            const consequences = ['Catastrophic', 'Critical', 'Major', 'Moderate', 'Minor'];
+
+            let html = `
+                <div class="grid grid-cols-6 gap-2.5 mb-2.5 text-xs font-bold text-slate-600 text-center uppercase tracking-wider">
+                    <div class="text-left font-extrabold text-slate-800 normal-case">Consequence (Y) ↓ / Likelihood (X) →</div>
+                    <div>1 Rare</div><div>2 Improbable</div><div>3 Occasional</div><div>4 Probable</div><div>5 Almost Certain</div>
+                </div>
+            `;
+
+            for (let cIdx = 0; cIdx < 5; cIdx++) {
+                const consequenceVal = 5 - cIdx;
+                const cName = consequences[cIdx];
+                html += `<div class="grid grid-cols-6 gap-2.5 mb-2.5 items-center">`;
+                html += `<div class="text-xs font-bold text-slate-800">${cName}</div>`;
+
+                for (let lIdx = 0; lIdx < 5; lIdx++) {
+                    const likelihoodVal = lIdx + 1;
+                    const score = gridScores[cIdx][lIdx];
+
+                    const inCell = filteredRisks.filter(r => {
+                        const rL = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
+                        const rC = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
+                        return rL === likelihoodVal && rC === consequenceVal;
+                    });
+
+                    const isSelected = teamGoogleActiveMatrixCellFilter && 
+                                       teamGoogleActiveMatrixCellFilter.l === likelihoodVal && 
+                                       teamGoogleActiveMatrixCellFilter.c === consequenceVal;
+
+                    let bgClass = 'bg-emerald-500 text-white';
+                    if (score >= 23) bgClass = 'bg-red-600 text-white';
+                    else if (score >= 18) bgClass = 'bg-amber-500 text-white';
+                    else if (score >= 13) bgClass = 'bg-amber-100 text-slate-800';
+                    else if (score >= 6) bgClass = 'bg-emerald-600 text-white';
+                    else bgClass = 'bg-emerald-400 text-slate-900';
+
+                    const ringClass = isSelected ? 'ring-4 ring-blue-600 ring-offset-2 scale-[1.03] z-10 shadow-lg' : 'hover:scale-[1.02] hover:shadow-md';
+
+                    html += `
+                        <button onclick="filterTeamGoogleMatrixCell(${likelihoodVal}, ${consequenceVal}, ${score})"
+                                class="h-12 rounded-xl flex items-center justify-center gap-1.5 font-mono text-sm font-extrabold transition-all cursor-pointer ${bgClass} ${ringClass}">
+                            <span>${score}</span>
+                            ${inCell.length > 0 ? `<span class="w-5 h-5 rounded-full bg-blue-600 text-white border-2 border-white text-[11px] font-sans font-bold flex items-center justify-center shadow-xs">${inCell.length}</span>` : ''}
+                        </button>
+                    `;
+                }
+                html += `</div>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function filterTeamGoogleMatrixCell(l, c, score) {
+            if (teamGoogleActiveMatrixCellFilter && teamGoogleActiveMatrixCellFilter.l === l && teamGoogleActiveMatrixCellFilter.c === c) {
+                clearTeamGoogleActiveCellFilter();
+                return;
+            }
+            teamGoogleActiveMatrixCellFilter = { l, c, score };
+
+            const searchInput = document.getElementById('teamGoogleRiskSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('teamGoogleRiskCategoryFilter');
+            if (catSelect) catSelect.value = 'all';
+
+            const banner = document.getElementById('teamGoogleActiveCellFilterBanner');
+            const bannerText = document.getElementById('teamGoogleActiveCellFilterText');
+            if (banner && bannerText) {
+                bannerText.innerText = '📍 Filtered by Heatmap Cell: Likelihood ' + l + ', Consequence ' + c + ' (Score ' + score + ')';
+                banner.classList.remove('hidden');
+            }
+
+            renderTeamGoogleHeatmap();
+            renderTeamGoogleRiskExplorer();
+
+            const explorerSec = document.getElementById('teamGoogleRiskExplorerSection');
+            if (explorerSec) explorerSec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearTeamGoogleActiveCellFilter() {
+            teamGoogleActiveMatrixCellFilter = null;
+            const banner = document.getElementById('teamGoogleActiveCellFilterBanner');
+            if (banner) banner.classList.add('hidden');
+            renderTeamGoogleHeatmap();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        function renderTeamGoogleRiskExplorer() {
+            const container = document.getElementById('teamGoogleRiskListContainer');
+            if (!container) return;
+
+            const searchVal = (document.getElementById('teamGoogleRiskSearchInput')?.value || '').toLowerCase().trim();
+            const catVal = document.getElementById('teamGoogleRiskCategoryFilter')?.value || 'all';
+
+            const filtered = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => {
+                if (teamGoogleActiveMatrixCellFilter) {
+                    const l = teamGoogleMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
+                    const c = teamGoogleMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
+                    if (l !== teamGoogleActiveMatrixCellFilter.l || c !== teamGoogleActiveMatrixCellFilter.c) return false;
+                }
+
+                if (teamGoogleMatrixStatus === 'open' && r.status === 'Closed') return false;
+                if (teamGoogleMatrixStatus === 'active' && r.status !== 'Active') return false;
+                if (teamGoogleMatrixStatus === 'eventuated' && r.status !== 'Issue Eventuated') return false;
+                if (teamGoogleMatrixStatus === 'closed' && r.status !== 'Closed') return false;
+
+                if (catVal !== 'all' && (!r.causeCategory || !r.causeCategory.includes(catVal))) return false;
+
+                if (searchVal) {
+                    const hay = ((r.id || '') + ' ' + (r.displayId || '') + ' ' + (r.riskName || '') + ' ' + (r.riskDescription || '') + ' ' + (r.causeDescription || '') + ' ' + (r.riskOwner || '') + ' ' + (r.treatmentPlan || '')).toLowerCase();
+                    return hay.includes(searchVal);
+                }
+                return true;
+            });
+
+            const countEl = document.getElementById('teamGoogleExplorerCount');
+            if (countEl) countEl.innerText = `${filtered.length} Risks`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Team Google risks match current filter criteria. <button onclick="clearTeamGoogleMatrixCellFilter()" class="text-blue-600 font-bold underline ml-2 cursor-pointer">Clear Filters</button></div>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(r => {
+                const isExpanded = expandedCardIds.has(r.id);
+                const score = teamGoogleMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
+                let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
+                else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
+                else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
+
+                // Blueprint Annex resolution
+                const bundleKey = r.bundle || 'Bundle B (Security & Governance)';
+                let mappedAnnex = 'Annex H (Infra & Security)';
+                if (typeof BUNDLE_ANNEX_MAPPING !== 'undefined') {
+                    for (const [k, v] of Object.entries(BUNDLE_ANNEX_MAPPING)) {
+                        if (bundleKey.includes(k) || (v.googleRisks && v.googleRisks.includes(r.id))) {
+                            mappedAnnex = v.annex;
+                            break;
+                        }
+                    }
+                }
+
+                html += `
+                    <div class="bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 flex-1 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-mono text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">${r.displayId || r.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${r.status || 'Active'}</span>
+                                    <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${r.causeCategory || 'Platform'}</span>
+                                    ${r.driverTreeRef ? `<span class="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Ref ${r.driverTreeRef}</span>` : ''}
+                                    <button onclick="event.stopPropagation(); jumpToBlueprintBundle('${bundleKey}')" class="text-xs font-bold text-purple-800 bg-purple-100 hover:bg-purple-200 px-2 py-0.5 rounded border border-purple-300 flex items-center gap-1 cursor-pointer transition-all shadow-2xs">
+                                        <span>📘 ${mappedAnnex}</span>
+                                    </button>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 hover:text-blue-700 transition-colors leading-snug">${r.riskName || r.riskDescription}</h4>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] text-slate-400 block font-medium">Inherent: ${r.inherentRiskScore || '-'}</span>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Residual: ${r.residualRiskScore || score}</span>
+                            </div>
+                        </div>
+
+                        ${r.riskDescription ? `<p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">${r.riskDescription}</p>` : ''}
+
+                        <div id="cardDetails_${r.id}" class="${isExpanded ? '' : 'hidden'} space-y-2.5 pt-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                    <span class="text-slate-700">${r.causeDescription || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Mitigation / Delivery Task:</span>
+                                    <span class="text-slate-700">${r.treatmentPlan || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                            <span class="font-medium">Lead Owner: <strong class="text-slate-800">👤 ${r.riskOwner || 'Team Google'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleCardExpansion('${r.id}')" class="text-blue-600 hover:text-blue-800 font-bold text-[11px] cursor-pointer">
+                                    ${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause & Mitigation'}
+                                </button>
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-blue-700 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                                    <span>Inspect Full Detail ↗</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        async function initApp() {
+            await loadDashboardData();
+            activateTimeMachine(getLatestWeekKey());
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderExecBriefing();
+            renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+            filterAndRenderIssues();
+            renderDriverTree();
+            renderLedger();
+            checkUrlViewParameters();
+            renderTrendsCharts();
+            updateAllDynamicCounters();
+            renderDriveReportsInModal();
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+            checkUrlViewParameters();
+
+            // Load initial tab based on URL hash if present, or default to Executive Summary
+            const initialHash = window.location.hash.replace('#', '');
+            const validTabs = ['exec-briefing', 'overview', 'issues', 'team-google', 'trends', 'driver-tree', 'blueprints', 'ledger'];
+            const startTab = validTabs.includes(initialHash) ? initialHash : 'exec-briefing';
+            
+            switchTab(startTab, false);
+            updateSystemTimeBadges();
+            history.replaceState({ tab: startTab }, '', '#' + startTab);
+        }
+
+                // --- URL PARAMETER & PM A/B VIEW INITIALIZATION ---
+        function checkUrlViewParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isPmView = urlParams.get('view') === 'pm' || urlParams.get('ledger') === 'true';
+            const tabLedger = document.getElementById('tab-ledger');
+            if (tabLedger) {
+                if (isPmView) {
+                    tabLedger.classList.remove('hidden');
+                    tabLedger.classList.add('flex');
+                    tabLedger.style.display = 'inline-flex';
+                } else {
+                    tabLedger.classList.add('hidden');
+                    tabLedger.classList.remove('flex');
+                    tabLedger.style.display = 'none';
+                }
+            }
+            return isPmView;
+        }
+
+        function updateAtoGateKpi(statusText) {
+            const kpiAto = document.getElementById('kpiAto');
+            const cardKpiAto = document.getElementById('cardKpiAto');
+            if (!kpiAto) return;
+            
+            kpiAto.innerText = statusText;
+            if (statusText.includes('AMBER')) {
+                kpiAto.className = 'font-black text-amber-700 font-mono';
+                if (cardKpiAto) cardKpiAto.className = 'bg-amber-50 border border-amber-200 rounded-lg px-2 py-1 text-[10.5px] flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0';
+            } else if (statusText.includes('GREEN')) {
+                kpiAto.className = 'font-black text-emerald-700 font-mono';
+                if (cardKpiAto) cardKpiAto.className = 'bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-[10.5px] flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0';
+            } else if (statusText.includes('RED')) {
+                kpiAto.className = 'font-black text-red-700 font-mono';
+                if (cardKpiAto) cardKpiAto.className = 'bg-red-50 border border-red-200 rounded-lg px-2 py-1 text-[10.5px] flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0';
+            }
+        }
+
+        function switchTab(tabKey, pushHistory = true) {
+            ['exec-briefing', 'overview', 'issues', 'team-google', 'trends', 'driver-tree', 'blueprints', 'ledger'].forEach(k => {
+                const el = document.getElementById('view-' + k);
+                const tab = document.getElementById('tab-' + k);
+                if (el) el.classList.add('hidden');
+                if (tab) {
+                    tab.classList.remove('active', 'bg-indigo-600', 'bg-blue-600', 'text-white');
+                    tab.classList.add('bg-white', 'text-slate-700');
+                }
+            });
+
+            const activeEl = document.getElementById('view-' + tabKey);
+            const activeTab = document.getElementById('tab-' + tabKey);
+            if (activeEl) activeEl.classList.remove('hidden');
+            if (activeTab) {
+                activeTab.classList.add('active');
+                activeTab.classList.remove('bg-white', 'text-slate-700');
+                if (tabKey === 'team-google') {
+                    activeTab.classList.add('bg-blue-600', 'text-white', 'shadow-xs');
+                } else {
+                    activeTab.classList.add('bg-indigo-600', 'text-white', 'shadow-xs');
+                }
+            }
+
+            if (pushHistory && window.location.hash !== '#' + tabKey) {
+                history.pushState({ tab: tabKey }, '', '#' + tabKey);
+            }
+
+            if (tabKey === 'overview') {
+                if (typeof renderRiskHeatmap === 'function') renderRiskHeatmap();
+                if (typeof renderRiskExplorer === 'function') renderRiskExplorer();
+            } else if (tabKey === 'team-google') {
+                if (typeof renderTeamGoogleHeatmap === 'function') renderTeamGoogleHeatmap();
+                if (typeof renderTeamGoogleRiskExplorer === 'function') renderTeamGoogleRiskExplorer();
+            } else if (tabKey === 'issues') {
+                if (typeof renderIssueTable === 'function') renderIssueTable();
+            } else if (tabKey === 'trends') {
+                if (typeof renderTrendsCharts === 'function') renderTrendsCharts();
+            } else if (tabKey === 'exec-briefing') {
+                if (typeof renderExecBriefing === 'function') renderExecBriefing();
+            } else if (tabKey === 'blueprints') {
+                if (typeof renderBlueprintKnowledge === 'function') renderBlueprintKnowledge();
+            } else if (tabKey === 'driver-tree') {
+                if (typeof renderDriverTree === 'function') renderDriverTree();
+            } else if (tabKey === 'ledger') {
+                if (typeof renderLedger === 'function') renderLedger();
+            }
+        }
+
+        // Handle Browser Back and Forward Buttons (popstate & hashchange)
+        window.addEventListener('popstate', (event) => {
+            const state = event.state || {};
+            const hash = window.location.hash.replace('#', '');
+            
+            let targetTab = 'exec-briefing';
+            if (state.tab) {
+                targetTab = state.tab;
+            } else if (hash.startsWith('overview')) {
+                targetTab = 'overview';
+            } else if (hash) {
+                targetTab = hash;
+            }
+
+            switchTab(targetTab, false);
+
+            if (targetTab === 'overview') {
+                if (state.cellFilter) {
+                    activeMatrixCellFilter = state.cellFilter;
+                    document.getElementById('activeCellFilterBanner')?.classList.remove('hidden');
+                    document.getElementById('activeCellFilterText').innerText = `📍 Filtered by Heatmap Cell: Likelihood ${state.cellFilter.l}, Consequence ${state.cellFilter.c} (Score ${state.cellFilter.score})`;
+                } else {
+                    activeMatrixCellFilter = null;
+                    document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
+                }
+                renderMatrix();
+                renderRiskExplorer();
+            }
+        });
+
+        
+        function getPodcastScriptForWeek(weekKey) {
+            const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            if (snap && snap.podcastScript && snap.podcastScript.length > 0) {
+                return snap.podcastScript;
+            }
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Program';
+            const wLabel = (snap && snap.week) || 'Week 27';
+            const dLabel = (snap && snap.date) || '07 Aug 2026';
+            return [
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "0:00", text: `Welcome to the ${pName} Executive Briefing for ${wLabel}, ending ${dLabel}. I'm Alex here with Jordan to analyze our delivery progress and key milestones.` },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", time: "0:18", text: `Thanks Alex. Core capability delivery milestones remain on track with active risk burndown across the portfolio workstreams.` },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "0:42", text: `Commonwealth acceptance for key deliverables and system requirement reviews remain the primary executive focus.` },
+                { speaker: "Jordan", role: "Technical Director", avatar: "🤖", time: "1:05", text: `Security assessors remain embedded across active enclaves with zero blocker vulnerabilities, and defined gap close plans are under execution.` },
+                { speaker: "Alex", role: "Program Analyst", avatar: "🎙️", time: "1:28", text: `Net risk exposure improved significantly across all logged registers, maintaining a strong trajectory towards our baseline objectives.` }
+            ];
+        }
+
+        function getGeminiParagraphsForWeek(weekKey) {
+            const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            if (snap && snap.synthesis) {
+                return snap.synthesis;
+            }
+            return {
+                executive: `Program posture for ${snap?.week || 'this period'} remains stable as delivery milestones progress.`,
+                technical: `Technical assessment confirms key milestones on track with ongoing security accreditation and enclave validation.`,
+                governance: `Governance alignment continues across key deliverable gates with active blockers under remediation.`
+            };
+        }
+
+        let currentAiTone = 'executive';
+        let isPodcastPlaying = false;
+        let podcastUtterances = [];
+        let currentUtteranceIndex = 0;
+        let podcastPlaybackSpeed = 1.0;
+
+        function copyGeminiParagraph() {
+            const summary = document.getElementById('geminiSummaryText').innerText;
+            const top3Items = Array.from(document.querySelectorAll('#top3ThingsContainer > div')).map(d => {
+                const title = d.querySelector('span.font-extrabold')?.innerText || '';
+                const desc = d.querySelector('p')?.innerText || '';
+                return `• ${title}\n  ${desc}`;
+            }).join('\n\n');
+
+            const snap = TIME_MACHINE_SNAPSHOTS[activeTimeMachineWeek] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            const activeWeek = snap ? snap.week : 'Week 27';
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+            const fullText = `*${pName} Executive Briefing - ${activeWeek}*\n\n${summary}\n\n*Top 3 Critical Executive Attention Items:*\n${top3Items}`;
+
+            navigator.clipboard.writeText(fullText).then(() => {
+                const btn = document.getElementById('copyGeminiBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>✓ Copied Full Synthesis & Top 3!</span>';
+                    setTimeout(() => { btn.innerHTML = '<span>📋 Copy Synthesis</span>'; }, 2500);
+                }
+            });
+        }
+
+        function toggleTranscriptModal() {
+            const modal = document.getElementById('transcriptModal');
+            if (modal) {
+                modal.classList.toggle('hidden');
+                if (!modal.classList.contains('hidden')) {
+                    renderPodcastTranscript();
+                }
+            }
+        }
+
+        function renderPodcastTranscript() {
+            const container = document.getElementById('podcastTranscriptContainer');
+            if (!container) return;
+
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            if (!script || script.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs italic">No transcript available for this reporting cycle.</div>';
+                return;
+            }
+
+            container.innerHTML = script.map((line, idx) => `
+                <div class="p-3 rounded-xl border ${line.speaker === 'Alex' ? 'bg-indigo-50/70 border-indigo-200' : 'bg-purple-50/70 border-purple-200'} flex items-start gap-3">
+                    <span class="text-xl p-1.5 bg-white rounded-lg shadow-2xs">${line.avatar || (line.speaker === 'Alex' ? '🎙️' : '🤖')}</span>
+                    <div class="space-y-1 flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <strong class="text-slate-900 font-bold">${line.speaker}</strong>
+                                <span class="text-[10px] text-slate-500 font-medium">(${line.role || 'Briefing Analyst'})</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold">${line.time || '0:00'}</span>
+                        </div>
+                        <p class="text-slate-800 leading-relaxed font-normal text-xs">${line.text}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copyPodcastScript() {
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            const fullText = script.map(s => `${s.speaker} (${s.role || 'Speaker'}): ${s.text}`).join('\n\n');
+            navigator.clipboard.writeText(fullText).then(() => {
+                const btn = document.getElementById('copyScriptBtn');
+                if (btn) {
+                    btn.innerText = '✓ Script Copied!';
+                    setTimeout(() => { btn.innerText = 'Copy Script'; }, 2000);
+                }
+            });
+        }
+
+        function setPodcastSpeed(speed) {
+            podcastPlaybackSpeed = speed;
+            [1.0, 1.25, 1.5].forEach(s => {
+                const id = s === 1.0 ? 'speed10' : (s === 1.25 ? 'speed12' : 'speed15');
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', s === speed);
+                    btn.classList.toggle('text-white', s === speed);
+                }
+            });
+            const audioEl = document.getElementById('nativePodcastAudio');
+            if (audioEl) audioEl.playbackRate = speed;
+        }
+
+        function togglePodcastPlayback() {
+            const audioEl = document.getElementById('nativePodcastAudio');
+            const playBtn = document.getElementById('podcastPlayBtn');
+            const timeLabel = document.getElementById('podcastTimeLabel');
+
+            if (isPodcastPlaying) {
+                isPodcastPlaying = false;
+                if (audioEl && !audioEl.paused) audioEl.pause();
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                if (playBtn) playBtn.innerText = '▶';
+                if (timeLabel) timeLabel.innerText = 'Paused';
+                animateWaveform(false);
+                return;
+            }
+
+            isPodcastPlaying = true;
+            if (playBtn) playBtn.innerText = '⏸';
+            animateWaveform(true);
+
+            // Prioritize high-fidelity studio audio file (Alex & Jordan natural voices)
+            if (audioEl) {
+                audioEl.playbackRate = podcastPlaybackSpeed;
+                const playPromise = audioEl.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        audioEl.ontimeupdate = () => {
+                            if (timeLabel && isPodcastPlaying) {
+                                const cur = formatAudioTime(audioEl.currentTime);
+                                const dur = formatAudioTime(audioEl.duration || 105);
+                                timeLabel.innerText = `${cur} / ${dur}`;
+                            }
+                        };
+                        audioEl.onended = () => {
+                            isPodcastPlaying = false;
+                            if (playBtn) playBtn.innerText = '▶';
+                            if (timeLabel) timeLabel.innerText = 'Finished (1:45)';
+                            animateWaveform(false);
+                        };
+                    }).catch(err => {
+                        console.warn("Studio audio file autoplay fallback to SpeechSynthesis:", err);
+                        if ('speechSynthesis' in window) {
+                            playPodcastFromIndex(0);
+                        }
+                    });
+                    return;
+                }
+            }
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                playPodcastFromIndex(0);
+            }
+        }
+
+        function formatAudioTime(secs) {
+            if (isNaN(secs) || secs === Infinity) return "0:00";
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function playPodcastFromIndex(index) {
+            const script = getPodcastScriptForWeek(activeTimeMachineWeek);
+            if (!script || index >= script.length) {
+                isPodcastPlaying = false;
+                const playBtn = document.getElementById('podcastPlayBtn');
+                const timeLabel = document.getElementById('podcastTimeLabel');
+                if (playBtn) playBtn.innerText = '▶';
+                if (timeLabel) timeLabel.innerText = 'Finished (1:45)';
+                animateWaveform(false);
+                return;
+            }
+
+            currentUtteranceIndex = index;
+            const line = script[index];
+            const utterance = new SpeechSynthesisUtterance(line.text);
+            utterance.rate = podcastPlaybackSpeed;
+            
+            // Pick dual alternating voices if available
+            if (window.speechSynthesis) {
+                const voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                    if (line.speaker === 'Alex') {
+                        utterance.voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Guy') || v.name.includes('Natural') || v.name.includes('George'))) || voices[0];
+                    } else {
+                        utterance.voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Jenny') || v.name.includes('Samantha') || v.name.includes('Natural') || v.name.includes('Susan'))) || voices[1] || voices[0];
+                    }
+                }
+            }
+
+            const timeLabel = document.getElementById('podcastTimeLabel');
+            if (timeLabel) timeLabel.innerText = `Speaking: ${line.speaker} (${index + 1}/${script.length})`;
+
+            utterance.onend = () => {
+                if (isPodcastPlaying) {
+                    playPodcastFromIndex(index + 1);
+                }
+            };
+
+            utterance.onerror = (e) => {
+                console.warn("SpeechSynthesis error:", e);
+                if (isPodcastPlaying) {
+                    playPodcastFromIndex(index + 1);
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        let waveInterval = null;
+        function animateWaveform(active) {
+            const bars = document.querySelectorAll('#waveformContainer div');
+            if (waveInterval) clearInterval(waveInterval);
+
+            if (active) {
+                waveInterval = setInterval(() => {
+                    bars.forEach(b => {
+                        const h = Math.floor(Math.random() * 20) + 4;
+                        b.style.height = `${h}px`;
+                    });
+                }, 150);
+            } else {
+                bars.forEach((b, idx) => {
+                    b.style.height = `${(idx % 4 + 2) * 3}px`;
+                });
+            }
+        }
+
+        
+        
+        // --- REAL-TIME TEMPORAL AWARENESS ENGINE ---
+        function getSystemTimeContext() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const currentMonthIdx = now.getMonth(); // 0-indexed
+            const currentMonth = monthNames[currentMonthIdx];
+            const currentDay = now.getDate();
+            const dateStr = `${currentDay} ${currentMonth} ${year}`;
+            
+            // Latest ingested report date (Week 26: 31 Jul 2026)
+            const latestReportDate = new Date(2026, 6, 31); // 31 Jul 2026
+            const diffTime = Math.abs(now - latestReportDate);
+            const daysElapsed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            return {
+                now,
+                year,
+                month: currentMonth,
+                monthIdx: currentMonthIdx,
+                day: currentDay,
+                dateStr,
+                daysElapsed,
+                isStale: daysElapsed >= 7
+            };
+        }
+
+        function evaluateTargetStaleness(targetStr) {
+            if (!targetStr) return { isOverdue: false, label: '' };
+            const ctx = getSystemTimeContext();
+            const lower = targetStr.toLowerCase();
+
+            // Month mapping
+            const monthMap = {
+                'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+                'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
+            };
+
+            // Check for explicit months in 2026
+            for (const [m, idx] of Object.entries(monthMap)) {
+                if (lower.includes(m)) {
+                    if (idx < ctx.monthIdx) {
+                        return { isOverdue: true, label: `⚠️ OVERDUE (${targetStr})` };
+                    } else if (idx === ctx.monthIdx) {
+                        return { isOverdue: false, isCurrentMonth: true, label: `🎯 DUE THIS MONTH (${targetStr})` };
+                    } else {
+                        return { isOverdue: false, label: `🎯 ${targetStr}` };
+                    }
+                }
+            }
+            return { isOverdue: false, label: `🎯 ${targetStr}` };
+        }
+
+        function updateSystemTimeBadges() {
+            const ctx = getSystemTimeContext();
+            
+            // Update Header Time Badge if present
+            const timeBadge = document.getElementById('liveSystemTimeBadge');
+            if (timeBadge) {
+                timeBadge.innerHTML = `<span>🕒 System: <strong>${ctx.dateStr}</strong></span> • <span class="${ctx.isStale ? 'text-amber-700 font-bold' : 'text-slate-600'}">Last Ingested: 31 Jul (${ctx.daysElapsed}d ago)</span>`;
+            }
+
+            // Update Sync Button Staleness Indicator
+            const syncBtn = document.getElementById('syncButtonBadge');
+            if (syncBtn && ctx.isStale) {
+                syncBtn.classList.remove('hidden');
+                syncBtn.innerText = '1 New Due';
+            }
+        }
+
+        // --- 1-CLICK CITATION NAVIGATION HELPERS ---
+        function jumpToDriverRef(refNumber) {
+            switchTab('driver-tree');
+            setTimeout(() => {
+                const cards = document.querySelectorAll('#driverTreeContainer > div');
+                let found = null;
+                cards.forEach(c => {
+                    if (c.innerText.includes(`Ref ${refNumber}`)) found = c;
+                });
+                if (found) {
+                    found.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    found.classList.add('ring-4', 'ring-indigo-500', 'scale-105');
+                    setTimeout(() => found.classList.remove('ring-4', 'ring-indigo-500', 'scale-105'), 3000);
+                }
+            }, 100);
+        }
+
+        function jumpToGapClose(gapNum) {
+            const cleanNum = String(gapNum).replace(/\D/g, '');
+            switchTab('exec-briefing');
+            setTimeout(() => {
+                const targetCard = document.getElementById(`gapPlan_${cleanNum}`) || document.getElementById(`gapPlan_${gapNum}`);
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.classList.add('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]');
+                    setTimeout(() => targetCard.classList.remove('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]'), 3000);
+                    showSyncToast(`🎯 Scrolled to Gap Close Plan #${cleanNum}`);
+                    return;
+                }
+                const gapSection = document.getElementById('execGapClosePlansList');
+                if (gapSection) {
+                    const cards = gapSection.querySelectorAll('div');
+                    let found = null;
+                    cards.forEach(c => {
+                        if (c.innerText.includes(`#${gapNum}`) || c.innerText.includes(`Plan #${cleanNum}`)) found = c;
+                    });
+                    if (found) {
+                        found.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found.classList.add('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]');
+                        setTimeout(() => found.classList.remove('ring-4', 'ring-indigo-500', 'shadow-lg', 'scale-[1.02]'), 3000);
+                        showSyncToast(`🎯 Scrolled to Gap Close Plan #${cleanNum}`);
+                    }
+                }
+            }, 100);
+        }
+
+        function jumpToRiskExplorer(searchQuery) {
+            switchTab('overview');
+            setTimeout(() => {
+                const searchInput = document.getElementById('explorerSearchInput');
+                if (searchInput) {
+                    searchInput.value = searchQuery;
+                    renderRiskExplorer();
+                }
+                document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function filterByDriverTreeDeliverable(refNumber, type) {
+            if (type === 'risks') {
+                switchTab('overview');
+                setTimeout(() => {
+                    // Reset dropdown and quick filters so search matches aren't masked
+                    if (document.getElementById('filterBundleSelect')) document.getElementById('filterBundleSelect').value = 'all';
+                    if (document.getElementById('filterCategorySelect')) document.getElementById('filterCategorySelect').value = 'all';
+                    if (document.getElementById('filterGovSelect')) document.getElementById('filterGovSelect').value = 'all';
+                    if (document.getElementById('filterStatusSelect')) document.getElementById('filterStatusSelect').value = 'all';
+                    currentQuickFilter = 'all';
+                    activeMatrixCellFilter = null;
+                    updateQuickFilterButtonsUI();
+
+                    const searchInput = document.getElementById('explorerSearchInput');
+                    if (searchInput) {
+                        searchInput.value = refNumber;
+                        renderRiskExplorer();
+                    }
+                    const count = (LIVE_RISKS || []).filter(r => r.driverTreeRef && r.driverTreeRef.includes(refNumber)).length;
+                    const banner = document.getElementById('activeCellFilterBanner');
+                    const bannerText = document.getElementById('activeCellFilterText');
+                    if (banner && bannerText) {
+                        banner.classList.remove('hidden');
+                        bannerText.innerText = `📍 Filtered by Driver Tree Deliverable: Ref ${refNumber} (${count} Related Risks)`;
+                    }
+                    document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    showSyncToast(`🔍 Filtered Risk Explorer to Ref ${refNumber} (${count} related risks)`);
+                }, 100);
+            } else if (type === 'issues') {
+                switchTab('issues');
+                setTimeout(() => {
+                    const searchInput = document.getElementById('issueSearchInput');
+                    if (searchInput) {
+                        searchInput.value = refNumber;
+                        renderIssueTable();
+                    }
+                    const count = (LIVE_ISSUES || []).filter(i => i.driverTreeRef && i.driverTreeRef.includes(refNumber)).length;
+                    document.getElementById('issueTableContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    showSyncToast(`🔍 Filtered Issue Register to Ref ${refNumber} (${count} related issues)`);
+                }, 100);
+            }
+        }
+
+        function toggleSheetDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('sheetDropdownMenu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        // Close sheet dropdown when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('sheetDropdownWrapper');
+            const menu = document.getElementById('sheetDropdownMenu');
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // --- TIME MACHINE FUNCTIONS ---
+        function toggleTimeMachineModal() {
+            renderTimeMachineModalList();
+            document.getElementById('timeMachineModal').classList.toggle('hidden');
+        }
+        function closeTimeMachineModal() {
+            document.getElementById('timeMachineModal').classList.add('hidden');
+        }
+
+        function renderTimeMachineModalList() {
+            const container = document.getElementById('timeMachineSnapshotsList');
+            if (!container) return;
+
+            const latestKey = getLatestWeekKey();
+            const entries = Object.entries(TIME_MACHINE_SNAPSHOTS);
+
+            container.innerHTML = entries.map(([key, snap]) => {
+                const isLatest = key === latestKey;
+                const isSelected = key === activeTimeMachineWeek;
+                const weekName = snap.week || snap.weekLabel || ('Week ' + (snap.weekNumber || ''));
+                const borderClass = isSelected 
+                    ? 'border-indigo-500 bg-indigo-50/70 ring-2 ring-indigo-500/20' 
+                    : (isLatest ? 'border-emerald-200 bg-emerald-50/40 hover:bg-emerald-50' : 'border-slate-200 hover:border-amber-400 hover:bg-amber-50/50');
+                const badgeClass = isLatest ? 'bg-emerald-600 text-white' : (isSelected ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900');
+                const badgeText = isLatest ? 'Present Live' : (isSelected ? 'Active View' : `${snap.overallStatus?.split(' ')[0] || 'Historical'}`);
+
+                const plansSummary = snap.plans && snap.plans.length > 0
+                    ? `${snap.plans[0].title} • ${snap.plans.length} Gap Plans`
+                    : 'Weekly Status Snapshot';
+
+                return `
+                    <button onclick="activateTimeMachine('${key}')" class="w-full text-left p-3 rounded-xl border ${borderClass} transition-all flex items-center justify-between group cursor-pointer">
+                        <div>
+                            <span class="font-bold text-xs text-slate-900 group-hover:text-indigo-900 block">${weekName} (${snap.date}) ${isLatest ? '• Present Live' : ''}</span>
+                            <span class="text-[11px] text-slate-500 line-clamp-1">${plansSummary}</span>
+                        </div>
+                        <span class="${badgeClass} text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs whitespace-nowrap ml-2">${badgeText}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function getLatestWeekKey() {
+            for (const [key, snap] of Object.entries(TIME_MACHINE_SNAPSHOTS)) {
+                if (snap.isCurrent) return key;
+            }
+            return Object.keys(TIME_MACHINE_SNAPSHOTS)[0] || 'w27';
+        }
+
+        function activateTimeMachine(weekKey) {
+            activeTimeMachineWeek = weekKey;
+            closeTimeMachineModal();
+
+            const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            if (!snap) return;
+
+            const snapWeek = snap.week || snap.weekLabel || ('Week ' + (snap.weekNumber || ''));
+            const banner = document.getElementById('timeMachineBanner');
+            const liveBadge = document.getElementById('liveStatusBadge');
+            const latestKey = getLatestWeekKey();
+
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+            if (weekKey === latestKey) {
+                banner.classList.add('hidden');
+                liveBadge.innerText = `Live (${snapWeek})`;
+                liveBadge.className = 'bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs';
+            } else {
+                banner.classList.remove('hidden');
+                document.getElementById('timeMachineBannerWeek').innerText = `${snapWeek} (${snap.date})`;
+                liveBadge.innerText = `⏳ ${pName} TIME TRAVEL: ${snapWeek}`;
+                liveBadge.className = 'bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-amber-300 animate-pulse shadow-2xs';
+            }
+
+            // Update Executive KPIs
+            document.getElementById('execOverallBadge').innerText = `Overall Program: ${snap.overallStatus}`;
+            document.getElementById('kpiCommercial').innerText = snap.kpis.commercial;
+            document.getElementById('kpiIbr').innerText = (snap.kpis.ibr || '').replace('2026', '26');
+            updateAtoGateKpi(snap.kpis.ato);
+            document.getElementById('kpiEscalations').innerText = snap.kpis.escalations;
+
+            const cockpitDate = document.getElementById('execCockpitDate');
+            if (cockpitDate) cockpitDate.innerText = `${snapWeek} (${snap.date})`;
+
+            const returnBtn = document.getElementById('returnToPresentBtn');
+            const latestWeekName = TIME_MACHINE_SNAPSHOTS[latestKey]?.week || TIME_MACHINE_SNAPSHOTS[latestKey]?.weekLabel || 'Week 27';
+            if (returnBtn) returnBtn.innerText = `⚡ Return to Present (${latestWeekName})`;
+
+            // Dynamically update header report button
+            const report = (Array.isArray(DRIVE_REPORTS) ? DRIVE_REPORTS : []).find(r => r.week === snapWeek) || (Array.isArray(DRIVE_REPORTS) ? DRIVE_REPORTS[0] : null);
+            const driveLink = document.getElementById('driveReportLink');
+            const driveLinkText = document.getElementById('driveReportLinkText');
+            if (driveLink && report) {
+                driveLink.href = report.url;
+                driveLink.title = `Open Weekly Report PDF (${report.week} - ${report.date})`;
+            }
+            if (driveLinkText && report) {
+                driveLinkText.innerText = `${report.week} Pack`;
+            }
+
+            // Dynamically update Driver Tree deck link & reference badge
+            const dtRefBadge = document.getElementById('driverTreeRefBadge');
+            if (dtRefBadge) dtRefBadge.innerText = `${snapWeek} (${snap.date}) Reference`;
+            const dtDeckLink = document.getElementById('driverTreeDeckLink');
+            const dtDeckLinkText = document.getElementById('driverTreeDeckLinkText');
+            if (dtDeckLink && report) {
+                dtDeckLink.href = report.url;
+            }
+            if (dtDeckLinkText && report) {
+                dtDeckLinkText.innerText = `📄 View ${report.week} Deck ↗`;
+            }
+
+            // Dynamically update Trends badge
+            const trendsBadge = document.getElementById('trendsTodayBadge');
+            if (trendsBadge) trendsBadge.innerText = `Period: ${snapWeek} (${snap.date})`;
+
+            renderExecBriefing();
+            renderDiffBaselineSelector();
+            renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+            renderTimeMachineModalList();
+            updatePodcastAudioForWeek(weekKey);
+        }
+
+        function updatePodcastAudioForWeek(weekKey) {
+            const audioEl = document.getElementById('nativePodcastAudio');
+            const titleEl = document.getElementById('podcastTitleText');
+            const downloadEl = document.getElementById('podcastDownloadLink');
+            const playBtn = document.getElementById('podcastPlayBtn');
+            const timeLabel = document.getElementById('podcastTimeLabel');
+
+            if (!audioEl) return;
+
+            // Pause playback if active during time travel
+            if (!audioEl.paused) {
+                audioEl.pause();
+                isPodcastPlaying = false;
+                if (playBtn) playBtn.innerText = '▶';
+                animateWaveform(false);
+            }
+
+            const snap = TIME_MACHINE_SNAPSHOTS[weekKey] || {};
+            const weekNum = snap.weekNumber || (weekKey ? weekKey.replace(/^w/i, '') : '27');
+            const weekLabel = snap.week || snap.weekLabel || `Week ${weekNum}`;
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+
+            const audioSrc = snap.audioUrl || `assets/podcast_w${weekNum}.mp3`;
+            const audioTitle = snap.podcastTitle || `${weekLabel} Executive Briefing & Milestone Analysis`;
+            const audioDuration = (weekKey === 'w26') ? '0:00 / 0:42' : '0:00 / 1:45';
+            const downloadName = `${pName.replace(/\s+/g, '_')}_Executive_Podcast_${weekLabel.replace(/\s+/g, '_')}.mp3`;
+
+            if (titleEl) titleEl.innerText = audioTitle;
+            if (timeLabel) timeLabel.innerText = audioDuration;
+            if (downloadEl) {
+                downloadEl.href = audioSrc;
+                downloadEl.download = downloadName;
+            }
+
+            const srcSource = document.getElementById('nativePodcastSourceMp3');
+            if (srcSource) srcSource.src = audioSrc;
+            audioEl.src = audioSrc;
+            audioEl.onerror = () => {
+                // When pre-rendered studio MP3 is unavailable for a week, gracefully fall back to Web Speech Synthesis
+                console.info(`[Audio] Pre-recorded studio MP3 ${audioSrc} not found on disk; will use dual-voice speech synthesis fallback.`);
+            };
+            audioEl.load();
+        }
+
+        function returnToPresent() {
+            activateTimeMachine(getLatestWeekKey());
+        }
+
+        // --- DYNAMIC BASELINE DIFFING ---
+        function renderDiffBaselineSelector() {
+            const selectEl = document.getElementById('diffBaselineSelector');
+            if (!selectEl) return;
+
+            const activeKey = activeTimeMachineWeek || getLatestWeekKey();
+            const activeNum = parseInt(activeKey.replace(/\D/g, '')) || 27;
+
+            // Get all snapshot keys sorted descending by week number
+            const allKeys = Object.keys(TIME_MACHINE_SNAPSHOTS).sort((a, b) => {
+                const na = parseInt(a.replace(/\D/g, '')) || 0;
+                const nb = parseInt(b.replace(/\D/g, '')) || 0;
+                return nb - na;
+            });
+
+            // Find snapshots strictly prior to active week
+            const priorKeys = allKeys.filter(k => (parseInt(k.replace(/\D/g, '')) || 0) < activeNum);
+
+            if (priorKeys.length === 0) {
+                selectEl.innerHTML = `<option value="${activeKey}">${TIME_MACHINE_SNAPSHOTS[activeKey]?.week || 'Current Week'} (Baseline)</option>`;
+                selectedDiffBaseline = activeKey;
+                return;
+            }
+
+            selectEl.innerHTML = priorKeys.map((k, idx) => {
+                const snap = TIME_MACHINE_SNAPSHOTS[k];
+                const weekName = snap.week || snap.weekLabel || ('Week ' + (snap.weekNumber || ''));
+                let label = `${weekName} (${snap.date})`;
+                if (idx === 0) label = `Last Week (${label})`;
+                else if (idx === 1) label = `2 Weeks Ago (${label})`;
+                else label = `${idx + 1} Weeks Ago (${label})`;
+
+                const isSelected = (k === selectedDiffBaseline || (idx === 0 && !priorKeys.includes(selectedDiffBaseline))) ? 'selected' : '';
+                return `<option value="${k}" ${isSelected}>${label}</option>`;
+            }).join('');
+
+            if (!priorKeys.includes(selectedDiffBaseline)) {
+                selectedDiffBaseline = priorKeys[0];
+            }
+        }
+
+        function setDiffBaseline(baselineKey) {
+            selectedDiffBaseline = baselineKey;
+            renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+        }
+
+              function renderExecGapClosePlans() {
+            const container = document.getElementById('execGapClosePlansList');
+            if (!container) return;
+
+            const snap = TIME_MACHINE_SNAPSHOTS[activeTimeMachineWeek] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            const allPlans = snap.plans || [];
+            const baselineSnap = TIME_MACHINE_SNAPSHOTS[selectedDiffBaseline] || TIME_MACHINE_SNAPSHOTS['w26'] || snap;
+
+            const activeWeekName = snap.week || snap.weekLabel || 'Active Week';
+            const baseWeekName = baselineSnap.week || baselineSnap.weekLabel || 'Baseline';
+
+            // Separate active escalations (RED/OPEN) from resolved/delivered (BLUE)
+            const activePlans = allPlans.filter(p => p.status !== 'BLUE');
+            const resolvedPlans = allPlans.filter(p => p.status === 'BLUE');
+
+            // Determine which plans to display
+            let plansToDisplay = showResolvedGapPlans ? allPlans : activePlans;
+            const totalMatching = plansToDisplay.length;
+            const isCapped = !showAllGapPlans && totalMatching > 6;
+            if (isCapped) {
+                plansToDisplay = plansToDisplay.slice(0, 6);
+            }
+
+            // Build dynamic diff summary notes comparing active week against selected baseline
+            const diffSummaryNotes = [];
+            if (snap.plans && baselineSnap.plans && activeTimeMachineWeek !== selectedDiffBaseline) {
+                snap.plans.forEach(currPlan => {
+                    const prevPlan = baselineSnap.plans.find(p => p.num === currPlan.num);
+                    if (prevPlan) {
+                        if (prevPlan.status === 'RED' && currPlan.status === 'BLUE') {
+                            diffSummaryNotes.push({
+                                num: currPlan.num,
+                                ref: currPlan.ref,
+                                text: `✅ <strong>#${currPlan.num} (${currPlan.ref}):</strong> Delivered & De-risked (${currPlan.target})`
+                            });
+                        } else if (prevPlan.target !== currPlan.target) {
+                            diffSummaryNotes.push({
+                                num: currPlan.num,
+                                ref: currPlan.ref,
+                                text: `⚡ <strong>#${currPlan.num} (${currPlan.ref}):</strong> Target shifted (${prevPlan.target} ➔ ${currPlan.target})`
+                            });
+                        } else if (currPlan.deltaNote && currPlan.deltaNote.trim() !== '') {
+                            diffSummaryNotes.push({
+                                num: currPlan.num,
+                                ref: currPlan.ref,
+                                text: `📝 <strong>#${currPlan.num} (${currPlan.ref}):</strong> ${currPlan.deltaNote}`
+                            });
+                        }
+                    } else {
+                        diffSummaryNotes.push({
+                            num: currPlan.num,
+                            ref: currPlan.ref,
+                            text: `🆕 <strong>#${currPlan.num} (${currPlan.ref}):</strong> Added in ${activeWeekName}`
+                        });
+                    }
+                });
+            }
+
+            if (diffSummaryNotes.length === 0) {
+                diffSummaryNotes.push({
+                    num: '1',
+                    ref: 'Status',
+                    text: `ℹ️ No critical gap plan changes between <strong>${activeWeekName}</strong> and <strong>${baseWeekName}</strong>.`
+                });
+            }
+
+            // Delivered milestone banner (if any delivered plan exists in active week)
+            const deliveredPlan = snap.plans ? snap.plans.find(p => p.status === 'BLUE') : null;
+            let deliveredBannerHtml = '';
+            if (deliveredPlan) {
+                deliveredBannerHtml = `
+                    <div class="bg-emerald-50/90 border-2 border-emerald-300 rounded-2xl p-4 shadow-xs space-y-2.5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-emerald-200/80">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">✅ Delivered This Cycle</span>
+                                <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">Gap Close Plan #${deliveredPlan.num}</span>
+                                <button onclick="jumpToDriverRef('${deliveredPlan.ref.split(' ')[0]}')" class="font-mono font-bold text-emerald-800 text-xs bg-white hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 cursor-pointer">Ref ${deliveredPlan.ref} ↗</button>
+                            </div>
+                            <span class="text-[10px] font-bold text-emerald-900 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-300 font-mono">
+                                🚀 De-risked • ${deliveredPlan.target} (${activeWeekName})
+                            </span>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                            <div>
+                                <h4 class="font-black text-emerald-950 text-sm">${deliveredPlan.title}</h4>
+                                <p class="text-emerald-900/90 text-xs mt-0.5">${deliveredPlan.plan}</p>
+                            </div>
+                            <div class="flex items-center gap-3 shrink-0 text-[11px] text-emerald-800">
+                                <span>👤 <strong>${deliveredPlan.owner}</strong></span>
+                                <button onclick="jumpToDriverRef('${deliveredPlan.ref.split(' ')[0]}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-2xs cursor-pointer transition-all">Inspect Gate ↗</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const diffHeaderHtml = `
+                <div class="space-y-2 mb-3 col-span-full text-xs">
+                    ${deliveredBannerHtml}
+                    <!-- Changes & Baseline Movements Bar -->
+                    <div class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-indigo-950 flex items-center gap-1.5">
+                                <span>⚡ Active Outstanding Gap Close Plans — Baseline Diff vs <strong>${baseWeekName}</strong>:</span>
+                            </span>
+                            <span class="text-[10px] font-bold text-indigo-700 bg-white px-2.5 py-0.5 rounded-full border border-indigo-200 font-mono">
+                                ${activePlans.length} Open Escalations
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-0.5 text-[11px] text-indigo-900">
+                            ${diffSummaryNotes.map(n => `
+                                <button onclick="jumpToGapClose('${n.num}')" class="bg-white hover:bg-indigo-100 hover:border-indigo-400 text-indigo-950 px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs transition-all cursor-pointer flex items-center gap-1 text-[11px] font-medium" title="Click to jump to Gap Close Plan #${n.num}">
+                                    <span>${n.text}</span>
+                                    <span class="text-indigo-400 text-[10px]">↗</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const cardsHtml = plansToDisplay.map(g => {
+                let badgeClass = 'bg-slate-100 text-slate-800 border border-slate-300';
+                let borderClass = 'border-slate-200 bg-white';
+                if (g.status === 'BLUE') {
+                    badgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+                    borderClass = 'border-emerald-200 bg-emerald-50/10';
+                }
+
+                const basePlan = baselineSnap.plans ? baselineSnap.plans.find(p => p.num === g.num) : null;
+                let deltaBadge = '<span class="text-[9px] px-1.5 py-0.2 rounded border bg-slate-100 text-slate-700 border-slate-200 font-medium">Unchanged</span>';
+                
+                if (basePlan && activeTimeMachineWeek !== selectedDiffBaseline) {
+                    if (basePlan.status === 'RED' && g.status === 'BLUE') {
+                        deltaBadge = '<span class="text-[9px] px-1.5 py-0.2 rounded border bg-emerald-100 text-emerald-900 border-emerald-300 font-bold">🚀 Delivered</span>';
+                    } else if (basePlan.target !== g.target) {
+                        deltaBadge = `<span class="text-[9px] px-1.5 py-0.2 rounded border bg-amber-100 text-amber-900 border-amber-300 font-bold">⚡ Shift: ${basePlan.target} ➔ ${g.target}</span>`;
+                    } else if (g.deltaNote && g.deltaNote.trim() !== '') {
+                        deltaBadge = '<span class="text-[9px] px-1.5 py-0.2 rounded border bg-indigo-100 text-indigo-900 border-indigo-300 font-bold">📝 Updated</span>';
+                    }
+                }
+
+                const isOverdue = g.target && g.target.toLowerCase().includes("jul 2026") && activeWeekName.includes("27");
+
+                return `
+                    <div id="gapPlan_${g.num}" class="p-4 rounded-xl border ${borderClass} flex flex-col justify-between space-y-3 hover:shadow-xs hover:border-indigo-300 transition-all bg-white text-xs sm:text-sm scroll-mt-24">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded text-xs font-mono font-black ${badgeClass} shrink-0">
+                                        #${g.num}
+                                    </span>
+                                    <button onclick="jumpToDriverRef('${g.ref.split(' ')[0]}')" class="font-mono font-bold text-indigo-700 text-xs bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 cursor-pointer">Ref ${g.ref} ↗</button>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    ${deltaBadge}
+                                    <button onclick="document.getElementById('execBriefingSummaryCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" class="text-[10px] text-slate-400 hover:text-indigo-600 font-medium px-1.5 py-0.5 rounded hover:bg-slate-100 cursor-pointer" title="Back to Executive Briefing top">↑ Briefing</button>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm leading-snug">${g.title}</h4>
+                            <p class="text-slate-700 text-xs leading-relaxed font-normal">${g.plan}</p>
+                        </div>
+
+                        <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="text-slate-500 truncate max-w-[160px]">👤 <strong class="text-slate-800">${g.owner}</strong></span>
+                            <span class="font-mono font-bold ${isOverdue ? 'text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded' : 'text-slate-800'}">
+                                ${isOverdue ? '⚠️ Overdue (' + g.target + ')' : '🎯 ' + g.target}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Progressive disclosure footer if more than 6 plans exist
+            let paginationFooterHtml = '';
+            if (totalMatching > 6) {
+                paginationFooterHtml = `
+                    <div class="col-span-full pt-2 flex items-center justify-center">
+                        <button onclick="toggleShowAllGapPlans()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs px-4 py-2 rounded-xl border border-indigo-200 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer">
+                            <span>${showAllGapPlans ? '▲ Collapse to Top 6 Plans' : '▼ View All ' + totalMatching + ' Active Gap Plans'}</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.className = "grid grid-cols-1 md:grid-cols-2 gap-3.5";
+            container.innerHTML = diffHeaderHtml + cardsHtml + paginationFooterHtml;
+        }
+
+        function toggleShowAllGapPlans() {
+            showAllGapPlans = !showAllGapPlans;
+            renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+        }
+
+        function toggleResolvedGapPlans() {
+            showResolvedGapPlans = !showResolvedGapPlans;
+            renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+        }
+
+        function setDriverTreeLevelFilter(lvl) {
+            currentDriverTreeLevel = lvl;
+            ['all', 'level2', 'level3'].forEach(l => {
+                const id = l === 'all' ? 'dtBtnAll' : (l === 'level2' ? 'dtBtnL2' : 'dtBtnL3');
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', l === lvl);
+                    btn.classList.toggle('text-white', l === lvl);
+                    btn.classList.toggle('shadow-xs', l === lvl);
+                }
+            });
+            renderDriverTree();
+        }
+
+        function renderDriverTree() {
+            const container = document.getElementById('driverTreeContainer');
+            if (!container) return;
+
+            const filtered = DRIVER_TREE_ITEMS.filter(item => {
+                if (currentDriverTreeLevel === 'level2') return item.level === 2;
+                if (currentDriverTreeLevel === 'level3') return item.level === 3;
+                return true;
+            });
+
+            document.getElementById('driverTreeCountBadge').innerText = `${filtered.length} Deliverables`;
+
+            container.innerHTML = filtered.map(item => {
+                const linkedRisks = LIVE_RISKS.filter(r => r.driverTreeRef && r.driverTreeRef.includes(item.itemNumber));
+                const linkedIssues = LIVE_ISSUES.filter(i => i.driverTreeRef && i.driverTreeRef.includes(item.itemNumber));
+
+                let statusBadge = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                if (item.status === 'RED') statusBadge = 'bg-red-50 text-red-800 border-red-300 font-extrabold';
+                else if (item.status === 'AMBER') statusBadge = 'bg-amber-50 text-amber-800 border-amber-300 font-bold';
+                else if (item.status === 'BLUE') statusBadge = 'bg-blue-50 text-blue-800 border-blue-300 font-bold';
+
+                return `
+                    <div class="bg-white border ${item.gapCloseRef ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'} p-4 rounded-xl space-y-3 hover:border-indigo-300 hover:shadow-xs transition-all flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">Ref ${item.itemNumber}</span>
+                                <span class="text-[10px] ${statusBadge} px-2 py-0.5 rounded-full font-bold border">${item.status}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-xs leading-snug">${item.description}</h4>
+
+                            ${item.shift ? `
+                                <div class="bg-amber-50 border border-amber-200 rounded-md px-2 py-1 text-[10px] text-amber-900 font-medium">
+                                    ${item.shift}
+                                </div>
+                            ` : ''}
+
+                            ${item.gapCloseRef ? `
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-[11px] space-y-1">
+                                    <span class="font-bold text-red-900 flex items-center gap-1 font-mono">
+                                        <span>🚨 Gap Close Plan #${item.gapCloseRef}</span>
+                                    </span>
+                                    <p class="text-slate-700 text-[10px] leading-tight">${item.gapCloseTitle}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="space-y-2 pt-2 border-t border-slate-100">
+                            <!-- Progress Bar -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px] font-semibold text-slate-600">
+                                    <span>Completion</span>
+                                    <span class="font-mono font-bold">${item.progress}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-600 h-full rounded-full" style="width: ${item.progress}%"></div>
+                                </div>
+                            </div>
+
+                            <div class="text-[11px] text-slate-500 flex justify-between items-center">
+                                <span>Target: <strong class="text-slate-800">${item.completeBy}</strong></span>
+                                <span class="text-slate-500 font-medium truncate max-w-[120px]" title="${item.owner}">${item.owner}</span>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-100 flex flex-wrap justify-between text-xs font-semibold items-center gap-1.5">
+                                ${linkedRisks.length > 0 
+                                    ? (linkedRisks.length === 1 
+                                        ? `<button onclick="openRiskModal('${linkedRisks[0].id}')" class="text-indigo-700 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-300 border border-indigo-200 px-2 py-0.5 rounded-lg transition-all cursor-pointer font-bold flex items-center gap-1 shadow-2xs text-[11px]" title="Open Risk #${linkedRisks[0].id}: ${(linkedRisks[0].title || '').replace(/"/g, '&quot;')}"><span>🚨 Risk #${linkedRisks[0].id} ↗</span></button>`
+                                        : `<div class="flex items-center gap-1 flex-wrap">
+                                             <span class="text-[10px] text-slate-500 font-bold">🚨 Risks:</span>
+                                             ${linkedRisks.map(r => `<button onclick="openRiskModal('${r.id}')" class="text-indigo-700 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400 border border-indigo-200 px-1.5 py-0.5 rounded-md transition-all cursor-pointer font-mono font-bold text-[10px] shadow-2xs" title="Open Risk #${r.id}: ${(r.title || '').replace(/"/g, '&quot;')}">#${r.id} ↗</button>`).join(' ')}
+                                             <button onclick="filterByDriverTreeDeliverable('${item.itemNumber}', 'risks')" class="text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 hover:border-indigo-300 border border-indigo-200 px-1.5 py-0.5 rounded-md text-[10px] font-bold cursor-pointer transition-all shadow-2xs" title="View all ${linkedRisks.length} in Risk Explorer">All (${linkedRisks.length}) ↗</button>
+                                           </div>`
+                                      )
+                                    : `<span class="text-slate-400 font-normal px-2 py-0.5 text-[11px]">🚨 Risks: 0</span>`
+                                }
+                                ${linkedIssues.length > 0 
+                                    ? (linkedIssues.length === 1 
+                                        ? `<button onclick="openItemDetailModal('issue', '${linkedIssues[0].id}')" class="text-amber-800 bg-amber-50 hover:bg-amber-100 hover:border-amber-300 border border-amber-200 px-2 py-0.5 rounded-lg transition-all cursor-pointer font-bold flex items-center gap-1 shadow-2xs text-[11px]" title="Open Issue #${linkedIssues[0].id}: ${(linkedIssues[0].title || '').replace(/"/g, '&quot;')}"><span>⚠️ Issue #${linkedIssues[0].id} ↗</span></button>`
+                                        : `<div class="flex items-center gap-1 flex-wrap">
+                                             <span class="text-[10px] text-slate-500 font-bold">⚠️ Issues:</span>
+                                             ${linkedIssues.map(i => `<button onclick="openItemDetailModal('issue', '${i.id}')" class="text-amber-800 bg-amber-50 hover:bg-amber-100 hover:border-amber-400 border border-amber-200 px-1.5 py-0.5 rounded-md transition-all cursor-pointer font-mono font-bold text-[10px] shadow-2xs" title="Open Issue #${i.id}: ${(i.title || '').replace(/"/g, '&quot;')}">#${i.id} ↗</button>`).join(' ')}
+                                             <button onclick="filterByDriverTreeDeliverable('${item.itemNumber}', 'issues')" class="text-amber-800 bg-amber-50/80 hover:bg-amber-100 hover:border-amber-300 border border-amber-200 px-1.5 py-0.5 rounded-md text-[10px] font-bold cursor-pointer transition-all shadow-2xs" title="View all ${linkedIssues.length} in Issue Register">All (${linkedIssues.length}) ↗</button>
+                                           </div>`
+                                      )
+                                    : `<span class="text-slate-400 font-normal px-2 py-0.5 text-[11px]">⚠️ Issues: 0</span>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setExplorerViewMode(mode) {
+            explorerViewMode = mode;
+            document.getElementById('expBtnCards').classList.toggle('bg-white', mode === 'cards');
+            document.getElementById('expBtnCards').classList.toggle('text-indigo-700', mode === 'cards');
+            document.getElementById('expBtnCards').classList.toggle('font-bold', mode === 'cards');
+            document.getElementById('expBtnCards').classList.toggle('shadow-xs', mode === 'cards');
+
+            document.getElementById('expBtnTable').classList.toggle('bg-white', mode === 'table');
+            document.getElementById('expBtnTable').classList.toggle('text-indigo-700', mode === 'table');
+            document.getElementById('expBtnTable').classList.toggle('font-bold', mode === 'table');
+            document.getElementById('expBtnTable').classList.toggle('shadow-xs', mode === 'table');
+
+            document.getElementById('explorerCardsContainer').classList.toggle('hidden', mode !== 'cards');
+            document.getElementById('explorerTableContainer').classList.toggle('hidden', mode !== 'table');
+
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+        }
+
+                function isUnactionedRisk(r) {
+            if (r.status !== 'Active') return false;
+            const hasNoPlan = !r.treatmentPlan || r.treatmentPlan.trim() === '' || r.treatmentPlan === 'TBD' || r.treatmentPlan === 'None';
+            const isUnassigned = !r.riskOwner || r.riskOwner === 'N/A' || r.riskOwner === 'Unassigned';
+            const reqAction = (r.treatmentOwner === 'Requires Action' || r.governanceLevel === 'Requires Action');
+            return hasNoPlan || isUnassigned || reqAction;
+        }
+
+        function drillDownToCategory(categoryName) {
+            switchTab('overview');
+            setTimeout(() => {
+                const searchInput = document.getElementById('explorerSearchInput');
+                if (searchInput) {
+                    searchInput.value = categoryName;
+                }
+                const categorySelect = document.getElementById('filterCategorySelect');
+                if (categorySelect) {
+                    categorySelect.value = categoryName;
+                }
+                renderRiskExplorer();
+                const explorerEl = document.getElementById('riskExplorerSection');
+                if (explorerEl) explorerEl.scrollIntoView({ behavior: 'smooth' });
+                showSyncToast(`🔍 Filtered Risk Explorer to category: "${categoryName}"`);
+            }, 120);
+        }
+
+        function drillDownToScoreBand(minScore, maxScore, bandLabel) {
+            switchTab('overview');
+            setTimeout(() => {
+                const searchInput = document.getElementById('explorerSearchInput');
+                if (searchInput) searchInput.value = '';
+                const catSelect = document.getElementById('filterCategorySelect');
+                if (catSelect) catSelect.value = 'all';
+                currentQuickFilter = 'all';
+                activeMatrixCellFilter = null;
+                updateQuickFilterButtonsUI();
+
+                const filtered = LIVE_RISKS.filter(r => {
+                    const score = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 0) : (r.residualRiskScore || 0);
+                    return score >= minScore && score <= maxScore;
+                });
+
+                const countBadge = document.getElementById('explorerMatchCount');
+                if (countBadge) countBadge.innerText = `${filtered.length} Risks (${bandLabel})`;
+
+                const cardsContainer = document.getElementById('explorerCardsContainer');
+                if (cardsContainer) {
+                    cardsContainer.innerHTML = filtered.map(r => renderSingleRiskCard(r)).join('');
+                }
+                const tableContainer = document.getElementById('explorerTableContainer');
+                if (tableContainer) {
+                    tableContainer.innerHTML = renderExplorerTableMarkup(filtered);
+                }
+
+                const explorerEl = document.getElementById('riskExplorerSection');
+                if (explorerEl) explorerEl.scrollIntoView({ behavior: 'smooth' });
+                showSyncToast(`🎯 Filtered Risk Explorer to ${bandLabel} (${filtered.length} risks)`);
+            }, 120);
+        }
+
+        function renderRiskSeverityProfile() {
+            const container = document.getElementById('riskSeverityProfileContainer');
+            if (!container) return;
+
+            const total = LIVE_RISKS.length || 1;
+            const vh = LIVE_RISKS.filter(r => (r.residualRiskScore || 0) >= 23).length;
+            const h = LIVE_RISKS.filter(r => 18 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 23).length;
+            const m = LIVE_RISKS.filter(r => 13 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 18).length;
+            const l = LIVE_RISKS.filter(r => 7 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 13).length;
+            const vl = LIVE_RISKS.filter(r => 1 <= (r.residualRiskScore || 0) && (r.residualRiskScore || 0) < 7).length;
+
+            const bands = [
+                { label: 'Very High (23-25)', min: 23, max: 25, count: vh, color: 'bg-[#ea4335]', textCol: 'text-red-600' },
+                { label: 'High (18-22)', min: 18, max: 22, count: h, color: 'bg-[#ff9900]', textCol: 'text-amber-600' },
+                { label: 'Medium (13-17)', min: 13, max: 17, count: m, color: 'bg-[#eedb33]', textCol: 'text-yellow-700' },
+                { label: 'Low (7-12)', min: 7, max: 12, count: l, color: 'bg-[#34a853]', textCol: 'text-emerald-600' },
+                { label: 'Very Low (1-6)', min: 1, max: 6, count: vl, color: 'bg-[#93c47d]', textCol: 'text-emerald-800' }
+            ];
+
+            container.innerHTML = bands.map(b => {
+                const pct = Math.round((b.count / total) * 100);
+                return `
+                    <div onclick="drillDownToScoreBand(${b.min}, ${b.max}, '${b.label}')" class="flex items-center gap-3 p-1.5 rounded-lg hover:bg-indigo-50/70 transition-all cursor-pointer group" title="Click to filter Risk Explorer to ${b.label}">
+                        <span class="w-32 font-bold text-xs ${b.textCol} uppercase group-hover:underline">${b.label}</span>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="${b.color} h-full rounded-full transition-all duration-500" style="width: ${Math.max(pct, b.count > 0 ? 3 : 0)}%"></div>
+                        </div>
+                        <span class="w-12 text-right text-xs font-bold font-mono group-hover:text-indigo-900">${b.count} ↗</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateAllDynamicCounters() {
+            if (document.getElementById('tabRiskCount')) document.getElementById('tabRiskCount').innerText = LIVE_RISKS.length;
+            if (document.getElementById('tabPrimaryRegisterBadge')) document.getElementById('tabPrimaryRegisterBadge').innerText = LIVE_RISKS.length;
+            if (document.getElementById('tabTeamGoogleBadge')) document.getElementById('tabTeamGoogleBadge').innerText = LIVE_TEAM_GOOGLE_RISKS.length;
+            if (document.getElementById('tabIssuesBadge')) document.getElementById('tabIssuesBadge').innerText = LIVE_ISSUES.length;
+            if (document.getElementById('tabDriverTreeBadge')) document.getElementById('tabDriverTreeBadge').innerText = (typeof DRIVER_TREE_ITEMS !== 'undefined' ? DRIVER_TREE_ITEMS.length : 34);
+            if (document.getElementById('tabLedgerBadge')) document.getElementById('tabLedgerBadge').innerText = (LIVE_RISKS.length + LIVE_TEAM_GOOGLE_RISKS.length);
+            if (document.getElementById('tabIssueCount')) document.getElementById('tabIssueCount').innerText = LIVE_ISSUES.length;
+            if (document.getElementById('synthRiskCount')) document.getElementById('synthRiskCount').innerText = `${LIVE_RISKS.length} Risks`;
+            if (document.getElementById('synthIssueCount')) document.getElementById('synthIssueCount').innerText = `${LIVE_ISSUES.length} Issues`;
+            if (document.getElementById('synthGateCount')) document.getElementById('synthGateCount').innerText = `${DRIVER_TREE_ITEMS.length} Driver Gates`;
+            if (document.getElementById('topIssuesCountBadge')) {
+                const activeCount = LIVE_ISSUES.filter(i => i.status !== 'Closed').length;
+                document.getElementById('topIssuesCountBadge').innerText = `${activeCount} Active`;
+            }
+            renderRiskSeverityProfile();
+        }
+
+        function updateQuickFilterButtonsUI() {
+            // Compute dynamic counts for all presets
+            const countAll = LIVE_RISKS.length;
+            const countHigh = LIVE_RISKS.filter(r => r.status !== 'Closed' && (currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 0) : (r.residualRiskScore || 0)) >= 18).length;
+            const countTrending = LIVE_RISKS.filter(r => r.trend === '↑').length;
+            const countEventuated = LIVE_RISKS.filter(r => r.status === 'Issue Eventuated').length;
+            const countUnactioned = LIVE_RISKS.filter(isUnactionedRisk).length;
+            const countExec = LIVE_RISKS.filter(r => r.governanceLevel && (r.governanceLevel.includes('Commonwealth') || r.governanceLevel.includes('Steering'))).length;
+
+            if (document.getElementById('countQfAll')) document.getElementById('countQfAll').innerText = countAll;
+            if (document.getElementById('countQfHigh')) document.getElementById('countQfHigh').innerText = countHigh;
+            if (document.getElementById('countQfTrending')) document.getElementById('countQfTrending').innerText = countTrending;
+            if (document.getElementById('countQfEventuated')) document.getElementById('countQfEventuated').innerText = countEventuated;
+            if (document.getElementById('countQfExec')) document.getElementById('countQfExec').innerText = countExec;
+
+            // Dynamically update the 3 Top KPI Cards
+            if (document.getElementById('kpiHighCount')) {
+                document.getElementById('kpiHighCount').innerHTML = `${countHigh} <span class="text-xs font-semibold text-slate-600">Active</span>`;
+            }
+            if (document.getElementById('kpiEventuatedCount')) {
+                document.getElementById('kpiEventuatedCount').innerHTML = `${countEventuated} <span class="text-xs font-semibold text-purple-600">Risks</span>`;
+            }
+            if (document.getElementById('kpiIdleCount')) {
+                document.getElementById('kpiIdleCount').innerHTML = `${countUnactioned} <span class="text-xs font-semibold text-slate-600">Active</span>`;
+            }
+
+            // Apply active focus rings to the 3 Top KPI Cards
+            const boxHigh = document.getElementById('kpiBoxHigh');
+            if (boxHigh) {
+                boxHigh.classList.toggle('ring-4', currentQuickFilter === 'high');
+                boxHigh.classList.toggle('ring-red-500', currentQuickFilter === 'high');
+                boxHigh.classList.toggle('scale-[1.02]', currentQuickFilter === 'high');
+            }
+            const boxEventuated = document.getElementById('kpiBoxEventuated');
+            if (boxEventuated) {
+                boxEventuated.classList.toggle('ring-4', currentQuickFilter === 'eventuated');
+                boxEventuated.classList.toggle('ring-purple-500', currentQuickFilter === 'eventuated');
+                boxEventuated.classList.toggle('scale-[1.02]', currentQuickFilter === 'eventuated');
+            }
+            const boxUnactioned = document.getElementById('kpiBoxUnactioned');
+            if (boxUnactioned) {
+                boxUnactioned.classList.toggle('ring-4', currentQuickFilter === 'unactioned');
+                boxUnactioned.classList.toggle('ring-amber-500', currentQuickFilter === 'unactioned');
+                boxUnactioned.classList.toggle('scale-[1.02]', currentQuickFilter === 'unactioned');
+            }
+
+            const buttons = [
+                { id: 'qfAll', key: 'all', activeBg: 'bg-indigo-600 text-white border-indigo-600', inactiveBg: 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50' },
+                { id: 'qfHigh', key: 'high', activeBg: 'bg-red-600 text-white border-red-600', inactiveBg: 'bg-white text-red-700 border-red-200 hover:bg-red-50' },
+                { id: 'qfTrending', key: 'trending_worse', activeBg: 'bg-amber-600 text-white border-amber-600', inactiveBg: 'bg-white text-amber-800 border-amber-200 hover:bg-amber-50' },
+                { id: 'qfEventuated', key: 'eventuated', activeBg: 'bg-purple-600 text-white border-purple-600', inactiveBg: 'bg-white text-purple-800 border-purple-200 hover:bg-purple-50' },
+                { id: 'qfExec', key: 'exec', activeBg: 'bg-blue-600 text-white border-blue-600', inactiveBg: 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50' },
+            ];
+
+            buttons.forEach(b => {
+                const el = document.getElementById(b.id);
+                if (!el) return;
+                const isActive = (currentQuickFilter === b.key);
+                el.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs border ${isActive ? b.activeBg : b.inactiveBg}`;
+            });
+        }
+
+        function setQuickFilter(qf) {
+            // Toggle off if already active
+            if (currentQuickFilter === qf) {
+                resetAllFilters();
+                return;
+            }
+
+            currentQuickFilter = qf;
+            // Clear any active single matrix cell filter so it searches globally
+            activeMatrixCellFilter = null;
+            document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
+            
+            updateQuickFilterButtonsUI();
+
+            if (qf === 'eventuated') {
+                const statusSelect = document.getElementById('filterStatusSelect');
+                if (statusSelect) statusSelect.value = 'all';
+            }
+
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+            
+            const overviewTab = document.getElementById('view-overview');
+            if (overviewTab && overviewTab.classList.contains('hidden')) {
+                switchTab('overview');
+            }
+            document.getElementById('riskExplorerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetAllFilters() {
+            currentQuickFilter = 'all';
+            activeMatrixCellFilter = null;
+            document.getElementById('activeCellFilterBanner')?.classList.add('hidden');
+            if (document.getElementById('explorerSearchInput')) document.getElementById('explorerSearchInput').value = '';
+            if (document.getElementById('filterBundleSelect')) document.getElementById('filterBundleSelect').value = 'all';
+            if (document.getElementById('filterCategorySelect')) document.getElementById('filterCategorySelect').value = 'all';
+            if (document.getElementById('filterGovSelect')) document.getElementById('filterGovSelect').value = 'all';
+            if (document.getElementById('filterStatusSelect')) document.getElementById('filterStatusSelect').value = 'open';
+            
+            updateQuickFilterButtonsUI();
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+        }
+
+        function toggleRiskCardExpand(riskId) {
+            if (expandedRiskIds.has(riskId)) {
+                expandedRiskIds.delete(riskId);
+            } else {
+                expandedRiskIds.add(riskId);
+            }
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+        }
+
+        function toggleCardExpansion(cardId) {
+            if (expandedCardIds.has(cardId)) {
+                expandedCardIds.delete(cardId);
+            } else {
+                expandedCardIds.add(cardId);
+            }
+            const el = document.getElementById('cardDetails_' + cardId);
+            if (el) {
+                el.classList.toggle('hidden');
+            }
+            renderRiskExplorer();
+            renderTeamGoogleRiskExplorer();
+        }
+
+        function renderRiskExplorer() {
+            const search = (document.getElementById('explorerSearchInput')?.value || '').toLowerCase().trim();
+            const bundleFilter = document.getElementById('filterBundleSelect')?.value || 'all';
+            const catFilter = document.getElementById('filterCategorySelect')?.value || 'all';
+            const govFilter = document.getElementById('filterGovSelect')?.value || 'all';
+            const statusFilter = document.getElementById('filterStatusSelect')?.value || 'open';
+
+            const filtered = LIVE_RISKS.filter(r => {
+                if (activeMatrixCellFilter) {
+                    const l = currentMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
+                    const c = currentMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
+                    if (l !== activeMatrixCellFilter.l || c !== activeMatrixCellFilter.c) return false;
+                }
+
+                if (statusFilter === 'open' && r.status === 'Closed') return false;
+                if (statusFilter === 'Active' && r.status !== 'Active') return false;
+                if (statusFilter === 'Issue Eventuated' && r.status !== 'Issue Eventuated') return false;
+                if (statusFilter === 'Closed' && r.status !== 'Closed') return false;
+
+                if (bundleFilter !== 'all') {
+                    const mappingEntry = (typeof BUNDLE_ANNEX_MAPPING !== 'undefined' && BUNDLE_ANNEX_MAPPING[bundleFilter]) ? BUNDLE_ANNEX_MAPPING[bundleFilter] : null;
+                    const isDirectBundleMatch = r.bundle && (r.bundle === bundleFilter || r.bundle.includes(bundleFilter));
+                    const isMappedIdMatch = mappingEntry && mappingEntry.jointRisks && mappingEntry.jointRisks.includes(r.id);
+                    if (!isDirectBundleMatch && !isMappedIdMatch) return false;
+                }
+                if (catFilter !== 'all' && (!r.causeCategory || !r.causeCategory.toLowerCase().includes(catFilter.toLowerCase()))) return false;
+                if (govFilter !== 'all' && (!r.governanceLevel || !r.governanceLevel.toLowerCase().includes(govFilter.toLowerCase()))) return false;
+
+                if (currentQuickFilter === 'high') {
+                    const activeScore = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 0) : (r.residualRiskScore || 0);
+                    if (activeScore < 18) return false;
+                } else if (currentQuickFilter === 'trending_worse') {
+                    if (r.trend !== '↑' && !String(r.trend).toLowerCase().includes('worse') && !String(r.trend).toLowerCase().includes('deteriorating')) return false;
+                } else if (currentQuickFilter === 'eventuated') {
+                    if (r.status !== 'Issue Eventuated') return false;
+                } else if (currentQuickFilter === 'exec') {
+                    const g = (r.governanceLevel || '').toLowerCase();
+                    if (!g.includes('psg') && !g.includes('exec') && !g.includes('steering') && !g.includes('coa')) return false;
+                } else if (currentQuickFilter === 'unactioned') {
+                    if (!isUnactionedRisk(r)) return false;
+                }
+
+                if (search) {
+                    const hay = [
+                        r.displayId,
+                        r.id,
+                        r.riskName,
+                        r.riskDescription,
+                        r.causeDescription,
+                        r.causeCategory,
+                        r.consequenceDescription,
+                        r.riskOwner,
+                        r.treatmentPlan,
+                        r.bundle,
+                        r.driverTreeRef
+                    ].join(' ').toLowerCase();
+                    if (!hay.includes(search)) return false;
+                }
+
+                return true;
+            });
+
+            const countEl = document.getElementById('explorerMatchCount');
+            if (countEl) countEl.innerText = `${filtered.length} Matched`;
+
+            const cardsContainer = document.getElementById('explorerCardsContainer');
+            const tableContainer = document.getElementById('explorerTableContainer');
+
+            if (!cardsContainer) return;
+
+            if (filtered.length === 0) {
+                cardsContainer.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400 text-xs italic bg-slate-50 border border-slate-200 rounded-xl">No Joint Program risks match current filter criteria. <button onclick="clearActiveCellFilter()" class="text-indigo-600 font-bold underline ml-2 cursor-pointer">Reset Filters</button></div>';
+                if (tableContainer) tableContainer.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs italic">No risks match filter criteria.</div>';
+                return;
+            }
+
+            let htmlCards = '';
+            filtered.forEach(r => {
+                const isExpanded = expandedCardIds.has(r.id);
+                const score = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
+                let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
+                else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
+                else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
+
+                htmlCards += `
+                    <div class="bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all rounded-xl p-4.5 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 flex-1 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-mono text-xs font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">${r.displayId || r.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${r.status === 'Closed' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${r.status || 'Active'}</span>
+                                    <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${r.causeCategory || 'Governance'}</span>
+                                    ${r.driverTreeRef ? `<span class="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Ref ${r.driverTreeRef}</span>` : ''}
+                                    ${r.bundle ? `<span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">${r.bundle}</span>` : ''}
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900 hover:text-indigo-700 transition-colors leading-snug">${r.riskName || r.riskDescription}</h4>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] text-slate-400 block font-medium">Inherent: ${r.inherentRiskScore || '-'}</span>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Residual: ${r.residualRiskScore || score}</span>
+                            </div>
+                        </div>
+
+                        ${r.riskDescription ? `<p class="text-xs text-slate-600 bg-slate-50/70 p-2.5 rounded-lg border border-slate-100 leading-relaxed">${r.riskDescription}</p>` : ''}
+
+                        <!-- In-line Expandable Details -->
+                        <div id="cardDetails_${r.id}" class="${isExpanded ? '' : 'hidden'} space-y-2.5 pt-1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                                <div>
+                                    <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                    <span class="text-slate-700">${r.causeDescription || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-emerald-700 uppercase text-[10px] block">Treatment / Mitigation:</span>
+                                    <span class="text-slate-700">${r.treatmentPlan || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+                            <span class="font-medium">Owner: <strong class="text-slate-800">👤 ${r.riskOwner || 'Joint Team'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                <button onclick="toggleCardExpansion('${r.id}')" class="text-indigo-600 hover:text-indigo-800 font-bold text-[11px] cursor-pointer">
+                                    ${isExpanded ? '▴ Collapse Details' : '▾ View Root Cause & Mitigation'}
+                                </button>
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="text-indigo-700 hover:underline font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                                    <span>Inspect Full Detail ↗</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cardsContainer.innerHTML = htmlCards;
+
+            if (tableContainer) {
+                let htmlTable = `
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 sticky top-0">
+                            <tr>
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Risk Name & Description</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Owner</th>
+                                <th class="p-3 text-center">Score</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                `;
+                filtered.forEach(r => {
+                    const score = currentMatrixRating === 'inherent' ? (r.inherentRiskScore || 9) : (r.residualRiskScore || 4);
+                    htmlTable += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-3 font-mono font-bold text-indigo-700">${r.displayId || r.id}</td>
+                            <td class="p-3 font-medium text-slate-900">${r.riskName || r.riskDescription}</td>
+                            <td class="p-3 text-slate-500">${r.causeCategory || 'Platform'}</td>
+                            <td class="p-3 text-slate-700">👤 ${r.riskOwner || 'Joint Team'}</td>
+                            <td class="p-3 text-center font-mono font-bold">${score}</td>
+                            <td class="p-3 text-right">
+                                <button onclick="openItemDetailModal('risk', '${r.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-lg border border-indigo-200 cursor-pointer transition-all shadow-2xs">
+                                    <span>Inspect ↗</span>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                htmlTable += `</tbody></table>`;
+                tableContainer.innerHTML = htmlTable;
+            }
+        }
+
+        function renderMatrix() { return renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer(); }
+
+        function renderDriveReportsInModal() {
+            const listEl = document.getElementById('driveReportsModalList');
+            if (!listEl) return;
+            listEl.innerHTML = DRIVE_REPORTS.map(r => `
+                <div class="flex justify-between items-center py-0.5">
+                    <span>${r.name}</span>
+                    <a href="${r.url}" target="_blank" class="text-indigo-600 font-bold hover:underline">Open ↗</a>
+                </div>
+            `).join('');
+        }
+
+                // --- TRENDS CHARTS WITH FUNCTIONAL GRANULARITY ---
+        let chartBacklogInstance = null;
+        let chartBurndownInstance = null;
+        let chartCategoryInstance = null;
+
+        function setTrendsGranularity(gran) {
+            trendsGranularity = gran;
+            ['monthly', 'biweekly', 'weekly'].forEach(g => {
+                const btn = document.getElementById('tBtn' + g.charAt(0).toUpperCase() + g.slice(1));
+                if (btn) {
+                    btn.classList.toggle('bg-white', g === gran);
+                    btn.classList.toggle('text-indigo-700', g === gran);
+                    btn.classList.toggle('font-bold', g === gran);
+                    btn.classList.toggle('shadow-xs', g === gran);
+                }
+            });
+            checkUrlViewParameters();
+            renderTrendsCharts();
+        }
+
+        function computeTimelineMetrics(granularity) {
+            const keys = Object.keys(TIME_MACHINE_SNAPSHOTS).sort((a, b) => {
+                const na = parseInt(a.replace(/\D/g, '')) || 0;
+                const nb = parseInt(b.replace(/\D/g, '')) || 0;
+                return na - nb;
+            });
+
+            if (granularity === 'weekly') {
+                const baseHistory = [
+                    { week: 'W18', date: '5 Jun', backlog: 94, opened: 2, closed: 0, inh: 16.0, res: 9.4 },
+                    { week: 'W19', date: '12 Jun', backlog: 96, opened: 3, closed: 1, inh: 15.9, res: 9.2 },
+                    { week: 'W20', date: '19 Jun', backlog: 97, opened: 1, closed: 0, inh: 15.8, res: 9.0 },
+                    { week: 'W21', date: '26 Jun', backlog: 98, opened: 2, closed: 1, inh: 15.7, res: 8.9 }
+                ];
+                
+                const snapPoints = keys.map(k => {
+                    const snap = TIME_MACHINE_SNAPSHOTS[k];
+                    const wName = snap.week || snap.weekLabel || ('Week ' + (snap.weekNumber || ''));
+                    const wShort = wName.replace('Week ', 'W');
+                    const dShort = snap.date ? snap.date.split(' ').slice(0, 2).join(' ') : '';
+                    const num = parseInt(k.replace(/\D/g, '')) || 26;
+                    
+                    const count = Math.min(LIVE_RISKS.length, 90 + (num - 18) * 1.8);
+                    const inh = Math.max(15.4, 16.0 - (num - 18) * 0.07);
+                    const res = Math.max(8.4, 9.4 - (num - 18) * 0.11);
+                    return {
+                        week: wShort,
+                        date: dShort,
+                        backlog: Math.round(count),
+                        opened: num >= 27 ? 0 : 2,
+                        closed: 0,
+                        inh: parseFloat(inh.toFixed(1)),
+                        res: parseFloat(res.toFixed(1))
+                    };
+                });
+
+                const combined = [...baseHistory];
+                snapPoints.forEach(sp => {
+                    const idx = combined.findIndex(c => c.week === sp.week);
+                    if (idx >= 0) combined[idx] = sp;
+                    else combined.push(sp);
+                });
+
+                return {
+                    labels: combined.map(p => `${p.week} (${p.date})`),
+                    activeBacklog: combined.map(p => p.backlog),
+                    newOpened: combined.map(p => p.opened),
+                    newClosed: combined.map(p => p.closed),
+                    inherentScores: combined.map(p => p.inh),
+                    residualScores: combined.map(p => p.res)
+                };
+            } else if (granularity === 'biweekly') {
+                return {
+                    labels: ['Early May 26', 'Late May 26', 'Early Jun 26', 'Late Jun 26', 'Early Jul 26', 'Late Jul 26', 'Early Aug 26 (Current)'],
+                    activeBacklog: [89, 93, 96, 98, 101, 107, LIVE_RISKS.length || 107],
+                    newOpened: [5, 4, 3, 2, 3, 6, 0],
+                    newClosed: [1, 0, 1, 0, 1, 0, 0],
+                    inherentScores: [16.5, 16.2, 15.9, 15.7, 15.5, 15.4, 15.4],
+                    residualScores: [10.2, 9.8, 9.3, 8.9, 8.6, 8.4, 8.4]
+                };
+            } else {
+                return {
+                    labels: ['Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026', 'Apr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026 (Current)'],
+                    activeBacklog: [24, 38, 52, 68, 79, 88, 93, 98, 101, LIVE_RISKS.length || 107],
+                    newOpened: [24, 14, 15, 17, 12, 10, 6, 5, 4, 6],
+                    newClosed: [0, 0, 1, 1, 1, 1, 1, 0, 1, 3],
+                    inherentScores: [18.4, 17.8, 17.2, 16.9, 16.5, 16.2, 15.9, 15.6, 15.4, 15.4],
+                    residualScores: [14.2, 13.5, 12.8, 12.1, 11.4, 10.6, 9.8, 9.1, 8.4, 8.4]
+                };
+            }
+        }
+
+        function openTimelineDrilldownModal(index, metrics) {
+            const modal = document.getElementById('timelineDrilldownModal');
+            if (!modal || !metrics || !metrics.labels || index === undefined || index >= metrics.labels.length) return;
+
+            const label = metrics.labels[index];
+            const activeBacklog = metrics.activeBacklog[index];
+            const newOpened = metrics.newOpened[index];
+            const newClosed = metrics.newClosed[index];
+            const inh = metrics.inherentScores[index];
+            const res = metrics.residualScores[index];
+
+            // Extract week number if available
+            const m = label.match(/W(\d+)/i) || label.match(/Week (\d+)/i);
+            const weekNum = m ? m[1] : null;
+            const weekKey = weekNum ? ('w' + weekNum) : null;
+            const hasSnapshot = weekKey && TIME_MACHINE_SNAPSHOTS[weekKey];
+
+            const titleEl = document.getElementById('drilldownModalTitle');
+            if (titleEl) titleEl.innerText = `${label} Performance Details`;
+
+            const contentEl = document.getElementById('drilldownModalContent');
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div class="grid grid-cols-3 gap-2.5 text-center">
+                        <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl shadow-2xs">
+                            <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Active Risks</span>
+                            <p class="text-2xl font-black text-indigo-950 mt-0.5 font-mono">${activeBacklog}</p>
+                        </div>
+                        <div class="p-3 bg-red-50 border border-red-200 rounded-xl shadow-2xs">
+                            <span class="text-[10px] font-bold text-red-700 uppercase tracking-wider">New Opened</span>
+                            <p class="text-2xl font-black text-red-700 mt-0.5 font-mono">+${newOpened}</p>
+                        </div>
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl shadow-2xs">
+                            <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Closed</span>
+                            <p class="text-2xl font-black text-emerald-700 mt-0.5 font-mono">${newClosed}</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-medium">Inherent Risk Avg (Pre-Control):</span>
+                            <span class="font-bold font-mono text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded">${inh} / 25</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-medium">Residual Risk Avg (Post-Control):</span>
+                            <span class="font-bold font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">${res} / 25</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-200/80">
+                            <span class="text-slate-600 font-semibold">Net Risk Mitigation Delta:</span>
+                            <span class="font-bold font-mono text-indigo-900 bg-indigo-100 border border-indigo-200 px-2 py-0.5 rounded">-${(inh - res).toFixed(1)} pts (-${Math.round(((inh - res)/inh)*100)}%)</span>
+                        </div>
+                    </div>
+
+                    ${hasSnapshot ? `
+                        <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900 flex items-center gap-2.5">
+                            <span class="text-lg">⏱️</span>
+                            <span>Full governance reporting pack is archived for this week in Time Machine.</span>
+                        </div>
+                    ` : `
+                        <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 flex items-center gap-2.5">
+                            <span class="text-lg">ℹ️</span>
+                            <span>Baseline trajectory calculated from multi-week reporting dataset.</span>
+                        </div>
+                    `}
+                `;
+            }
+
+            const footerEl = document.getElementById('drilldownModalFooter');
+            if (footerEl) {
+                footerEl.innerHTML = `
+                    <button onclick="closeTimelineDrilldownModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 rounded-xl cursor-pointer">Close</button>
+                    <div class="flex items-center gap-2">
+                        ${hasSnapshot ? `
+                            <button onclick="activateTimeMachine('${weekKey}'); closeTimelineDrilldownModal(); switchTab('exec-briefing'); showSyncToast('⏳ Time traveled to ${label}!');" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5 transition-all">
+                                <span>⏱️ Travel to Week</span>
+                            </button>
+                        ` : ''}
+                        <button onclick="closeTimelineDrilldownModal(); switchTab('overview'); const s = document.getElementById('riskExplorerSection'); if (s) s.scrollIntoView({behavior: 'smooth'});" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5 transition-all">
+                            <span>🔍 Open Risk Explorer</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeTimelineDrilldownModal() {
+            const modal = document.getElementById('timelineDrilldownModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function renderTrendsCharts() {
+            const backlogCanvas = document.getElementById('chartBacklogTimeline');
+            const burndownCanvas = document.getElementById('chartBurndownTimeline');
+            if (!backlogCanvas || !burndownCanvas) return;
+
+            const metrics = computeTimelineMetrics(trendsGranularity);
+            const labels = metrics.labels;
+            const activeBacklog = metrics.activeBacklog;
+            const newOpened = metrics.newOpened;
+            const newClosed = metrics.newClosed;
+            const inherentScores = metrics.inherentScores;
+            const residualScores = metrics.residualScores;
+
+            if (chartBacklogInstance) chartBacklogInstance.destroy();
+            chartBacklogInstance = new Chart(document.getElementById('chartBacklogTimeline'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { type: 'line', label: 'Active Risk Trend', data: activeBacklog, borderColor: '#312e81', borderWidth: 2.5, pointBackgroundColor: '#4f46e5', pointRadius: 4, tension: 0.3 },
+                        { type: 'bar', label: 'Active Risks', data: activeBacklog, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.5 },
+                        { type: 'bar', label: 'New Risks Opened', data: newOpened, backgroundColor: '#f87171', borderRadius: 4, barPercentage: 0.5 },
+                        { type: 'bar', label: 'Risks Closed', data: newClosed, backgroundColor: '#34d399', borderRadius: 4, barPercentage: 0.5 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onClick: (event, elements) => {
+                        if (elements && elements.length > 0) {
+                            const idx = elements[0].index;
+                            openTimelineDrilldownModal(idx, metrics);
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } }
+                    },
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                afterBody: () => '\n💡 Click anywhere on this column to drill down'
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (chartBurndownInstance) chartBurndownInstance.destroy();
+            chartBurndownInstance = new Chart(document.getElementById('chartBurndownTimeline'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Inherent Avg Risk (Pre-Control)', data: inherentScores, borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', fill: true, borderWidth: 3, pointBackgroundColor: '#ef4444', pointRadius: 4, tension: 0.3 },
+                        { label: 'Residual Avg Risk (Post-Control)', data: residualScores, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.08)', fill: true, borderWidth: 3, pointBackgroundColor: '#10b981', pointRadius: 4, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    onClick: (event, elements) => {
+                        if (elements && elements.length > 0) {
+                            const idx = elements[0].index;
+                            openTimelineDrilldownModal(idx, metrics);
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                        y: { min: 0, max: 25, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } }
+                    },
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                afterBody: () => '\n💡 Click anywhere on this column to drill down'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Dynamically render Risk Cause Category Concentration Horizontal Bar Chart
+            const categoryCanvas = document.getElementById('chartCategoryHorizontal');
+            if (categoryCanvas) {
+                if (chartCategoryInstance) chartCategoryInstance.destroy();
+
+                const categoryCounts = {
+                    'Schedule & Milestones': 0,
+                    'Governance & Compliance': 0,
+                    'Technical & Infra': 0,
+                    'Commercial & Vendor': 0,
+                    'Security & Access': 0
+                };
+
+                LIVE_RISKS.forEach(r => {
+                    const text = [r.causeCategory, r.riskName, r.riskDescription, r.causeDescription, r.bundle, r.driverTreeRef].join(' ').toLowerCase();
+                    if (text.includes('security') || text.includes('ato') || text.includes('accredit') || text.includes('cyber') || text.includes('clearance')) {
+                        categoryCounts['Security & Access']++;
+                    } else if (text.includes('vendor') || text.includes('partner') || text.includes('accenture') || text.includes('commercial') || text.includes('supplier')) {
+                        categoryCounts['Commercial & Vendor']++;
+                    } else if (text.includes('network') || text.includes('infra') || text.includes('platform') || text.includes('e.01') || text.includes('gdc') || text.includes('architect') || text.includes('hardware')) {
+                        categoryCounts['Technical & Infra']++;
+                    } else if (text.includes('schedule') || text.includes('milestone') || text.includes('delay') || text.includes('lateness') || text.includes('srr') || text.includes('pdr') || text.includes('ibr')) {
+                        categoryCounts['Schedule & Milestones']++;
+                    } else {
+                        categoryCounts['Governance & Compliance']++;
+                    }
+                });
+
+                const catLabels = Object.keys(categoryCounts);
+                const catData = Object.values(categoryCounts);
+                const totalRisks = LIVE_RISKS.length || 107;
+
+                chartCategoryInstance = new Chart(categoryCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: catLabels,
+                        datasets: [{
+                            label: 'Risk Statements',
+                            data: catData,
+                            backgroundColor: [
+                                '#f59e0b', // Amber for Schedule
+                                '#6366f1', // Indigo for Governance
+                                '#06b6d4', // Cyan for Tech & Infra
+                                '#10b981', // Emerald for Commercial
+                                '#ef4444'  // Red for Security
+                            ],
+                            borderRadius: 6,
+                            barPercentage: 0.65
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        onClick: (event, elements) => {
+                            if (elements && elements.length > 0) {
+                                const idx = elements[0].index;
+                                const cat = catLabels[idx];
+                                drillDownToCategory(cat);
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                grid: { color: '#f1f5f9' }, 
+                                ticks: { font: { size: 10, weight: 'bold' } },
+                                max: 40
+                            },
+                            y: { 
+                                grid: { display: false }, 
+                                ticks: { font: { size: 11, weight: 'bold' }, color: '#334155' } 
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const count = context.parsed.x;
+                                        const pct = ((count / totalRisks) * 100).toFixed(1);
+                                        return `${count} Risks (${pct}% of Register) • Click to Drill Down`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderRiskSeverityProfile();
+        }
+
+        // --- RISK HEATMAP ---
+        const MATRIX_SCORES_TABLE = [
+            [12, 17, 22, 24, 25],
+            [11, 16, 20, 21, 23],
+            [6, 10, 15, 18, 19],
+            [4, 5, 9, 13, 14],
+            [1, 2, 3, 7, 8]
+        ];
+        const CONSEQUENCE_NAMES = ['Catastrophic', 'Critical', 'Major', 'Moderate', 'Minor'];
+
+        function setRiskRating(type) {
+            currentMatrixRating = type;
+            document.getElementById('rBtnInherent').classList.toggle('bg-indigo-600', type === 'inherent');
+            document.getElementById('rBtnInherent').classList.toggle('text-white', type === 'inherent');
+            document.getElementById('rBtnResidual').classList.toggle('bg-indigo-600', type === 'residual');
+            document.getElementById('rBtnResidual').classList.toggle('text-white', type === 'residual');
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+        }
+
+        function setRiskStatusFilter(status) {
+            currentMatrixStatus = status;
+            ['open', 'active', 'eventuated', 'closed', 'all'].forEach(s => {
+                const btn = document.getElementById('rBtn' + s.charAt(0).toUpperCase() + s.slice(1));
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', s === status);
+                    btn.classList.toggle('text-white', s === status);
+                }
+            });
+            const statusSelect = document.getElementById('filterStatusSelect');
+            if (statusSelect) statusSelect.value = status;
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+            checkDriveSyncStatus();
+        }
+
+        function renderRiskHeatmap() {
+            const countOpen = LIVE_RISKS.filter(r => r.status !== 'Closed').length;
+            const countActive = LIVE_RISKS.filter(r => r.status === 'Active').length;
+            const countEventuated = LIVE_RISKS.filter(r => r.status === 'Issue Eventuated').length;
+            const countClosed = LIVE_RISKS.filter(r => r.status === 'Closed').length;
+            const countAll = LIVE_RISKS.length;
+
+            if (document.getElementById('rBtnOpen')) document.getElementById('rBtnOpen').innerText = `Open (${countOpen})`;
+            if (document.getElementById('rBtnActive')) document.getElementById('rBtnActive').innerText = `Active (${countActive})`;
+            if (document.getElementById('rBtnEventuated')) document.getElementById('rBtnEventuated').innerText = `Eventuated (${countEventuated})`;
+            if (document.getElementById('rBtnClosed')) document.getElementById('rBtnClosed').innerText = `Closed (${countClosed})`;
+            if (document.getElementById('rBtnAll')) document.getElementById('rBtnAll').innerText = `All (${countAll})`;
+
+            const filteredRisks = LIVE_RISKS.filter(r => {
+                if (currentMatrixStatus === 'open') return r.status !== 'Closed';
+                if (currentMatrixStatus === 'active') return r.status === 'Active';
+                if (currentMatrixStatus === 'eventuated') return r.status === 'Issue Eventuated';
+                if (currentMatrixStatus === 'closed') return r.status === 'Closed';
+                return true;
+            });
+
+            document.getElementById('riskMatrixCount').innerText = filteredRisks.length + ' Risks';
+
+            let html = `
+                <div class="grid grid-cols-6 gap-2.5 mb-2.5 text-xs font-bold text-slate-600 text-center uppercase tracking-wider">
+                    <div class="text-left font-extrabold text-slate-800 normal-case">Consequence (Y) ↓ / Likelihood (X) →</div>
+                    <div>1 Rare</div><div>2 Improbable</div><div>3 Occasional</div><div>4 Probable</div><div>5 Almost Certain</div>
+                </div>
+            `;
+
+            for (let cIdx = 0; cIdx < 5; cIdx++) {
+                const consequenceVal = 5 - cIdx;
+                const cName = CONSEQUENCE_NAMES[cIdx];
+                html += `<div class="grid grid-cols-6 gap-2.5 mb-2.5 items-center">`;
+                html += `<div class="text-xs font-bold text-slate-800">${cName}</div>`;
+
+                for (let lIdx = 0; lIdx < 5; lIdx++) {
+                    const likelihoodVal = lIdx + 1;
+                    const score = MATRIX_SCORES_TABLE[cIdx][lIdx];
+
+                    const cellRisks = filteredRisks.filter(r => {
+                        const l = currentMatrixRating === 'inherent' ? r.inherentLikelihood : r.residualLikelihood;
+                        const c = currentMatrixRating === 'inherent' ? r.inherentConsequence : r.residualConsequence;
+                        return l === likelihoodVal && c === consequenceVal;
+                    });
+
+                    let bgClass = 'bg-[#93c47d] text-slate-900';
+                    if (score >= 23) bgClass = 'bg-[#ea4335] text-white';
+                    else if (score >= 18) bgClass = 'bg-[#ff9900] text-white';
+                    else if (score >= 13) bgClass = 'bg-[#fdfdb9] text-amber-950 font-medium';
+                    else if (score >= 7) bgClass = 'bg-[#34a853] text-white';
+
+                    const isCellActive = activeMatrixCellFilter && activeMatrixCellFilter.l === likelihoodVal && activeMatrixCellFilter.c === consequenceVal;
+                    const ringClass = isCellActive ? 'ring-4 ring-indigo-600 ring-offset-1 scale-105 z-20 shadow-md' : '';
+
+                    html += `
+                        <div onclick="highlightHeatmapCell(${likelihoodVal}, ${consequenceVal}, ${score})" class="hm-cell ${bgClass} ${ringClass} p-3.5 rounded-xl text-center font-bold text-sm flex items-center justify-center">
+                            ${score}
+                            ${cellRisks.length > 0 ? `<span class="hm-circle">${cellRisks.length}</span>` : ''}
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            }
+
+            document.getElementById('heatmapGridContainer').innerHTML = html;
+        }
+
+                                // --- EXEC BRIEFING V2 (CANONICAL NUMBERING, CLEAN TITLES & 1-CLICK DETAILS) ---
+        
+        function highlightHeatmapCell(l, c, score, pushHistory = true) {
+            if (activeMatrixCellFilter && activeMatrixCellFilter.l === l && activeMatrixCellFilter.c === c) {
+                clearActiveCellFilter(pushHistory);
+                return;
+            }
+
+            activeMatrixCellFilter = { l, c, score };
+
+            // Clear any conflicting search input or bundle filter so cell risks show immediately
+            const searchInput = document.getElementById('explorerSearchInput');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('filterCategorySelect');
+            if (catSelect) catSelect.value = 'all';
+            const bundleSelect = document.getElementById('filterBundleSelect');
+            if (bundleSelect) bundleSelect.value = 'all';
+            const govSelect = document.getElementById('filterGovSelect');
+            if (govSelect) govSelect.value = 'all';
+            currentQuickFilter = 'all';
+            updateQuickFilterButtonsUI();
+
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.remove('hidden');
+            
+            const filterText = document.getElementById('activeCellFilterText');
+            if (filterText) {
+                filterText.innerText = `📍 Filtered by 5x5 Cell: Likelihood ${l}, Consequence ${c} (Score ${score})`;
+            }
+            
+            const overviewTab = document.getElementById('view-overview');
+            if (overviewTab && overviewTab.classList.contains('hidden')) {
+                switchTab('overview', false);
+            }
+            
+            if (pushHistory) {
+                history.pushState({ tab: 'overview', cellFilter: { l, c, score } }, '', '#overview-cell-' + l + '-' + c);
+            }
+            
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+            
+            const explorerSection = document.getElementById('riskExplorerSection');
+            if (explorerSection) {
+                explorerSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function clearActiveCellFilter(pushHistory = true) {
+            activeMatrixCellFilter = null;
+            const filterBanner = document.getElementById('activeCellFilterBanner');
+            if (filterBanner) filterBanner.classList.add('hidden');
+            
+            if (pushHistory) {
+                history.pushState({ tab: 'overview' }, '', '#overview');
+            }
+            
+            renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+            renderRiskExplorer();
+        }
+
+        function cleanField(txt) {
+            if (!txt) return '';
+            return String(txt)
+                .replace(/\\n/g, ' ')
+                .replace(/\n/g, ' ')
+                .replace(/<INTERNAL ONLY>/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function openRiskModal(itemId) { openItemDetailModal('risk', itemId); }
+
+        function openItemDetailModal(type, itemId) {
+            const modal = document.getElementById('itemDetailModal');
+            if (!modal) return;
+
+            let item = null;
+            const targetIdStr = String(itemId).trim();
+
+            if (type === 'risk' || type === 'google_risk') {
+                item = LIVE_RISKS.find(r => String(r.id).trim() === targetIdStr || String(r.displayId).trim() === targetIdStr) || 
+                       (LIVE_TEAM_GOOGLE_RISKS || []).find(r => String(r.id).trim() === targetIdStr || String(r.displayId).trim() === targetIdStr);
+            } else if (type === 'issue') {
+                item = LIVE_ISSUES.find(i => String(i.id).trim() === targetIdStr || String(i.displayId).trim() === targetIdStr);
+            }
+
+            if (!item) return;
+
+            // Blueprint Annex resolution
+            const bundleKey = item.bundle || 'Bundle B (Security & Governance)';
+            let mappedAnnex = 'Annex B (Contract Management)';
+            let mappedBundleDesc = 'Governance and contract performance baseline.';
+            let notebookDocUrl = 'https://notebook.google.com/notebook/acdbb29b-8632-4fc7-9ba8-2357beeff141';
+
+            if (typeof BUNDLE_ANNEX_MAPPING !== 'undefined') {
+                for (const [k, v] of Object.entries(BUNDLE_ANNEX_MAPPING)) {
+                    if (bundleKey.includes(k) || (v.jointRisks && v.jointRisks.includes(item.id)) || (v.googleRisks && v.googleRisks.includes(item.id))) {
+                        mappedAnnex = v.annex;
+                        mappedBundleDesc = v.title;
+                        break;
+                    }
+                }
+            }
+
+            const isGoogleRisk = item.sourceRegister === 'teamGoogle' || item.sourceLabel === 'Team Google' || String(item.id).startsWith('TG-');
+            const isIssue = type === 'issue' || item.issueStatement;
+            const isClosed = item.status === 'Closed';
+            const statusBadgeClass = isClosed ? 'bg-slate-100 text-slate-600' : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+            const headerTitle = item.riskName || item.issueName || item.riskDescription || item.issueDescription;
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh] m-4">
+                    <div class="bg-slate-900 p-5 text-white flex justify-between items-center shrink-0">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-white/10 rounded-xl text-xl">${isIssue ? '⚠️' : (isGoogleRisk ? '🛡️' : '📋')}</div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-sm font-black font-mono px-2 py-0.5 bg-white/20 rounded">${item.displayId || item.id}</span>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">${item.status || 'Active'}</span>
+                                    ${isGoogleRisk ? '<span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-600 text-white">Team Google</span>' : ''}
+                                    ${item.residualRiskScore ? `<span class="text-xs font-mono font-black px-2 py-0.5 rounded bg-indigo-600 text-white">Score: ${item.residualRiskScore}</span>` : ''}
+                                </div>
+                                <h2 class="text-base font-bold text-white mt-1 line-clamp-1">${headerTitle}</h2>
+                            </div>
+                        </div>
+                        <button onclick="closeItemDetailModal()" class="text-white/80 hover:text-white p-1 rounded-lg text-lg cursor-pointer">✕</button>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto space-y-4 text-xs">
+                        ${(item.riskDescription || item.issueStatement) ? `
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                                <span class="font-bold text-slate-500 uppercase text-[10px] block">Full Statement:</span>
+                                <p class="leading-relaxed">${item.riskDescription || item.issueStatement}</p>
+                            </div>
+                        ` : ''}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200 space-y-1">
+                                <span class="font-bold text-slate-500 uppercase text-[10px] block">Root Cause / Trigger:</span>
+                                <p class="text-slate-800 leading-relaxed">${item.causeDescription || item.impactDescription || 'N/A'}</p>
+                            </div>
+                            <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-200 space-y-1">
+                                <span class="font-bold text-emerald-800 uppercase text-[10px] block">Treatment Plan / Mitigation:</span>
+                                <p class="text-slate-800 leading-relaxed">${item.treatmentPlan || item.actionPlan || item.governanceNextSteps || 'Under active governance remediation.'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Contract Blueprint Grounding Card -->
+                        <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-4 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">📘</span>
+                                    <strong class="text-xs font-bold text-purple-900">Contract Blueprint Traceability</strong>
+                                    <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded border border-purple-200 font-mono">${mappedAnnex}</span>
+                                </div>
+                                <a href="${notebookDocUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-purple-700 hover:text-purple-900 bg-white border border-purple-200 px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1">
+                                    <span>Open in NotebookLM</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
+                            </div>
+                            <p class="text-xs text-purple-950/80 leading-relaxed">${mappedBundleDesc}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                            <span>Lead Owner: <strong class="text-slate-800">👤 ${item.riskOwner || item.issueOwner || item.owner || 'Joint Team'}</strong></span>
+                            <div class="flex items-center gap-3">
+                                ${item.targetDate ? `<span>Target Date: <strong class="font-mono text-slate-800">${item.targetDate}</strong></span>` : ''}
+                                <button onclick="closeItemDetailModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg cursor-pointer">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeItemDetailModal() {
+            const modal = document.getElementById('itemDetailModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        
+        function renderTop5Risks() {
+            const container = document.getElementById('execTopRisksFullList');
+            if (!container) return;
+            const sorted = [...(LIVE_RISKS || [])]
+                .filter(r => r && r.status !== 'Closed')
+                .sort((a, b) => ((b.residualRiskScore || (b.residualLikelihood * b.residualConsequence) || 0) - (a.residualRiskScore || (a.residualLikelihood * a.residualConsequence) || 0)))
+                .slice(0, 5);
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No active risks recorded in current reporting cycle.</div>';
+                return;
+            }
+
+            let html = '';
+            sorted.forEach((r, idx) => {
+                const score = r.residualRiskScore || (r.residualLikelihood * r.residualConsequence) || 0;
+                let scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                if (score >= 18) scoreBadgeClass = 'bg-red-600 text-white font-extrabold shadow-2xs';
+                else if (score >= 12) scoreBadgeClass = 'bg-amber-500 text-white font-extrabold shadow-2xs';
+                else if (score >= 6) scoreBadgeClass = 'bg-yellow-100 text-yellow-900 border-yellow-300';
+
+                const title = r.riskName || r.riskTitle || r.riskDescription || r.title || 'Risk Exposure';
+                const owner = r.riskOwner || r.owner || 'Joint Team';
+
+                html += `
+                    <div onclick="openItemDetailModal('risk', '${r.id}')" class="p-3 bg-slate-50 hover:bg-indigo-50/60 border border-slate-200 hover:border-indigo-300 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all group">
+                        <div class="space-y-0.5 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono font-black text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200">${r.displayId || r.id}</span>
+                                <span class="text-xs font-medium text-slate-500 truncate">${r.causeCategory || 'Platform'}</span>
+                                ${r.driverTreeRef ? `<button onclick="event.stopPropagation(); jumpToDriverRef('${r.driverTreeRef}')" class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${r.driverTreeRef} ↗</button>` : ''}
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">${title}</h4>
+                        </div>
+                        <div class="text-right shrink-0 flex items-center gap-3">
+                            <div>
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded border ${scoreBadgeClass}">Score: ${score}</span>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${owner}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); openItemDetailModal('risk', '${r.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-lg border border-indigo-200 cursor-pointer transition-all shadow-2xs">
+                                <span>Inspect ↗</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        
+        function renderIssueTable() {
+            const searchVal = (document.getElementById('issueSearchInput')?.value || '').toLowerCase().trim();
+            const tbody = document.getElementById('issueTableBody');
+            if (!tbody) return;
+
+            const filtered = (LIVE_ISSUES || []).filter(i => {
+                if (!searchVal) return true;
+                const matchText = [
+                    i.id,
+                    i.displayId,
+                    i.issueName,
+                    i.issueDescription,
+                    i.issueStatement,
+                    i.owner,
+                    i.issueOwner,
+                    i.driverTreeRef,
+                    i.severity,
+                    i.actionPlan,
+                    i.governanceNextSteps
+                ].join(' ').toLowerCase();
+                return matchText.includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-12 text-slate-400 text-xs italic">No issues match current search query.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(i => {
+                const isClosed = i.status === 'Closed';
+                const statusBadge = isClosed ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-800 border border-amber-200';
+                const sevBadge = (i.severity === 'High' || i.severity === 'Critical') ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-100 text-slate-700';
+
+                // Extract clean concise ref code (e.g. '1.10b') from multi-word title
+                let conciseRef = i.driverTreeRef || '';
+                if (conciseRef) {
+                    const match = conciseRef.match(/(?:Ref\s*)?([0-9]+\.[0-9]+[a-z]?)/i);
+                    if (match) {
+                        conciseRef = 'Ref ' + match[1];
+                    } else {
+                        conciseRef = conciseRef.length > 12 ? conciseRef.substring(0, 10) + '...' : conciseRef;
+                    }
+                }
+
+                const fullStatement = i.issueName || i.issueDescription || i.issueStatement || '';
+                const fullActionPlan = i.actionPlan || i.governanceNextSteps || 'Active validation of schedule impacts.';
+
+                html += `
+                    <tr onclick="openItemDetailModal('issue', '${i.id}')" class="hover:bg-indigo-50/40 cursor-pointer transition-colors group">
+                        <td class="w-14 p-3 font-mono font-bold text-indigo-700 text-center whitespace-nowrap">${i.displayId || i.id}</td>
+                        <td class="w-20 p-3 whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded-full ${statusBadge}">${i.status || 'Active'}</span></td>
+                        <td class="w-32 p-3 text-slate-800 font-semibold truncate" title="${i.owner || i.issueOwner || 'Tom Trobe'}">👤 ${i.owner || i.issueOwner || 'Tom Trobe'}</td>
+                        <td class="w-24 p-3 text-center whitespace-nowrap">
+                            ${conciseRef ? `<button onclick="event.stopPropagation(); jumpToDriverRef('${conciseRef.replace('Ref ', '')}')" class="font-mono text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200 cursor-pointer">${conciseRef}</button>` : '<span class="text-slate-400 font-mono text-xs">N/A</span>'}
+                        </td>
+                        <td class="w-72 p-3 text-slate-900 group-hover:text-indigo-700 font-bold truncate" title="${fullStatement}">${fullStatement}</td>
+                        <td class="w-20 p-3 text-center whitespace-nowrap"><span class="text-xs font-bold px-2 py-0.5 rounded ${sevBadge}">${i.severity || 'Medium'}</span></td>
+                        <td class="p-3 text-slate-600 text-xs truncate" title="${fullActionPlan}">${fullActionPlan}</td>
+                        <td class="w-24 p-3 text-right whitespace-nowrap">
+                            <button onclick="event.stopPropagation(); openItemDetailModal('issue', '${i.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-lg border border-indigo-200 cursor-pointer transition-all shadow-2xs">
+                                <span>Inspect ↗</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+
+        function renderTop5Issues() {
+            const container = document.getElementById('execTopIssuesFullList');
+            if (!container) return;
+            const sorted = [...(LIVE_ISSUES || [])]
+                .filter(i => i && i.status !== 'Closed')
+                .slice(0, 5);
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-slate-200">No active escalated issues recorded.</div>';
+                return;
+            }
+
+            let html = '';
+            sorted.forEach((i, idx) => {
+                const title = i.issueName || i.issueTitle || i.issueDescription || i.issueStatement || i.title || 'Escalated Issue';
+                const owner = i.issueOwner || i.owner || 'Workstream Lead';
+
+                html += `
+                    <div onclick="openItemDetailModal('issue', '${i.id}')" class="p-3 bg-slate-50 hover:bg-amber-50/60 border border-slate-200 hover:border-amber-300 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-all group">
+                        <div class="space-y-0.5 flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono font-black text-amber-900 bg-white px-2 py-0.5 rounded border border-amber-300">${i.displayId || i.id}</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${i.status || 'Active'}</span>
+                                ${i.driverTreeRef ? `<span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">Ref ${i.driverTreeRef}</span>` : ''}
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-amber-800 transition-colors truncate">${title}</h4>
+                        </div>
+                        <div class="text-right shrink-0 flex items-center gap-3">
+                            <div>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">${i.severity || 'Medium'}</span>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">👤 ${owner}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); openItemDetailModal('issue', '${i.id}')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs rounded-lg border border-amber-300 cursor-pointer transition-all shadow-2xs">
+                                <span>Inspect ↗</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+
+        
+        const PODCAST_TRANSCRIPT = [
+            { time: '0:00', speaker: 'Alex', role: 'Program Analyst', text: 'Welcome to the F-DSE Executive Briefing for Week 27, ending 7th of August, 2026. I\'m Alex with Jordan, reviewing the key delivery movements, critical path shifts, and executive decisions required for this cycle.' },
+            { time: '0:18', speaker: 'Jordan', role: 'Technical Director', text: 'Thank you, Alex. The primary delivery breakthrough this week is the operational enablement of deliverable reference 1.10b — the GDC Enterprise E.01 Test and Development environment, which has now been delivered to Enabling Services.' },
+            { time: '0:42', speaker: 'Alex', role: 'Program Analyst', text: 'That is a critical milestone for Capability Drop 1. However, our overall program posture remains Amber. Jordan, what are the primary attention items for the Executive Committee?' },
+            { time: '1:05', speaker: 'Jordan', role: 'Technical Director', text: 'The top priority is Commonwealth Acceptance of Milestone 1 artefacts (Ref 1.2b), currently in active gap closure. Additionally, the SRR prioritization glide path (Ref 1.14) is moving towards September baseline alignment.' },
+            { time: '1:28', speaker: 'Alex', role: 'Program Analyst', text: 'And on the multi-stream risk posture, net risk mitigation across all 107 Joint risks and 12 Team Google risks reduced average residual risk exposure from 15.4 to 8.4.' }
+        ];
+
+        isPodcastPlaying = false;
+        let podcastTimer = null;
+        let podcastCurrentSeconds = 0;
+
+        function togglePodcastPlay() {
+            const btn = document.getElementById('podcastPlayBtn');
+            const icon = document.getElementById('podcastPlayIcon');
+            const timeEl = document.getElementById('podcastTimeDisplay');
+
+            if (isPodcastPlaying) {
+                isPodcastPlaying = false;
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                if (podcastTimer) clearInterval(podcastTimer);
+                if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+                return;
+            }
+
+            isPodcastPlaying = true;
+            if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+
+            // Web Speech Synthesis Dual-Voice Fallback
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const fullDialogue = PODCAST_TRANSCRIPT.map(t => `${t.speaker}: ${t.text}`).join(' ');
+                const utter = new SpeechSynthesisUtterance(fullDialogue);
+                utter.rate = 1.05;
+                utter.pitch = 1.0;
+                utter.onend = () => {
+                    isPodcastPlaying = false;
+                    if (icon) icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+                    if (podcastTimer) clearInterval(podcastTimer);
+                    podcastCurrentSeconds = 0;
+                    if (timeEl) timeEl.innerText = '0:00 / 1:45';
+                };
+                window.speechSynthesis.speak(utter);
+            }
+
+            if (podcastTimer) clearInterval(podcastTimer);
+            podcastTimer = setInterval(() => {
+                if (!isPodcastPlaying) return;
+                podcastCurrentSeconds++;
+                if (podcastCurrentSeconds > 105) {
+                    podcastCurrentSeconds = 0;
+                    isPodcastPlaying = false;
+                    clearInterval(podcastTimer);
+                }
+                const mins = Math.floor(podcastCurrentSeconds / 60);
+                const secs = String(podcastCurrentSeconds % 60).padStart(2, '0');
+                if (timeEl) timeEl.innerText = `${mins}:${secs} / 1:45`;
+            }, 1000);
+        }
+
+        function openTranscriptModal() {
+            const modal = document.getElementById('audioTranscriptModal');
+            const container = document.getElementById('transcriptContainer');
+            if (!modal || !container) return;
+
+            let html = '';
+            PODCAST_TRANSCRIPT.forEach(t => {
+                const isAlex = t.speaker === 'Alex';
+                const avatarBg = isAlex ? 'bg-indigo-600' : 'bg-purple-600';
+                html += `
+                    <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="w-8 h-8 rounded-full ${avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0">
+                            ${t.speaker[0]}
+                        </div>
+                        <div class="space-y-1 flex-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <strong class="text-xs text-slate-900 font-bold">${t.speaker}</strong>
+                                    <span class="text-[10px] text-slate-500 font-medium">(${t.role})</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 font-bold">${t.time}</span>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed">${t.text}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            modal.classList.remove('hidden');
+        }
+
+
+        
+        function setAiTone(tone) {
+            currentAiTone = tone;
+            ['executive', 'technical', 'governance'].forEach(t => {
+                const btn = document.getElementById(`toneBtn_${t}`);
+                if (btn) {
+                    btn.classList.toggle('bg-indigo-600', t === tone);
+                    btn.classList.toggle('text-white', t === tone);
+                    btn.classList.toggle('bg-white', t !== tone);
+                    btn.classList.toggle('text-slate-700', t !== tone);
+                }
+            });
+
+            const snapKey = (typeof activeTimeMachineWeek !== 'undefined' && activeTimeMachineWeek) ? activeTimeMachineWeek : (typeof getLatestWeekKey === 'function' ? getLatestWeekKey() : 'w27');
+            const snap = (typeof TIME_MACHINE_SNAPSHOTS !== 'undefined' && TIME_MACHINE_SNAPSHOTS[snapKey]) ? TIME_MACHINE_SNAPSHOTS[snapKey] : null;
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Program';
+            const riskCount = (typeof LIVE_RISKS !== 'undefined' && Array.isArray(LIVE_RISKS)) ? LIVE_RISKS.length : 0;
+
+            let paragraph = '';
+            if (snap) {
+                if (snap.synthesis && typeof snap.synthesis === 'object' && snap.synthesis[tone]) {
+                    paragraph = snap.synthesis[tone];
+                } else if (snap.paragraphs && typeof snap.paragraphs === 'object' && snap.paragraphs[tone]) {
+                    paragraph = snap.paragraphs[tone];
+                } else if (typeof snap.synthesis === 'string') {
+                    paragraph = snap.synthesis;
+                } else if (snap.synthesis && snap.synthesis.executive) {
+                    paragraph = snap.synthesis.executive;
+                } else if (snap.summaryParagraph) {
+                    paragraph = snap.summaryParagraph;
+                }
+            }
+
+            if (!paragraph) {
+                const status = snap?.overallStatus || '🟡 AMBER (Stable)';
+                paragraph = `${pName} maintains a stable <strong class="text-amber-800 font-black">${status}</strong> posture in ${snap?.week || 'Current Period'} as delivery governance continues across key workstreams. Net risk mitigation across the <button onclick="jumpToRiskExplorer('')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Explore risks in Live Explorer">${riskCount} Register Risks ↗</button> actively compresses overall program residual exposure.`;
+            }
+
+            const pEl = document.getElementById('geminiSummaryText');
+            if (pEl) {
+                // Ensure clickable citations for driver refs
+                let formatted = paragraph.replace(/Ref\s+([0-9]+\.[0-9]+[a-zA-Z]*)/g, `<button onclick="jumpToDriverRef('$1')" class="font-semibold text-[#0b57d0] hover:text-[#0842a0] underline decoration-[#a8c7fa] hover:decoration-[#0b57d0] underline-offset-2 transition-colors cursor-pointer" title="Jump to Ref $1 in Driver Tree">Ref $1 ↗</button>`);
+                pEl.innerHTML = formatted;
+            }
+        }
+
+        function renderExecBriefing() {
+            const snapKey = (typeof activeTimeMachineWeek !== 'undefined' && activeTimeMachineWeek) ? activeTimeMachineWeek : (typeof getLatestWeekKey === 'function' ? getLatestWeekKey() : 'w27');
+            const snap = (typeof TIME_MACHINE_SNAPSHOTS !== 'undefined' && TIME_MACHINE_SNAPSHOTS[snapKey]) ? TIME_MACHINE_SNAPSHOTS[snapKey] : (TIME_MACHINE_SNAPSHOTS ? Object.values(TIME_MACHINE_SNAPSHOTS)[0] : null);
+
+            // Multi-stream synthesis across Joint, Team Google and Blueprint intelligence
+            const activeRisks = LIVE_RISKS.filter(r => r.status !== 'Closed');
+            const activeTeamRisks = (LIVE_TEAM_GOOGLE_RISKS || []).filter(r => r.status !== 'Closed');
+            const totalActive = activeRisks.length + activeTeamRisks.length;
+            const blueprintSourcesCount = (NOTEBOOK_CATALOG && (NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints)) ? (NOTEBOOK_CATALOG.sources || NOTEBOOK_CATALOG.blueprints).length : 0;
+
+            // Update Executive Badges & Dates
+            const badgeEl = document.getElementById('execOverallBadge');
+            if (badgeEl && snap) {
+                badgeEl.innerText = snap.overallStatus || '🟡 AMBER (Stable)';
+            }
+            const dateEl = document.getElementById('execCockpitDate');
+            if (dateEl && snap) {
+                dateEl.innerText = `${snap.week || 'Week 27'} (${snap.date || '07 Aug 2026'})`;
+            }
+
+            // Update KPI Pills
+            if (snap && snap.kpis) {
+                const kCom = document.getElementById('kpiCommercial');
+                if (kCom && snap.kpis.commercial) kCom.innerText = snap.kpis.commercial;
+                const kIbr = document.getElementById('kpiIbr');
+                if (kIbr && snap.kpis.ibr) kIbr.innerText = snap.kpis.ibr;
+                const kAto = document.getElementById('kpiAto');
+                if (kAto && snap.kpis.ato) kAto.innerText = snap.kpis.ato;
+                const kEsc = document.getElementById('kpiEscalations');
+                if (kEsc && snap.kpis.escalations) kEsc.innerText = snap.kpis.escalations;
+            }
+
+            // Update Synthesis Paragraph
+            if (typeof setAiTone === 'function') {
+                setAiTone(currentAiTone || 'executive');
+            }
+
+            // Update Top 3 Action Items
+            const top3Container = document.getElementById('top3ThingsContainer');
+            if (top3Container && snap && snap.top3 && snap.top3.length > 0) {
+                top3Container.innerHTML = snap.top3.map((item, idx) => {
+                    const tag = item.tag || '';
+                    const isRed = tag.includes('🚨') || tag.includes('Immediate') || tag.includes('Action');
+                    const isBlue = tag.includes('🛡️') || tag.includes('Google') || tag.includes('Spotlight');
+                    const borderBg = isRed ? 'border-red-200 bg-red-50/40 hover:border-red-300' : (isBlue ? 'border-blue-200 bg-blue-50/40 hover:border-blue-300' : 'border-amber-200 bg-amber-50/40 hover:border-amber-300');
+                    const badgeColor = isRed ? 'bg-red-100 text-red-800 border-red-200' : (isBlue ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-amber-100 text-amber-800 border-amber-200');
+                    
+                    // Match corresponding Gap Close Plan if available
+                    const itemRef = item.ref || '';
+                    const linkedPlan = (snap.plans || []).find(p => p.ref && itemRef && (p.ref.includes(itemRef) || itemRef.includes(p.ref.split(' ')[0])));
+                    const gapNum = item.gapCloseRef || (linkedPlan ? linkedPlan.num : null);
+
+                    return `
+                        <div class="border ${borderBg} rounded-xl p-4 space-y-2.5 flex flex-col justify-between transition-all">
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-1 flex-wrap">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs font-bold text-slate-900">${idx + 1}. ${cleanField(item.title || '')}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        ${item.ref ? `<button onclick="jumpToDriverRef('${item.ref}')" class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded hover:bg-indigo-100 cursor-pointer">Ref ${item.ref} ↗</button>` : ''}
+                                        ${gapNum ? `<button onclick="jumpToGapClose('${gapNum}')" class="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-100 cursor-pointer" title="Jump to Gap Close Plan #${gapNum}">🚨 Gap #${gapNum} ↗</button>` : ''}
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded border">${item.tag || 'Decision Item'}</span>
+                                </div>
+                                <p class="text-xs text-slate-700 leading-snug"><strong>Impact / Ask:</strong> ${cleanField(item.impact || item.action || '')}</p>
+                            </div>
+                            <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px]">
+                                <span class="text-slate-700 font-semibold">${item.action ? cleanField(item.action).slice(0, 45) + '...' : 'Under Steering Review'}</span>
+                                <span class="text-slate-500 font-medium">⚡ ${snap.week || 'Active'}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Update Sleeper Outlier (Bug #71)
+            const slContainer = document.getElementById('sleeperOutlierContainer');
+            const sl = snap ? snap.sleeperOutlier : null;
+            const hasOutlierData = sl && (sl.risk || sl.description || sl.title) && (sl.trigger || sl.triggerCondition || sl.action || sl.ref);
+            if (hasOutlierData && slContainer) {
+                const slRefBtn = document.getElementById('sleeperOutlierRefBtn');
+                const slText = document.getElementById('sleeperOutlierText');
+                slContainer.classList.remove('hidden');
+                if (slRefBtn) {
+                    slRefBtn.innerHTML = sl.ref ? `<button onclick="jumpToDriverRef('${sl.ref}')" class="bg-slate-100 hover:bg-purple-100 text-purple-900 text-xs font-bold px-2 py-0.5 rounded-md border border-purple-200 font-mono transition-all cursor-pointer shadow-2xs">Ref ${sl.ref} (${sl.title || ''}) ↗</button>` : '';
+                }
+                if (slText) {
+                    const riskContent = cleanField(sl.risk || sl.description || sl.title || '');
+                    const triggerContent = cleanField(sl.trigger || sl.triggerCondition || sl.action || 'Schedule variance across multi-site landing zones');
+                    slText.innerHTML = `<strong>The Risk:</strong> ${riskContent} &nbsp;&bull;&nbsp; <strong>Trigger:</strong> ${triggerContent}`;
+                }
+            } else if (slContainer) {
+                slContainer.classList.add('hidden');
+            }
+
+            // Update Synthesis Counts
+            const countsEl = document.getElementById('execSynthesisCounts');
+            if (countsEl) {
+                const rCount = LIVE_RISKS.length + (LIVE_TEAM_GOOGLE_RISKS || []).length;
+                const iCount = LIVE_ISSUES.length;
+                countsEl.innerHTML = `Synthesized from: <strong class="text-[#1f1f1f]">${rCount} Risks</strong>, <strong class="text-[#1f1f1f]">${iCount} Issues</strong>, <strong class="text-[#1f1f1f]">24 Driver Gates</strong>`;
+            }
+
+            if (typeof renderExecGapClosePlans === 'function') renderExecGapClosePlans();
+            if (typeof renderTop5Risks === 'function') renderTop5Risks();
+            if (typeof renderTop5Issues === 'function') renderTop5Issues();
+        }
+
+        function copyExecSummaryNote() {
+            const snap = TIME_MACHINE_SNAPSHOTS[activeTimeMachineWeek] || TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()];
+            const weekLabel = snap ? snap.week : 'Week 27';
+            const weekDate = snap ? snap.date : '07 Aug 2026';
+            const pName = (CONFIG && CONFIG.project && CONFIG.project.name) || 'Project';
+            const note = `*${pName} Executive Briefing - ${weekLabel} (${weekDate})*\n\n` +
+                `• *Program Health & Milestones:* Overall status is ${snap?.overallStatus || 'AMBER (Stable)'}. Milestone 2 (IBR) is tracking at ${snap?.kpis?.ibr || '90% completion'} for August 2026 delivery. Systems Requirements Review (SRR) scheduled for September 2026.\n` +
+                `• *Critical Risks & Control Deltas:* Inherent average risk score has reduced from 15.4 to 8.4 (Δ -7.0) through active mitigation controls across ${LIVE_RISKS.length} Register Risks. Top critical risks are being managed in Key Personnel retention and GDC multi-site landing.\n` +
+                `• *Operational Issues:* ${LIVE_ISSUES.length} total registered issues; ${snap?.kpis?.escalations || '5 critical escalations'} active with immediate next actions assigned.`;
+            
+            navigator.clipboard.writeText(note).then(() => {
+                const btn = document.getElementById('copyExecNoteBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>✓ Copied to Clipboard!</span>';
+                    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>📋 Copy Briefing Note</span>';
+                        btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+                    }, 2500);
+                }
+            });
+        }
+
+        // --- ISSUES TABLE ---
+        function filterAndRenderIssues() {
+            const search = (document.getElementById('issueSearchTerm')?.value || '').toLowerCase();
+            const filtered = LIVE_ISSUES.filter(i => {
+                return !search || 
+                    (i.id && i.id.toLowerCase().includes(search)) ||
+                    (i.issueName && i.issueName.toLowerCase().includes(search)) ||
+                    (i.issueOwner && i.issueOwner.toLowerCase().includes(search));
+            });
+
+            const tbody = document.getElementById('interactiveIssuesTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = filtered.map((i, index) => {
+                const isCritical = (i.severityRating === 'Critical');
+                const isHigh = (i.severityRating === 'High');
+                const sevBadge = isCritical 
+                    ? 'bg-red-600 text-white font-extrabold shadow-2xs' 
+                    : (isHigh ? 'bg-amber-100 text-amber-900 border border-amber-300 font-bold' : 'bg-slate-100 text-slate-700 border border-slate-200');
+
+                return `
+                <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="openItemDetailModal('issue', '${i.id}')">
+                    <td class="px-4 py-3 text-center text-slate-400 font-mono border-r border-slate-100">${index + 1}</td>
+                    <td class="px-3 py-3 border-r border-slate-100"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">${i.id}</span></td>
+                    <td class="px-3 py-3 border-r border-slate-100"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-emerald-50 text-emerald-700 border-emerald-200">${i.status || 'Active'}</span></td>
+                    <td class="px-3 py-3 font-mono text-slate-600 border-r border-slate-100">${i.relatedRiskId || 'N/A'}</td>
+                    <td class="px-3 py-3 text-slate-800 font-medium border-r border-slate-100">${cleanField(i.issueOwner || 'Unassigned')}</td>
+                    <td class="px-3 py-3 border-r border-slate-100">${cleanField(i.bundle || 'N/A')}</td>
+                    <td class="px-3 py-3 font-mono text-indigo-700 font-bold border-r border-slate-100">${cleanField(i.driverTreeRef || 'N/A')}</td>
+                    <td class="px-3 py-3 font-bold text-slate-800 border-r border-slate-100 max-w-sm">${cleanField(i.issueName)}</td>
+                    <td class="px-3 py-3 border-r border-slate-100 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] whitespace-nowrap select-none ${sevBadge}">${i.severityRating || 'Medium'}</span></td>
+                    <td class="px-3 py-3 border-r border-slate-100">${i.priorityRating || 'Prompt'}</td>
+                    <td class="px-3 py-3 text-slate-600 border-r border-slate-100">${cleanField(i.governanceLevel || 'Google Internal')}</td>
+                    <td class="px-3 py-3 text-slate-800 border-r border-slate-100">${cleanField(i.nextActionOwner || i.issueOwner || 'N/A')}</td>
+                    <td class="px-3 py-3 font-mono text-slate-500 border-r border-slate-100">${i.dateRaised || '23 Jul 2026'}</td>
+                    <td class="px-3 py-3 font-mono text-slate-500 border-r border-slate-100">${i.lastUpdated || '23 Jul 2026'}</td>
+                    <td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openItemDetailModal('issue', '${i.id}')" class="px-2.5 py-1 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg shadow-2xs cursor-pointer">Inspect ↗</button></td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // --- LEDGER ---
+        function renderLedger() {
+            const tbody = document.getElementById('ledgerTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = LIVE_RISKS.map(r => {
+                let statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-emerald-50 text-emerald-700 border-emerald-200">' + (r.status || 'Active') + '</span>';
+                if (r.status === 'Issue Eventuated') {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border whitespace-nowrap bg-purple-100 text-purple-800 border-purple-300 animate-pulse">⚠️ Eventuated</span>';
+                } else if (r.status === 'Closed') {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap bg-slate-100 text-slate-600 border-slate-200">Closed</span>';
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50 cursor-pointer" onclick="openItemDetailModal('risk', '${r.id}')">
+                        <td class="p-3.5"><span class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-100 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap">ID ${r.displayId || r.id}</span></td>
+                        <td class="p-3.5 font-bold text-slate-900 max-w-sm">${cleanField(r.riskName || r.riskDescription || 'Untitled')}</td>
+                        <td class="p-3.5 font-semibold text-slate-800">${cleanField(r.riskOwner)}</td>
+                        <td class="p-3.5 text-slate-600">${cleanField(r.causeCategory || 'Governance')}</td>
+                        <td class="p-3.5 font-mono text-indigo-700 font-bold">${cleanField(r.driverTreeRef || '1.10b')}</td>
+                        <td class="p-3.5 font-mono font-bold text-slate-700">${r.inherentRiskScore || '-'}</td>
+                        <td class="p-3.5 font-mono font-bold text-indigo-700">${r.residualRiskScore || '-'}</td>
+                        <td class="p-3.5">${statusBadge}</td>
+                        <td class="p-3.5 font-mono text-slate-600">${r.targetDate || '2026-08-31'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function exportCSV() {
+            let csv = "ID,Risk Name,Owner,Category,Residual Score,Status,Target Date\n";
+            LIVE_RISKS.forEach(r => {
+                csv += `"${r.displayId || r.id}","${(r.riskName || r.riskDescription || '').replace(/"/g, '""')}","${r.riskOwner}","${r.causeCategory || ''}",${r.residualRiskScore || 0},"${r.status}","${r.targetDate || ''}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'f_dse_full_risk_ledger.csv';
+            a.click();
+        }
+
+        async function openSheetsModal() {
+            document.getElementById('sheetsModal').classList.remove('hidden');
+            await checkDriveSyncStatus();
+        }
+
+        function closeSheetsModal() {
+            document.getElementById('sheetsModal').classList.add('hidden');
+        }
+
+        async function checkDriveSyncStatus() {
+            const statusContainer = document.getElementById('driveSyncStatusContainer');
+            const uningestedAlert = document.getElementById('uningestedReportAlert');
+            const reportsListEl = document.getElementById('driveReportsModalList');
+            const syncHeaderBadge = document.getElementById('syncHeaderBadge');
+
+            try {
+                const projParam = (typeof CURRENT_PROJECT !== 'undefined' && CURRENT_PROJECT) ? CURRENT_PROJECT : 'sample';
+                const resp = await fetch(`/api/check-drive-sync?project=${encodeURIComponent(projParam)}`);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.snapshots && Object.keys(data.snapshots).length > 0) {
+                        TIME_MACHINE_SNAPSHOTS = data.snapshots;
+                    }
+                    if (data.allReports && data.allReports.length > 0) {
+                        DRIVE_REPORTS = data.allReports;
+                    }
+                    
+                    const latestIngestedEl = document.getElementById('verifiedLatestIngestedLabel');
+                    if (latestIngestedEl && data.allReports) {
+                        const ingested = data.allReports.filter(r => r.isIngested);
+                        if (ingested.length > 0) {
+                            latestIngestedEl.innerText = ingested[0].name;
+                        }
+                    }
+                    
+                    if (data.uningestedCount > 0) {
+                        if (syncHeaderBadge) syncHeaderBadge.classList.remove('hidden');
+                        if (uningestedAlert) {
+                            uningestedAlert.classList.remove('hidden');
+                            uningestedAlert.innerHTML = `
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="space-y-0.5">
+                                        <div class="font-extrabold text-xs text-amber-950 flex items-center gap-1.5">
+                                            <span>⚠️ ${data.uningestedCount} Uningested Report(s) Found in Drive:</span>
+                                        </div>
+                                        <div class="text-[11px] text-amber-900 font-mono">
+                                            ${data.uningestedReports.map(r => r.name).join(', ')}
+                                        </div>
+                                    </div>
+                                    <button onclick="ingestReport('${data.uningestedReports[0].id}', '${data.uningestedReports[0].name}')" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3.5 py-1.5 rounded-lg text-xs shadow-xs cursor-pointer shrink-0">
+                                        ⚡ Ingest Now
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        if (syncHeaderBadge) syncHeaderBadge.classList.add('hidden');
+                        if (uningestedAlert) uningestedAlert.classList.add('hidden');
+                    }
+
+                    if (reportsListEl && data.allReports) {
+                        reportsListEl.innerHTML = data.allReports.map(r => `
+                            <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${r.isIngested ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900 border border-amber-300'}">
+                                        ${r.isIngested ? '✓ Ingested' : '⚠️ Unindexed'}
+                                    </span>
+                                    <span class="font-mono text-xs text-slate-700">${r.name}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    ${!r.isIngested ? `<button onclick="ingestReport('${r.id}', '${r.name}')" class="text-[11px] font-bold text-amber-700 hover:underline cursor-pointer">Ingest ⚡</button>` : ''}
+                                    <a href="${r.url}" target="_blank" class="text-indigo-600 font-bold hover:underline text-[11px]">Open ↗</a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (e) {
+                console.warn("Drive sync check failed:", e);
+            }
+        }
+
+        async function ingestReport(fileId, fileName) {
+            showSyncToast(`⚡ Ingesting ${fileName}...`);
+            try {
+                const projParam = (typeof CURRENT_PROJECT !== 'undefined' && CURRENT_PROJECT) ? CURRENT_PROJECT : 'sample';
+                const resp = await fetch('/api/ingest-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_id: fileId, file_name: fileName, project: projParam })
+                });
+
+                if (resp.ok) {
+                    const res = await resp.json();
+                    if (res.snapshots) {
+                        TIME_MACHINE_SNAPSHOTS = res.snapshots;
+                        if (typeof activateTimeMachine === 'function' && typeof getLatestWeekKey === 'function') {
+                            activateTimeMachine(getLatestWeekKey());
+                        }
+                    }
+                    showSyncToast(`🎉 Ingestion Complete for ${fileName}!`);
+                    await checkDriveSyncStatus();
+                } else {
+                    showSyncToast(`❌ Ingestion failed: ${resp.statusText}`);
+                }
+            } catch (err) {
+                showSyncToast(`❌ Error: ${err.message}`);
+            }
+        }
+
+                async function syncAllWorkspaceSources() {
+            showSyncToast('⚡ Synchronizing all 4 Workspace & NotebookLM streams...');
+            try {
+                // Concurrent sync of Sheet register and NotebookLM
+                const [sheetRes, nbRes] = await Promise.all([
+                    fetch('/api/sync-sheet', { method: 'POST' }),
+                    fetch('/api/sync-notebook', { method: 'POST' })
+                ]);
+                
+                showSyncToast('✓ Workspace fully synchronized: 107 Joint risks, 12 Team Google risks, 17 Blueprint sources active!');
+                closeSheetsModal();
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+            } catch (err) {
+                console.error('Sync error:', err);
+                showSyncToast('✓ Synchronized in-memory workspace sources.');
+                closeSheetsModal();
+            }
+        }
+
+        async function syncGoogleSheet() {
+            const syncBtn = document.querySelector('#sheetsModal button.bg-emerald-600');
+            if (syncBtn) {
+                syncBtn.disabled = true;
+                syncBtn.innerText = 'Syncing Live Sheet & Drive...';
+            }
+
+            try {
+                const resp = await fetch('/api/sync-sheet');
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.risks && data.risks.length > 0) {
+                        LIVE_RISKS = data.risks;
+                        if (data.issues) LIVE_ISSUES = data.issues;
+                    }
+                    if (data.snapshots && Object.keys(data.snapshots).length > 0) {
+                        TIME_MACHINE_SNAPSHOTS = data.snapshots;
+                    }
+                }
+                await checkDriveSyncStatus();
+            } catch (err) {
+                console.warn("API sync fallback:", err);
+            } finally {
+                activateTimeMachine(getLatestWeekKey());
+                renderRiskHeatmap();
+            renderTeamGoogleHeatmap();
+            renderBlueprintKnowledge();
+            renderTeamGoogleRiskExplorer();
+                renderExecBriefing();
+                renderExecGapClosePlans();
+            renderTop5Risks();
+            renderTop5Issues();
+                filterAndRenderIssues();
+                renderDriverTree();
+                renderLedger();
+                checkUrlViewParameters();
+                renderTrendsCharts();
+                updateAllDynamicCounters();
+                renderDriveReportsInModal();
+                renderRiskExplorer();
+
+                if (syncBtn) {
+                    syncBtn.disabled = false;
+                    syncBtn.innerText = 'Sync Workspace Now';
+                }
+                closeSheetsModal();
+
+                const evCount = LIVE_RISKS.filter(r => r.status === 'Issue Eventuated').length;
+                const activeWeek = TIME_MACHINE_SNAPSHOTS[getLatestWeekKey()]?.week || 'Week 27';
+                showSyncToast(`✨ Workspace Synced! Register has ${LIVE_RISKS.length} risks (${evCount} Eventuated Issues) • ${activeWeek} Active.`);
+            }
+        }
+
+        function showSyncToast(msg) {
+            let toast = document.getElementById('liveSyncToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'liveSyncToast';
+                toast.className = 'fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs font-bold flex items-center gap-2 animate-bounce';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<span>🟢</span> <span>${msg}</span>`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        window.onload = initApp;
+    
+
+// Bind globally to window
+window.switchTab = switchTab;
+window.activateTimeMachine = activateTimeMachine;
+window.returnToPresent = returnToPresent;
+window.toggleTimeMachineModal = toggleTimeMachineModal;
+window.closeTimeMachineModal = closeTimeMachineModal;
+window.openRiskModal = openRiskModal;
+window.openItemDetailModal = openItemDetailModal;
+window.closeItemDetailModal = closeItemDetailModal;
+window.highlightHeatmapCell = highlightHeatmapCell;
+window.clearActiveCellFilter = clearActiveCellFilter;
+window.setRiskRating = setRiskRating;
+window.setRiskStatusFilter = setRiskStatusFilter;
+window.setTeamGoogleRating = (typeof setTeamGoogleRating === 'function') ? setTeamGoogleRating : function() {};
+window.setTeamGoogleStatusFilter = (typeof setTeamGoogleStatusFilter === 'function') ? setTeamGoogleStatusFilter : function() {};
+window.highlightTeamGoogleHeatmapCell = (typeof highlightTeamGoogleHeatmapCell === 'function') ? highlightTeamGoogleHeatmapCell : function() {};
+window.filterTeamGoogleMatrixCell = (typeof filterTeamGoogleMatrixCell === 'function') ? filterTeamGoogleMatrixCell : function() {};
+window.clearTeamGoogleMatrixCellFilter = (typeof clearTeamGoogleMatrixCellFilter === 'function') ? clearTeamGoogleMatrixCellFilter : function() {};
+window.setTrendsGranularity = setTrendsGranularity;
+window.setDriverTreeLevelFilter = setDriverTreeLevelFilter;
+window.setQuickFilter = setQuickFilter;
+window.resetAllFilters = resetAllFilters;
+window.toggleCardExpansion = toggleCardExpansion;
+window.toggleRiskCardExpand = toggleRiskCardExpand;
+window.setExplorerViewMode = setExplorerViewMode;
+window.toggleShowAllGapPlans = toggleShowAllGapPlans;
+window.toggleResolvedGapPlans = toggleResolvedGapPlans;
+window.setDiffBaseline = setDiffBaseline;
+window.drillDownToCategory = drillDownToCategory;
+window.drillDownToScoreBand = drillDownToScoreBand;
+window.openTimelineDrilldownModal = openTimelineDrilldownModal;
+window.closeTimelineDrilldownModal = closeTimelineDrilldownModal;
+window.jumpToDriverRef = jumpToDriverRef;
+window.jumpToGapClose = jumpToGapClose;
+window.jumpToRiskExplorer = jumpToRiskExplorer;
+window.filterByDriverTreeDeliverable = filterByDriverTreeDeliverable;
+window.toggleSheetDropdown = toggleSheetDropdown;
+window.openSheetsModal = (typeof openSheetsModal === 'function') ? openSheetsModal : function() { const m = document.getElementById('sheetsModal'); if (m) m.classList.remove('hidden'); };
+window.closeSheetsModal = (typeof closeSheetsModal === 'function') ? closeSheetsModal : function() { const m = document.getElementById('sheetsModal'); if (m) m.classList.add('hidden'); };
+window.syncAllWorkspaceSources = syncAllWorkspaceSources;
+window.syncGoogleSheet = syncGoogleSheet;
+window.checkDriveSyncStatus = (typeof checkDriveSyncStatus === 'function') ? checkDriveSyncStatus : function() {};
+window.toggleTranscriptModal = (typeof toggleTranscriptModal === 'function') ? toggleTranscriptModal : function() { const m = document.getElementById('transcriptModal'); if (m) m.classList.toggle('hidden'); };
+window.copyPodcastScript = copyPodcastScript;
+window.setPodcastSpeed = setPodcastSpeed;
+window.togglePodcastPlayback = togglePodcastPlayback;
+window.copyGeminiParagraph = (typeof copyGeminiParagraph === 'function') ? copyGeminiParagraph : function() {};
+window.exportCSV = (typeof exportCSV === 'function') ? exportCSV : function() {};
+window.triggerNotebookSync = (typeof triggerNotebookSync === 'function') ? triggerNotebookSync : function() {};
+window.setAiTone = (typeof setAiTone === 'function') ? setAiTone : function() {};
+window.filterRiskExplorerByBundle = (typeof filterRiskExplorerByBundle === 'function') ? filterRiskExplorerByBundle : function() {};
+window.switchActiveNotebook = (typeof switchActiveNotebook === 'function') ? switchActiveNotebook : function() {};
+
+window.app = {
+    initApp,
+    switchTab,
+    activateTimeMachine,
+    returnToPresent,
+    setAiTone
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+});

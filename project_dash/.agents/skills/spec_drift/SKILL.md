@@ -33,10 +33,10 @@ Render and write the discrepancy analysis to `conductor/spec_discrepancies.md` (
 ```markdown
 # Spec vs. Codebase Discrepancy Review Matrix
 
-| ID | Domain / Component | Specification Version | Implemented Codebase Version | Resolution Status | Recommended Action |
-|:---|:---|:---|:---|:---:|:---|
-| **D-1** | `config.json` | Basic theme colors & URLs | Rich `kpiPillars` & feature toggles | 🟡 Open | Update Spec / Align Code |
-| **D-2** | `risks.json` | snake_case fields | camelCase domain fields | 🟡 Open | Update Spec / Align Code |
+| ID | Domain / Component | Specification Version | Implemented Codebase Version | Recommendation | Resolution Status | User Decision / Action |
+|:---|:---|:---|:---|:---|:---:|:---|
+| **D-1** | `config.json` | Basic theme colors & URLs | Rich `kpiPillars` & feature toggles | **Adopt Code** (Update Spec) | 🟡 Open | *Awaiting review* |
+| **D-2** | `risks.json` | snake_case fields | camelCase domain fields | **Adopt Code** (Update Spec) | 🟡 Open | *Awaiting review* |
 ```
 
 ### 4. Provide Triage Recommendations

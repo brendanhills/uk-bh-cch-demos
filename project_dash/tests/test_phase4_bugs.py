@@ -3,11 +3,25 @@ import unittest
 import re
 import os
 
+def load_full_html():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        html = f.read()
+    js_dir = os.path.join(base_dir, 'src', 'js')
+    if os.path.exists(js_dir):
+        for root, _, files in os.walk(js_dir):
+            for fn in sorted(files):
+                if fn.endswith('.js'):
+                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
+                        html += chr(10) + f.read()
+    return html
+
+
 class TestPhase4Bugs(unittest.TestCase):
     def setUp(self):
         self.index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "index.html"))
         with open(self.index_path, "r", encoding="utf-8") as f:
-            self.html = f.read()
+            self.html = load_full_html()
 
     def test_bug_42_risk_explorer_container_id_aligned(self):
         """Bug #42: renderRiskExplorer must update explorerCardsContainer element."""

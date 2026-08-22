@@ -67,7 +67,7 @@ def get_gemini_client() -> Optional[genai.Client]:
     try:
         return genai.Client()
     except Exception as e:
-        logger.error(f"Failed to initialize any Gemini client: {e}")
+        logger.warning(f"Gemini client not configured or credentials missing: {e}")
         return None
 
 def build_synthesis_prompt(metrics: Dict[str, Any], gap_close_plans: List[Dict[str, Any]]) -> str:
@@ -201,7 +201,63 @@ Return STRICT JSON as an array of dialogue turns:
 
     try:
         script = json.loads(response.text)
-        return script
     except Exception as e:
         logger.error(f"Failed to parse podcast script JSON: {e}")
         raise ValueError(f"Invalid podcast script JSON from {model}: {e}")
+
+    # Generate multi-speaker audio if audio_out_path is provided
+    if audio_out_path and script:
+        try:
+            tts_dialogue = "\n\n".join([
+                f"{turn.get('speaker', 'Alex')}: {turn.get('text', '')}"
+                for turn in script
+            ])
+            tts_prompt = f"Perform this executive podcast briefing naturally:\n\n{tts_dialogue}"
+
+            speaker_configs = [
+                types.SpeakerVoiceConfig(
+                    speaker="Alex",
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Puck")
+                    )
+                ),
+                types.SpeakerVoiceConfig(
+                    speaker="Jordan",
+                    voice_config=types.VoiceConfig(
+                        prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name="Aoede")
+                    )
+                )
+            ]
+
+            speech_config = types.SpeechConfig(
+                multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
+                    speaker_voice_configs=speaker_configs
+                )
+            )
+
+            tts_model = os.getenv("GEMINI_TTS_MODEL", "gemini-3.1-flash-tts-preview")
+            tts_resp = client.models.generate_content(
+                model=tts_model,
+                contents=tts_prompt,
+                config=types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=speech_config
+                )
+            )
+
+            audio_data = None
+            if tts_resp.candidates and tts_resp.candidates[0].content and tts_resp.candidates[0].content.parts:
+                for part in tts_resp.candidates[0].content.parts:
+                    if hasattr(part, 'inline_data') and part.inline_data and part.inline_data.data:
+                        audio_data = part.inline_data.data
+                        break
+
+            if audio_data:
+                os.makedirs(os.path.dirname(audio_out_path), exist_ok=True)
+                with open(audio_out_path, "wb") as f:
+                    f.write(audio_data)
+                logger.info(f"Generated multi-speaker podcast audio at {audio_out_path}")
+        except Exception as tts_err:
+            logger.warning(f"Multi-speaker audio generation warning: {tts_err}")
+
+    return script

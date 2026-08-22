@@ -3,12 +3,26 @@ import unittest
 import re
 import os
 
+def load_full_html():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        html = f.read()
+    js_dir = os.path.join(base_dir, 'src', 'js')
+    if os.path.exists(js_dir):
+        for root, _, files in os.walk(js_dir):
+            for fn in sorted(files):
+                if fn.endswith('.js'):
+                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
+                        html += chr(10) + f.read()
+    return html
+
+
 class TestPhase2Bugs(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "index.html"))
         with open(cls.index_path, "r", encoding="utf-8") as f:
-            cls.html = f.read()
+            cls.html = load_full_html()
 
     def test_bug_28_and_35_workspace_sync_modal_4_streams(self):
         """Bugs #28 & #35: Workspace Live Sync modal must include Team Google and NotebookLM streams."""

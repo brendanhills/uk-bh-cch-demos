@@ -5,6 +5,7 @@ COPY index.html /usr/share/nginx/html/index.html
 COPY favicon.svg /usr/share/nginx/html/favicon.svg
 COPY assets/ /usr/share/nginx/html/assets/
 COPY data/ /usr/share/nginx/html/data/
+COPY src/ /usr/share/nginx/html/src/
 
 # Copy custom Nginx configuration for Cloud Run port 8080
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf

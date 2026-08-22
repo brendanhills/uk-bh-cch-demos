@@ -1,5 +1,20 @@
+import os
 import json
 import unittest
+
+def load_full_html():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        html = f.read()
+    js_dir = os.path.join(base_dir, 'src', 'js')
+    if os.path.exists(js_dir):
+        for root, _, files in os.walk(js_dir):
+            for fn in sorted(files):
+                if fn.endswith('.js'):
+                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
+                        html += chr(10) + f.read()
+    return html
+
 
 class TestDataIntegrity(unittest.TestCase):
     def test_live_data_schema(self):
@@ -38,8 +53,7 @@ class TestDataIntegrity(unittest.TestCase):
             self.assertTrue(len(gr['riskOwner']) > 0)
 
     def test_index_html_canvas_binding(self):
-        with open('index.html', 'r', encoding='utf-8') as f:
-            html = f.read()
+        html = load_full_html()
         self.assertIn('id="chartBurndownTimeline"', html)
         self.assertIn("document.getElementById('chartBurndownTimeline')", html)
         self.assertNotIn("document.getElementById('chartBurndownBurnup')", html)

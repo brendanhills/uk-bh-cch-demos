@@ -1,5 +1,20 @@
 import unittest
+import os
 import server
+
+def load_full_html():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        html = f.read()
+    js_dir = os.path.join(base_dir, 'src', 'js')
+    if os.path.exists(js_dir):
+        for root, _, files in os.walk(js_dir):
+            for fn in sorted(files):
+                if fn.endswith('.js'):
+                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
+                        html += chr(10) + f.read()
+    return html
+
 
 class TestServerStartup(unittest.TestCase):
     def test_get_startup_urls(self):
@@ -87,7 +102,7 @@ class TestAllDashboardsDynamicSync(unittest.TestCase):
         import os
         index_path = os.path.join(server.DIRECTORY, "index.html")
         with open(index_path, "r", encoding="utf-8") as f:
-            cls.html_content = f.read()
+            cls.html_content = load_full_html()
 
     def test_view_containers_exist(self):
         """Verify all 6 tab view containers exist."""
@@ -274,4 +289,3 @@ class TestAllDashboardsDynamicSync(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
