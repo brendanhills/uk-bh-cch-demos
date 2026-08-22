@@ -11,10 +11,11 @@
 The **F-DSE Program Governance & Risk Intelligence Platform** is a zero-build, single-page web application designed for executive decision-making, live risk matrix analysis, and contractual delivery governance.
 
 ### Zero-Server / Browser-Direct Architecture
-* **Where does the app run?**: The dashboard runs directly in the user's web browser as a pure static Single-Page Application (`index.html`).
-* **Who maintains backend servers?**: **No one.** There are no cloud VMs, Borg jobs, or backend servers required to be running 24/7.
-* **Storage Backend**: The single source of truth is your team's **Google Drive Shared Folder** containing weekly PDF risk reports, Google Sheets registers, and `weekly_snapshots.json`.
-* **AI Intelligence**: Executive briefings are synthesized using Google Gemini 3.5 Pro API.
+* **Where does the app run?**: The dashboard runs directly in the user's web browser as a pure static Single-Page Application (`index.html`) modularized with ES6 modules in `src/js/`.
+* **Who maintains backend servers?**: **No one.** There are no complex long-running stateful databases required.
+* **Storage Backend**: The single source of truth is your team's **Google Drive Shared Folder** containing weekly PDF risk reports, Google Sheets registers, and `data/sample/snapshots.json`.
+* **Unified Processing Engine**: Ingestion, Google Sheets synchronization, and Gemini AI executive briefings are handled by [`scripts/pipeline.py`](file:///usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/scripts/pipeline.py) with deterministic self-healing fallbacks.
+* **Clean REST API**: The optional local and Cloud Run backend exposes clean endpoints: `GET /api/status`, `POST /api/sync`, `POST /api/ingest`, and `POST /api/briefing/generate`.
 
 ---
 
@@ -43,7 +44,7 @@ When a new weekly risk register arrives (e.g., Week 28 PDF or updated Google She
 ### Method A: Direct from the Dashboard Web UI (Recommended • 0 Code)
 1. Drop the new weekly PDF report (e.g. `Weekly Reporting - Week 28 - 14 Aug 2026.pdf` or `Status_Report.pdf`) into the team's shared Google Drive folder.
 2. Open the dashboard in your browser (`http://localhost:9000/?project=f-dse`).
-3. Click the **"Sync with Google Drive"** button in the header.
+3. Click the **"Sync with Google Drive"** / **"Workspace Sync"** button in the header.
 4. The dashboard will automatically detect the new file, run the self-healing ingestion pipeline, generate the executive briefing, and refresh the 5×5 heatmap and Time Machine ribbon in real time!
 
 ### Method B: Unified Pipeline CLI (Optional 1-Command Tool)
@@ -54,6 +55,9 @@ python3 scripts/pipeline.py --project=f-dse --sync
 
 # 1-Command weekly PDF ingestion:
 python3 scripts/pipeline.py --project=f-dse --ingest-report="Weekly Reporting - Week 28 - 14 Aug 2026.pdf"
+
+# 1-Command executive briefing & podcast regeneration:
+python3 scripts/pipeline.py --project=f-dse --regenerate-briefing="Week 28"
 ```
 
 ---

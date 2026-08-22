@@ -5,28 +5,28 @@
 
 ---
 
-## 1. 🌟 This Week's Showcase: Week 26 Baseline (Operationalizing the v1 Prototype)
+## 1. 🌟 This Week's Showcase: Operational Executive Cockpit & Unified Intelligence Pipeline
 
 ### 📅 Session Context
-- **Reporting Period:** Week 26 (`31 Jul 2026` Baseline)
-- **Target Audience:** F-DSE Project Team, Delivery Leads (Tom, Scott, Mick), Governance & Risk Managers (Susan, Michael), Executive Sponsors.
-- **Core Narrative:** Building upon the initial proof-of-concept (`dash_v1`) that established our core visualization requirements, this release (`project_dash`) operationalizes those concepts into a live, production-ready Executive Cockpit directly connected to our working datasets.
+- **Reporting Period:** Week 27 (`07 Aug 2026` Baseline) / Week 28 Ingestion Ready
+- **Target Audience:** F-DSE Project Team, Delivery Leads (Tom, Scott, Mick), Governance & Risk Managers (Susan, Michael), Executive Sponsors (`allins@`, `sdeacon@`, `waynedavis@`).
+- **Core Narrative:** This release (`project_dash`) delivers a production-ready, self-healing Executive Cockpit directly connected to live Google Sheets, Drive PDF reports, and Gemini 3.5 Pro decision intelligence.
 
 ### 🚀 Key Capabilities Operationalized in This Baseline Delta:
 1. **Gemini 3.5 Pro Executive Decision Synthesis (Tab 1):**
-   - Expanded the initial summary concept into an exception-first synthesis featuring **Top 3 Critical Priorities**, an **Early Warning Sleeper Outlier** (`Ref 1.15`), and a **Schedule Squeeze Barometer** that quantifies cross-bundle dependencies.
-   - Integrated an **Australian Neural Audio Briefing** (`en-AU-Neural2-A/B` NotebookLM style) with waveform scrubbing and speed controls for mobile/hands-free executive updates.
+   - Exception-first synthesis featuring **Top 3 Critical Priorities**, an **Early Warning Sleeper Outlier** (`Ref 1.14` / `Ref 1.15`), and a **Schedule Squeeze Barometer** that quantifies cross-bundle dependencies.
+   - Integrated **Australian Neural Audio Briefing** (`Puck` & `Aoede` personas) with waveform scrubbing and speed controls for hands-free executive updates.
 2. **Interactive 5×5 Heatmap & 1-Click Traceability (Tab 2):**
-   - Added interactive toggling between Inherent (Pre-Control) and Residual (Post-Control) risk distributions to clearly display mitigation efficacy.
-   - Added active focus ring cell filtering: clicking any matrix cell filters the register table below.
+   - Interactive toggling between Inherent (Pre-Control) and Residual (Post-Control) risk distributions to clearly display mitigation efficacy.
+   - Active focus ring cell filtering: clicking any matrix cell filters the register table below.
    - 1-click citation jumps (`↗`): clicking any ticket opens the comprehensive Item Detail Modal.
-3. **Contractual Milestone Alignment & CD1 Driver Tree (Tab 5):**
-   - Evolved the driver tree view into a hierarchical map of Level 2 Contractual Milestones (`1.7a DevSecOps`, `1.10b E.01 Test/Dev`, `1.13 IBR`, `1.14 SRR`) directly linked to blocking risks and active gap closure plans.
-4. **Multi-Granularity Performance Trends (Tab 4):**
-   - Operationalized the burndown chart with dynamic granularity switching (`Weekly`, `Bi-Weekly`, `Monthly`) and added a Risk Cause Category concentration breakdown.
-5. **Live Workspace Sync & Historical Time Machine:**
-   - 100% synchronized live dataset (`107 Risks` and `29 Issues`) mapped directly from the team's official Google Sheet.
-   - Historical time-travel across indexed weekly snapshots (`W22` through `W26`).
+3. **Contractual Milestone Alignment & CD1 Driver Tree (Tab 7):**
+   - Hierarchical map of Level 2 Contractual Milestones (`1.7a DevSecOps`, `1.10b E.01 Test/Dev`, `1.13 IBR`, `1.14 SRR`) directly linked to blocking risks and active gap closure plans.
+4. **Multi-Granularity Performance Trends (Tab 5):**
+   - Longitudinal risk burndown with dynamic granularity switching (`Weekly`, `Bi-Weekly`, `Monthly`) and Net Backlog Velocity tracking.
+5. **Turnkey In-Dashboard Sync & Historical Time Machine:**
+   - 1-Click live sync from official Google Sheets and automated PDF report scanning from Google Drive.
+   - Historical time-travel across indexed weekly snapshots (`W22` through `W27+`).
 
 ---
 

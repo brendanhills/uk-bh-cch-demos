@@ -14,7 +14,7 @@ flowchart LR
 
     subgraph CloudBuild["Google Cloud Build (monaro-risk-dev)"]
         Trigger["Trigger: deploy-monaro-risk-dash-dev"]
-        Step1["1. Run Unit Tests (79 tests)"]
+        Step1["1. Run Unit Tests (122 tests)"]
         Step2["2. Check/Create Artifact Registry"]
         Step3["3. Docker Build & Push"]
         Step4["4. Deploy to Cloud Run (--iap)"]
@@ -53,6 +53,7 @@ Enable all required Google Cloud APIs for container build execution, artifact ma
 
 ```bash
 gcloud services enable \
+    clouderrorreporting.googleapis.com \
     run.googleapis.com \
     cloudbuild.googleapis.com \
     artifactregistry.googleapis.com \
@@ -71,6 +72,7 @@ gcloud services enable \
 
 | API Name | Service Identifier | Purpose / Why Needed |
 | :--- | :--- | :--- |
+| **Cloud Error Reporting API** | `clouderrorreporting.googleapis.com` | Automatically detects, groups, and alerts on runtime stack traces & crashes. |
 | **Cloud Run Admin API** | `run.googleapis.com` | Manages Cloud Run service lifecycles and revisions. |
 | **Cloud Build API** | `cloudbuild.googleapis.com` | Orchestrates automated CI/CD container build pipelines. |
 | **Artifact Registry API** | `artifactregistry.googleapis.com` | Stores and manages versioned Docker container images. |
