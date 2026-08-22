@@ -14,9 +14,13 @@
 **Project Dash** is an ultra-responsive, decoupled executive governance and operational risk intelligence platform. It unifies fragmented weekly PDF reports, Google Sheets risk registers, contractual milestones, and NotebookLM knowledge documents into an interactive, real-time decision cockpit — providing comprehensive 5×5 risk matrices, longitudinal burndown analytics, contractual delivery driver trees, and integrated **Google Gemini AI** executive decision briefings.
 
 ### 1.2 Core Architectural & Operational Principles
-1. **Turnkey Handover & Low-Friction Ownership**:
-   - The platform is designed to be fully operable and maintainable by governance leads and program managers (`allins@`, `sdeacon@`, `waynedavis@`) without requiring ongoing software engineering support or on-call maintenance.
-   - **1-Click Web Management**: Adding reports, syncing live Sheets, and browsing historical time-travel snapshots are executed directly via the browser UI with clear, human-readable feedback toasts.
+1. **Turnkey Handover & Browser-Triggered Data Operations**:
+   - The platform is designed to be fully operable and maintainable by governance leads and program managers (`allins@`, `sdeacon@`, `waynedavis@`) without requiring ongoing software engineering support or dedicated administrative portals.
+   - **Unified In-Dashboard Data Operations**: All 4 core data lifecycle operations are triggered on-demand directly from the dashboard:
+     - **Live Sync**: Syncs live Google Sheets registers and NotebookLM knowledge sources via the **Workspace Sync Modal** (`POST /api/sync`).
+     - **Report Ingestion**: Scans the shared Drive folder for newly uploaded PDF reports and ingests them into the time-travel registry with 1 click (`POST /api/ingest`).
+     - **Executive Briefing Synthesis**: Synthesizes Gemini 3.5 Pro exception-first executive summaries and Top 3 Attention items upon ingestion or manual regeneration (`POST /api/briefing/generate`).
+     - **Neural Podcast Generation**: Generates Australian multi-speaker (`Puck` & `Aoede`) podcast audio dialogue on-demand directly in the backend.
    - **Self-Service Access**: User provisioning is handled through Google Groups (`monaro-risk-dev@google.com` / `monaro-risk-prod@google.com`), automatically synchronizing IAP permissions without touching GCP IAM.
    - **Automated CI/CD**: Cloud Build automatically builds, tests, and deploys verified changes upon git push, eliminating manual container or server management.
 2. **Defensive Processing & Resilient Ingestion**:

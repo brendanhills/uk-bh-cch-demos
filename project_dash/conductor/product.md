@@ -9,9 +9,10 @@ The **F-DSE Program Governance & Risk Intelligence Platform** (Monaro Risk Dashb
 - **Delivery & Governance Teams:** Program managers, risk owners, and engineering leads monitoring Level 2 Contractual Milestones.
 
 ## Mandatory Architectural & Operational Principles
-1. **Turnkey Handover & Low-Friction Ownership**:
-   - The platform is designed for long-term ownership by a non-specialist governance team.
-   - Routine operations (weekly PDF report ingestion, Google Sheets synchronization, historical time-travel analysis) are 1-click actions performed entirely in the browser UI without needing terminal access, code changes, or manual configuration edits.
+1. **Turnkey Handover & Browser-Triggered Data Operations**:
+   - The platform is designed for long-term ownership by a non-specialist governance team without requiring a dedicated "Admin" portal or CLI scripts.
+   - **Interactive In-Dashboard Governance**: All critical data lifecycle actions — live Google Sheets synchronization, Google Drive weekly report detection & ingestion, Gemini AI executive briefing generation, and neural podcast synthesis — are triggered on-demand directly from the dashboard via the **Workspace Sync Modal** (`sheetsModal`) or feature cards.
+   - When any team member opens the Sync modal or triggers an update, the backend pipeline runs the necessary synchronizations, regenerates snapshots, and updates all views in real time.
    - User onboarding and access management are performed directly in standard Google Groups (`monaro-risk-dev@google.com` / `monaro-risk-prod@google.com`).
 2. **Defensive, Resilient Processing**:
    - Ingestion and data synchronization adapt gracefully to common variations in filenames, dates, and data formats.
