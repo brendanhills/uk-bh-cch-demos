@@ -6,6 +6,8 @@ This guide documents the end-to-end, reproducible deployment procedure for the *
 
 ## 🏗️ Architecture & Security Model
 
+![Project Dash - Automated CI/CD & Secure IAP Architecture](assets/gcp_cicd_iap_architecture.png)
+
 ```mermaid
 flowchart LR
     subgraph GitHub["GitHub (cloud-gtm/uk-bh-experiments)"]
