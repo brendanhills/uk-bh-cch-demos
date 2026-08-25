@@ -1,0 +1,56 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "bug"
+
+cases {
+  name: "record_bug_explicit_command"
+  prompt: "/bug The login form crashes when entering special characters in the email field."
+  expectations: "The agent reads or updates `.agents/bugs.json` in the active workspace."
+  expectations: "The agent records a new entry with `type: \"Bug\"` and the summary description of the login form crash."
+  expectations: "The agent auto-assigns the next sequential integer ID."
+  expectations: "The agent sets `status: \"Reported\"`."
+  expectations: "The agent initializes `priority`, `impact`, `risk`, and `phase` to empty strings (\"\")."
+  expectations: "The agent sets `date_reported` to the current date and initializes `date_triaged` and `date_resolved` to empty strings."
+  expectations: "The agent acknowledges recording the bug and halts without modifying source code or running tests."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "record_bug_natural_language"
+  prompt: "I found an issue in the workspace where the export CSV button throws a 500 error when the dataset is empty. Can you file this in the bug registry?"
+  expectations: "The agent reads or updates `.agents/bugs.json`."
+  expectations: "The agent records the entry as `type: \"Bug\"` with the description of the 500 error on empty CSV export."
+  expectations: "The agent sets `status: \"Reported\"` with empty `priority`, `impact`, `risk`, and `phase` fields."
+  expectations: "The agent records the reporter identity."
+  expectations: "The agent does NOT attempt to fix the code or run unit test suites."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "hard_constraint_no_code_modifications"
+  prompt: "/bug Memory leak detected in worker process during batch file ingestion."
+  expectations: "The agent records the memory leak bug in `.agents/bugs.json`."
+  expectations: "The agent does NOT edit any application source files."
+  expectations: "The agent does NOT execute pytest, unit tests, or build commands."
+  expectations: "The agent confirms the bug has been logged with its assigned ID and halts."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "sequential_id_allocation"
+  prompt: "/bug API gateway returns 401 instead of 403 on forbidden scope."
+  expectations: "The agent inspects existing IDs in `.agents/bugs.json`."
+  expectations: "The agent assigns an ID strictly equal to `max(existing_ids) + 1` as an integer."
+  expectations: "The agent sets `status: \"Reported\"`."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 3, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"\", \"impact\": \"\", \"risk\": \"\", \"phase\": \"\", \"status\": \"Reported\", \"description\": \"Previous bug\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}

@@ -1,0 +1,61 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "list_bugs"
+
+cases {
+  name: "list_default_active_bugs"
+  prompt: "/list_bugs"
+  expectations: "The agent reads `.agents/bugs.json` from the active workspace."
+  expectations: "The agent filters for active unresolved items (excluding 'Fix Verified', 'Closed', and 'Obsolete')."
+  expectations: "The agent groups items by status and sorts each group by priority (P0 first, then P1, P2, P3)."
+  expectations: "The agent outputs a structured markdown table containing columns: ID, Type, Reporter, Priority, Impact, Status, Description, and Date Reported."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Login auth token expires too quickly\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-21\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"alice\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Medium\", \"phase\": \"Phase 1\", \"status\": \"Investigated\", \"description\": \"Database deadlock on concurrent writes\", \"date_reported\": \"2026-08-22\", \"date_triaged\": \"2026-08-22\", \"date_resolved\": \"\"},\n  {\"id\": 3, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P2\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Fix Verified\", \"description\": \"Header alignment off on mobile\", \"date_reported\": \"2026-08-15\", \"date_triaged\": \"2026-08-16\", \"date_resolved\": \"2026-08-18\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "list_filter_feature_requests"
+  prompt: "/list_bugs fr"
+  expectations: "The agent reads `.agents/bugs.json`."
+  expectations: "The agent filters the registry to show only entries where `type` is 'FR'."
+  expectations: "The agent displays the filtered items in a structured markdown table."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Memory leak in batch worker\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"FR\", \"reporter\": \"bob\", \"priority\": \"P2\", \"impact\": \"Medium\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Reported\", \"description\": \"Export to CSV support\", \"date_reported\": \"2026-08-21\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "list_filter_my_bugs"
+  prompt: "/list_bugs my"
+  expectations: "The agent inspects the current user identity."
+  expectations: "The agent filters `.agents/bugs.json` to only show items reported by the current user."
+  expectations: "The agent renders the matching items in a structured markdown table."
+  setup {
+    commands: "mkdir -p .agents && USER_NAME=$(git config user.name 2>/dev/null || echo \"$USER\"); cat << DATA > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"$USER_NAME\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Cache stampede on product page\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"other_user\", \"priority\": \"P2\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Reported\", \"description\": \"Sidebar css glitch\", \"date_reported\": \"2026-08-21\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "list_filter_all_status"
+  prompt: "/list_bugs all"
+  expectations: "The agent reads `.agents/bugs.json`."
+  expectations: "The agent includes both outstanding and resolved/closed items."
+  expectations: "The agent groups items into 'Outstanding / Needs Fix' and 'Fix Implemented / Resolved' sections."
+  expectations: "The agent displays markdown tables for both sections."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Search latency regression\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"SQL injection vulnerability\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "list_empty_workspace_clean"
+  prompt: "/list_bugs"
+  expectations: "The agent checks `.agents/bugs.json`."
+  expectations: "When no items or matches exist, the agent announces that no matching items were found and the workspace is clean."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}

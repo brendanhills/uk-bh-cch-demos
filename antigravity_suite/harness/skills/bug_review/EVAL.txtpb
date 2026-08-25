@@ -1,0 +1,53 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "bug_review"
+
+cases {
+  name: "review_default_scope"
+  prompt: "/bug_review"
+  expectations: "The agent reads `.agents/bugs.json`."
+  expectations: "The agent inspects active open bugs and recently closed bugs."
+  expectations: "The agent checks git history and codebase state to audit relevance and potential regressions."
+  expectations: "The agent executes only targeted unit tests if reproduction tests exist for candidate bugs."
+  expectations: "The agent updates `.agents/bugs.json` with updated statuses, `date_triaged`, and `review_notes`."
+  expectations: "The agent renders a summary markdown table of the review results."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Deadlock in worker thread\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Implemented\", \"description\": \"Auth token expiration\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "review_detect_obsolete_bug"
+  prompt: "/bug_review #4"
+  expectations: "The agent inspects bug #4 in `.agents/bugs.json`."
+  expectations: "The agent analyzes git history and source files to verify if the affected component or feature was removed or refactored."
+  expectations: "When the component no longer exists, the agent updates status to 'Obsolete' with rationale recorded in `review_notes`."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 4, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P2\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Reported\", \"description\": \"Bug in legacy_v1_module which was deleted in recent commit\", \"date_reported\": \"2026-08-01\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "review_detect_regression_reopen"
+  prompt: "/bug_review #2"
+  expectations: "The agent inspects resolved bug #2."
+  expectations: "The agent runs the targeted reproduction test for bug #2 or inspects recent breaking commits."
+  expectations: "Upon detecting a test failure or regression, the agent transitions the status to 'Reopened'."
+  expectations: "The agent updates `.agents/bugs.json` with review notes explaining the regression."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"Broken header layout\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "review_all_archive"
+  prompt: "/bug_review all"
+  expectations: "The agent audits all historical entries in `.agents/bugs.json`."
+  expectations: "The agent verifies codebase consistency for all records."
+  expectations: "The agent outputs a comprehensive audit summary table."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Open issue\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"Fixed issue\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}

@@ -1,0 +1,53 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "triage_bug"
+
+cases {
+  name: "triage_single_bug_by_id"
+  prompt: "/triage_bug #1"
+  expectations: "The agent reads `.agents/bugs.json` and locates entry with ID 1."
+  expectations: "The agent checks that the bug is not already resolved, closed, or obsolete."
+  expectations: "The agent investigates the root cause and outlines a solution plan."
+  expectations: "The agent assigns `priority` (P0-P3), `impact` (Critical-Low), and `risk` (Low-High)."
+  expectations: "The agent sets `date_triaged` to the current date and updates `status` to 'Investigated'."
+  expectations: "The agent does NOT write or apply code modifications to fix the bug."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"\", \"impact\": \"\", \"risk\": \"\", \"phase\": \"\", \"status\": \"Reported\", \"description\": \"Timeout during large file upload\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "triage_all_untriaged_bugs"
+  prompt: "/triage_bug"
+  expectations: "The agent scans `.agents/bugs.json` for all untriaged items where priority, impact, or risk are empty."
+  expectations: "The agent skips any items that are already resolved, fixed, closed, or obsolete."
+  expectations: "The agent sequentially investigates root cause, assigns priority/impact/risk, and updates status to 'Investigated' for each untriaged bug."
+  expectations: "The agent sets `date_triaged` to current date for the triaged items."
+  expectations: "The agent does NOT implement the fixes."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"\", \"impact\": \"\", \"risk\": \"\", \"phase\": \"\", \"status\": \"Reported\", \"description\": \"Memory spike on websocket reconnect\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"alice\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Medium\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"Authentication bypass\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "triage_resolved_bug_guard"
+  prompt: "/triage_bug #2"
+  expectations: "The agent checks entry #2 in `.agents/bugs.json`."
+  expectations: "If the item is already closed or resolved (e.g. status 'Fix Verified' or 'Closed'), the agent informs the user and halts without re-triaging."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"Crash on startup\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "triage_hard_constraint_no_fix"
+  prompt: "/triage_bug #3"
+  expectations: "The agent investigates bug #3 and updates `.agents/bugs.json` with triage fields."
+  expectations: "The agent presents the root cause analysis and recommended fix plan in chat."
+  expectations: "The agent does NOT edit application source code files."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 3, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"\", \"impact\": \"\", \"risk\": \"\", \"phase\": \"\", \"status\": \"Reported\", \"description\": \"Null pointer exception in parser\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}

@@ -1,0 +1,52 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "bug_plan"
+
+cases {
+  name: "plan_default_balanced_mode"
+  prompt: "/bug_plan"
+  expectations: "The agent checks `.agents/bugs.json` for active bugs."
+  expectations: "The agent auto-triages any untriaged bugs before planning."
+  expectations: "The agent assigns active bugs into balanced phases (Phase 1: critical/high-impact low-risk, Phase 2: higher-risk core fixes, Phase 3/4: polish and backlog)."
+  expectations: "The agent updates `risk` and `phase` fields in `.agents/bugs.json`."
+  expectations: "The agent creates or updates `.agents/bug_plan.md` with an executive summary and detailed phase breakdown."
+  expectations: "The agent outputs a summary table of the phased roadmap in the conversation."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Data loss on write\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-21\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"alice\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"High\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Refactor database connection pool\", \"date_reported\": \"2026-08-21\", \"date_triaged\": \"2026-08-21\", \"date_resolved\": \"\"},\n  {\"id\": 3, \"type\": \"Bug\", \"reporter\": \"bob\", \"priority\": \"P3\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Button color mismatch\", \"date_reported\": \"2026-08-22\", \"date_triaged\": \"2026-08-22\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "plan_demo_mode_low_risk"
+  prompt: "/bug_plan demo"
+  expectations: "The agent reads `.agents/bugs.json`."
+  expectations: "The agent applies demo/launch mode prioritization, placing low-risk stability fixes and UI polish in Phase 1."
+  expectations: "The agent updates `.agents/bugs.json` with assigned phases and risks."
+  expectations: "The agent generates `.agents/bug_plan.md` reflecting the demo stability strategy."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"Medium\", \"risk\": \"Low\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Demo view label typo\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"alice\", \"priority\": \"P0\", \"impact\": \"High\", \"risk\": \"High\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Complete schema rewrite\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "plan_auto_triage_guard"
+  prompt: "/bug_plan"
+  expectations: "The agent detects active bugs in `.agents/bugs.json` that have empty `priority`, `impact`, or `risk`."
+  expectations: "The agent performs triage on the untriaged items, assigning priority and impact before computing phases."
+  expectations: "The agent updates `.agents/bugs.json` with triage details."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"\", \"impact\": \"\", \"risk\": \"\", \"phase\": \"\", \"status\": \"Reported\", \"description\": \"Untriaged race condition in session manager\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "plan_filters_resolved_bugs"
+  prompt: "/bug_plan"
+  expectations: "The agent reads `.agents/bugs.json` containing a mix of open and resolved/closed bugs."
+  expectations: "The agent excludes bugs with status 'Fix Verified', 'Closed', or 'Obsolete' from the active planning phases."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"Low\", \"phase\": \"\", \"status\": \"Investigated\", \"description\": \"Open item\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Fix Verified\", \"description\": \"Closed item\", \"date_reported\": \"2026-08-10\", \"date_triaged\": \"2026-08-10\", \"date_resolved\": \"2026-08-11\"}\n]\nDATA"
+  }
+}

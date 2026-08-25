@@ -1,0 +1,54 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "fix_bug"
+
+cases {
+  name: "fix_bug_by_id_targeted"
+  prompt: "/fix_bug #1"
+  expectations: "The agent reads `.agents/bugs.json` and retrieves details for bug #1."
+  expectations: "The agent applies Adaptive Tiered Verification based on bug priority and complexity."
+  expectations: "The agent implements the necessary code modifications to resolve the root cause."
+  expectations: "The agent executes unit tests to verify that the fix passes and regressions do not occur."
+  expectations: "The agent sets `date_resolved` to the current date and updates status to 'Fix Implemented' in `.agents/bugs.json`."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P2\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Investigated\", \"description\": \"Typo in config parser error string\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "fix_bug_no_arg_recommend_sequence"
+  prompt: "/fix_bug"
+  expectations: "The agent reads `.agents/bugs.json`."
+  expectations: "The agent identifies all open, unresolved bugs."
+  expectations: "The agent sorts the bugs by priority (P0 -> P1 -> P2 -> P3) and chronologically by ID."
+  expectations: "The agent presents a recommended sequence of resolution without modifying code."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 1, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P2\", \"impact\": \"Low\", \"risk\": \"Low\", \"phase\": \"Phase 2\", \"status\": \"Investigated\", \"description\": \"Low priority bug\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"},\n  {\"id\": 2, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Low\", \"phase\": \"Phase 1\", \"status\": \"Investigated\", \"description\": \"Critical P0 blocker\", \"date_reported\": \"2026-08-21\", \"date_triaged\": \"2026-08-21\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "fix_bug_p0_reproduction_test"
+  prompt: "/fix_bug #5"
+  expectations: "The agent checks bug #5 in `.agents/bugs.json` which is a P0 blocker."
+  expectations: "The agent writes an automated reproduction unit test verifying failure before fix."
+  expectations: "The agent modifies source code to fix the root cause."
+  expectations: "The agent runs tests verifying the reproduction test now passes."
+  expectations: "The agent updates `.agents/bugs.json` with status 'Fix Implemented'."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 5, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"High\", \"phase\": \"Phase 1\", \"status\": \"Investigated\", \"description\": \"Critical null check failure on stream start\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
+
+cases {
+  name: "fix_bug_circuit_breaker"
+  prompt: "/fix_bug #3"
+  expectations: "The agent attempts test setup for complex bug #3."
+  expectations: "When test harness setup encounters repeated failures (>2 attempts), the agent triggers the circuit breaker, implements the fix directly, and verifies against existing regression suites."
+  expectations: "The agent marks bug #3 as 'Fix Implemented' once verified."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 3, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P1\", \"impact\": \"High\", \"risk\": \"High\", \"phase\": \"Phase 1\", \"status\": \"Investigated\", \"description\": \"Intermittent deadlock in event loop\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"2026-08-20\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}

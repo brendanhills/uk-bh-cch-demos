@@ -1,0 +1,56 @@
+# proto-file: learning/gemini/agents/evaluation/evalin/proto/eval_suite.proto
+# proto-message: EvalSuite
+# txtpbfmt: wrap_strings_after_newlines
+
+suite_name: "fr"
+
+cases {
+  name: "record_feature_request_explicit"
+  prompt: "/fr Add support for exporting evaluation reports directly to Google Slides."
+  expectations: "The agent reads or updates `.agents/bugs.json` in the active workspace."
+  expectations: "The agent records a new entry with `type: \"FR\"` and the summary description of the Google Slides export feature."
+  expectations: "The agent auto-assigns the next sequential integer ID sharing the ID sequence with bugs."
+  expectations: "The agent sets `status: \"Reported\"`."
+  expectations: "The agent initializes `priority`, `impact`, `risk`, and `phase` to empty strings (\"\")."
+  expectations: "The agent sets `date_reported` to current date and initializes `date_triaged` and `date_resolved` to empty strings."
+  expectations: "The agent acknowledges recording the feature request and halts without modifying code or running tests."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "record_feature_request_natural_language"
+  prompt: "We should provide a dark mode toggle in the web dashboard header. Can you record this feature request in the workspace registry?"
+  expectations: "The agent reads or updates `.agents/bugs.json`."
+  expectations: "The agent records the entry with `type: \"FR\"` describing dark mode toggle support."
+  expectations: "The agent sets `status: \"Reported\"`."
+  expectations: "The agent initializes `priority`, `impact`, `risk`, and `phase` to empty strings."
+  expectations: "The agent does NOT write or edit source code files."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "hard_constraint_no_code_modifications"
+  prompt: "/fr Add an automated Slack webhook notifier when tests complete."
+  expectations: "The agent records the feature request in `.agents/bugs.json`."
+  expectations: "The agent does NOT modify any source files or configuration files."
+  expectations: "The agent does NOT run test suites or build commands."
+  expectations: "The agent confirms the feature request has been registered and halts."
+  setup {
+    commands: "mkdir -p .agents && echo '[]' > .agents/bugs.json"
+  }
+}
+
+cases {
+  name: "shared_sequential_id_allocation"
+  prompt: "/fr Implement pagination for the audit log endpoint."
+  expectations: "The agent checks existing entries in `.agents/bugs.json`."
+  expectations: "The agent assigns `id` as the next integer (`max(existing_ids) + 1`)."
+  expectations: "The agent sets `type: \"FR\"` and `status: \"Reported\"`."
+  setup {
+    commands: "mkdir -p .agents && cat << 'DATA' > .agents/bugs.json\n[\n  {\"id\": 5, \"type\": \"Bug\", \"reporter\": \"brendanhills\", \"priority\": \"P0\", \"impact\": \"Critical\", \"risk\": \"Medium\", \"phase\": \"Phase 1\", \"status\": \"Reported\", \"description\": \"Data loss on unmount\", \"date_reported\": \"2026-08-20\", \"date_triaged\": \"\", \"date_resolved\": \"\"}\n]\nDATA"
+  }
+}
