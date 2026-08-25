@@ -6,7 +6,8 @@ class TestModularFrontendIntegrity(unittest.TestCase):
     """Automated integrity verification for domain-driven frontend ES modules."""
 
     def setUp(self):
-        self.js_root = '/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/src/js'
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.js_root = os.path.join(project_root, 'src', 'js')
         self.expected_modules = [
             'analytics.js',
             'state.js',

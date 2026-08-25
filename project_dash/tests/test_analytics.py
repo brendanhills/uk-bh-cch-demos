@@ -124,7 +124,8 @@ class TestAnalyticsAndState(unittest.TestCase):
 
     def test_js_analytics_module_exists(self):
         """Verify that src/js/analytics.js exists and exports pure calculation routines."""
-        js_file = '/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/src/js/analytics.js'
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        js_file = os.path.join(project_root, 'src', 'js', 'analytics.js')
         self.assertTrue(os.path.exists(js_file), f'Missing {js_file}')
         with open(js_file, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -135,7 +136,8 @@ class TestAnalyticsAndState(unittest.TestCase):
 
     def test_js_state_store_exists(self):
         """Verify that src/js/state.js exists and implements reactive pub/sub state management."""
-        js_file = '/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/src/js/state.js'
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        js_file = os.path.join(project_root, 'src', 'js', 'state.js')
         self.assertTrue(os.path.exists(js_file), f'Missing {js_file}')
         with open(js_file, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -144,7 +146,8 @@ class TestAnalyticsAndState(unittest.TestCase):
 
     def test_js_api_client_exists(self):
         """Verify that src/js/api.js exists and implements data ingestion & sync endpoints."""
-        js_file = '/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash/src/js/api.js'
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        js_file = os.path.join(project_root, 'src', 'js', 'api.js')
         self.assertTrue(os.path.exists(js_file), f'Missing {js_file}')
         with open(js_file, 'r', encoding='utf-8') as f:
             content = f.read()
