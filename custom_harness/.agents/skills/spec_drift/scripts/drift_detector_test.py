@@ -5,11 +5,21 @@ import os
 import tempfile
 from typing import Any
 
-from absl.testing import absltest
+try:
+  from absl.testing import absltest
+except ImportError:
+  import unittest as absltest
 
-from google3.net.slo.l3._agents.skills.spec_drift_detector.scripts import (
-    drift_detector,
-)
+try:
+  from google3.net.slo.l3._agents.skills.spec_drift_detector.scripts import (
+      drift_detector,
+  )
+except ImportError:
+  try:
+    from . import drift_detector
+  except ImportError:
+    import drift_detector
+
 
 
 class DriftDetectorTest(absltest.TestCase):
