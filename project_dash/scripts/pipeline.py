@@ -20,6 +20,11 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(me
 
 def get_project_dir(project_name: str = 'sample', data_root: Optional[str] = None) -> str:
     root = data_root or DATA_BASE_DIR
+    # Backward compatibility alias
+    if project_name == 'f-dse' and os.path.exists(os.path.join(root, 'monaro')):
+        project_name = 'monaro'
+    elif project_name == 'monaro' and not os.path.exists(os.path.join(root, 'monaro')) and os.path.exists(os.path.join(root, 'f-dse')):
+        project_name = 'f-dse'
     proj_dir = os.path.join(root, project_name)
     os.makedirs(proj_dir, exist_ok=True)
     return proj_dir
@@ -40,18 +45,46 @@ def save_json_file(file_path: str, data: Any):
 
 # --- Report Parsing & Metadata Extraction ---
 
-def parse_report_metadata(file_name: str, fallback_week: Optional[int] = None) -> Dict[str, Any]:
+def parse_report_metadata(
+    file_name: str,
+    fallback_week: Optional[int] = None,
+    file_path: Optional[str] = None,
+    file_bytes: Optional[bytes] = None,
+    use_gemini: bool = True
+) -> Dict[str, Any]:
     """
-    Extracts week number and date from report filename or metadata with flexible heuristics.
-    Supports formats:
-      - 'Weekly Reporting - Week 28 - 14 Aug 2026.pdf'
-      - 'W29_Executive_Summary_21Aug2026.pdf'
-      - 'Week_30_Status.pdf'
-      - 'Report.pdf' (with sequential fallback)
+    Extracts week number and date from report filename or document content.
+    Supports:
+      1. Multimodal Gemini AI inspection of PDF/document content (cover slide / header).
+      2. Flexible heuristic regex extraction from filenames.
+      3. Fallback sequential week assignment.
     """
     clean_name = os.path.basename(file_name)
+
+    # 1. Attempt Gemini Multimodal AI Inspection if enabled
+    if use_gemini and (file_path or file_bytes or os.path.exists(file_name)):
+        target_path = file_path if file_path else (file_name if os.path.exists(file_name) else None)
+        try:
+            from scripts.gemini_generator import inspect_report_with_gemini
+            ai_meta = inspect_report_with_gemini(
+                file_content_or_path=file_bytes if file_bytes else target_path,
+                file_name=clean_name
+            )
+            if ai_meta and ai_meta.get('week_number') and ai_meta.get('report_date'):
+                w_num = int(ai_meta['week_number'])
+                return {
+                    'file_name': clean_name,
+                    'week_number': w_num,
+                    'week_label': ai_meta.get('week_label', f"Week {w_num}"),
+                    'report_date': ai_meta['report_date'],
+                    'title': ai_meta.get('title', clean_name),
+                    'summary': ai_meta.get('summary', ''),
+                    'inspectedBy': ai_meta.get('inspectedBy', 'gemini')
+                }
+        except Exception as e:
+            logger.debug(f"Gemini multimodal inspection fallback to regex: {e}")
     
-    # 1. Extract Week Number
+    # 2. Extract Week Number via Regex
     week_num = None
     week_match = re.search(r'week[\s_-]*(\d+)', clean_name, re.IGNORECASE)
     if not week_match:
@@ -66,7 +99,7 @@ def parse_report_metadata(file_name: str, fallback_week: Optional[int] = None) -
     else:
         week_num = 1
 
-    # 2. Extract Date String
+    # 3. Extract Date String via Regex
     report_date = None
     # Pattern: DD Mon YYYY (e.g. 14 Aug 2026 or 14-Aug-2026)
     date_match = re.search(r'(\d{1,2})[\s_-]+([A-Za-z]{3,9})[\s_-]+(\d{4})', clean_name)
@@ -84,7 +117,8 @@ def parse_report_metadata(file_name: str, fallback_week: Optional[int] = None) -
         'file_name': clean_name,
         'week_number': week_num,
         'week_label': f"Week {week_num}",
-        'report_date': report_date
+        'report_date': report_date,
+        'inspectedBy': 'regex_heuristic'
     }
 
 # --- Metrics Computation ---
@@ -267,7 +301,12 @@ def ingest_report_file(
             existing_weeks.append(int(match.group(0)))
     next_week = (max(existing_weeks) + 1) if existing_weeks else 1
 
-    meta = parse_report_metadata(file_name, fallback_week=next_week)
+    meta = parse_report_metadata(
+        file_name,
+        fallback_week=next_week,
+        file_path=file_name,
+        use_gemini=not force_fallback
+    )
     week_key = meta['week_label']
     report_date = meta['report_date']
 
@@ -306,11 +345,16 @@ def ingest_report_file(
     # 4. Construct Snapshot Record
     snapshot_entry = {
         'date': report_date,
+        'week': week_key,
+        'weekLabel': week_key,
+        'weekNumber': meta['week_number'],
         'metrics': metrics,
         'executiveSummary': synthesis.get('synthesis', {}),
         'top3': synthesis.get('top3', []),
         'sleeperOutlier': synthesis.get('sleeperOutlier', {}),
         'podcastScript': podcast_script,
+        'driveFileId': file_id or f"mock-drive-id-{meta['week_number']}",
+        'driveFileName': meta['file_name'],
         'driveFile': {
             'name': meta['file_name'],
             'id': file_id or f"mock-drive-id-{meta['week_number']}",
@@ -360,3 +404,41 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def resolve_target_projects(cli_arg: Optional[str] = None) -> List[str]:
+    """Resolve target project slugs from CLI argument, environment, or default fallback."""
+    if cli_arg:
+        return [p.strip() for p in cli_arg.split(",") if p.strip()]
+    env_val = os.environ.get("DEFAULT_PROJECTS")
+    if env_val:
+        return [p.strip() for p in env_val.split(",") if p.strip()]
+    return ["sample"]
+
+
+def load_project_config(project: str) -> Dict[str, Any]:
+    """Load configuration for a specific project."""
+    pdir = get_project_dir(project)
+    cfg_file = os.path.join(pdir, "config.json")
+    return load_json_file(cfg_file, {"project": {"slug": project, "name": project}})
+
+
+def ingest_single_project(project: str = "sample", generate_ai: bool = False, data_root: Optional[str] = None) -> Dict[str, Any]:
+    """Ingest and synchronize data for a single project."""
+    res = sync_project_data(project_name=project, data_root=data_root or DATA_BASE_DIR)
+    res["totalRisks"] = res.get("total_risks", 0)
+    res["totalIssues"] = res.get("total_issues", 0)
+    res["totalSnapshots"] = res.get("total_snapshots", 0)
+    return res
+
+
+def ingest_file(file_id_or_name: str, file_name: Optional[str] = None, week_num: Optional[Any] = None, date_str: Optional[str] = None, project: str = "sample", data_root: Optional[str] = None) -> Dict[str, Any]:
+    """Backward-compatible wrapper for report file ingestion returning snapshot dict."""
+    actual_file_name = file_name if file_name else file_id_or_name
+    actual_file_id = file_id_or_name if file_name else None
+    res = ingest_report_file(file_name=actual_file_name, file_id=actual_file_id, project_name=project, data_root=data_root)
+    proj_dir = get_project_dir(project, data_root)
+    snapshots = load_json_file(os.path.join(proj_dir, "snapshots.json"), {})
+    week_key = res.get("week", "Week 27")
+    snap = snapshots.get("snapshots", {}).get(week_key) or snapshots.get("snapshots", {}).get("w27", res)
+    return snap

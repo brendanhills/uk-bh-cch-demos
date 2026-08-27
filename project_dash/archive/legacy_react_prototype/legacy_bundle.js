@@ -172,8 +172,11 @@
             
             const driveLink = document.getElementById('driveReportLink');
             const driveText = document.getElementById('driveReportLinkText');
-            if (driveLink && latestSnap.driveFileId) {
-                driveLink.href = `https://drive.google.com/file/d/${latestSnap.driveFileId}/view`;
+            if (driveLink) {
+                const driveUrl = latestSnap.driveFile?.url || (latestSnap.driveFile?.id ? `https://drive.google.com/file/d/${latestSnap.driveFile.id}/view` : (latestSnap.driveFileId ? `https://drive.google.com/file/d/${latestSnap.driveFileId}/view` : null));
+                if (driveUrl) {
+                    driveLink.href = driveUrl;
+                }
             }
             if (driveText) {
                 driveText.innerText = `${latestWeek} Pack`;
@@ -1441,12 +1444,13 @@
             const report = (Array.isArray(DRIVE_REPORTS) ? DRIVE_REPORTS : []).find(r => r.week === snapWeek) || (Array.isArray(DRIVE_REPORTS) ? DRIVE_REPORTS[0] : null);
             const driveLink = document.getElementById('driveReportLink');
             const driveLinkText = document.getElementById('driveReportLinkText');
-            if (driveLink && report) {
-                driveLink.href = report.url;
-                driveLink.title = `Open Weekly Report PDF (${report.week} - ${report.date})`;
+            const driveUrl = snap.driveFile?.url || (snap.driveFile?.id ? `https://drive.google.com/file/d/${snap.driveFile.id}/view` : (snap.driveFileId ? `https://drive.google.com/file/d/${snap.driveFileId}/view` : (report ? report.url : null)));
+            if (driveLink && driveUrl) {
+                driveLink.href = driveUrl;
+                driveLink.title = `Open Weekly Report PDF (${snapWeek} - ${snap.date || (report ? report.date : '')})`;
             }
-            if (driveLinkText && report) {
-                driveLinkText.innerText = `${report.week} Pack`;
+            if (driveLinkText) {
+                driveLinkText.innerText = `${snapWeek} Pack`;
             }
 
             // Dynamically update Driver Tree deck link & reference badge

@@ -31,9 +31,9 @@
 ## 4. Multi-Notebook Knowledge Base & Ingestion
 - **Knowledge Catalog:** Project blueprints and contract deliverables are stored in `data/<project-slug>/knowledge.json` (e.g. Technical Architecture, Security ATO, Contractual SOWs).
 - **Unified Ingestion:** Knowledge entries and contractual driver trees are processed and organized alongside risks and issues via the master CLI:
-  `python3 scripts/ingest_data.py --project=<project-slug>`
-- **Optional Helper CLI (`sync_notebook.py`):** Standalone differential sync script available for direct Notebook ID fetching if needed, though primary workflows use `ingest_data.py`.
+  `python3 scripts/pipeline.py --project=<project-slug> --sync`
+- **Unified Pipeline Engine (`pipeline.py`):** Consolidated master ingestion CLI (`python3 scripts/pipeline.py --sync`).
 
 ## 5. Turnkey Operations & Handover Tooling
 - **Operator Runbook:** `docs/HANDOVER_GUIDE.md` for self-service maintenance by team members (`allins@`, `sdeacon@`, `waynedavis@`).
-- **Emergency Lifecycle:** 1-click immediate local service shutdown (`deploy/shutdown.sh` / `deploy/stop.sh`).
+- **Server Lifecycle:** Managed via Cloud Run in Sydney (`australia-southeast1`) and local `run_server.sh`.

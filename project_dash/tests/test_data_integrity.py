@@ -18,7 +18,7 @@ def load_full_html():
 
 class TestDataIntegrity(unittest.TestCase):
     def test_live_data_schema(self):
-        with open('src/data/live_synced_data.json', 'r', encoding='utf-8') as f:
+        with open('data/sheets/live_synced_data.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
         self.assertIn('risks', data)
         self.assertIn('teamGoogleRisks', data)

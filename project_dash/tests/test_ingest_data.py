@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from unittest.mock import patch, MagicMock
 
-from scripts.ingest_data import (
+from scripts.pipeline import (
     resolve_target_projects,
     load_project_config,
     ingest_single_project
@@ -75,12 +75,12 @@ class TestIngestData(unittest.TestCase):
             self.assertEqual(projects, ['sample'])
 
     def test_load_project_config(self):
-        with patch('scripts.ingest_data.DATA_BASE_DIR', os.path.join(self.test_dir, 'data')):
+        with patch('scripts.pipeline.DATA_BASE_DIR', os.path.join(self.test_dir, 'data')):
             config = load_project_config('sample')
             self.assertEqual(config['project']['name'], 'Project Aurora')
 
     def test_ingest_single_project_pipeline(self):
-        with patch('scripts.ingest_data.DATA_BASE_DIR', os.path.join(self.test_dir, 'data')):
+        with patch('scripts.pipeline.DATA_BASE_DIR', os.path.join(self.test_dir, 'data')):
             result = ingest_single_project('sample', generate_ai=False)
             self.assertTrue(result['success'])
             self.assertEqual(result['totalRisks'], 1)

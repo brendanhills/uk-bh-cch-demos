@@ -7,15 +7,15 @@ import { store } from './state.js';
 
 /**
  * Loads project configuration, snapshots, and raw dataset for the active project slug.
- * @param {string} projectSlug ('sample' or 'f-dse')
+ * @param {string} projectSlug ('sample', 'monaro', or 'f-dse')
  * @returns {Promise<Object>} Loaded project payload
  */
 export async function loadProjectData(projectSlug = 'sample') {
-    const slug = projectSlug || 'sample';
-    const basePath = `data/${slug}`;
+    let slug = projectSlug || 'sample';
+    let basePath = `data/${slug}`;
 
     try {
-        const [configRes, risksRes, issuesRes, snapshotsRes, knowledgeRes, driverTreeRes] = await Promise.allSettled([
+        let [configRes, risksRes, issuesRes, snapshotsRes, knowledgeRes, driverTreeRes] = await Promise.allSettled([
             fetch(`${basePath}/config.json`),
             fetch(`${basePath}/risks.json`),
             fetch(`${basePath}/issues.json`),
@@ -23,6 +23,27 @@ export async function loadProjectData(projectSlug = 'sample') {
             fetch(`${basePath}/knowledge.json`),
             fetch(`${basePath}/driver_tree.json`)
         ]);
+
+        // Fallback between monaro and f-dse if primary fetch fails
+        if (configRes.status !== 'fulfilled' || !configRes.value.ok) {
+            const fallbackSlug = slug === 'f-dse' ? 'monaro' : (slug === 'monaro' ? 'f-dse' : null);
+            if (fallbackSlug) {
+                const altPath = `data/${fallbackSlug}`;
+                const altRes = await Promise.allSettled([
+                    fetch(`${altPath}/config.json`),
+                    fetch(`${altPath}/risks.json`),
+                    fetch(`${altPath}/issues.json`),
+                    fetch(`${altPath}/snapshots.json`),
+                    fetch(`${altPath}/knowledge.json`),
+                    fetch(`${altPath}/driver_tree.json`)
+                ]);
+                if (altRes[0].status === 'fulfilled' && altRes[0].value.ok) {
+                    slug = fallbackSlug;
+                    basePath = altPath;
+                    [configRes, risksRes, issuesRes, snapshotsRes, knowledgeRes, driverTreeRes] = altRes;
+                }
+            }
+        }
 
         const config = configRes.status === 'fulfilled' && configRes.value.ok ? await configRes.value.json() : null;
         const allRisks = risksRes.status === 'fulfilled' && risksRes.value.ok ? await risksRes.value.json() : [];
