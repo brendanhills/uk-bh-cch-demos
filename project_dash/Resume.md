@@ -1,6 +1,6 @@
 # Project Monaro / F-DSE Risk Governance & Intelligence Platform — Session Resume
 
-**Checkpoint Timestamp:** `2026-08-27 12:56:00 AEST`  
+**Checkpoint Timestamp:** `2026-08-27 13:01:00 AEST`  
 **Active Git Branch:** `dev`  
 **Workspace:** `/usr/local/google/home/brendanhills/dev/uk-bh-experiments/project_dash`  
 **Deployment Region:** **`australia-southeast1`** (Sydney, Australia)  
@@ -95,6 +95,7 @@ git push origin project_dash/prod-v1.0.0
 | `simplify_and_harden_for_handover_20260822` | **[x] Completed** | Consolidated unified pipeline, rationalized REST APIs, self-healing fallbacks. |
 | `modularize_frontend_architecture_20260818` | **[~] In Progress** | Core ES6 modules created under `src/js/`; active manual verification. |
 | `ondemand_podcast_generation_20260820` | **[ ] Queued** | Backend on-demand podcast generation and interactive loading states (Bugs #73, #78). |
+| `migrate_from_unittest_to_pytest_20260827` | **[ ] Queued** | Migrate test suite from unittest to idiomatic pytest & shared conftest fixtures. |
 | `tailored_stakeholder_views` | **[ ] Queued** | URL-driven views for Exec, PM, and Tech stakeholders. |
 | `terraform_iac_provisioning_future` | **[ ] Queued** | Terraform Infrastructure as Code (IaC) provisioning. |
 
