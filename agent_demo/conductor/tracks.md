@@ -2,10 +2,10 @@
 
 ---
 
-- [ ] **Track: Clinical SOAP Note Export & UI Clean-Up (PSN Demo) [Consolidated into adk2_multi_agent_workflow_20260806]**
+- [x] **Track: Clinical SOAP Note Export & UI Clean-Up (PSN Demo) [Consolidated into adk2_multi_agent_workflow_20260806]**
   *Link: [psn_soap_and_ui_cleanup_20260805](./tracks/psn_soap_and_ui_cleanup_20260805/index.md)*
 
-- [ ] **Track: HealthDirect Medical Glossary & Term Translation Support [Depends on adk2_multi_agent_workflow_20260806]**
+- [ ] **Track: HealthDirect Medical Glossary & Term Translation Support [Unblocked - Ready to Implement]**
   *Link: [medical_glossary_explanation_20260805](./tracks/medical_glossary_explanation_20260805/index.md)*
 
 - [x] **Track: Document Scanner & Agentic Auto-Trigger (#BUG-42 & #BUG-48) [Consolidated into adk2_multi_agent_workflow_20260806]**

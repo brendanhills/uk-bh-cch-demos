@@ -483,13 +483,14 @@
   {
     "id": "BUG-43",
     "title": "Evaluate upgrade to newer Gemini Live API model endpoints and Google ADK versions",
-    "description": "Evaluate upgrading the Live API model configuration and ADK dependencies to the latest Gemini 2.5 / 3.x Live API model endpoints and streaming features.",
+    "description": "Evaluate upgrading the Live API model configuration and ADK dependencies to the latest Gemini 3.x Live API model endpoints (gemini-3.1-flash-live-preview, gemini-3-flash) and ADK 2.0 framework features.",
     "date": "2026-08-05",
-    "status": "Investigated",
+    "status": "Fix Implemented",
     "priority": "P3",
     "impact": "Low",
     "risk": "Medium",
     "phase": "Phase 6",
+    "review_notes": "Audited 2026-08-19: Formally adopted Gemini 3+ model policy (gemini-3.1-flash-live-preview for BIDI audio, gemini-3-flash for unary tools/vision) and google-adk>=2.0.0 in Master Specification (conductor/spec.md Section 5.1).",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "are there newer Gemini 3.x live apis that we can use"
   },
