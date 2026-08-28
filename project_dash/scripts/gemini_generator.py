@@ -43,6 +43,13 @@ class PodcastDialogueTurn(BaseModel):
     time: str = Field(description="Timestamp in format MM:SS.")
     text: str = Field(description="Spoken dialogue text.")
 
+class ReportMetadataInspection(BaseModel):
+    week_number: int = Field(description="The program or project reporting week number integer (e.g. 28, 29, 30).")
+    week_label: str = Field(description="Standardized week label (e.g. 'Week 28').")
+    report_date: str = Field(description="The formal reporting date in 'DD Mon YYYY' format (e.g. '14 Aug 2026').")
+    title: str = Field(description="Report title or document headline found on the title slide or document header.")
+    summary: str = Field(description="Brief 1-sentence summary of the report pack scope or period.")
+
 def get_gemini_client() -> Optional[genai.Client]:
     """Initializes genai.Client with ADC Vertex AI priority and API Key fallback."""
     project = os.getenv("GCP_PROJECT_ID")
@@ -261,3 +268,58 @@ Return STRICT JSON as an array of dialogue turns:
             logger.warning(f"Multi-speaker audio generation warning: {tts_err}")
 
     return script
+
+def inspect_report_with_gemini(
+    file_content_or_path: Any,
+    file_name: str = "",
+    mime_type: str = "application/pdf",
+    model: str = "gemini-3.5-flash"
+) -> Optional[Dict[str, Any]]:
+    """
+    Inspects report content or document files using Gemini Multimodal AI to extract
+    the reporting week number, formal date, and title from cover slides or document headers.
+    """
+    client = get_gemini_client()
+    if not client:
+        return None
+
+    try:
+        contents = []
+        prompt_text = (
+            f"Inspect the provided report document (filename: '{file_name}'). "
+            "Extract the exact program/project reporting week number (as an integer), "
+            "the formal reporting date (formatted as 'DD Mon YYYY', e.g. '14 Aug 2026'), "
+            "the document title, and a brief 1-sentence summary of the reporting period. "
+            "If the week number is not explicitly stated in text, infer it from the date or context."
+        )
+
+        if isinstance(file_content_or_path, str) and os.path.exists(file_content_or_path):
+            with open(file_content_or_path, 'rb') as f:
+                raw_bytes = f.read()
+            contents.append(types.Part.from_bytes(data=raw_bytes, mime_type=mime_type))
+        elif isinstance(file_content_or_path, bytes):
+            contents.append(types.Part.from_bytes(data=file_content_or_path, mime_type=mime_type))
+        elif isinstance(file_content_or_path, str) and len(file_content_or_path) > 0:
+            contents.append(file_content_or_path)
+
+        contents.append(prompt_text)
+
+        response = client.models.generate_content(
+            model=model,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=ReportMetadataInspection,
+                temperature=0.1
+            )
+        )
+        if response.text:
+            result = json.loads(response.text)
+            result['inspectedBy'] = model
+            return result
+    except Exception as e:
+        logger.warning(f"Gemini multimodal report inspection encountered an error: {e}")
+        return None
+
+    return None
+

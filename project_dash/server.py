@@ -44,6 +44,11 @@ def get_default_project():
 def get_project_dir(project_slug=''):
     if not project_slug:
         project_slug = get_default_project()
+    # Backward compatibility alias between monaro and f-dse
+    if project_slug == 'f-dse' and os.path.exists(os.path.join(DIRECTORY, 'data', 'monaro')):
+        project_slug = 'monaro'
+    elif project_slug == 'monaro' and not os.path.exists(os.path.join(DIRECTORY, 'data', 'monaro')) and os.path.exists(os.path.join(DIRECTORY, 'data', 'f-dse')):
+        project_slug = 'f-dse'
     p_dir = os.path.join(DIRECTORY, 'data', project_slug)
     if os.path.exists(p_dir):
         return p_dir
@@ -62,7 +67,8 @@ def parse_request_params(query_or_params):
 
 # Default fallback Drive folder reports
 DEFAULT_DRIVE_REPORTS = [
-    {"id": "1vXb9r7N8y2_dummy_w28", "week": "Week 28", "date": "14 Aug 2026", "name": "Weekly Reporting - Week 28 - 14 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1vXb9r7N8y2_dummy_w28/view"},
+    {"id": "1_monaro_drive_w29", "week": "Week 29", "date": "21 Aug 2026", "name": "Weekly Reporting - Week 29 - 21 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1_monaro_drive_w29/view"},
+    {"id": "1_monaro_drive_w28", "week": "Week 28", "date": "14 Aug 2026", "name": "Weekly Reporting - Week 28 - 14 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1_monaro_drive_w28/view"},
     {"id": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu", "week": "Week 27", "date": "07 Aug 2026", "name": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf", "url": "https://drive.google.com/file/d/1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu/view"},
     {"id": "1UlQmROLEbOroFI8neyne3qOUm4wEgCyC", "week": "Week 26", "date": "31 Jul 2026", "name": "Weekly Reporting - Week 26 - 31 Jul 2026.pdf", "url": "https://drive.google.com/file/d/1UlQmROLEbOroFI8neyne3qOUm4wEgCyC/view"},
     {"id": "13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz", "week": "Week 25", "date": "24 Jul 2026", "name": "Weekly Reporting - Week 25 - 24 Jul 2026.pdf", "url": "https://drive.google.com/file/d/13ThXt0QIpS2OFg4NEewfx8ggoD2CItlz/view"},
@@ -72,6 +78,44 @@ DEFAULT_DRIVE_REPORTS = [
 ]
 
 KNOWN_DRIVE_REPORTS = DEFAULT_DRIVE_REPORTS
+
+def query_live_drive_folder(folder_id: str) -> List[Dict[str, Any]]:
+    """Queries Google Drive API for files in the specified folderId using ADC credentials."""
+    if not folder_id or str(folder_id).startswith('sample-'):
+        return []
+    try:
+        import google.auth
+        from googleapiclient.discovery import build
+        credentials, _ = google.auth.default(scopes=[
+            'https://www.googleapis.com/auth/drive.readonly',
+            'https://www.googleapis.com/auth/cloud-platform'
+        ])
+        service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
+        query = f"'{folder_id}' in parents and trashed = false"
+        results = service.files().list(
+            q=query,
+            fields="files(id, name, mimeType, webViewLink, createdTime)",
+            orderBy="name desc"
+        ).execute()
+        files = results.get('files', [])
+        drive_reports = []
+        for f in files:
+            name = f.get('name', '')
+            if name.endswith(('.pdf', '.docx', '.doc', '.gdoc', '.pptx')) or 'Reporting' in name or 'Week' in name:
+                w_match = re.search(r'week[\s_-]*(\d+)', name, re.IGNORECASE) or re.search(r'\bw(\d+)\b', name, re.IGNORECASE)
+                w_label = f"Week {w_match.group(1)}" if w_match else "Report"
+                date_match = re.search(r'(\d{1,2})[\s_-]+([A-Za-z]{3,9})[\s_-]+(\d{4})', name)
+                rep_date = f"{date_match.group(1)} {date_match.group(2)[:3].title()} {date_match.group(3)}" if date_match else "Recent"
+                drive_reports.append({
+                    "id": f.get('id'),
+                    "name": name,
+                    "week": w_label,
+                    "date": rep_date,
+                    "url": f.get('webViewLink') or f"https://drive.google.com/file/d/{f.get('id')}/view"
+                })
+        return drive_reports
+    except Exception:
+        return []
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -335,17 +379,46 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
             snapshots_data = load_json_file(os.path.join(p_dir, 'snapshots.json'), {})
             cfg = load_json_file(os.path.join(p_dir, 'config.json'), {})
-            known_reports = list(cfg.get('sources', {}).get('googleDrive', {}).get('knownReports') or DEFAULT_DRIVE_REPORTS)
 
-            seen_names = {r.get('name') for r in known_reports}
+            # 1. Live Google Drive Folder Querying on demand
+            folder_id = cfg.get('sources', {}).get('googleDrive', {}).get('folderId') or cfg.get('driveFolderId')
+            live_reports = query_live_drive_folder(folder_id) if folder_id else []
+
+            # 2. Known configured reports fallback/default
+            raw_known = cfg.get('sources', {}).get('googleDrive', {}).get('knownReports')
+            if raw_known is not None:
+                configured_reports = list(raw_known)
+            else:
+                configured_reports = list(DEFAULT_DRIVE_REPORTS)
+
+            seen_ids = set()
+            seen_names = set()
+            merged_reports = []
+
+            # Add live reports first (authoritative Google Drive metadata & real URLs)
+            for r in live_reports:
+                merged_reports.append(r)
+                if r.get('id'): seen_ids.add(str(r['id']))
+                if r.get('name'): seen_names.add(r['name'])
+
+            # Add configured / default reports not seen in live query
+            for r in configured_reports:
+                r_id = str(r.get('id')) if r.get('id') else ''
+                r_name = r.get('name', '')
+                if (not r_id or r_id not in seen_ids) and (not r_name or r_name not in seen_names):
+                    merged_reports.append(r)
+                    if r_id: seen_ids.add(r_id)
+                    if r_name: seen_names.add(r_name)
+
+            # 3. Add local candidate reports on disk if not seen
             for candidate_folder in ['drive_reports', 'drive_cache', 'reports', 'docs']:
                 cf_path = os.path.join(p_dir, candidate_folder)
                 if os.path.exists(cf_path) and os.path.isdir(cf_path):
                     for fn in sorted(os.listdir(cf_path)):
-                        if fn.endswith(('.pdf', '.docx', '.doc', '.json')) and fn not in seen_names:
-                            w_match = re.search(r'week[\s_-]*(\d+)', fn, re.IGNORECASE)
+                        if fn.endswith(('.pdf', '.docx', '.doc', '.json', '.gdoc', '.pptx')) and fn not in seen_names:
+                            w_match = re.search(r'week[\s_-]*(\d+)', fn, re.IGNORECASE) or re.search(r'\bw(\d+)\b', fn, re.IGNORECASE)
                             w_label = f"Week {w_match.group(1)}" if w_match else "New Report"
-                            known_reports.append({
+                            merged_reports.append({
                                 "id": f"local_{fn}",
                                 "name": fn,
                                 "week": w_label,
@@ -354,24 +427,71 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                             })
                             seen_names.add(fn)
 
+            known_reports = merged_reports
+
+            # 4. Extract all indexed identifiers from snapshots
             indexed_ids = set()
+            indexed_names = set()
+            indexed_weeks = set()
+            indexed_week_numbers = set()
+
             snaps_dict = snapshots_data.get('snapshots', snapshots_data) if isinstance(snapshots_data, dict) else {}
-            for s in snaps_dict.values():
+            for snap_key, s in snaps_dict.items():
                 if isinstance(s, dict):
-                    if s.get('driveFileId'): indexed_ids.add(s['driveFileId'])
-                    if s.get('driveFileName'): indexed_ids.add(s['driveFileName'])
-                    if s.get('week'): indexed_ids.add(s['week'])
+                    if s.get('driveFileId'): indexed_ids.add(str(s['driveFileId']))
+                    if s.get('driveFileName'): indexed_names.add(s['driveFileName'])
+                    if isinstance(s.get('driveFile'), dict):
+                        if s['driveFile'].get('id'): indexed_ids.add(str(s['driveFile']['id']))
+                        if s['driveFile'].get('name'): indexed_names.add(s['driveFile']['name'])
+                    if s.get('week'):
+                        indexed_weeks.add(str(s['week']).lower())
+                    if s.get('weekLabel'):
+                        indexed_weeks.add(str(s['weekLabel']).lower())
+                    if s.get('weekNumber') is not None:
+                        try:
+                            indexed_week_numbers.add(int(s['weekNumber']))
+                        except (ValueError, TypeError):
+                            pass
+
+                # Check snap_key (e.g. 'w28', 'Week 28')
+                indexed_weeks.add(str(snap_key).lower())
+                k_match = re.search(r'(\d+)', str(snap_key))
+                if k_match:
+                    try:
+                        indexed_week_numbers.add(int(k_match.group(1)))
+                    except (ValueError, TypeError):
+                        pass
 
             all_reports = []
             uningested = []
             for r in known_reports:
-                is_ingested = (r['id'] in indexed_ids) or (r['name'] in indexed_ids)
+                r_id = str(r.get('id', ''))
+                r_name = r.get('name', '')
+                r_week = str(r.get('week', '')).lower()
+                r_week_num = None
+                w_match = re.search(r'(\d+)', r_name) or re.search(r'(\d+)', r_week)
+                if w_match:
+                    try:
+                        r_week_num = int(w_match.group(1))
+                    except (ValueError, TypeError):
+                        pass
+
+                is_ingested = False
+                if r_id and r_id in indexed_ids:
+                    is_ingested = True
+                elif r_name and r_name in indexed_names:
+                    is_ingested = True
+                elif r_week and r_week in indexed_weeks:
+                    is_ingested = True
+                elif r_week_num is not None and r_week_num in indexed_week_numbers:
+                    is_ingested = True
+
                 report_item = {
-                    'id': r['id'],
-                    'name': r['name'],
-                    'week': r['week'],
-                    'date': r['date'],
-                    'url': r['url'],
+                    'id': r.get('id', ''),
+                    'name': r.get('name', ''),
+                    'week': r.get('week', 'Report'),
+                    'date': r.get('date', 'Recent'),
+                    'url': r.get('url', ''),
                     'isIngested': is_ingested
                 }
                 all_reports.append(report_item)
@@ -497,7 +617,7 @@ def get_startup_banner(port=PORT):
         '=' * 64,
         f'  👉 Dashboard (Local):        {urls[0]}/?project=sample',
         f'  👉 Dashboard (Loopback):     {urls[1]}/?project=sample',
-        f'  👉 Dashboard (Proprietary):  {urls[0]}/?project=f-dse',
+        f'  👉 Dashboard (Monaro):       {urls[0]}/?project=monaro',
         f'  📡 REST Status Endpoint:     http://localhost:{port}/api/status?project={default_proj}',
         f'  📡 REST Sync Endpoint:       http://localhost:{port}/api/sync?project={default_proj}',
         '=' * 64,

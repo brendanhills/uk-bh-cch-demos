@@ -1,9 +1,8 @@
 {
   "name": "spec_drift",
-  "version": "1.0.0",
-  "description": "Specification drift detection suite for CL reviews and Conductor SDD architecture audits.",
+  "version": "1.1.0",
+  "description": "Specification drift detection suite for Antigravity & developer environments.",
   "skills": [
-    "spec_drift",
-    "spec_drift_detector"
+    "spec_drift"
   ]
 }

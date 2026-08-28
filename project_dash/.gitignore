@@ -17,6 +17,7 @@ deploy/repo/
 *.key
 
 # Private & Proprietary Datasets (Keep data/sample/ public)
+data/monaro/
 data/f-dse/
 data/local/
 data/private/

@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-08-25T15:47:11.511862",
+  "lastSynced": "2026-08-26T14:03:24.662973",
   "driveFolderId": "sample-drive-folder-aurora",
   "snapshots": {
     "w22": {
@@ -679,6 +679,9 @@
   },
   "Week 28": {
     "date": "14 Aug 2026",
+    "week": "Week 28",
+    "weekLabel": "Week 28",
+    "weekNumber": 28,
     "metrics": {
       "total_risks": 28,
       "inherent_avg_score": 14.6,
@@ -768,10 +771,114 @@
         "text": "Overall risk posture remains stable with clear treatment ownership across all key pillars. Back to you for executive decisions."
       }
     ],
+    "driveFileId": "mock-w28-id",
+    "driveFileName": "Weekly Reporting - Week 28 - 14 Aug 2026.pdf",
     "driveFile": {
       "name": "Weekly Reporting - Week 28 - 14 Aug 2026.pdf",
       "id": "mock-w28-id",
-      "ingestedAt": "2026-08-25T15:47:11.540864"
+      "ingestedAt": "2026-08-27T12:55:18.765124"
+    }
+  },
+  "Week 27": {
+    "date": "07 Aug 2026",
+    "week": "Week 27",
+    "weekLabel": "Week 27",
+    "weekNumber": 27,
+    "metrics": {
+      "total_risks": 28,
+      "inherent_avg_score": 14.6,
+      "residual_avg_score": 4.8,
+      "delta_compression": "-9.8",
+      "eventuated_issues_count": 0,
+      "total_issues": 11,
+      "report_week": "Week 27",
+      "report_date": "07 Aug 2026",
+      "project_name": "sample",
+      "baseline_week": "Week 28",
+      "baseline_date": "14 Aug 2026"
+    },
+    "executiveSummary": {
+      "executive": "Delivery velocity remains active for Week 27 ending 07 Aug 2026. Risk portfolio tracks 28 active items with residual exposure compressing from 14.6 to 4.8 (delta -9.8). Management focus remains locked on contractual milestones.",
+      "technical": "Engineering baseline across sovereign enclaves and network interconnects is stable. Critical path activities for IBR and SRR milestone gates are progressing with 0 eventuated issues under active mitigation.",
+      "governance": "Joint Steering Committee governance controls are validated. ATO accreditation and security audit artifacts remain aligned to target baseline dates with no catastrophic commercial blockers."
+    },
+    "top3": [
+      {
+        "num": 1,
+        "type": "decision",
+        "tag": "\ud83d\udea8 Immediate Executive Action",
+        "ref": "1.13 IBR",
+        "title": "Contractual Milestone Gate 2 Alignment",
+        "impact": "Critical path baseline verification for Commonwealth stakeholder review.",
+        "action": "Authorize integrated schedule baseline and close residual action items."
+      },
+      {
+        "num": 2,
+        "type": "schedule",
+        "tag": "\u26a1 Critical Schedule Alignment",
+        "ref": "1.10b Test/Dev",
+        "title": "Sovereign Enclave Hardware Interconnect Latency",
+        "impact": "Network validation window lead time compression prior to Phase 1 cutover.",
+        "action": "Complete redundant optical interconnect verification and dark fiber testing."
+      },
+      {
+        "num": 3,
+        "type": "win",
+        "tag": "\ud83d\ude80 Primary Delivery Win",
+        "ref": "1.7a DevSecOps",
+        "title": "CI/CD Pipeline Security Baseline Accreditation",
+        "impact": "Automated deployment pipelines and zero-trust IAP gates fully accredited.",
+        "action": "Maintain automated compliance gates and proceed to next milestone phase."
+      }
+    ],
+    "sleeperOutlier": {
+      "ref": "1.14 SRR",
+      "title": "System Requirements Review Verification Window",
+      "warning": "Inter-team dependency handoffs may compress review window if pre-work packages are delayed."
+    },
+    "podcastScript": [
+      {
+        "speaker": "Alex",
+        "role": "Program Analyst",
+        "avatar": "\ud83c\udf99\ufe0f",
+        "time": "0:00",
+        "text": "Welcome to the Executive Decision Briefing for Week 27, ending 07 Aug 2026. I'm Alex, and with me is Jordan, our Technical Director."
+      },
+      {
+        "speaker": "Jordan",
+        "role": "Technical Director",
+        "avatar": "\ud83e\udd16",
+        "time": "0:15",
+        "text": "Thanks Alex. This week our primary focus is locked onto contractual delivery milestones and risk mitigation velocity."
+      },
+      {
+        "speaker": "Alex",
+        "role": "Program Analyst",
+        "avatar": "\ud83c\udf99\ufe0f",
+        "time": "0:32",
+        "text": "Looking at our Top Attention items, Contractual Milestone Gate 2 Alignment is currently on the critical path for leadership review."
+      },
+      {
+        "speaker": "Jordan",
+        "role": "Technical Director",
+        "avatar": "\ud83e\udd16",
+        "time": "0:48",
+        "text": "Exactly. On the engineering side, Sovereign Enclave Hardware Interconnect Latency is being actively managed to ensure full network validation ahead of cutover."
+      },
+      {
+        "speaker": "Alex",
+        "role": "Program Analyst",
+        "avatar": "\ud83c\udf99\ufe0f",
+        "time": "1:05",
+        "text": "Overall risk posture remains stable with clear treatment ownership across all key pillars. Back to you for executive decisions."
+      }
+    ],
+    "driveFileId": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu",
+    "driveFileName": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf",
+    "driveFile": {
+      "name": "Weekly Reporting - Week 27 - 07 Aug 2026.pdf",
+      "id": "1HBfI9itx3BER4IRnH9eavBgAsrDGHnmu",
+      "ingestedAt": "2026-08-27T12:55:18.711202"
     }
   }
 }

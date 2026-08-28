@@ -12,7 +12,7 @@ An ultra-responsive, decoupled executive governance and operational risk intelli
    - Can be served via Python server, Nginx, GitHub Pages, or serverless containers (Cloud Run).
 
 2. **Gemini Ingestion & Decision Synthesis Engine**:
-   - Ingestion CLI (`scripts/ingest_data.py`) automatically ingests Google Sheets, Google Drive PDF report packs, and knowledge documents into standardized project datasets (`snapshots.json`, `risks.json`, `issues.json`).
+   - Ingestion CLI (`scripts/pipeline.py`) automatically ingests Google Sheets, Google Drive PDF report packs, and knowledge documents into standardized project datasets (`snapshots.json`, `risks.json`, `issues.json`).
    - Uses **Gemini 3.5 Flash** to generate structured executive syntheses tailored for 3 executive stakeholder perspectives:
      - 👔 **Executive**: Focus on milestones, strategic delivery blockers, and board actions.
      - ⚙️ **Technical**: Focus on infrastructure, security enclaves, API SLAs, and telemetry.
@@ -72,7 +72,7 @@ python3 server.py
 2. Click the **"Sync with Google Drive"** / **"Workspace Sync"** button in the top navigation header.
 3. The dashboard will trigger the automated ingestion pipeline, run Gemini decision synthesis, generate the neural podcast audio, and update all 5×5 matrices and trend curves in real time!
 
-*(Optional Headless Automation CLI: `python3 scripts/ingest_data.py --project=sample`)*
+*(Optional Headless Automation CLI: `python3 scripts/pipeline.py --project=sample`)*
 
 ---
 
@@ -107,7 +107,7 @@ project_dash/
 │       ├── snapshots.json       # Longitudinal weekly snapshots (W22-W27)
 │       ├── knowledge.json       # Blueprint & contract knowledge sources
 │       └── driver_tree.json     # Contractual milestones & capability drops
-└── tests/                       # Complete automated unit test suite (122 tests)
+└── tests/                       # Complete automated unit test suite (127 tests)
 ```
 
 ---
@@ -131,7 +131,7 @@ To add a new project (e.g. `my-project`):
 
 4. **Run ingestion**:
    ```bash
-   python3 scripts/ingest_data.py --project=my-project
+   python3 scripts/pipeline.py --project=my-project
    ```
 
 5. **View in browser**:
@@ -145,11 +145,11 @@ Project Dash includes a comprehensive unit test suite covering data integrity, l
 
 ```bash
 # Run all automated unit tests
-python3 -m unittest discover tests
+python3 -m unittest discover -s tests -p "test_*.py"
 
 # Run specific test suites
 python3 -m unittest tests/test_gemini_generator.py
-python3 -m unittest tests/test_ingest_data.py
+python3 -m unittest tests/test_pipeline.py
 python3 -m unittest tests/test_server_parameterized.py
 ```
 

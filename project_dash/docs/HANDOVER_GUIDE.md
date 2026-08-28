@@ -43,7 +43,7 @@ When a new weekly risk register arrives (e.g., Week 28 PDF or updated Google She
 
 ### Method A: Direct from the Dashboard Web UI (Recommended • 0 Code)
 1. Drop the new weekly PDF report (e.g. `Weekly Reporting - Week 28 - 14 Aug 2026.pdf` or `Status_Report.pdf`) into the team's shared Google Drive folder.
-2. Open the dashboard in your browser (`http://localhost:9000/?project=f-dse`).
+2. Open the dashboard in your browser (`http://localhost:9000/?project=monaro`).
 3. Click the **"Sync with Google Drive"** / **"Workspace Sync"** button in the header.
 4. The dashboard will automatically detect the new file, run the self-healing ingestion pipeline, generate the executive briefing, and refresh the 5×5 heatmap and Time Machine ribbon in real time!
 
@@ -51,13 +51,13 @@ When a new weekly risk register arrives (e.g., Week 28 PDF or updated Google She
 If you prefer running a command-line script to synchronize all streams or ingest a specific report:
 ```bash
 # 1-Command full workspace sync:
-python3 scripts/pipeline.py --project=f-dse --sync
+python3 scripts/pipeline.py --project=monaro --sync
 
 # 1-Command weekly PDF ingestion:
-python3 scripts/pipeline.py --project=f-dse --ingest-report="Weekly Reporting - Week 28 - 14 Aug 2026.pdf"
+python3 scripts/pipeline.py --project=monaro --ingest-report="Weekly Reporting - Week 28 - 14 Aug 2026.pdf"
 
 # 1-Command executive briefing & podcast regeneration:
-python3 scripts/pipeline.py --project=f-dse --regenerate-briefing="Week 28"
+python3 scripts/pipeline.py --project=monaro --regenerate-briefing="Week 28"
 ```
 
 ---
@@ -72,7 +72,7 @@ The dashboard supports a **Generalized Multi-Notebook Architecture**. You can co
 ### 1. Adding a New Gemini Notebook (1 Command)
 To register and synchronize a new Gemini Notebook, run:
 ```bash
-python3 scripts/sync_notebook.py \
+python3 scripts/pipeline.py \
   --notebook-id "<GEMINI_NOTEBOOK_UUID>" \
   --title "Technical Architecture & System Blueprints" \
   --slug "tech_blueprints" \
@@ -108,9 +108,9 @@ http://localhost:9000
 ### 2. Immediate Service Shutdown (Emergency Stop)
 If you ever need to immediately take any running service offline:
 ```bash
-./deploy/shutdown.sh
+./deploy/provision_environment.sh
 # or
-./deploy/stop.sh
+./deploy/provision_environment.sh
 ```
 
 ---
