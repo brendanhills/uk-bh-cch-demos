@@ -8,7 +8,7 @@
 ### 1. Phase 1: Multimodal 2FA Visual Code Capture (Strict Physical Flow)
 - **Mock SMS Code Generation:** Upon initiating a sensitive EMR operation or entering the discharge portal, the system triggers a 2FA prompt. It generates a random 4-digit verification code (e.g., `4832`) and logs it securely to a "Mock SMS Dispatch Panel" on the developer dashboard/UI (simulating SMS delivery to the user's phone).
 - **Webcam Camera Guide:** The app opens the camera stream and displays a clean visual guide: `"Hold your phone's screen showing the 2FA code up to the camera"`.
-- **Vision Decoding via Gemini Live API:** The user holds up their physical phone (or a physical card/paper) displaying the 4-digit code. Gemini's visual system inspects the video frames, parses the digits, and matches them against the generated session code.
+- **Vision Decoding via Gemini Live API (Gemini 3 Flash):** The user holds up their physical phone (or a physical card/paper) displaying the 4-digit code. Gemini's visual system inspects the video frames, parses the digits, and matches them against the generated session code.
 - **Verification Shutter:** Once verified, a success chime plays, and the UI displays a green badge `🔒 User Authenticated`.
 
 ### 2. Phase 2: Hybrid Unobtrusive Speaker Verification

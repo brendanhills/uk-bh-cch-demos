@@ -23,3 +23,6 @@
 [submodule "kmart_demo"]
 	path = kmart_demo
 	url = git@github.com:grandintegrator/kmart-alphaevolve-demo.git
+[submodule "monash/agenica"]
+	path = monash/agenica
+	url = git@github.com:abzzta/agenica.git
