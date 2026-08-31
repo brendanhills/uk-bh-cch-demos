@@ -1,15 +1,15 @@
 # Implementation Plan: Migrate Test Suite from Unittest to Idiomatic Pytest
 
 ## Phase 1: Pytest Root Configuration & Shared Fixtures
-- [ ] Task: Update `pyproject.toml` with `[tool.pytest.ini_options]`
-  - [ ] Add `pythonpath = ["."]`
-  - [ ] Add `testpaths = ["tests"]`
-  - [ ] Add standard flags and warning filters
-  - [ ] Verify `pytest` runs directly from command line without `python3 -m`
-- [ ] Task: Create `tests/conftest.py` with shared fixtures
-  - [ ] Add `sample_dir`, `sample_config`, `sample_risks`, `sample_issues`, `sample_snapshots` fixtures
-  - [ ] Add `tmp_project_workspace` fixture for isolated test execution
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Update `pyproject.toml` with `[tool.pytest.ini_options]`
+  - [x] Add `pythonpath = ["."]`
+  - [x] Add `testpaths = ["tests"]`
+  - [x] Add standard flags and warning filters
+  - [x] Verify `pytest` runs directly from command line without `python3 -m`
+- [x] Task: Create `tests/conftest.py` with shared fixtures
+  - [x] Add `sample_dir`, `sample_config`, `sample_risks`, `sample_issues`, `sample_snapshots` fixtures
+  - [x] Add `tmp_project_workspace` fixture for isolated test execution
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Core Domain & Ingestion Test Migration
 - [ ] Task: Migrate Analytics & Data Integrity Test Suites
