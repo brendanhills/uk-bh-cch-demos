@@ -22,7 +22,7 @@
 - [x] **Track: Customer Feedback & Strategic Advisory Enhancements**
   *Link: [./tracks/customer_feedback_enhancements_20260819/index.md](./tracks/customer_feedback_enhancements_20260819/index.md)*
 ---
-- [~] **Track: Modularize `index.html` Frontend Architecture with ES Modules** `[In Progress / Active Manual Verification]`
+- [x] **Track: Modularize `index.html` Frontend Architecture with ES Modules**
   *Link: [./tracks/modularize_frontend_architecture_20260818/index.md](./tracks/modularize_frontend_architecture_20260818/index.md)*
 ---
 - [x] **Track: Simplify & Harden Platform for Turnkey Handover**
@@ -31,7 +31,7 @@
 - [ ] **Track: On-Demand Backend Podcast Generation**
   *Link: [./tracks/ondemand_podcast_generation_20260820/index.md](./tracks/ondemand_podcast_generation_20260820/index.md)*
 ---
-- [ ] **Track: Migrate Test Suite from Unittest to Idiomatic Pytest**
+- [~] **Track: Migrate Test Suite from Unittest to Idiomatic Pytest**
   *Link: [./tracks/migrate_from_unittest_to_pytest_20260827/index.md](./tracks/migrate_from_unittest_to_pytest_20260827/index.md)*
 ---
 - [ ] **Track: Tailored Stakeholder Views (Exec, PM, and Tech URL-Driven Views)** `[Future Enhancement]`
