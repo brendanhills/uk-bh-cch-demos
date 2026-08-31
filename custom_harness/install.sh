@@ -17,6 +17,7 @@ NC='\033[0m'
 
 TARGET_MODE="global"
 TARGET_DIR=""
+UPDATE_SUBMODULES=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -33,12 +34,17 @@ while [[ $# -gt 0 ]]; do
       fi
       shift 2
       ;;
+    --update-submodules)
+      UPDATE_SUBMODULES=true
+      shift
+      ;;
     --help|-h)
       echo "Usage: ./install.sh [OPTIONS]"
       echo ""
       echo "Options:"
       echo "  --global              Install skills, plugins, hooks, and scripts globally to ~/.gemini/config/ (default)"
       echo "  --local <dir_path>    Install skills, plugins, hooks, and scripts locally to <dir_path>/.agents/"
+      echo "  --update-submodules   Pull latest upstream updates for Git submodules (e.g. conductor)"
       echo "  --help, -h            Show this help message"
       exit 0
       ;;
@@ -48,6 +54,12 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+if [ "$UPDATE_SUBMODULES" = true ]; then
+  echo -e "${BLUE}Updating Git submodules...${NC}"
+  git submodule update --init --recursive --remote
+  echo -e "${GREEN}Submodules updated successfully!${NC}"
+fi
 
 echo -e "${BLUE}Installing Custom Harness for Antigravity & Jetski...${NC}"
 
