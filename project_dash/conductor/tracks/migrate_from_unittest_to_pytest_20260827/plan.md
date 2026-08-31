@@ -12,16 +12,16 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: Core Domain & Ingestion Test Migration
-- [ ] Task: Migrate Analytics & Data Integrity Test Suites
-  - [ ] Migrate `tests/test_analytics.py` (convert to test functions, use native `assert`)
-  - [ ] Migrate `tests/test_data_integrity.py`
-  - [ ] Migrate `tests/test_sample_dataset.py`
-  - [ ] Migrate `tests/test_modules_integrity.py`
-- [ ] Task: Migrate Gemini & Pipeline Ingestion Test Suites
-  - [ ] Migrate `tests/test_gemini_generator.py` (use `monkeypatch` and `pytest.raises`)
-  - [ ] Migrate `tests/test_pipeline.py` (use `tmp_path` and shared sample fixtures)
-  - [ ] Migrate `tests/test_ingest_data.py`
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Migrate Analytics & Data Integrity Test Suites
+  - [x] Migrate `tests/test_analytics.py` (convert to test functions, use native `assert`)
+  - [x] Migrate `tests/test_data_integrity.py`
+  - [x] Migrate `tests/test_sample_dataset.py`
+  - [x] Migrate `tests/test_modules_integrity.py`
+- [x] Task: Migrate Gemini & Pipeline Ingestion Test Suites
+  - [x] Migrate `tests/test_gemini_generator.py` (use `monkeypatch` and `pytest.raises`)
+  - [x] Migrate `tests/test_pipeline.py` (use `tmp_path` and shared sample fixtures)
+  - [x] Migrate `tests/test_ingest_data.py`
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: Server, REST API & Presentation Test Migration
 - [ ] Task: Migrate Server & API Test Suites
