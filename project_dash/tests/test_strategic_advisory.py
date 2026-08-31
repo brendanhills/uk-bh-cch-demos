@@ -1,19 +1,11 @@
-import unittest
-import os
+"""Tests verifying strategic advisory elements, classification banners, and governance badges."""
 
-DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INDEX_PATH = os.path.join(DIRECTORY, 'index.html')
+from pathlib import Path
+import pytest
 
-class TestStrategicAdvisory(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        with open(INDEX_PATH, 'r', encoding='utf-8') as f:
-            cls.html = f.read()
 
-    def test_google_need_to_know_global_banner(self):
-        """Verify Google Need to Know (NTK) classification badge is in the title banner."""
-        self.assertIn('id="ntkClassificationBadge"', self.html)
-        self.assertIn('Google Need to Know (NTK)', self.html)
-
-if __name__ == '__main__':
-    unittest.main()
+def test_google_need_to_know_global_banner(project_root: Path):
+    """Verify Google Need to Know (NTK) classification badge is in the title banner."""
+    html = (project_root / 'index.html').read_text(encoding='utf-8')
+    assert 'id="ntkClassificationBadge"' in html
+    assert 'Google Need to Know (NTK)' in html

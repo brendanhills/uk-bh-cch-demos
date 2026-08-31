@@ -101,3 +101,23 @@ def mock_pipeline_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("DEFAULT_PROJECT", "sample")
     monkeypatch.setenv("ENABLE_DRIVE_SCAN", "false")
     return data_dir
+
+
+class DummyHandler:
+    """Mock DashboardHandler for testing API endpoints."""
+
+    def __init__(self):
+        self.sent_data = None
+        self.sent_code = None
+        self.headers = {}
+
+    def send_json(self, data, status_code=200):
+        self.sent_data = data
+        self.sent_code = status_code
+
+
+@pytest.fixture
+def dummy_handler() -> DummyHandler:
+    """Returns a fresh DummyHandler instance for testing DashboardHandler methods."""
+    return DummyHandler()
+

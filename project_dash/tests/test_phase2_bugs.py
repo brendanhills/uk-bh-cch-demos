@@ -1,62 +1,52 @@
-#!/usr/bin/env python3
-import unittest
-import re
-import os
+"""Regression tests for Phase 2 bug fixes."""
 
-def load_full_html():
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
-        html = f.read()
-    js_dir = os.path.join(base_dir, 'src', 'js')
-    if os.path.exists(js_dir):
-        for root, _, files in os.walk(js_dir):
-            for fn in sorted(files):
-                if fn.endswith('.js'):
-                    with open(os.path.join(root, fn), 'r', encoding='utf-8') as f:
-                        html += chr(10) + f.read()
+from pathlib import Path
+import pytest
+
+
+def load_full_html(project_root: Path) -> str:
+    """Loads index.html concatenated with all ES modules under src/js/."""
+    html = (project_root / 'index.html').read_text(encoding='utf-8')
+    js_dir = project_root / 'src' / 'js'
+    if js_dir.exists():
+        for fn in sorted(js_dir.rglob('*.js')):
+            html += '\n' + fn.read_text(encoding='utf-8')
     return html
 
 
-class TestPhase2Bugs(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.index_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "index.html"))
-        with open(cls.index_path, "r", encoding="utf-8") as f:
-            cls.html = load_full_html()
+def test_bug_28_and_35_workspace_sync_modal_4_streams(project_root: Path):
+    """Bugs #28 & #35: Workspace Live Sync modal must include Team Google and NotebookLM streams."""
+    html = load_full_html(project_root)
+    assert 'id="sheetsModal"' in html, "sheetsModal must exist"
+    idx = html.find('id="sheetsModal"')
+    idx_end = html.find('<!-- SCRIPT CONTROLLERS -->')
+    modal_html = html[idx:idx_end]
 
-    def test_bug_28_and_35_workspace_sync_modal_4_streams(self):
-        """Bugs #28 & #35: Workspace Live Sync modal must include Team Google and NotebookLM streams."""
-        self.assertIn('id="sheetsModal"', self.html, "sheetsModal must exist")
-        idx = self.html.find('id="sheetsModal"')
-        idx_end = self.html.find('<!-- SCRIPT CONTROLLERS -->')
-        modal_html = self.html[idx:idx_end]
+    # Must include Team Google Sheet link
+    assert "1lNRf5NEBd6ygc91nNwFA4HWGFfbDK02QkbkVfr4OUoA" in modal_html, "sheetsModal must link to Team Google Sheet"
+    # Must include NotebookLM link
+    assert "acdbb29b-8632-4fc7-9ba8-2357beeff141" in modal_html, "sheetsModal must link to NotebookLM"
+    # Must include Notebook sync trigger
+    assert "triggerNotebookSync" in modal_html or "syncAllWorkspaceSources" in modal_html, (
+        "sheetsModal must provide a trigger to sync NotebookLM and all sources"
+    )
 
-        # Must include Team Google Sheet link
-        self.assertIn("1lNRf5NEBd6ygc91nNwFA4HWGFfbDK02QkbkVfr4OUoA", modal_html, "sheetsModal must link to Team Google Sheet")
-        # Must include NotebookLM link
-        self.assertIn("acdbb29b-8632-4fc7-9ba8-2357beeff141", modal_html, "sheetsModal must link to NotebookLM")
-        # Must include Notebook sync trigger
-        self.assertTrue(
-            "triggerNotebookSync" in modal_html or "syncAllWorkspaceSources" in modal_html,
-            "sheetsModal must provide a trigger to sync NotebookLM and all sources"
-        )
 
-    def test_bug_27_exec_briefing_synthesizes_team_google_and_blueprints(self):
-        """Bug #27: Executive briefing must synthesize Team Google and Blueprint datasets."""
-        self.assertIn("function renderExecBriefing", self.html, "renderExecBriefing must be defined")
-        idx = self.html.find("function renderExecBriefing")
-        exec_body = self.html[idx:idx+4000]
-        
-        # Must reference LIVE_TEAM_GOOGLE_RISKS in synthesis or KPIs
-        self.assertTrue(
-            "LIVE_TEAM_GOOGLE_RISKS" in exec_body or "teamGoogle" in exec_body or "Team Google" in exec_body,
-            "renderExecBriefing must include Team Google risks in synthesis"
-        )
-        # Must reference Notebook or Blueprint mappings
-        self.assertTrue(
-            "NOTEBOOK_CATALOG" in exec_body or "BUNDLE_ANNEX_MAPPING" in exec_body or "Blueprint" in exec_body or "NotebookLM" in exec_body,
-            "renderExecBriefing must link or reference contract blueprint intelligence"
-        )
+def test_bug_27_exec_briefing_synthesizes_team_google_and_blueprints(project_root: Path):
+    """Bug #27: Executive briefing must synthesize Team Google and Blueprint datasets."""
+    html = load_full_html(project_root)
+    assert "function renderExecBriefing" in html, "renderExecBriefing must be defined"
+    idx = html.find("function renderExecBriefing")
+    exec_body = html[idx:idx+4000]
 
-if __name__ == "__main__":
-    unittest.main()
+    # Must reference LIVE_TEAM_GOOGLE_RISKS in synthesis or KPIs
+    assert "LIVE_TEAM_GOOGLE_RISKS" in exec_body or "teamGoogle" in exec_body or "Team Google" in exec_body, (
+        "renderExecBriefing must include Team Google risks in synthesis"
+    )
+    # Must reference Notebook or Blueprint mappings
+    assert (
+        "NOTEBOOK_CATALOG" in exec_body or
+        "BUNDLE_ANNEX_MAPPING" in exec_body or
+        "Blueprint" in exec_body or
+        "NotebookLM" in exec_body
+    ), "renderExecBriefing must link or reference contract blueprint intelligence"

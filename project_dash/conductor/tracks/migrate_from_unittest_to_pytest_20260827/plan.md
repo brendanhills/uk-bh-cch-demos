@@ -24,17 +24,17 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: Server, REST API & Presentation Test Migration
-- [ ] Task: Migrate Server & API Test Suites
-  - [ ] Migrate `tests/test_server.py`
-  - [ ] Migrate `tests/test_server_parameterized.py` (leverage `@pytest.mark.parametrize`)
-  - [ ] Migrate `tests/test_server_rationalized.py`
-- [ ] Task: Migrate UI, Presentation & Phase Bug Suites
-  - [ ] Migrate `tests/test_presentation_decoupling.py`
-  - [ ] Migrate `tests/test_register_separation.py`
-  - [ ] Migrate `tests/test_strategic_advisory.py`
-  - [ ] Migrate `tests/test_driver_tree_clickable_risks.py`
-  - [ ] Migrate phase bug tests (`tests/test_phase1_bugs.py` through `tests/test_phase6_bugs.py`, `tests/test_phase1_stability.py`)
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Migrate Server & API Test Suites
+  - [x] Migrate `tests/test_server.py`
+  - [x] Migrate `tests/test_server_parameterized.py` (leverage `@pytest.mark.parametrize`)
+  - [x] Migrate `tests/test_server_rationalized.py`
+- [x] Task: Migrate UI, Presentation & Phase Bug Suites
+  - [x] Migrate `tests/test_presentation_decoupling.py`
+  - [x] Migrate `tests/test_register_separation.py`
+  - [x] Migrate `tests/test_strategic_advisory.py`
+  - [x] Migrate `tests/test_driver_tree_clickable_risks.py`
+  - [x] Migrate phase bug tests (`tests/test_phase1_bugs.py` through `tests/test_phase6_bugs.py`, `tests/test_phase1_stability.py`)
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 4: Full Suite Verification & Documentation Alignment
 - [ ] Task: Execute full test suite via `pytest` and verify 100% pass rate (127+ tests)
