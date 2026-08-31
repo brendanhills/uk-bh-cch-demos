@@ -1,29 +1,31 @@
 # Session Resume
 
 ## 📝 Session Summary
-In this session, we created and packaged the **`workspace_cleanup`** skill and its automated auditor CLI into `custom_harness`:
+In this session, we established the **Direct File Editing & Anti-Scripting Standards** across the custom harness and global configurations:
 
-1. **Workspace Cleanup Skill (`workspace_cleanup`)**:
-   - Packaged under `.agents/skills/workspace_cleanup/` with standard YAML frontmatter in [`SKILL.md`](./.agents/skills/workspace_cleanup/SKILL.md).
-   - Codified the 6-phase cleanup process: Deep Codebase & Spec Dependency Audit $\to$ Reduction Delta Analysis $\to$ Pre-Cleanup Safety Git Tagging (`checkpoint-pre-archive-<YYYYMMDD>`) $\to$ Structured Archival (`archive/<category>/`) $\to$ Master Spec & Test Modernization $\to$ 100% Pass Verification & Walkthrough Reporting.
-   - Enforces the **Zero Data Loss** and **1-Command Rollback Safety** invariants.
+1. **Universal Rules Packaging (`.agents/rules/`)**:
+   - Created [`.agents/rules/direct_file_editing_standards.md`](./.agents/rules/direct_file_editing_standards.md) to enforce direct native tool editing (`view_file`, `replace_file_content`, `write_to_file`, `notebook_edit`) and strictly prohibit `sed`, `awk`, `cat <<EOF`, and helper Python/Bash scripts for file operations.
+   - Updated [`.agents/rules/zero_approval_spam_standards.md`](./.agents/rules/zero_approval_spam_standards.md) to remove obsolete scratch script recommendations and mandate native API tools.
+   - Version-controlled universal rules in the repository: `agent_safety_and_batch_standards.md`, `cloudtop_git_velocity.md`, `pragmatic_testing_standards.md`, and `standalone_customization_architecture.md`.
 
-2. **Automated Workspace Clutter Auditor Tool (`audit_workspace_clutter.py`)**:
-   - Created standalone executable CLI utility at [`.agents/scripts/audit_workspace_clutter.py`](./.agents/scripts/audit_workspace_clutter.py).
-   - Scans repository trees, categorizes files by top-level directory, identifies candidate legacy/prototype files, checks references across specs/tracks/bugs/tests, and outputs formatted clutter reduction metrics.
+2. **Installer Automation (`install.sh`)**:
+   - Added Step 4 to deploy `.agents/rules/` to `~/.gemini/config/agents/rules/` and symlink into `~/.gemini/config/rules/`.
+   - Added Step 5 to automatically migrate and maintain a clean `~/.gemini/config/AGENTS.md` (removing legacy inline bug protocols and establishing the Direct File Editing Mandate, Bug Workflow Scoping, and Checkpoint rules).
 
-3. **Installer & Configuration Updates**:
-   - Verified that [`install.sh`](./install.sh) installs the new `workspace_cleanup` skill and `audit_workspace_clutter.py` script both globally and locally.
+3. **Documentation & Workspace Sync**:
+   - Updated [`README.md`](./README.md) with complete quick-start instructions, the native tool mapping matrix, and repository structure.
+   - Verified that `~/.gemini/config/AGENTS.md` is clean and active across all workspaces.
 
 ## 📍 Current Context & Progress
 - **Active Branch**: `dev`
-- **Active Plugins**:
-  - [`conductor`](./conductor)
-  - [`bug_management`](./.agents/plugins/bug_management)
-  - [`spec_drift`](./.agents/plugins/spec_drift)
-- **Active Skills**:
-  - `workspace_cleanup` (New)
-  - `progressive_disclosure_audit`, `skill_readability`, `mcp_cli`, `context_health`, `colab`, `gemini_cli`, `new_skill`, `customerize`, `check_prompt`, `prompt_metrics`, `prompt_optimize`
+- **Active Rules**:
+  - `direct_file_editing_standards.md`
+  - `zero_approval_spam_standards.md`
+  - `agent_safety_and_batch_standards.md`
+  - `cloudtop_git_velocity.md`
+  - `pragmatic_testing_standards.md`
+  - `standalone_customization_architecture.md`
+- **Active Plugins**: `conductor`, `bug_management`, `spec_drift`
 
 ## 📌 Immediate Next Steps
-1. Review and test installation via `./install.sh --global`.
+1. All changes installed and verified. Normal development and multi-workspace workflows can proceed with native tool editing enforcement.

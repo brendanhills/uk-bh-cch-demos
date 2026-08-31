@@ -127,4 +127,68 @@ if [ -f "${SCRIPT_DIR}/.agents/prompt_heuristics.md" ]; then
   cp "${SCRIPT_DIR}/.agents/prompt_heuristics.md" "${DEST_AGENTS_DIR}/prompt_heuristics.md"
 fi
 
+# 4. Install rules (.agents/rules)
+if [ -d "${SCRIPT_DIR}/.agents/rules" ]; then
+  mkdir -p "${DEST_AGENTS_DIR}/rules"
+  echo -e "  Installing rules to ${DEST_AGENTS_DIR}/rules/..."
+  for rule in "${SCRIPT_DIR}/.agents/rules"/*; do
+    if [ -f "$rule" ]; then
+      rule_name=$(basename "$rule")
+      echo -e "  Installing rule: ${BLUE}${rule_name}${NC}"
+      cp "$rule" "${DEST_AGENTS_DIR}/rules/${rule_name}"
+      if [ "$TARGET_MODE" == "global" ]; then
+        mkdir -p "${HOME}/.gemini/config/rules"
+        ln -sfn "${DEST_AGENTS_DIR}/rules/${rule_name}" "${HOME}/.gemini/config/rules/${rule_name}"
+      fi
+    fi
+  done
+fi
+
+# 5. Idempotently configure global AGENTS.md
+if [ "$TARGET_MODE" == "global" ]; then
+  GLOBAL_CONFIG_DIR="${HOME}/.gemini/config"
+  AGENTS_FILE="${GLOBAL_CONFIG_DIR}/AGENTS.md"
+  mkdir -p "${GLOBAL_CONFIG_DIR}"
+  touch "${AGENTS_FILE}"
+
+  # Clean up legacy Bug Reporting & Management Protocol block if present
+  if grep -q "Bug Reporting & Management Protocol" "${AGENTS_FILE}"; then
+    echo -e "  Migrating legacy bug rules in ${BLUE}AGENTS.md${NC} to plugin..."
+    # Replace full legacy file with clean modern standard
+    cat << 'EOF' > "${AGENTS_FILE}"
+# Global Rules
+
+- **Direct File Editing & Anti-Scripting Mandate**:
+  * **Exclusively Native Tools**: All file reading, searching, creating, editing, and notebook modifications MUST use native tools (`view_file`, `grep_search`, `list_dir`, `replace_file_content`, `write_to_file`, `notebook_edit`).
+  * **Strict Prohibitions**: NEVER use shell commands (`sed`, `awk`, `cat <<EOF`, `echo >`) or temporary Python/bash helper scripts to read, parse, or edit files.
+  * **Edit Recovery**: If `replace_file_content` fails on character matching, use `view_file` to re-read the exact line chunk and retry native replacement; do NOT fall back to terminal scripts.
+
+- **Bug Workflow Scoping**:
+  * When reporting or triaging issues (`/bug`, `/triage_bug`, `/bug_plan`), do not modify source code or attempt immediate fixes; only record metadata or investigate root causes. Execute fixes only when `/fix_bug` is explicitly invoked.
+
+- **checkpoint**: When requested with "checkpoint" (or when you say "checkpoint" or "Finish for the day" or "finish for the day"), update the README.md and Resume.md (compaction summary), track status, check for any untracked project source files/directories in the active workspace (confirming .gitignore is clean), stage and commit all relevant modified and untracked project files with a descriptive message, and push the branch to the remote repository to ensure complete machine portability.
+EOF
+  else
+    if ! grep -q "Direct File Editing & Anti-Scripting Mandate" "${AGENTS_FILE}"; then
+      echo -e "  Configuring direct file editing rule in ${BLUE}AGENTS.md${NC}..."
+      cat << 'EOF' >> "${AGENTS_FILE}"
+
+- **Direct File Editing & Anti-Scripting Mandate**:
+  * **Exclusively Native Tools**: All file reading, searching, creating, editing, and notebook modifications MUST use native tools (`view_file`, `grep_search`, `list_dir`, `replace_file_content`, `write_to_file`, `notebook_edit`).
+  * **Strict Prohibitions**: NEVER use shell commands (`sed`, `awk`, `cat <<EOF`, `echo >`) or temporary Python/bash helper scripts to read, parse, or edit files.
+  * **Edit Recovery**: If `replace_file_content` fails on character matching, use `view_file` to re-read the exact line chunk and retry native replacement; do NOT fall back to terminal scripts.
+EOF
+    fi
+
+    if ! grep -q "Bug Workflow Scoping" "${AGENTS_FILE}"; then
+      echo -e "  Configuring bug workflow rule in ${BLUE}AGENTS.md${NC}..."
+      cat << 'EOF' >> "${AGENTS_FILE}"
+
+- **Bug Workflow Scoping**:
+  * When reporting or triaging issues (`/bug`, `/triage_bug`, `/bug_plan`), do not modify source code or attempt immediate fixes; only record metadata or investigate root causes. Execute fixes only when `/fix_bug` is explicitly invoked.
+EOF
+    fi
+  fi
+fi
+
 echo -e "${GREEN}Custom Harness installed successfully!${NC}"
