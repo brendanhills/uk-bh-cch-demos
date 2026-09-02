@@ -657,5 +657,21 @@
     "phase": "Phase 1",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "didn't ask phone number, got names confused:\nYes, of course! I can definitely help with that. If you don't mind, could you tell me your son's name so I can look up his details?\n\nHis name is Leo.\n\nThanks, Leo. And to make sure I have the right patient, could you also give me your name as well?\n\nHi my name is Brendan and my\n\nGreat, thanks Brendan. To have a look at those papers, please click the camera button at the bottom and align the document in the viewfinder to snap a picture for me!"
+  },
+  {
+    "id": "BUG-56",
+    "type": "Bug",
+    "title": "Agent assumed child's name ('Leo') before user provided it in conversation",
+    "description": "When caller provided parent name ('Brandon') and phone number ('0458477029') without mentioning the child's name, the agent responded 'You mentioned your son Leo?' assuming the child's name was Leo before the caller stated it.",
+    "date": "2026-09-02",
+    "date_resolved": "2026-09-02",
+    "reporter": "Brendan Hills",
+    "status": "Fix Implemented",
+    "priority": "P1",
+    "impact": "High",
+    "risk": "Low",
+    "phase": "Phase 1",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "I didn't say Leo yet:\nHi. My son came home from hospital and he came with some paperwork, but I don't really understand what it means. Can you help me?\n\nI can certainly help with that. To make sure I'm accessing the correct details, could you please provide your name and your son's name, as well as a contact phone number?\n\nSure, and my name is Brandon and my numbers 0458477029.\n\nThanks, Brendan. I've got your details here. You mentioned your son Leo? If you hold the paperwork up to the camera, I can take a look and explain it for you."
   }
 ]

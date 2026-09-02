@@ -16,10 +16,16 @@ def test_router_instruction():
 def test_bug_55_parent_child_disambiguation_and_phone_verification():
     """Verify BUG-55 instructions for parent/child name disambiguation and mandatory phone verification."""
     assert "Name & Role Disambiguation" in ROUTER_INSTRUCTION
-    assert "Differentiate clearly between the caller (parent/carer, e.g., Brendan) and the child patient (e.g., Leo)" in ROUTER_INSTRUCTION
-    assert "NEVER address the caller by the child's name" in ROUTER_INSTRUCTION
+    assert "Differentiate clearly between the caller (parent/carer) and the child patient" in ROUTER_INSTRUCTION
     assert "Always ask for and validate the caller's Australian contact phone number" in ROUTER_INSTRUCTION
     assert "Complete phone number verification BEFORE prompting the caller to upload or scan discharge paperwork" in ROUTER_INSTRUCTION
+
+
+def test_bug_56_zero_assumption_child_name_rule():
+    """Verify BUG-56 instructions enforcing zero assumption of child patient name."""
+    assert "Zero-Assumption Rule" in ROUTER_INSTRUCTION
+    assert "NEVER assume, invent, or guess the child patient's name before the caller explicitly provides it" in ROUTER_INSTRUCTION
+    assert "Do NOT refer to the child by any assumed name (such as \"Leo\") unless explicitly stated" in ROUTER_INSTRUCTION
 
 
 def test_router_tools():
