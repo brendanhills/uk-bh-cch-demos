@@ -56,6 +56,7 @@ logging.getLogger("websockets").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("google").setLevel(logging.WARNING)
 logging.getLogger("google_adk").setLevel(logging.WARNING)
+logging.getLogger("google_genai").setLevel(logging.ERROR)
 logging.getLogger("opentelemetry").setLevel(logging.ERROR)
 
 # Suppress Pydantic serialization warnings
@@ -280,36 +281,32 @@ async def websocket_endpoint(
                             parts=[types.Part(text=text_val)]
                         )
                         live_request_queue.send_content(content)
+                        live_request_queue.send_activity_end()
 
                     # Handle image data
                     elif json_message.get("type") == "image":
                         image_data = base64.b64decode(json_message["data"])
                         mime_type = json_message.get("mimeType", "image/jpeg")
-                        send_as_content = json_message.get("send_as_content", False)
 
                         logger.info(
-                            f"[DOC_IMAGE_RECEIVED] Processing image payload: {len(image_data)} bytes, "
-                            f"type: {mime_type}, as_content: {send_as_content}"
+                            f"[DOC_IMAGE_RECEIVED] Processing image payload: {len(image_data)} bytes, type: {mime_type}"
                         )
                         call_transcript_logger.info(f"[USER_IMAGE_ATTACHMENT] user_id={user_id} session_id={session_id}: Attached document image ({len(image_data)} bytes)")
 
-                        # Send image as blob
+                        # Send image blob as native BIDI realtime stream chunk
                         image_blob = types.Blob(
                             mime_type=mime_type, data=image_data
                         )
+                        live_request_queue.send_realtime(image_blob)
 
-                        if send_as_content:
-                            # Send as persistent conversational turn part
-                            content = types.Content(
-                                parts=[
-                                    types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED]"),
-                                    types.Part(inline_data=image_blob)
-                                ]
-                            )
-                            live_request_queue.send_content(content)
-                        else:
-                            # Send as transient real-time stream chunk
-                            live_request_queue.send_realtime(image_blob)
+                        # Notify Gemini Live of document photo attachment
+                        content = types.Content(
+                            parts=[
+                                types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED] I have captured and attached a photo of my discharge summary document. Please inspect the image and explain what it says.")
+                            ]
+                        )
+                        live_request_queue.send_content(content)
+                        live_request_queue.send_activity_end()
         except asyncio.CancelledError:
             logger.debug("upstream_task cancelled")
 

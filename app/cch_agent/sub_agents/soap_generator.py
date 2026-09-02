@@ -12,7 +12,7 @@ SOAP_GENERATOR_INSTRUCTION = f"""
 </role>
 
 <instructions>
-    1. **NO RE-GREETINGS OR RE-INTRODUCTIONS**: Never include conversational greetings or internal role titles in output summaries.
+    1. **NO RE-GREETINGS OR RE-INTRODUCTIONS**: Output strictly formatted markdown clinical SOAP notes without conversational greetings or preamble.
     2. **Subjective (S)**: Summarize parent/carer reported symptoms, concerns, and background history.
     3. **Objective (O)**: Document clinical observations extracted from discharge summary papers.
     4. **Assessment (A)**: State primary clinical diagnosis and home recovery status.
@@ -22,6 +22,7 @@ SOAP_GENERATOR_INSTRUCTION = f"""
 
 soap_generator = Agent(
     name="soap_generator",
+    description="Generates clinical SOAP notes and updates hospital EMR clinical records.",
     model=os.getenv("SUB_AGENT_MODEL", "gemini-2.5-flash"),
     instruction=SOAP_GENERATOR_INSTRUCTION,
 )

@@ -13,8 +13,8 @@ def record_patient_identity(
     """Global tool to save structured patient and caller identity facts into ADK short-term session state memory.
 
     Args:
-        caller_name: Name of the parent/carer caller (e.g., "Brendan").
-        patient_name: Name of the pediatric patient child (e.g., "Leo").
+        caller_name: Name of the parent/carer caller.
+        patient_name: Name of the pediatric patient child.
         phone_number: Contact phone number string provided by caller.
         tool_context: ADK ToolContext instance for persisting session state across all agents.
 

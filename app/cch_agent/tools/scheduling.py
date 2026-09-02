@@ -3,17 +3,29 @@
 from typing import Any, Dict, List
 
 
+from datetime import datetime, timedelta
+
+
 def get_available_support_times(
-    requested_date: str, service_type: str = "Pediatric Nurse Visit"
+    requested_date: str = None, service_type: str = "Pediatric Nurse Visit"
 ) -> Dict[str, Any]:
     """Look up available clinical home care appointment slots for a specified future date.
 
     Args:
-        requested_date: The requested appointment date (e.g. 'tomorrow', 'Friday', '2026-07-22').
+        requested_date: The requested appointment date (must be at least 1 day after today, e.g. 'tomorrow', 'Friday', '2026-09-03').
         service_type: Type of home care service. Defaults to 'Pediatric Nurse Visit'.
     """
+    tomorrow = datetime.now() + timedelta(days=1)
+    tomorrow_str = tomorrow.strftime("%A, %d %B %Y")
+    day_after = datetime.now() + timedelta(days=2)
+    day_after_str = day_after.strftime("%A, %d %B %Y")
+
+    date_to_use = requested_date if requested_date and requested_date.strip() else f"Tomorrow ({tomorrow_str})"
+
     return {
-        "requested_date": requested_date,
+        "requested_date": date_to_use,
+        "earliest_allowed_date": tomorrow_str,
+        "suggested_dates": [tomorrow_str, day_after_str],
         "service_type": service_type,
         "available_slots": [
             {
@@ -37,7 +49,7 @@ def get_available_support_times(
                 "status": "Available",
             },
         ],
-        "notes": "All appointments include pediatric vital signs assessment and medication review.",
+        "notes": f"All appointments are scheduled at least 1 day in advance ({tomorrow_str} onwards) and include pediatric vital signs assessment and medication review.",
     }
 
 

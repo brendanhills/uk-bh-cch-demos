@@ -1049,25 +1049,18 @@ function checkDocumentRequestPhrases(text) {
   if (!text) return;
   const lower = text.toLowerCase();
   const triggerKeywords = [
-    "discharge papers",
-    "discharge summary",
-    "discharge document",
-    "medical document",
-    "hold up your document",
-    "hold your document",
-    "show me your document",
-    "show me your discharge",
-    "hold up your discharge",
-    "hold your discharge",
-    "hold your papers",
-    "hold up your papers",
-    "to the camera",
-    "read them for you",
-    "snap a photo",
-    "camera box",
-    "place your document",
-    "align your document",
-    "show your document"
+    "click the camera button",
+    "open the camera",
+    "camera button at the bottom",
+    "align your document in the viewfinder",
+    "align your paperwork in the viewfinder",
+    "align your document in the frame",
+    "snap a picture for me",
+    "snap a photo for me",
+    "hold your document up to the camera",
+    "hold up your document to the camera",
+    "place your document in the viewfinder",
+    "camera viewfinder"
   ];
 
   for (const phrase of triggerKeywords) {
