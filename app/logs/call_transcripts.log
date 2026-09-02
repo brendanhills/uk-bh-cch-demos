@@ -90,3 +90,35 @@
 2026-08-06 17:34:21,950 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
 2026-08-06 17:37:18,600 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-fddmkf: Attached document image (43746 bytes)
 2026-08-06 17:37:46,075 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 19:18:53,987 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 19:19:48,444 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-iu6639: hi
+2026-09-02 19:20:36,418 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-iu6639: Attached document image (40551 bytes)
+2026-09-02 19:23:21,687 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 19:24:29,668 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-sa9i97: hi
+2026-09-02 19:25:18,163 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-sa9i97: Attached document image (48928 bytes)
+2026-09-02 19:26:12,735 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-sa9i97: Attached document image (53117 bytes)
+2026-09-02 19:30:02,180 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 19:30:30,536 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 19:32:46,390 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-sa9i97: Attached document image (56558 bytes)
+2026-09-02 19:33:37,815 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-sa9i97: Attached document image (48958 bytes)
+2026-09-02 19:33:47,281 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:29:09,785 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:29:47,260 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:30:02,021 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:30:26,757 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:33:38,770 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:37:06,445 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 21:51:57,438 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-1y4uw9b: hi
+2026-09-02 21:52:44,649 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-ovrm9t: hi
+2026-09-02 21:55:09,734 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-ovrm9t: Attached document image (46545 bytes)
+2026-09-02 21:55:38,465 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-ovrm9t: Attached document image (39989 bytes)
+2026-09-02 22:03:07,599 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 22:04:55,726 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-6gu7jt: hi
+2026-09-02 22:06:21,756 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-6gu7jt: Attached document image (44195 bytes)
+2026-09-02 22:06:56,110 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-6gu7jt: Attached document image (41614 bytes)
+2026-09-02 22:11:49,393 - [INFO] - [USER_TEXT] user_id=demo-user session_id=demo-session-cd0z9u: h
+2026-09-02 22:12:36,909 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-cd0z9u: Attached document image (50065 bytes)
+2026-09-02 22:13:11,338 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-cd0z9u: Attached document image (45920 bytes)
+2026-09-02 22:13:35,489 - [INFO] - [USER_IMAGE_ATTACHMENT] user_id=demo-user session_id=demo-session-cd0z9u: Attached document image (52355 bytes)
+2026-09-02 22:15:29,914 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital
+2026-09-02 22:16:40,321 - [INFO] - [TEST_TURN] user_id=test_u1 session_id=test_s1: Hello Cymbal Hospital

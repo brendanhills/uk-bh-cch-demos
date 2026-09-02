@@ -22,10 +22,10 @@ def test_bug_55_parent_child_disambiguation_and_phone_verification():
 
 
 def test_bug_56_zero_assumption_child_name_rule():
-    """Verify BUG-56 instructions enforcing zero assumption of child patient name."""
-    assert "Zero-Assumption Rule" in ROUTER_INSTRUCTION
-    assert "NEVER assume, invent, or guess the child patient's name before the caller explicitly provides it" in ROUTER_INSTRUCTION
-    assert "Do NOT refer to the child by any assumed name (such as \"Leo\") unless explicitly stated" in ROUTER_INSTRUCTION
+    """Verify BUG-56 positive behavioral instructions for child patient name handling."""
+    assert "Patient Name Protocol" in ROUTER_INSTRUCTION
+    assert "Refer to the child patient strictly and exclusively by the exact name provided verbally by the caller or read from an attached discharge document" in ROUTER_INSTRUCTION
+    assert "If the caller has not mentioned their child's name yet, politely ask for the child's name or wait until inspecting the discharge paperwork" in ROUTER_INSTRUCTION
 
 
 def test_router_tools():
