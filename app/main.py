@@ -293,15 +293,14 @@ async def websocket_endpoint(
                         )
                         call_transcript_logger.info(f"[USER_IMAGE_ATTACHMENT] user_id={user_id} session_id={session_id}: Attached document image ({len(image_data)} bytes)")
 
-                        # Send image blob as native BIDI realtime stream chunk
+                        # Send image blob as inline_data inside conversation turn content
                         image_blob = types.Blob(
                             mime_type=mime_type, data=image_data
                         )
-                        live_request_queue.send_realtime(image_blob)
 
-                        # Notify Gemini Live of document photo attachment
                         content = types.Content(
                             parts=[
+                                types.Part(inline_data=image_blob),
                                 types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED] I have captured and attached a photo of my discharge summary document. Please inspect the image and explain what it says.")
                             ]
                         )

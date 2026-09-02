@@ -17,6 +17,17 @@ def calculate_home_care_financials(
         subsidy_type: Optional subsidy type (e.g., 'Medicare', 'NDIS', 'Hospital Assistance').
         subsidy_rate: Optional subsidy discount percentage as decimal (e.g. 0.15 for 15%).
     """
+    if subsidy_type and subsidy_rate == 0.0:
+        sub_lower = subsidy_type.lower()
+        if "medicare" in sub_lower:
+            subsidy_rate = 0.15
+        elif "ndis" in sub_lower:
+            subsidy_rate = 0.20
+        elif "hospital" in sub_lower or "assistance" in sub_lower:
+            subsidy_rate = 0.10
+        else:
+            subsidy_rate = 0.15
+
     total_base_cost = number_of_visits * base_rate_per_visit
     subsidy_discount = total_base_cost * subsidy_rate
     net_out_of_pocket = total_base_cost - subsidy_discount

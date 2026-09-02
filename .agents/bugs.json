@@ -628,5 +628,33 @@
     "phase": "Phase 1",
     "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
     "raw_report": "output which subagent or tool is being called in the Event Console."
+  },
+  {
+    "id": "BUG-54",
+    "type": "Bug",
+    "title": "ADK Experimental UserWarning on JSON_SCHEMA_FOR_FUNC_DECL during function declaration registration",
+    "description": "ADK models llm_request.py raises UserWarning: [EXPERIMENTAL] feature FeatureName.JSON_SCHEMA_FOR_FUNC_DECL is enabled when registering function declarations.",
+    "date": "2026-09-02",
+    "status": "Investigated",
+    "priority": "P3",
+    "impact": "Low",
+    "risk": "Low",
+    "phase": "Phase 1",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo/.venv/lib/python3.13/site-packages/google/adk/models/llm_request.py:298: UserWarning: [EXPERIMENTAL] feature FeatureName.JSON_SCHEMA_FOR_FUNC_DECL is enabled.\n  declaration = tool._get_declaration()"
+  },
+  {
+    "id": "BUG-55",
+    "type": "Bug",
+    "title": "Agent addressed parent by child's name ('Thanks, Leo') and omitted asking for contact phone number",
+    "description": "When parent stated child's name ('His name is Leo'), the agent addressed the parent as 'Thanks, Leo'. The agent then asked for parent name ('Brendan') but proceeded directly to prompting for camera without asking for or verifying contact phone number.",
+    "date": "2026-09-02",
+    "status": "Investigated",
+    "priority": "P1",
+    "impact": "High",
+    "risk": "Low",
+    "phase": "Phase 1",
+    "workspace": "/home/brendanhills/dev/uk-bh-experiments/CCH_demo",
+    "raw_report": "didn't ask phone number, got names confused:\nYes, of course! I can definitely help with that. If you don't mind, could you tell me your son's name so I can look up his details?\n\nHis name is Leo.\n\nThanks, Leo. And to make sure I have the right patient, could you also give me your name as well?\n\nHi my name is Brendan and my\n\nGreat, thanks Brendan. To have a look at those papers, please click the camera button at the bottom and align the document in the viewfinder to snap a picture for me!"
   }
 ]
