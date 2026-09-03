@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AlphaEvolve Unified Trace Schema",
+  "type": "object",
+  "properties": {
+    "step": { "type": "integer" },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "patientsScheduled": { "type": "integer" },
+        "overtimeHours": { "type": "number" },
+        "resourceIdleTime": { "type": "number" },
+        "fatigueViolations": { "type": "integer" }
+      },
+      "required": ["patientsScheduled", "overtimeHours", "resourceIdleTime", "fatigueViolations"]
+    },
+    "schedules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "demandId": { "type": "string" },
+          "patientId": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "day": { "type": "string" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "staffIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "priority": { "type": "integer" }
+        },
+        "required": ["id", "resourceId", "startTime", "endTime", "staffIds"]
+      }
+    },
+    "code": { "type": "string" },
+    "disruption": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "staffId": { "type": "string" },
+        "day": { "type": "string" },
+        "noticeTime": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "required": ["type"]
+    },
+    "initialSchedule": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "day": { "type": "string" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "staffIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["id", "resourceId", "startTime", "endTime"]
+      }
+    },
+    "replannedSchedule": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "resourceId": { "type": "string" },
+          "day": { "type": "string" },
+          "startTime": { "type": "string" },
+          "endTime": { "type": "string" },
+          "staffIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["id", "resourceId", "startTime", "endTime"]
+      }
+    }
+  },
+  "required": ["step", "metrics", "schedules", "code"]
+}
