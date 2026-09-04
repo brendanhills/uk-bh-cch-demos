@@ -2,6 +2,8 @@
 
 This guide contains everything you need to clone, set up, and run the **CCH Pediatric Home Care Concierge ("Jennie")** live streaming demo.
 
+> 📝 **Google Docs Version**: [CCH Quick Start Guide (Google Docs)](https://docs.google.com/document/d/1FyIXVE91yf6EP_AmCLAelKwU8jwQ4cW8xXqRRYnr0qc/edit?tab=t.0#heading=h.fhx1znudfnd7)
+
 ---
 
 ## 📋 1. Prerequisites

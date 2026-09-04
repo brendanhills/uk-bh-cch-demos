@@ -2,6 +2,12 @@
 
 A working demonstration of real-time bidirectional streaming with Google's Agent Development Kit (ADK). This FastAPI application showcases WebSocket-based communication with Gemini models, supporting multimodal requests (text, audio, and image/video input) and flexible responses (text or audio output).
 
+> ⚡ **Quick Links**:
+> - [Colleague Quick Start Guide (Google Docs)](https://docs.google.com/document/d/1FyIXVE91yf6EP_AmCLAelKwU8jwQ4cW8xXqRRYnr0qc/edit?tab=t.0#heading=h.fhx1znudfnd7)
+> - [Local Quick Start Guide](QUICK_START.md)
+> - [Verbatim Demo Script](docs/DEMO_SCRIPT.md)
+> - [Leo Marlow Discharge Summary PDF to Print](assets/discharge_notes_LeoMarlow.pdf)
+
 ![cch-demo-screen](assets/cch-demo-screen.png)
 
 ## Overview
