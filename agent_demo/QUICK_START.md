@@ -12,7 +12,20 @@ Before starting, ensure you have:
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
-3. **Google Cloud SDK (`gcloud`)** with access to a Google Cloud project with Vertex AI enabled.
+3. **Google Cloud SDK (`gcloud`)** and an active GCP Project with the following APIs and permissions:
+   - **Required APIs**:
+     - `aiplatform.googleapis.com` (Vertex AI API)
+     ```bash
+     gcloud services enable aiplatform.googleapis.com
+     ```
+   - **Required IAM Permissions / Roles**:
+     - **Vertex AI User** (`roles/aiplatform.user`) or **Vertex AI Administrator** (`roles/aiplatform.admin`)
+     ```bash
+     # To grant to a user:
+     gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+         --member="user:colleague@example.com" \
+         --role="roles/aiplatform.user"
+     ```
 4. **Google Chrome** (recommended for WebRTC/WebSocket audio and webcam streaming).
 
 ---
