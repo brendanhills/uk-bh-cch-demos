@@ -26,8 +26,10 @@ from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
+from pydantic import BaseModel
 
 from cch_agent.agent import agent
+from cch_agent.tools.soap_export import generate_soap_from_text
 
 
 # Configure main application logger
@@ -101,6 +103,61 @@ async def favicon():
         return FileResponse(favicon_path, media_type="image/x-icon")
     from fastapi.responses import Response
     return Response(status_code=204)
+
+
+class SoapNoteRequest(BaseModel):
+    user_id: str = "demo-user"
+    session_id: str
+
+
+@app.post("/api/session/soap_note")
+async def get_or_generate_soap_note(request: SoapNoteRequest):
+    """Retrieve existing clinical SOAP note from session state, or generate one from dialogue history."""
+    try:
+        session = await session_service.get_session(
+            app_name=APP_NAME, user_id=request.user_id, session_id=request.session_id
+        )
+    except Exception as e:
+        logger.warning(f"Could not retrieve session {request.session_id}: {e}")
+        session = None
+
+    # Check if already generated in session state
+    if session and hasattr(session, "state") and session.state and "soap_note" in session.state:
+        return {
+            "status": "success",
+            "session_id": request.session_id,
+            "soap_note": session.state["soap_note"],
+            "source": "session_state",
+        }
+
+    # Extract dialogue text from events
+    dialogue_lines = []
+    if session and hasattr(session, "events") and session.events:
+        for ev in session.events:
+            author = getattr(ev, "author", "speaker")
+            content = getattr(ev, "content", None)
+            if content and hasattr(content, "parts"):
+                for p in content.parts:
+                    text = getattr(p, "text", None)
+                    if text and not getattr(p, "thought", False):
+                        dialogue_lines.append(f"{author}: {text}")
+
+    context_str = "\n".join(dialogue_lines)
+    if not context_str.strip():
+        context_str = "Parent called regarding discharge paperwork review, identity verification, and home nurse visit scheduling."
+
+    soap_markdown = generate_soap_from_text(context_str)
+
+    # Persist in session state if session exists
+    if session and hasattr(session, "state") and session.state is not None:
+        session.state["soap_note"] = soap_markdown
+
+    return {
+        "status": "success",
+        "session_id": request.session_id,
+        "soap_note": soap_markdown,
+        "source": "generated",
+    }
 
 
 # ========================================
@@ -302,6 +359,34 @@ async def websocket_endpoint(
                             parts=[
                                 types.Part(inline_data=image_blob),
                                 types.Part(text="[DOCUMENT_IMAGE_PAYLOAD_ATTACHED] I have captured and attached a photo of my discharge summary document. Please inspect the image and explain what it says.")
+                            ]
+                        )
+                        live_request_queue.send_content(content)
+                        live_request_queue.send_activity_end()
+
+                    # Handle Start Call trigger (#BUG-51)
+                    elif json_message.get("type") == "start_call":
+                        logger.info(f"[CALL_STARTED] Initiating call for user_id={user_id} session_id={session_id}")
+                        call_transcript_logger.info(f"[CALL_STARTED] user_id={user_id} session_id={session_id}")
+                        content = types.Content(
+                            parts=[
+                                types.Part(
+                                    text="[CALL_CONNECTED] A caller has just dialed into Cymbal Children's Hospital. Deliver your warm, professional opening greeting immediately."
+                                )
+                            ]
+                        )
+                        live_request_queue.send_content(content)
+                        live_request_queue.send_activity_end()
+
+                    # Handle End Call trigger
+                    elif json_message.get("type") == "end_call":
+                        logger.info(f"[CALL_ENDED] Concluding call for user_id={user_id} session_id={session_id}")
+                        call_transcript_logger.info(f"[CALL_ENDED] user_id={user_id} session_id={session_id}")
+                        content = types.Content(
+                            parts=[
+                                types.Part(
+                                    text="[CALL_CONCLUDED] The caller has concluded the conversation. Call complete_consultation_and_export_soap to finalize the clinical documentation and hospital medical record, then deliver a warm closing farewell."
+                                )
                             ]
                         )
                         live_request_queue.send_content(content)

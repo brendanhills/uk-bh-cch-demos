@@ -16,6 +16,10 @@ from cch_agent.tools.phone_validator import (
     validate_phone_number as validate_australian_phone_number,
 )
 from cch_agent.tools.identity import record_patient_identity
+from cch_agent.tools.soap_export import (
+    complete_consultation_and_export_soap,
+    generate_soap_from_text,
+)
 
 __all__ = [
     "calculate_home_care_financials",
@@ -28,4 +32,6 @@ __all__ = [
     "validate_phone_number",
     "validate_australian_phone_number",
     "record_patient_identity",
+    "complete_consultation_and_export_soap",
+    "generate_soap_from_text",
 ]

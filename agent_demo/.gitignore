@@ -6,3 +6,6 @@ app/.env
 .uv_cache/
 app/logs/call_transcripts.log
 app/logs/attachments/*
+uv.lock
+.vscode/
+*.code-workspace

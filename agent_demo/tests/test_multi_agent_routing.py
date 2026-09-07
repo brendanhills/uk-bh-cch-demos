@@ -7,7 +7,7 @@ from app.cch_agent.agent import agent as router_agent
 def test_master_router_agent_configuration():
     """Verify master router agent is configured with direct domain tools."""
     assert router_agent.name == "cch_concierge_router"
-    assert len(router_agent.tools) == 7
+    assert len(router_agent.tools) == 8
     
     tool_names = [getattr(t, "__name__", str(t)) for t in router_agent.tools]
     assert "validate_phone_number" in tool_names
@@ -17,3 +17,4 @@ def test_master_router_agent_configuration():
     assert "get_available_support_times" in tool_names
     assert "schedule_home_care_visit" in tool_names
     assert "update_hospital_emr" in tool_names
+    assert "complete_consultation_and_export_soap" in tool_names

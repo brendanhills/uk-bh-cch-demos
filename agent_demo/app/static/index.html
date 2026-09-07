@@ -24,6 +24,7 @@
           <span>Affective Dialog</span>
         </label>
         <button type="button" id="resetSessionBtn" class="reset-session-btn" style="background: #e8f0fe; color: #1a73e8; border: 1px solid #1a73e8; padding: 4px 12px; border-radius: 16px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 8px;">🔄 New Session</button>
+        <button type="button" id="soapNoteButton" class="soap-note-btn" style="background: #fce8e6; color: #c5221f; border: 1px solid #c5221f; padding: 4px 12px; border-radius: 16px; cursor: pointer; font-size: 13px; font-weight: bold; margin-left: 8px;">📄 Export SOAP Note</button>
       </div>
       <div class="connection-status">
         <span class="status-indicator" id="statusIndicator"></span>
@@ -77,6 +78,8 @@
                 autocomplete="off"
               />
               <button type="submit" id="sendButton" disabled>Send</button>
+              <button type="button" id="startCallButton" class="call-control-btn start-call-btn" style="background: #1a73e8; color: white;">📞 Start Call</button>
+              <button type="button" id="endCallButton" class="call-control-btn end-call-btn" style="display: none; background: #ea4335; color: white;">📞 End Call</button>
               <button type="button" id="startAudioButton">Start Audio</button>
               <button type="button" id="stopAudioButton" style="display: none; background: #dc3545; color: white;">🛑 Stop Mic</button>
               <button type="button" id="cameraButton">📷 Camera</button>
@@ -97,6 +100,31 @@
           </div>
         </div>
         <div id="consoleContent" class="console-content"></div>
+      </div>
+    </div>
+
+    <!-- Clinical SOAP Note Export Modal (#BUG-23) -->
+    <div id="soapModal" class="soap-modal" style="display: none;">
+      <div class="soap-modal-overlay"></div>
+      <div class="soap-modal-container">
+        <div class="soap-modal-header">
+          <h2>📄 Clinical SOAP Note Export - Cymbal Children's Hospital</h2>
+          <button type="button" id="closeSoapModalBtn" class="soap-modal-close-btn" title="Close Modal">✕</button>
+        </div>
+        <div class="soap-modal-body">
+          <div id="soapModalLoading" class="soap-loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <span>Generating structured clinical SOAP note via Gemini...</span>
+          </div>
+          <div id="soapPaperDoc" class="soap-doc-paper">
+            <div id="soapNoteContent" class="soap-note-text"></div>
+          </div>
+        </div>
+        <div class="soap-modal-footer">
+          <button type="button" id="copySoapBtn" class="soap-action-btn copy-btn" title="Copy SOAP Markdown">📋 Copy to Clipboard</button>
+          <button type="button" id="printSoapBtn" class="soap-action-btn print-btn" title="Print Document">🖨️ Print Clinical Record</button>
+          <button type="button" id="closeSoapFooterBtn" class="soap-action-btn close-btn" title="Close">Close</button>
+        </div>
       </div>
     </div>
   </body>

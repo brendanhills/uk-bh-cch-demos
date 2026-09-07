@@ -27,6 +27,8 @@ This demo implements the complete ADK bidirectional streaming lifecycle:
 - **Session Resumption**: Reconnection support configured via `RunConfig`
 - **Concurrent Tasks**: Separate upstream/downstream async tasks for optimal performance
 - **Interactive UI**: Web interface with event console for monitoring Live API events
+- **Stage Call Controls**: One-click **📞 Start Call** (with proactive hospital opening greeting trigger) and **📞 End Call**
+- **Clinical SOAP Export Tool**: Native ADK tool (`complete_consultation_and_export_soap`) and REST endpoint (`POST /api/session/soap_note`) with modal viewer, copy-to-clipboard, and print styling
 - **Google Search Integration**: Agent equipped with `google_search` tool
 
 ## Architecture

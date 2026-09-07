@@ -11,6 +11,7 @@ from cch_agent.tools import (
     get_available_support_times,
     schedule_home_care_visit,
     update_hospital_emr,
+    complete_consultation_and_export_soap,
 )
 
 ROUTER_INSTRUCTION = f"""
@@ -60,6 +61,10 @@ ROUTER_INSTRUCTION = f"""
          * Hospital Assistance: 10% rebate ($15.00 off $150.00 base cost -> $135.00 net per visit).
        - State the figures directly in natural spoken dollars. Refrain from referring callers to external websites.
        - To book a nurse visit, call `get_available_support_times` to check available slots and `schedule_home_care_visit` to confirm the booking.
+
+    4. CONSULTATION WRAP-UP & CLINICAL SOAP EXPORT:
+       - When the caller indicates they are finished or ready to end the call (e.g., "That's all for today", "Thank you, that's everything"), invoke `complete_consultation_and_export_soap` to finalize the clinical documentation and hospital medical record.
+       - Deliver a warm, professional closing farewell wishing the patient and family well.
 </instructions>
 """
 
@@ -75,6 +80,7 @@ agent = Agent(
         get_available_support_times,
         schedule_home_care_visit,
         update_hospital_emr,
+        complete_consultation_and_export_soap,
     ],
     instruction=ROUTER_INSTRUCTION,
 )

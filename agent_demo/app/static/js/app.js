@@ -489,6 +489,24 @@ function connectWebsocket() {
         }
       }
 
+      // Check for SOAP export tool calls and results (#BUG-23)
+      for (const p of adkEvent.content.parts) {
+        if (p.functionCall && p.functionCall.name === "complete_consultation_and_export_soap") {
+          eventSummary = "Tool: complete_consultation_and_export_soap";
+          eventEmoji = "📋";
+          addSystemMessage("📋 Jennie is compiling and exporting the clinical SOAP note...");
+        }
+        if (p.functionResponse && p.functionResponse.name === "complete_consultation_and_export_soap") {
+          eventSummary = "Tool Result: complete_consultation_and_export_soap";
+          eventEmoji = "📋";
+          const resp = p.functionResponse.response;
+          const output = resp ? (resp.output || resp) : null;
+          if (output && output.soap_note) {
+            renderSoapNoteInModal(output.soap_note);
+          }
+        }
+      }
+
       if (hasText) {
         // Show text preview in summary
         const textPart = adkEvent.content.parts.find(p => p.text);
@@ -1302,4 +1320,176 @@ function audioRecorderHandler(pcmData) {
     console.log("[CLIENT TO AGENT] Sent audio chunk: %s bytes", pcmData.byteLength);
   }
 }
+
+/**
+ * Clinical SOAP Note Export Modal & Stage Call Controls (#BUG-23, #BUG-51)
+ */
+const soapNoteButton = document.getElementById("soapNoteButton");
+const startCallButton = document.getElementById("startCallButton");
+const endCallButton = document.getElementById("endCallButton");
+const soapModal = document.getElementById("soapModal");
+const soapModalLoading = document.getElementById("soapModalLoading");
+const soapPaperDoc = document.getElementById("soapPaperDoc");
+const soapNoteContent = document.getElementById("soapNoteContent");
+const closeSoapModalBtn = document.getElementById("closeSoapModalBtn");
+const closeSoapFooterBtn = document.getElementById("closeSoapFooterBtn");
+const copySoapBtn = document.getElementById("copySoapBtn");
+const printSoapBtn = document.getElementById("printSoapBtn");
+
+function renderSoapNoteInModal(soapText) {
+  if (!soapModal) return;
+  soapModal.style.display = "flex";
+  if (soapModalLoading) soapModalLoading.style.display = "none";
+  if (soapPaperDoc) soapPaperDoc.style.display = "block";
+
+  if (soapNoteContent) {
+    const formattedHtml = soapText
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/^# (.*$)/gim, '<h1 style="color:#1a73e8; font-size:1.4rem; border-bottom:2px solid #e8f0fe; padding-bottom:4px; margin-top:1rem;">$1</h1>')
+      .replace(/^## (.*$)/gim, '<h2 style="color:#1a73e8; font-size:1.2rem; border-bottom:1px solid #e8f0fe; padding-bottom:4px; margin-top:0.8rem;">$1</h2>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+    soapNoteContent.innerHTML = formattedHtml;
+  }
+}
+
+async function openSoapModal() {
+  if (!soapModal) return;
+  soapModal.style.display = "flex";
+  if (soapModalLoading) soapModalLoading.style.display = "flex";
+  if (soapPaperDoc) soapPaperDoc.style.display = "none";
+
+  try {
+    const response = await fetch("/api/session/soap_note", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_id: sessionId || "demo-session",
+        user_id: userId || "demo-user"
+      })
+    });
+    const data = await response.json();
+    const soapText = data.soap_note || "No clinical note generated.";
+    renderSoapNoteInModal(soapText);
+  } catch (err) {
+    console.error("Error fetching SOAP note:", err);
+    if (soapModalLoading) soapModalLoading.style.display = "none";
+    if (soapPaperDoc) soapPaperDoc.style.display = "block";
+    if (soapNoteContent) {
+      soapNoteContent.innerHTML = `<p style="color:#d93025;"><strong>Error:</strong> Failed to fetch SOAP note: ${err.message}</p>`;
+    }
+  }
+}
+
+function closeSoapModal() {
+  if (soapModal) soapModal.style.display = "none";
+}
+
+function copySoapToClipboard() {
+  if (soapNoteContent) {
+    const textToCopy = soapNoteContent.innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      if (copySoapBtn) {
+        const origText = copySoapBtn.innerText;
+        copySoapBtn.innerText = "✅ Copied!";
+        setTimeout(() => { copySoapBtn.innerText = origText; }, 2000);
+      }
+    }).catch(err => {
+      console.error("Failed to copy SOAP note:", err);
+    });
+  }
+}
+
+function printSoapNote() {
+  window.print();
+}
+
+function startCallHandler() {
+  if (startCallButton) {
+    startCallButton.style.display = "none";
+  }
+  if (endCallButton) {
+    endCallButton.style.display = "inline-block";
+  }
+  if (startAudioButton) {
+    startAudioButton.disabled = true;
+  }
+  if (stopAudioButton) {
+    stopAudioButton.style.display = "inline-block";
+  }
+
+  // Ensure audio is activated
+  if (!is_audio) {
+    startAudio();
+    is_audio = true;
+  }
+
+  addSystemMessage("📞 Call connected - Prompting Jennie's hospital greeting...");
+
+  // Send start_call event to trigger Jennie's proactive greeting immediately (#BUG-51)
+  const sendStartTrigger = () => {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      websocket.send(JSON.stringify({ type: "start_call" }));
+      addConsoleEntry('outgoing', 'Call Started Trigger Sent', {
+        action: 'start_call',
+        message: 'Prompted agent for immediate opening greeting'
+      }, '📞', 'user');
+    }
+  };
+
+  if (websocket && websocket.readyState === WebSocket.OPEN) {
+    sendStartTrigger();
+  } else {
+    // If connecting, wait briefly
+    const checkInterval = setInterval(() => {
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        clearInterval(checkInterval);
+        sendStartTrigger();
+      }
+    }, 150);
+  }
+}
+
+function endCallHandler() {
+  if (startCallButton) {
+    startCallButton.style.display = "inline-block";
+    startCallButton.disabled = false;
+  }
+  if (endCallButton) {
+    endCallButton.style.display = "none";
+  }
+  if (startAudioButton) {
+    startAudioButton.disabled = false;
+  }
+  if (stopAudioButton) {
+    stopAudioButton.style.display = "none";
+  }
+
+  // Send end_call signal over WebSocket to instruct agent to conclude and call export tool
+  if (websocket && websocket.readyState === WebSocket.OPEN) {
+    websocket.send(JSON.stringify({ type: "end_call" }));
+    addConsoleEntry('outgoing', 'Call Concluded Trigger Sent', {
+      action: 'end_call',
+      message: 'Notified agent of call conclusion'
+    }, '📞', 'user');
+  }
+
+  // Stop audio
+  if (is_audio) {
+    stopAudio();
+  }
+
+  addSystemMessage("📞 Call ended by presenter. Compiling clinical SOAP documentation...");
+
+  // Open SOAP modal (will show spinner then load)
+  openSoapModal();
+}
+
+if (soapNoteButton) soapNoteButton.addEventListener("click", () => openSoapModal());
+if (startCallButton) startCallButton.addEventListener("click", startCallHandler);
+if (endCallButton) endCallButton.addEventListener("click", endCallHandler);
+if (closeSoapModalBtn) closeSoapModalBtn.addEventListener("click", closeSoapModal);
+if (closeSoapFooterBtn) closeSoapFooterBtn.addEventListener("click", closeSoapModal);
+if (copySoapBtn) copySoapBtn.addEventListener("click", copySoapToClipboard);
+if (printSoapBtn) printSoapBtn.addEventListener("click", printSoapNote);
 

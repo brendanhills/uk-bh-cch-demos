@@ -11,6 +11,7 @@ def test_router_instruction():
     assert "GREETING & IDENTITY VERIFICATION" in ROUTER_INSTRUCTION
     assert "DISCHARGE PAPERWORK & MULTIMODAL VISION" in ROUTER_INSTRUCTION
     assert "FUNDING SUBSIDIES & NURSE VISIT BOOKING" in ROUTER_INSTRUCTION
+    assert "CONSULTATION WRAP-UP & CLINICAL SOAP EXPORT" in ROUTER_INSTRUCTION
 
 
 def test_bug_55_parent_child_disambiguation_and_phone_verification():
@@ -34,3 +35,4 @@ def test_router_tools():
     assert "validate_phone_number" in tool_names
     assert "calculate_home_care_financials" in tool_names
     assert "schedule_home_care_visit" in tool_names
+    assert "complete_consultation_and_export_soap" in tool_names

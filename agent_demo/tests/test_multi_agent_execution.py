@@ -15,8 +15,9 @@ def test_master_router_model_is_live_api_compatible():
 
 def test_router_agent_direct_tools_attachment():
     """Verify master router agent tools are direct Python function tools."""
-    assert len(router_agent.tools) == 7
+    assert len(router_agent.tools) == 8
     tool_names = [getattr(t, "__name__", str(t)) for t in router_agent.tools]
     assert "validate_phone_number" in tool_names
     assert "calculate_home_care_financials" in tool_names
     assert "schedule_home_care_visit" in tool_names
+    assert "complete_consultation_and_export_soap" in tool_names
