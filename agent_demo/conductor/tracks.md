@@ -14,7 +14,7 @@
 - [ ] **Track: ADK 2.0 Multi-Agent Concierge Workflow (#BUG-23, #BUG-25, #BUG-43, #BUG-46)**
   *Link: [adk2_multi_agent_workflow_20260806](./tracks/adk2_multi_agent_workflow_20260806/index.md)*
 
-- [ ] **Track: Stage Demo Call Controls & Automated SOAP Note Modal**
+- [x] **Track: Stage Demo Call Controls & Automated SOAP Note Modal**
   *Link: [stage_demo_soap_controls_20260902](./tracks/stage_demo_soap_controls_20260902/index.md)*
 
 

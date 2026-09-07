@@ -24,10 +24,13 @@ This demo implements the complete ADK bidirectional streaming lifecycle:
 - **WebSocket Communication**: Real-time bidirectional streaming via `/ws/{user_id}/{session_id}`
 - **Multimodal Requests**: Text, audio, and image/video input with automatic audio transcription
 - **Flexible Responses**: Text or audio output, automatically determined based on model architecture
+- **Clinical SOAP Note Export**: Automated synthesis of clinical Subjective, Objective, Assessment, and Plan (SOAP) notes via `soap_generator` and `POST /api/session/soap_note`
+- **Call Lifecycle Controls**: Dedicated "End Call" and header "SOAP Note" triggers that synthesize structured notes and open an interactive modal with clipboard copy and printable view
 - **Session Resumption**: Reconnection support configured via `RunConfig`
 - **Concurrent Tasks**: Separate upstream/downstream async tasks for optimal performance
 - **Interactive UI**: Web interface with event console for monitoring Live API events
 - **Google Search Integration**: Agent equipped with `google_search` tool
+
 
 ## Architecture
 
@@ -226,6 +229,14 @@ http://127.0.0.1:8000
 2. Speak into your microphone
 3. Receive audio responses with real-time transcription
 4. Click "Stop Audio" to end the audio session
+
+### Call Lifecycle & Clinical SOAP Note Export
+
+1. During an active consultation, click **"📞 End Call"** (or click the header **"SOAP Note"** button at any time).
+2. The UI calls `POST /api/session/soap_note`, which passes the full conversational session transcript to Gemini (`cch_agent.soap_generator`) to generate a structured clinical summary.
+3. An interactive popup modal displays the structured Subjective, Objective, Assessment, and Plan (SOAP) note.
+4. Use **"Copy to Clipboard"** for rapid ingestion into clinical EMR systems, or click **"Print / Export"** to generate a clean clinical document.
+
 
 ## WebSocket API
 
